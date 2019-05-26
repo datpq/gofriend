@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using goFriend.Services;
 using goFriend.Views;
+using System.Globalization;
 
 namespace goFriend
 {
@@ -14,6 +15,11 @@ namespace goFriend
 
         public App()
         {
+            res.Culture = new CultureInfo("vi-VN");
+            //res.Culture = new CultureInfo("");
+            //Thread.CurrentThread.CurrentCulture = res.Culture;
+            //Thread.CurrentThread.CurrentUICulture = res.Culture;
+
             InitializeComponent();
 
             if (UseMockDataStore)

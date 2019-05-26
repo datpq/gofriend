@@ -9,7 +9,7 @@ namespace goFriend.ViewModels
     {
         public AboutViewModel()
         {
-            Title = "About";
+            Title = res.Help;
 
             OpenWebCommand = new Command(() => Device.OpenUri(new Uri("https://xamarin.com/platform")));
         }

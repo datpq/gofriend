@@ -27,4 +27,8 @@
   <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
     <item name="colorAccent">#FF4081</item>
   </style>
+  <style name="splashTheme" parent="android:Theme">
+    <item name="android:windowBackground">@drawable/scaled_background</item>
+    <item name="android:windowNoTitle">true</item>
+  </style>
 </resources>

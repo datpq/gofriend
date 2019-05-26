@@ -2,10 +2,15 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
        xmlns:local="clr-namespace:goFriend.Views"
+       xmlns:models="clr-namespace:goFriend.Models"
        FlyoutBehavior="Disabled"
        Title="goFriend"
        x:Class="goFriend.AppShell">
-
+  
+  <ContentPage.BindingContext>
+    <models:HomeMenuItem />
+  </ContentPage.BindingContext>
+  
     <!--
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXX|                            |XXXXXXXX
@@ -49,17 +54,17 @@
     -->
     <Shell.Resources>
         <ResourceDictionary>
-            <Color x:Key="NavigationPrimary">#2196F3</Color>
+          <Color x:Key="NavigationPrimary">White</Color>
             <Style x:Key="BaseStyle" TargetType="Element">
-                <Setter Property="Shell.BackgroundColor" Value="{StaticResource NavigationPrimary}" />
-                <Setter Property="Shell.ForegroundColor" Value="White" />
-                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.BackgroundColor" Value="#61A830" />
+                <Setter Property="Shell.ForegroundColor" Value="{StaticResource NavigationPrimary}" />
+                <Setter Property="Shell.TitleColor" Value="{StaticResource NavigationPrimary}" />
                 <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
-                <Setter Property="Shell.UnselectedColor" Value="#95FFFFFF" />
+                <Setter Property="Shell.UnselectedColor" Value="#595959" />
                 <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
-                <Setter Property="Shell.TabBarForegroundColor" Value="White"/>
-                <Setter Property="Shell.TabBarUnselectedColor" Value="#95FFFFFF"/>
-                <Setter Property="Shell.TabBarTitleColor" Value="White"/>
+                <Setter Property="Shell.TabBarForegroundColor" Value="#61A830"/>
+                <Setter Property="Shell.TabBarUnselectedColor" Value="#595959"/>
+                <Setter Property="Shell.TabBarTitleColor" Value="#61A830"/>
             </Style>
             <Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" />
         </ResourceDictionary>
@@ -70,7 +75,16 @@
         <ShellSection Title="Browse" Icon="tab_feed.png">
             <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
-        <ShellSection Title="About" Icon="tab_about.png">
+        <ShellSection Title="{Binding TitleSearch}" Icon="ic_search_grey.png">
+            <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
+        </ShellSection>
+        <ShellSection Title="{Binding TitleMap}" Icon="navigation_map_green.png">
+            <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
+        </ShellSection>
+        <ShellSection Title="{Binding TitleAccount}" Icon="navigation_account_green.png">
+            <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
+        </ShellSection>
+        <ShellSection Title="{Binding TitleHelp}" Icon="ic_help_green.png">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
         </ShellSection>
     </ShellItem>
