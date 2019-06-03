@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace goFriend.Droid
 {
-    [Activity(Label = "goFriend", Icon = "@mipmap/icon", Theme = "@style/splashTheme", MainLauncher = true, NoHistory = true)]
+    [Activity(Label = "@string/app_label", Icon = "@mipmap/icon", Theme = "@style/splashTheme", MainLauncher = true, NoHistory = true)]
     public class SplashActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)

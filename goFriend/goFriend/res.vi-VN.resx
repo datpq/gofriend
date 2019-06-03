@@ -123,13 +123,46 @@
   <data name="Account" xml:space="preserve">
     <value>Tài khoản</value>
   </data>
+  <data name="ForgottenPassword" xml:space="preserve">
+    <value>Quên mật khẩu?</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Trợ giúp</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="LoginRequiredMsg" xml:space="preserve">
+    <value>Bạn cần đăng nhập hoặc đăng ký 1 tài khoản để tiếp tục</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Bản đồ</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Chính sách bảo mật</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Đăng ký</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Tìm kiếm</value>
+  </data>
+  <data name="Slogan" xml:space="preserve">
+    <value>Kết nối yêu thương</value>
+  </data>
+  <data name="TermCondition" xml:space="preserve">
+    <value>Điều lệ sử dụng</value>
+  </data>
+  <data name="TermConditionMsg1" xml:space="preserve">
+    <value>Bằng việc đăng ký tài khoản, bạn sẽ công nhận</value>
+  </data>
+  <data name="TermConditionMsg2" xml:space="preserve">
+    <value>và</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Email</value>
   </data>
 </root>

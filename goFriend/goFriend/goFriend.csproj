@@ -1,21 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceAssemblyReference>true</ProduceAssemblyReference>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-
   <ItemGroup>
+    <PackageReference Include="Rg.Plugins.Popup">
+      <Version>1.1.5.188</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="4.0.0.425677" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="res.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -23,7 +22,6 @@
       <DependentUpon>res.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="res.resx">
       <Generator>ResXFileCodeGenerator</Generator>

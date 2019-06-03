@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:goFriend"
+             xmlns:ext="clr-namespace:goFriend.Extensions"
+             NavigationPage.HasNavigationBar="false"
+             x:Class="goFriend.Views.LoginPage">
+    <StackLayout>
+        <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="10">
+            <ContentView Padding="10,20,10,0" VerticalOptions="Start">
+                <Image Source="logo.png" HorizontalOptions="StartAndExpand" HeightRequest="96" />
+            </ContentView>
+            <ContentView Padding="20,0,20,0" VerticalOptions="Start">
+                <Label FontSize="22" HorizontalOptions="StartAndExpand" FontAttributes="Bold" TextColor="{StaticResource ColorPrimary}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{x:Static local:res.Slogan}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </ContentView>
+        </StackLayout>
+        <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand" Spacing="10">
+            <Button Margin="20,5,20,5" CornerRadius="{StaticResource BtnCornerRadius}"
+                    BackgroundColor="{StaticResource ColorPrimary}"
+                    TextColor="{StaticResource ColorTitle}"
+                    Text="{x:Static local:res.Login}"
+                    Clicked="OnLoginButtonClicked" />
+            <Button Margin="20,5,20,5" CornerRadius="{StaticResource BtnCornerRadius}"
+                    BackgroundColor="{StaticResource ColorPrimary}"
+                    TextColor="{StaticResource ColorTitle}"
+                    Text="{x:Static local:res.Register}"
+                    Clicked="OnSignUpButtonClicked" />
+            <Label Margin="20,5,20,20" VerticalOptions="EndAndExpand">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{x:Static local:res.TermConditionMsg1}" />
+                        <Span Text=" "/>
+                        <ext:HyperlinkSpan Text="{x:Static local:res.TermCondition}"
+                                         Url="https://docs.microsoft.com/appcenter/" />
+                        <Span Text=" "/>
+                        <Span Text="{x:Static local:res.TermConditionMsg2}" />
+                        <Span Text=" "/>
+                        <ext:HyperlinkSpan Text="{x:Static local:res.PrivacyPolicy}"
+                                         Url="https://docs.microsoft.com/appcenter/" />
+                        <Span Text="."/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </StackLayout>
+    </StackLayout>
+    <!--<ContentPage.ToolbarItems>
+        <ToolbarItem Text="{x:Static local:res.Register}" Clicked="OnSignUpButtonClicked" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="StartAndExpand">
+            <Label Text="{x:Static local:res.UserName}" />
+            <Entry x:Name="usernameEntry" Placeholder="username" />
+            <Label Text="{x:Static local:res.Password}" />
+            <Entry x:Name="passwordEntry" IsPassword="true" />
+            <Button Text="Login" Clicked="OnLoginButtonClicked" />
+            <Label x:Name="messageLabel" />
+        </StackLayout>
+    </ContentPage.Content>-->
+</ContentPage>

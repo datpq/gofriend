@@ -5141,7 +5141,7 @@ namespace goFriend.Droid
 			public const int notify_panel_notification_icon_bg = 2130837810;
 			
 			// aapt resource value: 0x7f020133
-			public const int scaled_background = 2130837811;
+			public const int splash_screen = 2130837811;
 			
 			// aapt resource value: 0x7f020134
 			public const int tab_about = 2130837812;
@@ -6234,6 +6234,9 @@ namespace goFriend.Droid
 			
 			// aapt resource value: 0x7f0b0025
 			public const int abc_toolbar_collapse_description = 2131427365;
+			
+			// aapt resource value: 0x7f0b003c
+			public const int app_label = 2131427388;
 			
 			// aapt resource value: 0x7f0b0033
 			public const int appbar_scrolling_view_behavior = 2131427379;

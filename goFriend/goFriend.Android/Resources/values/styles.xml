@@ -13,7 +13,7 @@
     <!-- colorPrimary is used for the default action bar background -->
     <item name="colorPrimary">#2196F3</item>
     <!-- colorPrimaryDark is used for the status bar -->
-    <item name="colorPrimaryDark">#1976D2</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
     <item name="colorAccent">#FF4081</item>
@@ -27,8 +27,10 @@
   <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
     <item name="colorAccent">#FF4081</item>
   </style>
-  <style name="splashTheme" parent="android:Theme">
-    <item name="android:windowBackground">@drawable/scaled_background</item>
+  <style name="splashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:windowBackground">@drawable/splash_screen</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:windowNoTitle">true</item>
+    <!--<item name="android:windowFullscreen">true</item>-->
   </style>
 </resources>

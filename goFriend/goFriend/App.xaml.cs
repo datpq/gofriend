@@ -12,6 +12,7 @@ namespace goFriend
         //TODO: Replace with *.azurewebsites.net url after deploying backend to Azure
         public static string AzureBackendUrl = "http://localhost:5000";
         public static bool UseMockDataStore = true;
+        public static bool IsUserLoggedIn { get; set; }
 
         public App()
         {
@@ -26,7 +27,16 @@ namespace goFriend
                 DependencyService.Register<MockDataStore>();
             else
                 DependencyService.Register<AzureDataStore>();
-            MainPage = new AppShell();
+
+            if (IsUserLoggedIn)
+            {
+                MainPage = new AppShell();
+                //MainPage = new NavigationPage(new LoginNavigation.MainPage());
+            }
+            else
+            {
+                MainPage = new NavigationPage(new LoginPage());
+            }
         }
 
         protected override void OnStart()

@@ -79,11 +79,38 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Forgotten password?.
+        /// </summary>
+        internal static string ForgottenPassword {
+            get {
+                return ResourceManager.GetString("ForgottenPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         internal static string Help {
             get {
                 return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        internal static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to sign in or create an account to continue.
+        /// </summary>
+        internal static string LoginRequiredMsg {
+            get {
+                return ResourceManager.GetString("LoginRequiredMsg", resourceCulture);
             }
         }
         
@@ -97,11 +124,83 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        internal static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Privacy Policy.
+        /// </summary>
+        internal static string PrivacyPolicy {
+            get {
+                return ResourceManager.GetString("PrivacyPolicy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register.
+        /// </summary>
+        internal static string Register {
+            get {
+                return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string Search {
             get {
                 return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting Love.
+        /// </summary>
+        internal static string Slogan {
+            get {
+                return ResourceManager.GetString("Slogan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terms &amp; Condtitions.
+        /// </summary>
+        internal static string TermCondition {
+            get {
+                return ResourceManager.GetString("TermCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By proceeding with creating an account you agree to the GoFriend.
+        /// </summary>
+        internal static string TermConditionMsg1 {
+            get {
+                return ResourceManager.GetString("TermConditionMsg1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to and.
+        /// </summary>
+        internal static string TermConditionMsg2 {
+            get {
+                return ResourceManager.GetString("TermConditionMsg2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        internal static string UserName {
+            get {
+                return ResourceManager.GetString("UserName", resourceCulture);
             }
         }
     }

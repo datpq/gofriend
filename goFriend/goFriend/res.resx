@@ -123,13 +123,46 @@
   <data name="Account" xml:space="preserve">
     <value>Account</value>
   </data>
+  <data name="ForgottenPassword" xml:space="preserve">
+    <value>Forgotten password?</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginRequiredMsg" xml:space="preserve">
+    <value>You need to sign in or create an account to continue</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="Slogan" xml:space="preserve">
+    <value>Connecting Love</value>
+  </data>
+  <data name="TermCondition" xml:space="preserve">
+    <value>Terms &amp; Condtitions</value>
+  </data>
+  <data name="TermConditionMsg1" xml:space="preserve">
+    <value>By proceeding with creating an account you agree to the GoFriend</value>
+  </data>
+  <data name="TermConditionMsg2" xml:space="preserve">
+    <value>and</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Email</value>
   </data>
 </root>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:goFriend"
+             x:Class="goFriend.Views.LoginManual"
+             xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup">
+    <StackLayout Padding="20" Spacing="10" BackgroundColor="{StaticResource ColorPageBackground}"
+                 HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand">
+        <StackLayout Orientation="Horizontal">
+            <Label Text="{Static local:res.Login}" TextColor="Black" HorizontalOptions="Start" />
+            <Label Text="{Static local:res.ForgottenPassword}" TextColor="Black" HorizontalOptions="EndAndExpand" />
+        </StackLayout>
+        <StackLayout>
+            <Label Text="{x:Static local:res.UserName}" />
+            <Entry x:Name="entryUsername" Placeholder="{x:Static local:res.UserName}" />
+            <Label Text="{x:Static local:res.Password}" />
+            <Entry x:Name="entryPassword" IsPassword="true" />
+        </StackLayout>
+    </StackLayout>
+</pages:PopupPage>
