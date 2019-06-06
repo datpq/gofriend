@@ -18,17 +18,17 @@ namespace goFriend.Views
             InitializeComponent();
         }
 
-        async void OnSignUpButtonClicked(object sender, EventArgs e)
+        async void cmdSignUp_Click(object sender, EventArgs e)
         {
             //await Navigation.PushAsync(new SignUpPage());
         }
 
-        private void OnLoginButtonClicked(object sender, EventArgs e)
+        private void cmdLogin_Click(object sender, EventArgs e)
         {
             PopupNavigation.Instance.PushAsync(new LoginManual());
         }
 
-        //async void OnLoginButtonClicked(object sender, EventArgs e)
+        //async void cmdLogin_Click(object sender, EventArgs e)
         //{
         //    return;
         //    //var user = new User

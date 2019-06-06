@@ -123,6 +123,9 @@
   <data name="Account" xml:space="preserve">
     <value>Account</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="ForgottenPassword" xml:space="preserve">
     <value>Forgotten password?</value>
   </data>

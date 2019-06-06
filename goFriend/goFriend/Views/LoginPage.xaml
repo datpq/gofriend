@@ -25,12 +25,12 @@
                     BackgroundColor="{StaticResource ColorPrimary}"
                     TextColor="{StaticResource ColorTitle}"
                     Text="{x:Static local:res.Login}"
-                    Clicked="OnLoginButtonClicked" />
+                    Clicked="cmdLogin_Click" />
             <Button Margin="20,5,20,5" CornerRadius="{StaticResource BtnCornerRadius}"
                     BackgroundColor="{StaticResource ColorPrimary}"
                     TextColor="{StaticResource ColorTitle}"
                     Text="{x:Static local:res.Register}"
-                    Clicked="OnSignUpButtonClicked" />
+                    Clicked="cmdSignUp_Click" />
             <Label Margin="20,5,20,20" VerticalOptions="EndAndExpand">
                 <Label.FormattedText>
                     <FormattedString>
@@ -50,7 +50,7 @@
         </StackLayout>
     </StackLayout>
     <!--<ContentPage.ToolbarItems>
-        <ToolbarItem Text="{x:Static local:res.Register}" Clicked="OnSignUpButtonClicked" />
+        <ToolbarItem Text="{x:Static local:res.Register}" Clicked="cmdSignUp_Click" />
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout VerticalOptions="StartAndExpand">
@@ -58,7 +58,7 @@
             <Entry x:Name="usernameEntry" Placeholder="username" />
             <Label Text="{x:Static local:res.Password}" />
             <Entry x:Name="passwordEntry" IsPassword="true" />
-            <Button Text="Login" Clicked="OnLoginButtonClicked" />
+            <Button Text="Login" Clicked="cmdLogin_Click" />
             <Label x:Name="messageLabel" />
         </StackLayout>
     </ContentPage.Content>-->

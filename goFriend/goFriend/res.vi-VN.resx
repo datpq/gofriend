@@ -123,6 +123,9 @@
   <data name="Account" xml:space="preserve">
     <value>Tài khoản</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Hủy bỏ</value>
+  </data>
   <data name="ForgottenPassword" xml:space="preserve">
     <value>Quên mật khẩu?</value>
   </data>
