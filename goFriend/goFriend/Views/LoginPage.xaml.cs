@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -18,12 +14,12 @@ namespace goFriend.Views
             InitializeComponent();
         }
 
-        async void cmdSignUp_Click(object sender, EventArgs e)
+        async void CmdSignUp_Click(object sender, EventArgs e)
         {
             //await Navigation.PushAsync(new SignUpPage());
         }
 
-        private void cmdLogin_Click(object sender, EventArgs e)
+        private void CmdLogin_Click(object sender, EventArgs e)
         {
             PopupNavigation.Instance.PushAsync(new LoginManual());
         }

@@ -2,15 +2,19 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:goFriend"
-             xmlns:ext="clr-namespace:goFriend.Extensions"
+             xmlns:vm="clr-namespace:goFriend.ViewModels"
+             xmlns:ctl="clr-namespace:goFriend.Controls"
              NavigationPage.HasNavigationBar="false"
              x:Class="goFriend.Views.LoginPage">
-    <StackLayout>
+    <ContentPage.BindingContext>
+        <vm:LoginViewModel />
+    </ContentPage.BindingContext>
+    <StackLayout Margin="20,20,20,20">
         <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="10">
-            <ContentView Padding="10,20,10,0" VerticalOptions="Start">
+            <ContentView VerticalOptions="Start">
                 <Image Source="logo.png" HorizontalOptions="StartAndExpand" HeightRequest="96" />
             </ContentView>
-            <ContentView Padding="20,0,20,0" VerticalOptions="Start">
+            <ContentView VerticalOptions="Start">
                 <Label FontSize="22" HorizontalOptions="StartAndExpand" FontAttributes="Bold" TextColor="{StaticResource ColorPrimary}">
                     <Label.FormattedText>
                         <FormattedString>
@@ -20,28 +24,37 @@
                 </Label>
             </ContentView>
         </StackLayout>
-        <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand" Spacing="10">
-            <Button Margin="20,5,20,5" CornerRadius="{StaticResource BtnCornerRadius}"
+        <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
+            <ctl:FacebookLoginButton
+                Margin="0,0,0,10"
+                OnSuccess="{Binding OnFacebookLoginSuccessCmd}"
+                OnError="{Binding OnFacebookLoginErrorCmd}"
+                OnCancel="{Binding OnFacebookLoginCancelCmd}" />
+            <StackLayout Orientation="Horizontal" Margin="0,10,0,5">
+                <Button CornerRadius="{StaticResource BtnCornerRadius}"
+                    HeightRequest="50" HorizontalOptions="StartAndExpand" WidthRequest="140"
                     BackgroundColor="{StaticResource ColorPrimary}"
                     TextColor="{StaticResource ColorTitle}"
                     Text="{x:Static local:res.Login}"
-                    Clicked="cmdLogin_Click" />
-            <Button Margin="20,5,20,5" CornerRadius="{StaticResource BtnCornerRadius}"
+                    Clicked="CmdLogin_Click" />
+                <Button CornerRadius="{StaticResource BtnCornerRadius}"
+                        HorizontalOptions="EndAndExpand" WidthRequest="140"
                     BackgroundColor="{StaticResource ColorPrimary}"
                     TextColor="{StaticResource ColorTitle}"
                     Text="{x:Static local:res.Register}"
-                    Clicked="cmdSignUp_Click" />
-            <Label Margin="20,5,20,20" VerticalOptions="EndAndExpand">
+                    Clicked="CmdSignUp_Click" />
+            </StackLayout>
+            <Label Margin="0,5,0,0" VerticalOptions="EndAndExpand">
                 <Label.FormattedText>
                     <FormattedString>
                         <Span Text="{x:Static local:res.TermConditionMsg1}" />
                         <Span Text=" "/>
-                        <ext:HyperlinkSpan Text="{x:Static local:res.TermCondition}"
+                        <ctl:HyperlinkSpan Text="{x:Static local:res.TermCondition}"
                                          Url="https://docs.microsoft.com/appcenter/" />
                         <Span Text=" "/>
                         <Span Text="{x:Static local:res.TermConditionMsg2}" />
                         <Span Text=" "/>
-                        <ext:HyperlinkSpan Text="{x:Static local:res.PrivacyPolicy}"
+                        <ctl:HyperlinkSpan Text="{x:Static local:res.PrivacyPolicy}"
                                          Url="https://docs.microsoft.com/appcenter/" />
                         <Span Text="."/>
                     </FormattedString>
@@ -49,17 +62,4 @@
             </Label>
         </StackLayout>
     </StackLayout>
-    <!--<ContentPage.ToolbarItems>
-        <ToolbarItem Text="{x:Static local:res.Register}" Clicked="cmdSignUp_Click" />
-    </ContentPage.ToolbarItems>
-    <ContentPage.Content>
-        <StackLayout VerticalOptions="StartAndExpand">
-            <Label Text="{x:Static local:res.UserName}" />
-            <Entry x:Name="usernameEntry" Placeholder="username" />
-            <Label Text="{x:Static local:res.Password}" />
-            <Entry x:Name="passwordEntry" IsPassword="true" />
-            <Button Text="Login" Clicked="cmdLogin_Click" />
-            <Label x:Name="messageLabel" />
-        </StackLayout>
-    </ContentPage.Content>-->
 </ContentPage>

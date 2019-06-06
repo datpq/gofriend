@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace goFriend.Extensions
+namespace goFriend.Controls
 {
     public class HyperlinkSpan : Span
     {
