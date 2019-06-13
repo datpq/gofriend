@@ -134,8 +134,14 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NLog">
+      <Version>4.6.4</Version>
+    </PackageReference>
     <PackageReference Include="Rg.Plugins.Popup">
       <Version>1.1.5.188</Version>
+    </PackageReference>
+    <PackageReference Include="Xam.Plugins.Forms.ImageCircle">
+      <Version>3.0.0.5</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Facebook.iOS">
       <Version>4.40.0</Version>

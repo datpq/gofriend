@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+       xmlns:loc="clr-namespace:goFriend"
        xmlns:local="clr-namespace:goFriend.Views"
-       xmlns:models="clr-namespace:goFriend.Models"
        FlyoutBehavior="Disabled"
        Title="goFriend"
        x:Class="goFriend.AppShell">
-  
-  <ContentPage.BindingContext>
-    <models:HomeMenuItem />
-  </ContentPage.BindingContext>
-  
     <!--
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXX|                            |XXXXXXXX
@@ -75,16 +70,16 @@
         <ShellSection Title="Browse" Icon="tab_feed.png">
             <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
-        <ShellSection Title="{Binding TitleSearch}" Icon="ic_search_grey.png">
+        <ShellSection Title="{Static loc:res.Search}" Icon="ic_search_grey.png">
             <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
-        <ShellSection Title="{Binding TitleMap}" Icon="navigation_map_green.png">
+        <ShellSection Title="{Static loc:res.Map}" Icon="navigation_map_green.png">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
         </ShellSection>
-        <ShellSection Title="{Binding TitleAccount}" Icon="navigation_account_green.png">
-            <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
+        <ShellSection Title="{Static loc:res.Account}" Icon="navigation_account_green.png">
+            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}" />
         </ShellSection>
-        <ShellSection Title="{Binding TitleHelp}" Icon="ic_help_green.png">
+        <ShellSection Title="{Static loc:res.Help}" Icon="ic_help_green.png">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
         </ShellSection>
     </ShellItem>

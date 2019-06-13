@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="goFriend.Views.ItemsPage"
              Title="{Binding Title}"
-             BackgroundColor="#F3F3F3"
+             BackgroundColor="{StaticResource ColorTabPageBackground}"
              x:Name="BrowseItemsPage">
 
     <ContentPage.ToolbarItems>

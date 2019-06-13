@@ -1,9 +1,8 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
 using goFriend.Services;
 using goFriend.Views;
 using System.Globalization;
+using goFriend.Models;
 
 namespace goFriend
 {
@@ -13,6 +12,9 @@ namespace goFriend
         public static string AzureBackendUrl = "http://localhost:5000";
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
+        public static User User { get; set; }
+        public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
+        private static readonly ILogger logger = DependencyService.Get<ILogManager>().GetLog();
 
         public App()
         {
@@ -21,6 +23,11 @@ namespace goFriend
             //Thread.CurrentThread.CurrentCulture = res.Culture;
             //Thread.CurrentThread.CurrentUICulture = res.Culture;
 
+            System.AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
+                System.Exception ex = (System.Exception)args.ExceptionObject;
+                logger.Error(ex.ToString());
+            };
+
             InitializeComponent();
 
             if (UseMockDataStore)
@@ -28,8 +35,10 @@ namespace goFriend
             else
                 DependencyService.Register<AzureDataStore>();
 
+            IsUserLoggedIn = Settings.IsUserLoggedIn;
             if (IsUserLoggedIn)
             {
+                User = Settings.LastUser;
                 MainPage = new AppShell();
                 //MainPage = new NavigationPage(new LoginNavigation.MainPage());
             }
@@ -37,6 +46,11 @@ namespace goFriend
             {
                 MainPage = new NavigationPage(new LoginPage());
             }
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
 
         protected override void OnStart()

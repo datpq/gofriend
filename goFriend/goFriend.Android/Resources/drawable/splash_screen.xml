@@ -5,7 +5,7 @@
   </item>
   <item>
     <bitmap
-        android:src="@drawable/logo"
+        android:src="@drawable/hn9194_25"
         android:tileMode="disabled"
         android:gravity="center"/>
   </item>

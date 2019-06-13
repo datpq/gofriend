@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 namespace goFriend.Droid
 {
-    [Activity(Label = "@string/app_label", Icon = "@mipmap/icon", Theme = "@style/splashTheme", MainLauncher = true, NoHistory = true)]
+    [Activity(Label = "@string/app_label", Icon = "@mipmap/hn9194", Theme = "@style/splashTheme", MainLauncher = true, NoHistory = true)]
     public class SplashActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)

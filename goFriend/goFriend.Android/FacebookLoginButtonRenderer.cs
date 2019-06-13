@@ -1,12 +1,16 @@
 ﻿using Android.Content;
 using goFriend.Controls;
 using goFriend.Droid;
+using goFriend.Models;
+using goFriend.Services;
+using System;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
 [assembly: ExportRenderer(typeof(FacebookLoginButton), typeof(FacebookLoginButtonRenderer))]
+[assembly: Dependency(typeof(FacebookManager))]
 namespace goFriend.Droid
 {
     public class FacebookLoginButtonRenderer : ViewRenderer
@@ -71,6 +75,60 @@ namespace goFriend.Droid
             public void OnSuccess(Java.Lang.Object result) =>
                 view.OnSuccess?.Execute(((LoginResult)result).AccessToken.Token);
 
+        }
+    }
+
+    public class FacebookProfileTracker : ProfileTracker
+    {
+        public event EventHandler<OnProfileChangedEventArgs> mOnProfileChanged;
+        protected override void OnCurrentProfileChanged(Profile oldProfile, Profile newProfile)
+        {
+            if (mOnProfileChanged != null)
+            {
+                mOnProfileChanged.Invoke(this, new OnProfileChangedEventArgs(newProfile));
+            }
+        }
+    }
+    public class OnProfileChangedEventArgs : EventArgs
+    {
+        public Profile mProfile;
+        public OnProfileChangedEventArgs(Profile profile)
+        {
+            mProfile = profile;
+        }
+        //Extract or delete HTML tags based on their name or whether or not they contain some attributes or content with the HTML editor pro online program.
+    }
+
+    public class FacebookManager : IFacebookManager
+    {
+        public void Logout()
+        {
+            LoginManager.Instance.LogOut();
+        }
+
+        public bool IsLoggedIn()
+        {
+            var accessToken = AccessToken.CurrentAccessToken;
+            return accessToken != null;
+        }
+
+        public User GetCurrentUser()
+        {
+            return Profile.CurrentProfile?.CreateUserFromProfile();
+        }
+    }
+
+    public static class GoFriendExtension
+    {
+        public static User CreateUserFromProfile(this Profile profile)
+        {
+            return new User
+            {
+                Name = profile.Name,
+                FirstName = profile.FirstName,
+                LastName = profile.LastName,
+                FacebookId = profile.Id
+            };
         }
     }
 }

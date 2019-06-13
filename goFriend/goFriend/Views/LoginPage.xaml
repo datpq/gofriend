@@ -5,14 +5,14 @@
              xmlns:vm="clr-namespace:goFriend.ViewModels"
              xmlns:ctl="clr-namespace:goFriend.Controls"
              NavigationPage.HasNavigationBar="false"
-             x:Class="goFriend.Views.LoginPage">
+             x:Class="goFriend.Views.LoginPage"  BackgroundColor="{StaticResource ColorPageBackground}">
     <ContentPage.BindingContext>
         <vm:LoginViewModel />
     </ContentPage.BindingContext>
     <StackLayout Margin="20,20,20,20">
         <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand" Spacing="10">
             <ContentView VerticalOptions="Start">
-                <Image Source="logo.png" HorizontalOptions="StartAndExpand" HeightRequest="96" />
+                <Image Source="hn9194_25.png" HorizontalOptions="StartAndExpand" HeightRequest="96" />
             </ContentView>
             <ContentView VerticalOptions="Start">
                 <Label FontSize="22" HorizontalOptions="StartAndExpand" FontAttributes="Bold" TextColor="{StaticResource ColorPrimary}">
