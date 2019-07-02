@@ -9,7 +9,5 @@ namespace goFriend.Services
     {
         void Logout();
         bool IsLoggedIn();
-
-        User GetCurrentUser();
     }
 }

@@ -1,10 +1,4 @@
 ﻿using goFriend.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -13,13 +7,13 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AccountPage : ContentPage
     {
-        AccountViewModel viewModel;
+        private AccountViewModel _viewModel;
 
         public AccountPage()
         {
             InitializeComponent();
 
-            BindingContext = viewModel = new AccountViewModel();
+            BindingContext = _viewModel = new AccountViewModel();
         }
     }
 }

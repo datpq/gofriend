@@ -1,11 +1,11 @@
 ﻿using Android.Content;
 using goFriend.Controls;
 using goFriend.Droid;
-using goFriend.Models;
 using goFriend.Services;
 using System;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
+using Xamarin.Facebook.Login.Widget;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -15,11 +15,11 @@ namespace goFriend.Droid
 {
     public class FacebookLoginButtonRenderer : ViewRenderer
     {
-        Context ctx;
-        bool disposed;
+        private readonly Context _ctx;
+        private bool _disposed;
         public FacebookLoginButtonRenderer(Context ctx) : base(ctx)
         {
-            this.ctx = ctx;
+            _ctx = ctx;
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
@@ -27,13 +27,13 @@ namespace goFriend.Droid
             if (Control == null)
             {
                 var fbLoginBtnView = e.NewElement as FacebookLoginButton;
-                var fbLoginbBtnCtrl = new Xamarin.Facebook.Login.Widget.LoginButton(ctx)
+                var fbLoginbBtnCtrl = new LoginButton(_ctx)
                 {
                     LoginBehavior = LoginBehavior.NativeWithFallback
                 };
 
-                fbLoginbBtnCtrl.SetReadPermissions(fbLoginBtnView.Permissions);
-                fbLoginbBtnCtrl.RegisterCallback(MainActivity.CallbackManager, new MyFacebookCallback(this.Element as FacebookLoginButton));
+                fbLoginbBtnCtrl.SetReadPermissions(fbLoginBtnView?.Permissions);
+                fbLoginbBtnCtrl.RegisterCallback(MainActivity.CallbackManager, new MyFacebookCallback(Element as FacebookLoginButton));
 
                 SetNativeControl(fbLoginbBtnCtrl);
             }
@@ -43,18 +43,21 @@ namespace goFriend.Droid
         {
             try
             {
-                if (disposing && !this.disposed)
+                if (disposing && !_disposed)
                 {
-                    if (this.Control != null)
+                    if (Control != null)
                     {
-                        (this.Control as Xamarin.Facebook.Login.Widget.LoginButton).UnregisterCallback(MainActivity.CallbackManager);
-                        this.Control.Dispose();
+                        ((LoginButton) Control).UnregisterCallback(MainActivity.CallbackManager);
+                        Control.Dispose();
                     }
-                    this.disposed = true;
+                    _disposed = true;
                 }
                 base.Dispose(disposing);
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         class MyFacebookCallback : Java.Lang.Object, IFacebookCallback
@@ -80,21 +83,18 @@ namespace goFriend.Droid
 
     public class FacebookProfileTracker : ProfileTracker
     {
-        public event EventHandler<OnProfileChangedEventArgs> mOnProfileChanged;
+        public event EventHandler<OnProfileChangedEventArgs> MOnProfileChanged;
         protected override void OnCurrentProfileChanged(Profile oldProfile, Profile newProfile)
         {
-            if (mOnProfileChanged != null)
-            {
-                mOnProfileChanged.Invoke(this, new OnProfileChangedEventArgs(newProfile));
-            }
+            MOnProfileChanged?.Invoke(this, new OnProfileChangedEventArgs(newProfile));
         }
     }
     public class OnProfileChangedEventArgs : EventArgs
     {
-        public Profile mProfile;
+        public Profile MProfile;
         public OnProfileChangedEventArgs(Profile profile)
         {
-            mProfile = profile;
+            MProfile = profile;
         }
         //Extract or delete HTML tags based on their name or whether or not they contain some attributes or content with the HTML editor pro online program.
     }
@@ -112,23 +112,9 @@ namespace goFriend.Droid
             return accessToken != null;
         }
 
-        public User GetCurrentUser()
-        {
-            return Profile.CurrentProfile?.CreateUserFromProfile();
-        }
-    }
-
-    public static class GoFriendExtension
-    {
-        public static User CreateUserFromProfile(this Profile profile)
-        {
-            return new User
-            {
-                Name = profile.Name,
-                FirstName = profile.FirstName,
-                LastName = profile.LastName,
-                FacebookId = profile.Id
-            };
-        }
+        //public User GetCurrentUser()
+        //{
+        //    return Profile.CurrentProfile?.CreateUserFromProfile();
+        //}
     }
 }

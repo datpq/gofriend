@@ -14,7 +14,7 @@ namespace goFriend
         public static bool IsUserLoggedIn { get; set; }
         public static User User { get; set; }
         public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
-        private static readonly ILogger logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public App()
         {
@@ -25,7 +25,7 @@ namespace goFriend
 
             System.AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
                 System.Exception ex = (System.Exception)args.ExceptionObject;
-                logger.Error(ex.ToString());
+                Logger.Error(ex.ToString());
             };
 
             InitializeComponent();
@@ -46,11 +46,6 @@ namespace goFriend
             {
                 MainPage = new NavigationPage(new LoginPage());
             }
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
-        {
-            throw new System.NotImplementedException();
         }
 
         protected override void OnStart()

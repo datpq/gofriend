@@ -17,21 +17,47 @@ namespace goFriend.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static ICallbackManager CallbackManager;
-        private ILogger logger;
+        private ILogger _logger;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
             {
-                logger.Error(args.Exception.ToString());
+                _logger.Error(args.Exception.ToString());
             };
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
+            //facebook track of profile changing
             var facebookProfileTracker = new FacebookProfileTracker();
-            facebookProfileTracker.mOnProfileChanged += mProfileTracker_mOnProfileChanged;
+            facebookProfileTracker.MOnProfileChanged += (sender, e) =>
+            {
+                if (e.MProfile != null)
+                {
+                    try
+                    {
+                        _logger.Debug("Send profile");
+                        MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile,
+                            new User
+                            {
+                                Name = e.MProfile.Name,
+                                FirstName = e.MProfile.FirstName,
+                                LastName = e.MProfile.LastName,
+                                MiddleName = e.MProfile.MiddleName,
+                                FacebookId = e.MProfile.Id
+                            });
+                    }
+                    catch (Java.Lang.Exception) { }
+                }
+                else
+                {
+                    _logger.Debug("Profile null");
+                    MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, (User)null);
+                }
+            };
             facebookProfileTracker.StartTracking();
+
             // Create callback manager using CallbackManagerFactory
             CallbackManager = CallbackManagerFactory.Create();
 
@@ -40,38 +66,18 @@ namespace goFriend.Droid
             //FacebookSdk.SdkInitialize(ApplicationContext);
 
             Rg.Plugins.Popup.Popup.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
+            Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Forms.Init(this, savedInstanceState);
             ImageCircleRenderer.Init();
-            logger = DependencyService.Get<ILogManager>().GetLog();
+            _logger = DependencyService.Get<ILogManager>().GetLog();
             LoadApplication(new App());
         }
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-
-        void mProfileTracker_mOnProfileChanged(object sender, OnProfileChangedEventArgs e)
-        {
-            if (e.mProfile != null)
-            {
-                try
-                {
-                    logger.Debug("Send profile");
-                    MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile,
-                        e.mProfile.CreateUserFromProfile());
-                }
-                catch (Java.Lang.Exception ex) { }
-            }
-            else
-            {
-                logger.Debug("Profile null");
-                MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, (User)null);
-                //mprofile.ProfileId = null;
-            }
         }
 
         protected override void OnActivityResult(

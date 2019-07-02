@@ -138,6 +138,9 @@
   <data name="LoginRequiredMsg" xml:space="preserve">
     <value>Bạn cần đăng nhập hoặc đăng ký 1 tài khoản để tiếp tục</value>
   </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Đăng xuất</value>
+  </data>
   <data name="Map" xml:space="preserve">
     <value>Bản đồ</value>
   </data>

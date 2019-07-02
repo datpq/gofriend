@@ -138,6 +138,9 @@
   <data name="LoginRequiredMsg" xml:space="preserve">
     <value>You need to sign in or create an account to continue</value>
   </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
   </data>

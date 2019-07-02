@@ -77,8 +77,8 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FacebookLoginButtonRenderer.cs" />
-    <Compile Include="NLogger.cs" />
+    <Compile Include="FacebookManager.cs" />
+    <Compile Include="NLogLogger.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="NLogManager.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

@@ -7,12 +7,6 @@
             Title = res.Account;
         }
 
-        public string Avatar
-        {
-            get
-            {
-                return App.User.Avatar;
-            }
-        }
+        public string Avatar => App.User.Avatar;
     }
 }

@@ -6,7 +6,7 @@ namespace goFriend.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        private static readonly ILogger logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public ICommand OnFacebookLoginSuccessCmd { get; }
         public ICommand OnFacebookLoginErrorCmd { get; }
@@ -14,8 +14,8 @@ namespace goFriend.ViewModels
 
         public LoginViewModel()
         {
-            OnFacebookLoginSuccessCmd = new Command<string>(async authToken => {
-                logger.Debug($"Success: {authToken}");
+            OnFacebookLoginSuccessCmd = new Command<string>(authToken => {
+                Logger.Debug($"Success: {authToken}");
                 App.IsUserLoggedIn = true;
                 Settings.IsUserLoggedIn = App.IsUserLoggedIn;
                 Application.Current.MainPage = new AppShell();
@@ -26,11 +26,11 @@ namespace goFriend.ViewModels
 
             OnFacebookLoginCancelCmd = new Command(() =>
             {
-                logger.Debug($"Authentication cancelled by the user");
+                Logger.Debug($"Authentication cancelled by the user");
             });
         }
 
         void DisplayAlert(string title, string msg) =>
-            (Application.Current as App).MainPage.DisplayAlert(title, msg, "OK");
+            ((App) Application.Current).MainPage.DisplayAlert(title, msg, "OK");
     }
 }

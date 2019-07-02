@@ -10,24 +10,35 @@
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
              x:Class="goFriend.Views.AccountPage">
     <ContentPage.Content>
-        <StackLayout>
-            <controls:CircleImage Source="{Binding Avatar}" Aspect="AspectFit">
-                <controls:CircleImage.WidthRequest>
-                    <OnPlatform x:TypeArguments="x:Double">
-                        <On Platform="Android, iOS">75</On>
-                        <On Platform="WinPhone">75</On>
-                    </OnPlatform>
-                </controls:CircleImage.WidthRequest>
-                <controls:CircleImage.HeightRequest>
-                    <OnPlatform x:TypeArguments="x:Double">
-                        <On Platform="Android, iOS">75</On>
-                        <On Platform="WinPhone">75</On>
-                    </OnPlatform>
-                </controls:CircleImage.HeightRequest>
-            </controls:CircleImage>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout Margin="20,20,20,20">
+            <StackLayout VerticalOptions="EndAndExpand">
+                <TableView Intent="Menu" VerticalOptions="EndAndExpand">
+                    <TableRoot>
+                        <TableSection Title="{Static local:res.Account}" TextColor="{StaticResource ColorPrimary}">
+                            <ViewCell Height="100">
+                                <StackLayout Orientation="Horizontal">
+                                    <controls:CircleImage Source="{Binding Avatar}" Aspect="AspectFit">
+                                        <controls:CircleImage.WidthRequest>
+                                            <OnPlatform x:TypeArguments="x:Double">
+                                                <On Platform="Android, iOS">100</On>
+                                                <On Platform="WinPhone">75</On>
+                                            </OnPlatform>
+                                        </controls:CircleImage.WidthRequest>
+                                        <controls:CircleImage.HeightRequest>
+                                            <OnPlatform x:TypeArguments="x:Double">
+                                                <On Platform="Android, iOS">100</On>
+                                                <On Platform="WinPhone">75</On>
+                                            </OnPlatform>
+                                        </controls:CircleImage.HeightRequest>
+                                    </controls:CircleImage>
+                                    <Label Text="{Static local:res.Logout}"
+                                    TextColor="{StaticResource ColorPrimary}" />
+                                </StackLayout>
+                            </ViewCell>
+                        </TableSection>
+                    </TableRoot>
+                </TableView>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
