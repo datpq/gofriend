@@ -4,41 +4,56 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             BackgroundColor="{StaticResource ColorTabPageBackground}"
              xmlns:local="clr-namespace:goFriend"
              Title="{Static local:res.Account}"
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
              x:Class="goFriend.Views.AccountPage">
-    <ContentPage.Content>
-        <StackLayout Margin="20,20,20,20">
-            <StackLayout VerticalOptions="EndAndExpand">
-                <TableView Intent="Menu" VerticalOptions="EndAndExpand">
-                    <TableRoot>
-                        <TableSection Title="{Static local:res.Account}" TextColor="{StaticResource ColorPrimary}">
-                            <ViewCell Height="100">
-                                <StackLayout Orientation="Horizontal">
-                                    <controls:CircleImage Source="{Binding Avatar}" Aspect="AspectFit">
-                                        <controls:CircleImage.WidthRequest>
-                                            <OnPlatform x:TypeArguments="x:Double">
-                                                <On Platform="Android, iOS">100</On>
-                                                <On Platform="WinPhone">75</On>
-                                            </OnPlatform>
-                                        </controls:CircleImage.WidthRequest>
-                                        <controls:CircleImage.HeightRequest>
-                                            <OnPlatform x:TypeArguments="x:Double">
-                                                <On Platform="Android, iOS">100</On>
-                                                <On Platform="WinPhone">75</On>
-                                            </OnPlatform>
-                                        </controls:CircleImage.HeightRequest>
-                                    </controls:CircleImage>
-                                    <Label Text="{Static local:res.Logout}"
-                                    TextColor="{StaticResource ColorPrimary}" />
-                                </StackLayout>
-                            </ViewCell>
-                        </TableSection>
-                    </TableRoot>
-                </TableView>
-            </StackLayout>
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackground" />
+            </On>
+            <On Platform="iOS">White</On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+        <StackLayout>
+            <TableView Intent="Data" HasUnevenRows="True" VerticalOptions="FillAndExpand">
+                <TableRoot>
+                    <TableSection>
+                        <ViewCell>
+                            <StackLayout Margin="10" HorizontalOptions="CenterAndExpand">
+                                <controls:CircleImage Source="{Binding Avatar}" Aspect="AspectFit" HorizontalOptions="CenterAndExpand">
+                                    <controls:CircleImage.WidthRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android, iOS">100</On>
+                                            <On Platform="WinPhone">75</On>
+                                        </OnPlatform>
+                                    </controls:CircleImage.WidthRequest>
+                                    <controls:CircleImage.HeightRequest>
+                                        <OnPlatform x:TypeArguments="x:Double">
+                                            <On Platform="Android, iOS">100</On>
+                                            <On Platform="WinPhone">75</On>
+                                        </OnPlatform>
+                                    </controls:CircleImage.HeightRequest>
+                                </controls:CircleImage>
+                                <Label FontSize="20" TextColor="{StaticResource ColorLabel}" x:Name="LblFullName" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" x:Name="LblMemberSince" HorizontalOptions="CenterAndExpand" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell x:Name="LblBasicInfos">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.BasicInfos}" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell x:Name="LblLogout">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Logout}" TextColor="{StaticResource ColorLabel}" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.Logout}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView>
         </StackLayout>
-    </ContentPage.Content>
 </ContentPage>

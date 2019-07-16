@@ -8,17 +8,17 @@
                  HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand">
         <StackLayout Orientation="Horizontal" Margin="0,0,0,10">
             <Label Text="{Static local:res.Login}" VerticalOptions="EndAndExpand" FontSize="20" TextColor="Black" HorizontalOptions="Start" />
-            <Label x:Name="lblForgottenPassword" Text="{Static local:res.ForgottenPassword}" VerticalOptions="EndAndExpand" FontSize="12" HorizontalOptions="EndAndExpand" />
+            <Label x:Name="LblForgottenPassword" Text="{Static local:res.ForgottenPassword}" VerticalOptions="EndAndExpand" FontSize="12" HorizontalOptions="EndAndExpand" />
         </StackLayout>
         <StackLayout>
-            <Entry x:Name="entryUsername" Placeholder="{x:Static local:res.UserName}" PlaceholderColor="{StaticResource ColorPrimary}" Grid.Row="1" Grid.Column="1"></Entry>
+            <Entry x:Name="EntryUsername" Placeholder="{x:Static local:res.UserName}" PlaceholderColor="{StaticResource ColorPrimary}" Grid.Row="1" Grid.Column="1"></Entry>
             <StackLayout Grid.Row="2" Grid.Column="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions >
-                    <Entry IsPassword="True" x:Name="entryPassword" Placeholder="{x:Static local:res.Password}" PlaceholderColor="{StaticResource ColorPrimary}" Grid.Column="0" Grid.ColumnSpan="2"/>
+                    <Entry IsPassword="True" x:Name="EntryPassword" Placeholder="{x:Static local:res.Password}" PlaceholderColor="{StaticResource ColorPrimary}" Grid.Column="0" Grid.ColumnSpan="2"/>
                     <Image x:Name="ImgShowPass" Source="eye_off24.png" HorizontalOptions="End" VerticalOptions="Center" Grid.Column="1" >
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Tapped="ImgShowPass_Tap" NumberOfTapsRequired="1" />

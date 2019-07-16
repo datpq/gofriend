@@ -1,8 +1,12 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
 using goFriend.Controls;
 using goFriend.Droid;
 using goFriend.Services;
-using System;
+using Android.OS;
+using goFriend.Models;
+using Newtonsoft.Json.Linq;
+using Org.Json;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using Xamarin.Facebook.Login.Widget;
@@ -60,12 +64,14 @@ namespace goFriend.Droid
             }
         }
 
-        class MyFacebookCallback : Java.Lang.Object, IFacebookCallback
+        class MyFacebookCallback : Java.Lang.Object, IFacebookCallback, GraphRequest.IGraphJSONObjectCallback
         {
             FacebookLoginButton view;
+            private readonly ILogger _logger;
 
             public MyFacebookCallback(FacebookLoginButton view)
             {
+                _logger = DependencyService.Get<ILogManager>().GetLog();
                 this.view = view;
             }
 
@@ -75,28 +81,75 @@ namespace goFriend.Droid
             public void OnError(FacebookException fbException) =>
                 view.OnError?.Execute(fbException.Message);
 
-            public void OnSuccess(Java.Lang.Object result) =>
-                view.OnSuccess?.Execute(((LoginResult)result).AccessToken.Token);
+            public void OnSuccess(Java.Lang.Object result)
+            {
+                _logger.Debug("OnSuccess.BEGIN");
+                var accessToken = ((LoginResult) result).AccessToken;
+                view.OnSuccess?.Execute(accessToken.Token);
 
+                //var accessToken = AccessToken.CurrentAccessToken;
+                var request = GraphRequest.NewMeRequest(accessToken, this);
+                var parameters = new Bundle();
+                parameters.PutString("fields", "id,name,email,gender,birthday");
+                request.Parameters = parameters;
+                request.ExecuteAsync();
+
+                _logger.Debug("OnSuccess.END");
+            }
+
+            public void OnCompleted(JSONObject json, GraphResponse response)
+            {
+                _logger.Debug("OnCompleted.BEGIN");
+                var data = json.ToString();
+                dynamic result = JObject.Parse(data);
+                string birthdayStr = result.birthday;
+                var birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
+                try
+                {
+                    _logger.Debug($"Send profile extension: {result.email} {birthdayStr} {result.gender}");
+                    MessagingCenter.Send(Application.Current as App, Constants.MsgProfileExt,
+                        new User
+                        {
+                            Email = result.email,
+                            Birthday = birthday,
+                            Gender = result.gender
+                        });
+                }
+                catch (Java.Lang.Exception) { }
+                _logger.Debug("OnCompleted.END");
+            }
         }
     }
 
     public class FacebookProfileTracker : ProfileTracker
     {
-        public event EventHandler<OnProfileChangedEventArgs> MOnProfileChanged;
+        private readonly ILogger _logger = DependencyService.Get<ILogManager>().GetLog();
+
         protected override void OnCurrentProfileChanged(Profile oldProfile, Profile newProfile)
         {
-            MOnProfileChanged?.Invoke(this, new OnProfileChangedEventArgs(newProfile));
+            if (newProfile != null)
+            {
+                try
+                {
+                    _logger.Debug("Send profile");
+                    MessagingCenter.Send(Application.Current as App, Constants.MsgProfile,
+                        new User
+                        {
+                            Name = newProfile.Name,
+                            FirstName = newProfile.FirstName,
+                            LastName = newProfile.LastName,
+                            MiddleName = newProfile.MiddleName,
+                            FacebookId = newProfile.Id
+                        });
+                }
+                catch (Java.Lang.Exception) { }
+            }
+            else
+            {
+                _logger.Debug("Profile null");
+                MessagingCenter.Send(Application.Current as App, Constants.MsgProfile, (User)null);
+            }
         }
-    }
-    public class OnProfileChangedEventArgs : EventArgs
-    {
-        public Profile MProfile;
-        public OnProfileChangedEventArgs(Profile profile)
-        {
-            MProfile = profile;
-        }
-        //Extract or delete HTML tags based on their name or whether or not they contain some attributes or content with the HTML editor pro online program.
     }
 
     public class FacebookManager : IFacebookManager

@@ -1,4 +1,6 @@
-﻿namespace goFriend.Models
+﻿using System;
+
+namespace goFriend.Models
 {
     public class User
     {
@@ -7,16 +9,18 @@
         public string LastName { get; set; }
         public string MiddleName { get; set; }
         public string FacebookId { get; set; }
+        public string Email { get; set; }
+        public DateTime? Birthday { get; set; }
 
-        public bool IsMale { get; set; }
+        public string Gender { get; set; }
 
         public override string ToString()
         {
-            return $"{FacebookId}|{Name}";
+            return $"{FacebookId}|{Name}|{Email}";
         }
 
         public string Avatar =>
-            string.IsNullOrEmpty(FacebookId) ? (IsMale ? "default_male.jpg" : "default_female.jpg")
+            string.IsNullOrEmpty(FacebookId) ? (Gender == "male" ? "default_male.jpg" : "default_female.jpg")
                 : $"https://graph.facebook.com/{FacebookId}/picture?type=normal";
     }
 }

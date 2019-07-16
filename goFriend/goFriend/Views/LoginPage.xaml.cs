@@ -5,14 +5,13 @@ using Xamarin.Forms.Xaml;
 using Rg.Plugins.Popup.Services;
 using goFriend.Services;
 using goFriend.Models;
-using Newtonsoft.Json;
 
 namespace goFriend.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginPage : ContentPage
     {
-        private static readonly ILogger logger = DependencyService.Get<ILogManager>().GetLog();
+        private readonly ILogger _logger = DependencyService.Get<ILogManager>().GetLog();
 
         public LoginPage()
         {
@@ -32,23 +31,33 @@ namespace goFriend.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            logger.Debug("OnAppearing.Unsubscribe");
+            _logger.Debug("OnAppearing.Unsubscribe");
             MessagingCenter.Unsubscribe<App, string>(this, Constants.MsgProfile);
-            logger.Debug("OnAppearing.Subscribe");
-            MessagingCenter.Subscribe<App, User>(this, Constants.MsgProfile, (arg1, user) =>
+            MessagingCenter.Unsubscribe<App, string>(this, Constants.MsgProfileExt);
+
+            _logger.Debug("OnAppearing.Subscribe");
+            MessagingCenter.Subscribe<App, User>(this, Constants.MsgProfile, (sender, user) =>
             {
-                logger.Debug($"Received: {user}");
+                _logger.Debug($"Received: {Constants.MsgProfile} {user?.ToString()}");
                 App.User = user;
-                Settings.LastUser = user;
+                Settings.LastUser = App.User;
                 //(Application.Current as App).MainPage.DisplayAlert("Success", $"Authentication succeed: {user.Name}", "OK");
+            });
+            MessagingCenter.Subscribe<App, User>(this, Constants.MsgProfileExt, (sender, user) =>
+            {
+                _logger.Debug($"Received: {Constants.MsgProfileExt} {user?.ToString()}");
+                App.User.Email = user?.Email;
+                App.User.Birthday = user?.Birthday;
+                Settings.LastUser = App.User;
             });
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            logger.Debug("OnDisappearing.Unsubscribe");
+            _logger.Debug("OnDisappearing.Unsubscribe");
             MessagingCenter.Unsubscribe<App, string>(this, Constants.MsgProfile);
+            MessagingCenter.Unsubscribe<App, string>(this, Constants.MsgProfileExt);
         }
 
         //async void cmdLogin_Click(object sender, EventArgs e)

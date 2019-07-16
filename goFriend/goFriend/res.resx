@@ -123,14 +123,35 @@
   <data name="Account" xml:space="preserve">
     <value>Account</value>
   </data>
+  <data name="BasicInfos" xml:space="preserve">
+    <value>Basic Informations</value>
+  </data>
+  <data name="BasicInfosDesc" xml:space="preserve">
+    <value>Name, date of birth, email address</value>
+  </data>
+  <data name="BirthDay" xml:space="preserve">
+    <value>Birthday</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
   </data>
   <data name="ForgottenPassword" xml:space="preserve">
     <value>Forgotten password?</value>
   </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Login</value>
@@ -144,6 +165,9 @@
   <data name="Map" xml:space="preserve">
     <value>Map</value>
   </data>
+  <data name="MemberSince" xml:space="preserve">
+    <value>Member since {0}</value>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
@@ -152,6 +176,9 @@
   </data>
   <data name="Register" xml:space="preserve">
     <value>Register</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>

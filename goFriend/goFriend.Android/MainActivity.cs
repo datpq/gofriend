@@ -8,7 +8,6 @@ using Xamarin.Facebook;
 using Xamarin.Forms;
 using Android.Content;
 using goFriend.Services;
-using goFriend.Models;
 using ImageCircle.Forms.Plugin.Droid;
 
 namespace goFriend.Droid
@@ -29,35 +28,6 @@ namespace goFriend.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            //facebook track of profile changing
-            var facebookProfileTracker = new FacebookProfileTracker();
-            facebookProfileTracker.MOnProfileChanged += (sender, e) =>
-            {
-                if (e.MProfile != null)
-                {
-                    try
-                    {
-                        _logger.Debug("Send profile");
-                        MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile,
-                            new User
-                            {
-                                Name = e.MProfile.Name,
-                                FirstName = e.MProfile.FirstName,
-                                LastName = e.MProfile.LastName,
-                                MiddleName = e.MProfile.MiddleName,
-                                FacebookId = e.MProfile.Id
-                            });
-                    }
-                    catch (Java.Lang.Exception) { }
-                }
-                else
-                {
-                    _logger.Debug("Profile null");
-                    MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, (User)null);
-                }
-            };
-            facebookProfileTracker.StartTracking();
-
             // Create callback manager using CallbackManagerFactory
             CallbackManager = CallbackManagerFactory.Create();
 
@@ -71,6 +41,11 @@ namespace goFriend.Droid
             Forms.Init(this, savedInstanceState);
             ImageCircleRenderer.Init();
             _logger = DependencyService.Get<ILogManager>().GetLog();
+
+            //facebook track of profile changing
+            var facebookProfileTracker = new FacebookProfileTracker();
+            facebookProfileTracker.StartTracking();
+
             LoadApplication(new App());
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)

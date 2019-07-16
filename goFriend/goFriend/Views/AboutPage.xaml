@@ -3,9 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="goFriend.Views.AboutPage"
              xmlns:vm="clr-namespace:goFriend.ViewModels"
-             BackgroundColor="{StaticResource ColorTabPageBackground}"
              Title="{Binding Title}">
-    
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackground" />
+            </On>
+            <On Platform="iOS">White</On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
     <ContentPage.BindingContext>
         <vm:AboutViewModel />
     </ContentPage.BindingContext>
@@ -36,7 +42,7 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="AppName" FontAttributes="Bold" FontSize="22" />
+                                <Span Text="Bonjour Clemence" FontAttributes="Bold" FontSize="22" />
                                 <Span Text=" " />
                                 <Span Text="1.0" ForegroundColor="{StaticResource LightTextColor}" />
                             </FormattedString.Spans>

@@ -1,4 +1,5 @@
-﻿using Facebook.CoreKit;
+﻿using System;
+using Facebook.CoreKit;
 using Foundation;
 using goFriend.Models;
 using goFriend.Services;
@@ -40,6 +41,23 @@ namespace goFriend.iOS
                                 MiddleName = notification.NewProfile.MiddleName,
                                 FacebookId = notification.NewProfile.UserId
                             });
+                        var request = new GraphRequest("/" + notification.NewProfile.UserId, new NSDictionary("fields", "id,name,email,gender,birthday"), AccessToken.CurrentAccessToken.TokenString, null, "GET");
+                        request.Start((connection, result, error) =>
+                        {
+                            var userInfo = result as NSDictionary;
+                            _logger.Debug($"Send profile extension: {userInfo}");
+                            var email = userInfo?["email"]?.ToString();
+                            var birthdayStr = userInfo?["birthday"]?.ToString();
+                            var birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
+                            var gender = userInfo?["gender"]?.ToString();
+                            MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfileExt,
+                                new User
+                                {
+                                    Email = email,
+                                    Birthday = birthday,
+                                    Gender = gender
+                                });
+                        });
                 }
                 else
                 {
