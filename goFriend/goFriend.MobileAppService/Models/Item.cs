@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace goFriend.Models
+﻿namespace goFriend.MobileAppService.Models
 {
     public class Item
     {

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
-namespace goFriend.Models
+namespace goFriend.MobileAppService.Models
 {
     public class ItemRepository : IItemRepository
     {

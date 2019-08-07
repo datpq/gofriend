@@ -1,13 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using goFriend.MobileAppService.Data;
+using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
-
-using goFriend.Models;
 
 namespace goFriend.MobileAppService
 {
@@ -29,8 +29,15 @@ namespace goFriend.MobileAppService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<FriendDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("GoFriendDatabase")));
+            var sp = services.BuildServiceProvider();
+            var dbContext = sp.GetRequiredService<FriendDbContext>();
+            DbInitializer.Initialize(dbContext);
+
             services.AddMvc();
             services.AddSingleton<IItemRepository, ItemRepository>();
+            services.AddSingleton<IDataRepository>(new DataRepository(dbContext));
 
             services.AddSwaggerGen(c =>
             {

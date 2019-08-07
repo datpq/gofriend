@@ -1,31 +1,29 @@
 ﻿using System;
+using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Mvc;
 
-using goFriend.Models;
-
-namespace goFriend.Controllers
+namespace goFriend.MobileAppService.Controllers
 {
     [Route("api/[controller]")]
     public class ItemController : Controller
     {
-
-        private readonly IItemRepository ItemRepository;
+        private readonly IItemRepository _itemRepository;
 
         public ItemController(IItemRepository itemRepository)
         {
-            ItemRepository = itemRepository;
+            _itemRepository = itemRepository;
         }
 
         [HttpGet]
         public IActionResult List()
         {
-            return Ok(ItemRepository.GetAll());
+            return Ok(_itemRepository.GetAll());
         }
 
         [HttpGet("{id}")]
         public Item GetItem(string id)
         {
-            Item item = ItemRepository.Get(id);
+            Item item = _itemRepository.Get(id);
             return item;
         }
 
@@ -39,7 +37,7 @@ namespace goFriend.Controllers
                     return BadRequest("Invalid State");
                 }
 
-                ItemRepository.Add(item);
+                _itemRepository.Add(item);
 
             }
             catch (Exception)
@@ -58,7 +56,7 @@ namespace goFriend.Controllers
                 {
                     return BadRequest("Invalid State");
                 }
-                ItemRepository.Update(item);
+                _itemRepository.Update(item);
             }
             catch (Exception)
             {
@@ -70,7 +68,7 @@ namespace goFriend.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            ItemRepository.Remove(id);
+            _itemRepository.Remove(id);
         }
     }
 }
