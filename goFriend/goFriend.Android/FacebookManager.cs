@@ -4,7 +4,7 @@ using goFriend.Controls;
 using goFriend.Droid;
 using goFriend.Services;
 using Android.OS;
-using goFriend.Models;
+using goFriend.DataModel;
 using Newtonsoft.Json.Linq;
 using Org.Json;
 using Xamarin.Facebook;
@@ -108,7 +108,7 @@ namespace goFriend.Droid
                 {
                     _logger.Debug($"Send profile extension: {result.email} {birthdayStr} {result.gender}");
                     MessagingCenter.Send(Application.Current as App, Constants.MsgProfileExt,
-                        new User
+                        new Friend
                         {
                             Email = result.email,
                             Birthday = birthday,
@@ -133,7 +133,7 @@ namespace goFriend.Droid
                 {
                     _logger.Debug("Send profile");
                     MessagingCenter.Send(Application.Current as App, Constants.MsgProfile,
-                        new User
+                        new Friend
                         {
                             Name = newProfile.Name,
                             FirstName = newProfile.FirstName,
@@ -147,7 +147,7 @@ namespace goFriend.Droid
             else
             {
                 _logger.Debug("Profile null");
-                MessagingCenter.Send(Application.Current as App, Constants.MsgProfile, (User)null);
+                MessagingCenter.Send(Application.Current as App, Constants.MsgProfile, (Friend)null);
             }
         }
     }

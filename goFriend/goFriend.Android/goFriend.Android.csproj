@@ -123,6 +123,10 @@
     <Folder Include="Resources\drawable-xxxhdpi\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\goFriend.DataModel\goFriend.DataModel.csproj">
+      <Project>{fe5ad4e4-0ab3-4f1e-871f-5263f46c1612}</Project>
+      <Name>goFriend.DataModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\goFriend\goFriend.csproj">
       <Project>{D72E4830-F148-430D-B321-1B4F2474E253}</Project>
       <Name>goFriend</Name>

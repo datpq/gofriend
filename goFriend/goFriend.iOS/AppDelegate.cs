@@ -1,7 +1,7 @@
 ﻿using System;
 using Facebook.CoreKit;
 using Foundation;
-using goFriend.Models;
+using goFriend.DataModel;
 using goFriend.Services;
 using ImageCircle.Forms.Plugin.iOS;
 using Xamarin.Forms;
@@ -33,7 +33,7 @@ namespace goFriend.iOS
                 {
                         _logger.Debug("Send profile");
                         MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile,
-                            new User
+                            new Friend
                             {
                                 Name = notification.NewProfile.Name,
                                 FirstName = notification.NewProfile.FirstName,
@@ -51,7 +51,7 @@ namespace goFriend.iOS
                             var birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
                             var gender = userInfo?["gender"]?.ToString();
                             MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfileExt,
-                                new User
+                                new Friend
                                 {
                                     Email = email,
                                     Birthday = birthday,
@@ -62,7 +62,7 @@ namespace goFriend.iOS
                 else
                 {
                     _logger.Debug("Profile null");
-                    MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, (User)null);
+                    MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, (Friend)null);
                 }
             });
 

@@ -1,10 +1,9 @@
 ﻿using System;
-
+using goFriend.DataModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Rg.Plugins.Popup.Services;
 using goFriend.Services;
-using goFriend.Models;
 
 namespace goFriend.Views
 {
@@ -36,19 +35,20 @@ namespace goFriend.Views
             MessagingCenter.Unsubscribe<App, string>(this, Constants.MsgProfileExt);
 
             _logger.Debug("OnAppearing.Subscribe");
-            MessagingCenter.Subscribe<App, User>(this, Constants.MsgProfile, (sender, user) =>
+            MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfile, (sender, user) =>
             {
                 _logger.Debug($"Received: {Constants.MsgProfile} {user?.ToString()}");
                 App.User = user;
                 Settings.LastUser = App.User;
                 //(Application.Current as App).MainPage.DisplayAlert("Success", $"Authentication succeed: {user.Name}", "OK");
             });
-            MessagingCenter.Subscribe<App, User>(this, Constants.MsgProfileExt, (sender, user) =>
+            MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfileExt, (sender, user) =>
             {
                 _logger.Debug($"Received: {Constants.MsgProfileExt} {user?.ToString()}");
                 App.User.Email = user?.Email;
                 App.User.Birthday = user?.Birthday;
                 Settings.LastUser = App.User;
+                App.FriendStore.AddOrUpdateFriendAsync(App.User);
             });
         }
 

@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "goFriend.Android", "goFrien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "goFriend.iOS", "goFriend\goFriend.iOS\goFriend.iOS.csproj", "{75796E14-D609-4562-8796-EBCA13DD7B34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "goFriend.MobileAppService", "goFriend\goFriend.MobileAppService\goFriend.MobileAppService.csproj", "{866E58C2-C30F-4819-AB17-620ACF7441D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend.MobileAppService", "goFriend\goFriend.MobileAppService\goFriend.MobileAppService.csproj", "{866E58C2-C30F-4819-AB17-620ACF7441D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "goFriend", "goFriend\goFriend\goFriend.csproj", "{74E5E351-FD01-4EEE-A89D-38465808FF4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend", "goFriend\goFriend\goFriend.csproj", "{74E5E351-FD01-4EEE-A89D-38465808FF4E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend.DataModel", "goFriend\goFriend.DataModel\goFriend.DataModel.csproj", "{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,18 @@ Global
 		{74E5E351-FD01-4EEE-A89D-38465808FF4E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{74E5E351-FD01-4EEE-A89D-38465808FF4E}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{74E5E351-FD01-4EEE-A89D-38465808FF4E}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhone.Build.0 = Release|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

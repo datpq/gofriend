@@ -1,10 +1,7 @@
-﻿using goFriend.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using goFriend.DataModel;
 
 namespace goFriend
 {
@@ -18,9 +15,9 @@ namespace goFriend
             set => AppSettings.AddOrUpdateValue(nameof(IsUserLoggedIn), value);
         }
 
-        public static User LastUser
+        public static Friend LastUser
         {
-            get => JsonConvert.DeserializeObject<User>(AppSettings.GetValueOrDefault(nameof(LastUser), string.Empty));
+            get => JsonConvert.DeserializeObject<Friend>(AppSettings.GetValueOrDefault(nameof(LastUser), string.Empty));
             set => AppSettings.AddOrUpdateValue(nameof(LastUser), JsonConvert.SerializeObject(value));
         }
     }

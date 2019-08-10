@@ -1,18 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
 namespace goFriend.MobileAppService.Models
 {
-    public class GroupFriend
+    public class GroupCategory
     {
-        public int FriendId { get; set; }
-        //[ForeignKey("FriendId")]
-        [JsonIgnore]
-        public Friend Friend { get; set; }
-
-        public int GroupId { get; set; }
-        //[ForeignKey("GroupId")]
-        [JsonIgnore]
+        public int Id { get; set; }
         public Group Group { get; set; }
 
         [Column(TypeName = "NVARCHAR(50)")]

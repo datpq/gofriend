@@ -2,7 +2,7 @@
 using goFriend.Services;
 using goFriend.Views;
 using System.Globalization;
-using goFriend.Models;
+using goFriend.DataModel;
 
 namespace goFriend
 {
@@ -11,9 +11,10 @@ namespace goFriend
         public static string AzureBackendUrl = "http://gofriend.azurewebsites.net";
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
-        public static User User { get; set; }
+        public static Friend User { get; set; }
         public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        public static IFriendStore FriendStore;
 
         public App()
         {
@@ -29,6 +30,8 @@ namespace goFriend
 
             InitializeComponent();
 
+            DependencyService.Register<FriendStore>();
+            FriendStore = DependencyService.Get<IFriendStore>();
             if (UseMockDataStore)
                 DependencyService.Register<MockDataStore>();
             else

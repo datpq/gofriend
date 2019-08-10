@@ -30,18 +30,19 @@ namespace goFriend.MobileAppService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<FriendDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("GoFriendDatabase")));
+                options.UseSqlServer(Configuration.GetConnectionString("GoFriendConnection")));
             var sp = services.BuildServiceProvider();
             var dbContext = sp.GetRequiredService<FriendDbContext>();
             DbInitializer.Initialize(dbContext);
 
             services.AddMvc();
             services.AddSingleton<IItemRepository, ItemRepository>();
-            services.AddSingleton<IDataRepository>(new DataRepository(dbContext));
+            services.AddScoped<DbContext, FriendDbContext>();
+            services.AddScoped<IDataRepository, DataRepository>();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "GoFriend API", Version = "v1" });
             });
         }
 
@@ -56,7 +57,7 @@ namespace goFriend.MobileAppService
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GoFriend API v1");
             });
 
             app.Run(async (context) => await Task.Run(() => context.Response.Redirect("/swagger")));

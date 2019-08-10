@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
-namespace goFriend.MobileAppService.Models
+namespace goFriend.DataModel
 {
     public class Friend
     {
         public int Id { get; set; }
+
+        [Required]
+        [Column(TypeName = "NVARCHAR(100)")]
+        public string Name { get; set; }
 
         [Required]
         [Column(TypeName = "NVARCHAR(50)")]
@@ -32,6 +37,18 @@ namespace goFriend.MobileAppService.Models
         [Column(TypeName = "VARCHAR(10)")]
         public string Gender { get; set; }
 
+        [JsonIgnore]
         public ICollection<GroupFriend> GroupFriends { get; set; }
+
+        public override string ToString()
+        {
+            return $"{FacebookId}|{Id}|{Name}|{Email}";
+        }
+
+        [JsonIgnore]
+        [NotMapped]
+        public string Avatar =>
+            string.IsNullOrEmpty(FacebookId) ? (Gender == "male" ? "default_male.jpg" : "default_female.jpg")
+                : $"https://graph.facebook.com/{FacebookId}/picture?type=normal";
     }
 }

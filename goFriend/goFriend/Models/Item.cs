@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace goFriend.Models
+﻿namespace goFriend.Models
 {
     public class Item
     {

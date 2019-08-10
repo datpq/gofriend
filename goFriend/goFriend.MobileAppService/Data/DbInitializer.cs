@@ -1,6 +1,6 @@
 ﻿using System;
-using goFriend.MobileAppService.Models;
-using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
+using goFriend.DataModel;
 
 namespace goFriend.MobileAppService.Data
 {
@@ -10,7 +10,6 @@ namespace goFriend.MobileAppService.Data
         {
             context.Database.EnsureCreated();
 
-            // Look for any students.
             if (context.Friends.Any())
             {
                 return;   // DB has been seeded
@@ -18,27 +17,50 @@ namespace goFriend.MobileAppService.Data
 
             var groups = new[]
             {
-                new Group {Id = 1000, Name = "Hanoi9194_XaXu", Desc = "Group for Hanoi9194 abroad"},
-                new Group {Id = 1001, Name = "Hanoi9194", Desc = "Group for Hanoi9194"}
+                new Group {Name = "Hanoi9194XaXu", Desc = "Cấp 3 khóa 91-94 Hà Nội Xa xứ", Cat1Desc = "Thành phố", Cat2Desc = "Niên khóa", Cat3Desc = "Trường", Cat4Desc = "Lớp"},
+                new Group {Name = "Hanoi9194", Desc = "Cấp 3 khóa 91-94 Hà Nội", Cat1Desc = "Thành phố", Cat2Desc = "Niên khóa", Cat3Desc = "Trường", Cat4Desc = "Lớp"}
             };
             foreach (var x in groups)
             {
                 context.Groups.Add(x);
             }
+            context.SaveChanges();
+
+            var groupCatInfos = new[]
+            {
+                new GroupCategory{Group = context.Groups.First(x => x.Name == "Hanoi9194XaXu"), Cat1 = "Hà nội", Cat2 = "91-94"},
+                new GroupCategory{Group = context.Groups.First(x => x.Name=="Hanoi9194"), Cat1 = "Hà nội", Cat2 = "91-94"}
+            };
+            foreach (var x in groupCatInfos)
+            {
+                context.GroupCatInfos.Add(x);
+            }
+            context.SaveChanges();
+
             var friends = new[]
             {
-                new Friend{Id = 1, FirstName = "Quoc Dat", LastName = "Pham", Email = "datpquk@gmail.com", Gender = "Male", Birthday = new DateTime(1976, 9, 12) },
-                new Friend{Id = 2, FirstName = "Bao Thoa", LastName = "Vu", Email = "phambaothoauk@gmail.com", Gender = "Female", Birthday = new DateTime(1979, 12, 3)}
+                new Friend{Name = "DPH", FirstName = "DPH", LastName = "Phạm", Email = "gofriend9194@gmail.com", Gender = "Male", Birthday = new DateTime(1976, 9, 12) },
+                new Friend{Name = "Phạm Quốc Đạt", FirstName = "Quốc Đạt", LastName = "Phạm", Email = "datpq@free.fr", Gender = "Male", Birthday = new DateTime(1976, 9, 12) },
+                new Friend{Name = "Vũ Bảo Thoa", FirstName = "Bảo Thoa", LastName = "Vũ", Email = "phambaothoauk@gmail.com", Gender = "Female", Birthday = new DateTime(1979, 12, 3)}
             };
             foreach (var x in friends)
             {
                 context.Friends.Add(x);
             }
+            context.SaveChanges();
+
             var groupFriends = new[]
             {
-                new GroupFriend {Friend = context.Friends.Find(1), Group = context.Groups.Find(1000)},
-                new GroupFriend {Friend = context.Friends.Find(1), Group = context.Groups.Find(1001)},
-                new GroupFriend {Friend = context.Friends.Find(2), Group = context.Groups.Find(1000)},
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="gofriend9194@gmail.com"),
+                    Group = context.Groups.First(x => x.Name == "Hanoi9194XaXu"), Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="gofriend9194@gmail.com"),
+                    Group = context.Groups.First(x => x.Name == "Hanoi9194"), Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpquk@gmail.com"),
+                    Group = context.Groups.First(x => x.Name == "Hanoi9194XaXu"), Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpquk@gmail.com"),
+                    Group = context.Groups.First(x => x.Name == "Hanoi9194"), Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"),
+                    Group = context.Groups.First(x => x.Name == "Hanoi9194XaXu"), Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Amsterdam", Cat4 = "Pháp"},
             };
             foreach (var x in groupFriends)
             {
