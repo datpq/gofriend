@@ -70,11 +70,29 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accept.
+        /// </summary>
+        internal static string Accept {
+            get {
+                return ResourceManager.GetString("Accept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account.
         /// </summary>
         internal static string Account {
             get {
                 return ResourceManager.GetString("Account", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GoFriend-9194.
+        /// </summary>
+        internal static string AppTitle {
+            get {
+                return ResourceManager.GetString("AppTitle", resourceCulture);
             }
         }
         
@@ -210,6 +228,33 @@ namespace goFriend {
         internal static string MemberSince {
             get {
                 return ResourceManager.GetString("MemberSince", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to logout ?.
+        /// </summary>
+        internal static string MsgLogoutConfirm {
+            get {
+                return ResourceManager.GetString("MsgLogoutConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string MsgTitleError {
+            get {
+                return ResourceManager.GetString("MsgTitleError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        internal static string MsgTitleInfo {
+            get {
+                return ResourceManager.GetString("MsgTitleInfo", resourceCulture);
             }
         }
         

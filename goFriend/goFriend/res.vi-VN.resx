@@ -120,8 +120,14 @@
   <data name="About" xml:space="preserve">
     <value>Về chương trình</value>
   </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Chấp nhận</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>Tài khoản</value>
+  </data>
+  <data name="AppTitle" xml:space="preserve">
+    <value>GoFriend-9194</value>
   </data>
   <data name="BasicInfos" xml:space="preserve">
     <value>Thông tin cơ bản</value>
@@ -167,6 +173,15 @@
   </data>
   <data name="MemberSince" xml:space="preserve">
     <value>Thành viên từ {0}</value>
+  </data>
+  <data name="MsgLogoutConfirm" xml:space="preserve">
+    <value>Bạn thực sự muốn đăng xuất ?</value>
+  </data>
+  <data name="MsgTitleError" xml:space="preserve">
+    <value>Báo lỗi</value>
+  </data>
+  <data name="MsgTitleInfo" xml:space="preserve">
+    <value>Thông báo</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Mật khẩu</value>

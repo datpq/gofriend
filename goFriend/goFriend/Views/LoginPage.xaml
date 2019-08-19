@@ -25,11 +25,7 @@
             </ContentView>
         </StackLayout>
         <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
-            <ctl:FacebookLoginButton
-                Margin="0,0,0,10"
-                OnSuccess="{Binding OnFacebookLoginSuccessCmd}"
-                OnError="{Binding OnFacebookLoginErrorCmd}"
-                OnCancel="{Binding OnFacebookLoginCancelCmd}" />
+            <ctl:FacebookLoginButton x:Name="BtnFacebook" Margin="0,0,0,10"/>
             <StackLayout Orientation="Horizontal" Margin="0,10,0,5">
                 <Button CornerRadius="{StaticResource BtnCornerRadius}"
                     HeightRequest="50" HorizontalOptions="StartAndExpand" WidthRequest="140"

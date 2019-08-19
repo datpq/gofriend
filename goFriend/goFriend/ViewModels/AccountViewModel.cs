@@ -6,7 +6,5 @@
         {
             Title = res.Account;
         }
-
-        public string Avatar => App.User.Avatar;
     }
 }

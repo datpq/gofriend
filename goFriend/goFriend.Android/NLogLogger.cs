@@ -7,14 +7,14 @@ namespace goFriend.Droid
 {
     public class NLogLogger : Services.ILogger
     {
-        private Logger log;
+        private readonly Logger _log;
 
         public NLogLogger(Logger log)
         {
-            this.log = log;
+            _log = log;
         }
 
-        private string ReformatText(string text)
+        private static string ReformatText(string text)
         {
             return $"DPH|{text}";
         }
@@ -22,37 +22,37 @@ namespace goFriend.Droid
         public void Debug(string text, params object[] args)
         {
             text = ReformatText(text);
-            log.Debug(text, args);
+            _log.Debug(text, args);
         }
 
         public void Error(string text, params object[] args)
         {
             text = ReformatText(text);
-            log.Error(text, args);
+            _log.Error(text, args);
         }
 
         public void Fatal(string text, params object[] args)
         {
             text = ReformatText(text);
-            log.Fatal(text, args);
+            _log.Fatal(text, args);
         }
 
         public void Info(string text, params object[] args)
         {
             text = ReformatText(text);
-            log.Info(text, args);
+            _log.Info(text, args);
         }
 
         public void Trace(string text, params object[] args)
         {
             text = ReformatText(text);
-            log.Trace(text, args);
+            _log.Trace(text, args);
         }
 
         public void Warn(string text, params object[] args)
         {
             text = ReformatText(text);
-            log.Warn(text, args);
+            _log.Warn(text, args);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Xamarin.Forms;
 using goFriend.Services;
-using goFriend.Views;
 using System.Globalization;
+using System.Threading.Tasks;
 using goFriend.DataModel;
 
 namespace goFriend
@@ -18,6 +18,7 @@ namespace goFriend
 
         public App()
         {
+            Logger.Info("GoFriend starting new instance...");
             res.Culture = new CultureInfo("vi-VN");
             //res.Culture = new CultureInfo("");
             //Thread.CurrentThread.CurrentCulture = res.Culture;
@@ -41,13 +42,10 @@ namespace goFriend
             if (IsUserLoggedIn)
             {
                 User = Settings.LastUser;
-                MainPage = new AppShell();
-                //MainPage = new NavigationPage(new LoginNavigation.MainPage());
             }
-            else
-            {
-                MainPage = new NavigationPage(new LoginPage());
-            }
+            var appShell = new AppShell();
+            appShell.RefreshTabs();
+            MainPage = appShell;
         }
 
         protected override void OnStart()
@@ -63,6 +61,21 @@ namespace goFriend
         protected override void OnResume()
         {
             // Handle when your app resumes
+        }
+
+        public static void DisplayMsgInfo(string message)
+        {
+            Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
+        }
+
+        public static void DisplayMsgError(string message)
+        {
+            Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
+        }
+
+        public static Task<bool> DisplayMsgQuestion(string message)
+        {
+            return Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept, res.Cancel);
         }
     }
 }

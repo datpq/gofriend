@@ -7,6 +7,7 @@
              xmlns:local="clr-namespace:goFriend"
              Title="{Static local:res.Account}"
              xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             xmlns:ctl="clr-namespace:goFriend.Controls"
              x:Class="goFriend.Views.AccountPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -19,10 +20,10 @@
         <StackLayout>
             <TableView Intent="Data" HasUnevenRows="True" VerticalOptions="FillAndExpand">
                 <TableRoot>
-                    <TableSection>
-                        <ViewCell>
+                    <TableSection x:Name="TsShells">
+                        <ViewCell x:Name="CellAvatar">
                             <StackLayout Margin="10" HorizontalOptions="CenterAndExpand">
-                                <controls:CircleImage Source="{Binding Avatar}" Aspect="AspectFit" HorizontalOptions="CenterAndExpand">
+                                <controls:CircleImage x:Name="ImgAvatar" Aspect="AspectFit" HorizontalOptions="CenterAndExpand">
                                     <controls:CircleImage.WidthRequest>
                                         <OnPlatform x:TypeArguments="x:Double">
                                             <On Platform="Android, iOS">100</On>
@@ -40,16 +41,27 @@
                                 <Label FontSize="{StaticResource LblDetailFontSize}" x:Name="LblMemberSince" HorizontalOptions="CenterAndExpand" />
                             </StackLayout>
                         </ViewCell>
-                        <ViewCell x:Name="LblBasicInfos">
+                        <ViewCell x:Name="CellBasicInfos">
                             <StackLayout Padding="10" Orientation="Vertical">
                                 <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.BasicInfos}" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
                             </StackLayout>
                         </ViewCell>
-                        <ViewCell x:Name="LblLogout">
+                        <ViewCell x:Name="CellLogout">
                             <StackLayout Padding="10" Orientation="Vertical">
                                 <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Logout}" TextColor="{StaticResource ColorLabel}" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.Logout}" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell x:Name="CellLogin">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Login}" TextColor="{StaticResource ColorLabel}" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.Login}" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell x:Name="CellAbout">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.About}" TextColor="{StaticResource ColorLabel}" />
                             </StackLayout>
                         </ViewCell>
                     </TableSection>

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace goFriend.DataModel
 {
-    public class Friend
+    public class Friend : ICloneable
     {
         public int Id { get; set; }
 
@@ -37,6 +37,11 @@ namespace goFriend.DataModel
         [Column(TypeName = "VARCHAR(10)")]
         public string Gender { get; set; }
 
+        [Column(TypeName = "VARCHAR(170)")]
+        public string DeviceInfo { get; set; }
+
+        public byte[] Image { get; set; }
+
         [JsonIgnore]
         public ICollection<GroupFriend> GroupFriends { get; set; }
 
@@ -45,10 +50,25 @@ namespace goFriend.DataModel
             return $"{FacebookId}|{Id}|{Name}|{Email}";
         }
 
-        [JsonIgnore]
-        [NotMapped]
-        public string Avatar =>
-            string.IsNullOrEmpty(FacebookId) ? (Gender == "male" ? "default_male.jpg" : "default_female.jpg")
-                : $"https://graph.facebook.com/{FacebookId}/picture?type=normal";
+        public object Clone()
+        {
+            var result = new Friend();
+            CopyTo(result);
+            return result;
+        }
+
+        public void CopyTo(Friend friend)
+        {
+            friend.FacebookId = FacebookId;
+            friend.Name = Name;
+            friend.FirstName = FirstName;
+            friend.LastName = LastName;
+            friend.MiddleName = MiddleName;
+            friend.Birthday = Birthday;
+            friend.Gender = Gender;
+            friend.Email = Email;
+            friend.DeviceInfo = DeviceInfo;
+            friend.Image = Image;
+        }
     }
 }

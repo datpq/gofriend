@@ -67,19 +67,16 @@
 
     <!-- Your Pages -->
     <ShellItem>
-        <ShellSection Title="Browse" Icon="tab_feed.png">
+        <ShellSection x:Name="TabAccount" x:FieldModifier="public" Title="{Static loc:res.Account}" Icon="navigation_account_green.png">
+            <ShellContent x:Name="TabAccountContent" x:FieldModifier="public" ContentTemplate="{DataTemplate local:AccountPage}" />
+        </ShellSection>
+        <ShellSection x:Name="TabBrowse" Title="Browse" Icon="tab_feed.png">
             <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
-        <ShellSection Title="{Static loc:res.Search}" Icon="ic_search_grey.png">
+        <ShellSection x:Name="TabSearch" Title="{Static loc:res.Search}" Icon="ic_search_grey.png">
             <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
-        <ShellSection Title="{Static loc:res.Map}" Icon="navigation_map_green.png">
-            <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
-        </ShellSection>
-        <ShellSection Title="{Static loc:res.Account}" Icon="navigation_account_green.png">
-            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}" />
-        </ShellSection>
-        <ShellSection Title="{Static loc:res.Help}" Icon="ic_help_green.png">
+        <ShellSection x:Name="TabMap" Title="{Static loc:res.Map}" Icon="navigation_map_green.png">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
         </ShellSection>
     </ShellItem>

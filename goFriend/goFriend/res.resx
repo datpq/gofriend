@@ -120,8 +120,14 @@
   <data name="About" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>Account</value>
+  </data>
+  <data name="AppTitle" xml:space="preserve">
+    <value>GoFriend-9194</value>
   </data>
   <data name="BasicInfos" xml:space="preserve">
     <value>Basic Informations</value>
@@ -167,6 +173,15 @@
   </data>
   <data name="MemberSince" xml:space="preserve">
     <value>Member since {0}</value>
+  </data>
+  <data name="MsgLogoutConfirm" xml:space="preserve">
+    <value>Do you really want to logout ?</value>
+  </data>
+  <data name="MsgTitleError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="MsgTitleInfo" xml:space="preserve">
+    <value>Information</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>

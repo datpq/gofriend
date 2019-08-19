@@ -123,7 +123,18 @@ namespace goFriend.Droid
 
     public class FacebookProfileTracker : ProfileTracker
     {
+        private static FacebookProfileTracker _instance;
         private readonly ILogger _logger = DependencyService.Get<ILogManager>().GetLog();
+
+        public static FacebookProfileTracker GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new FacebookProfileTracker();
+                _instance.StartTracking();
+            }
+            return _instance;
+        }
 
         protected override void OnCurrentProfileChanged(Profile oldProfile, Profile newProfile)
         {

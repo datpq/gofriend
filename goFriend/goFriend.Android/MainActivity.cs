@@ -43,8 +43,7 @@ namespace goFriend.Droid
             _logger = DependencyService.Get<ILogManager>().GetLog();
 
             //facebook track of profile changing
-            var facebookProfileTracker = new FacebookProfileTracker();
-            facebookProfileTracker.StartTracking();
+            FacebookProfileTracker.GetInstance();
 
             LoadApplication(new App());
         }

@@ -60,13 +60,13 @@ namespace goFriend.MobileAppService.Controllers
         [HttpPost]
         public IActionResult AddOrUpdate([FromBody]Friend friend)
         {
+            var stopWatch = Stopwatch.StartNew();
+            if (Logger.IsDebugEnabled)// && Request != null
+            {
+                Logger.Debug($"BEGIN({friend})");
+            }
             try
             {
-                var stopWatch = Stopwatch.StartNew();
-                if (Logger.IsDebugEnabled && Request != null)
-                {
-                    Logger.Debug($"BEGIN({friend})");
-                }
                 if (friend == null || !ModelState.IsValid)
                 {
                     return BadRequest("Invalid State");
@@ -75,53 +75,58 @@ namespace goFriend.MobileAppService.Controllers
                 Friend result;
                 if (friend.FacebookId != null)
                 {
-                    result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
-                    if (result != null)
+                    if (Logger.IsDebugEnabled)
                     {
-                        result.Name = friend.Name;
-                        result.FirstName = friend.FirstName;
-                        result.LastName = friend.LastName;
-                        result.MiddleName = friend.MiddleName;
-                        result.Birthday = friend.Birthday;
-                        result.Gender = friend.Gender;
-                        result.Email = friend.Email;
+                        Logger.Info($"Facebook logged in: {friend}");
+                    }
+                    result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
+                    if (result == null)
+                    {
+                        lock (_dataRepo)
+                        {
+                            result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
+                            if (result == null)
+                            {
+                                result = (Friend)friend.Clone();
+                                _dataRepo.Add(result);
+                                Logger.Info($"New user registered: {result}");
+                            }
+                            else
+                            {
+                                Logger.Warn("Duplicate request happend. The second data counts");
+                                friend.CopyTo(result);
+                            }
+                        }
                     }
                     else
                     {
-                        result = new Friend
+                        friend.CopyTo(result);
+                        if (Logger.IsDebugEnabled)
                         {
-                            Name = friend.Name, FirstName = friend.FirstName, LastName = friend.LastName, MiddleName = friend.MiddleName,
-                            Birthday = friend.Birthday, Gender = friend.Gender, Email = friend.Email, FacebookId = friend.FacebookId
-                        };
-                        _dataRepo.Add(result);
+                            Logger.Debug($"Update info on user: {result}");
+                        }
                     }
-                    _dataRepo.Commit();
                 }
                 else
                 {
-                    result = new Friend
-                    {
-                        Name = friend.Name,
-                        FirstName = friend.FirstName,
-                        LastName = friend.LastName,
-                        MiddleName = friend.MiddleName,
-                        Birthday = friend.Birthday,
-                        Gender = friend.Gender,
-                        Email = friend.Email,
-                        FacebookId = friend.FacebookId
-                    };
+                    result = (Friend)friend.Clone();
                     _dataRepo.Add(result);
-                    _dataRepo.Commit();
+                    Logger.Info($"New user registered: {result}");
                 }
+                _dataRepo.Commit();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Error while creating or updating");
+                return BadRequest("Error while creating or updating");
+            }
+            finally
+            {
                 if (Logger.IsDebugEnabled)
                 {
                     Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
                 }
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return BadRequest("Error while creating or updating");
             }
         }
 
