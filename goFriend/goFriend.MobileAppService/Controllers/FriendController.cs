@@ -58,75 +58,101 @@ namespace goFriend.MobileAppService.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddOrUpdate([FromBody]Friend friend)
+        [Route("LoginWithFacebook")]
+        public ActionResult<Friend> LoginWithFacebook([FromBody] Friend friend)
         {
             var stopWatch = Stopwatch.StartNew();
-            if (Logger.IsDebugEnabled)// && Request != null
-            {
-                Logger.Debug($"BEGIN({friend})");
-            }
+            Logger.Debug($"BEGIN({friend})");
             try
             {
                 if (friend == null || !ModelState.IsValid)
                 {
-                    return BadRequest("Invalid State");
-                }
-
-                Friend result;
-                if (friend.FacebookId != null)
+                    return BadRequest(new Message{ Code = MessageCode.InvalidState, Msg = "Invalid State" });
+                } else if (friend.FacebookId == null)
                 {
-                    if (Logger.IsDebugEnabled)
+                    return BadRequest(new Message { Code = MessageCode.FacebookIdNull, Msg = "FacebookId is null" });
+                }
+                var result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
+                if (result == null) //register with facebook
+                {
+                    lock (_dataRepo)
                     {
-                        Logger.Info($"Facebook logged in: {friend}");
-                    }
-                    result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
-                    if (result == null)
-                    {
-                        lock (_dataRepo)
+                        result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
+                        if (result == null)
                         {
-                            result = _dataRepo.Get<Friend>(x => x.FacebookId == friend.FacebookId);
-                            if (result == null)
-                            {
-                                result = (Friend)friend.Clone();
-                                _dataRepo.Add(result);
-                                Logger.Info($"New user registered: {result}");
-                            }
-                            else
-                            {
-                                Logger.Warn("Duplicate request happend. The second data counts");
-                                friend.CopyTo(result);
-                            }
+                            result = (Friend)friend.Clone();
+                            result.Active = true; // new user is always not active
+                            _dataRepo.Add(result);
+                            Logger.Debug($"New user registered: {result}");
                         }
-                    }
-                    else
-                    {
-                        friend.CopyTo(result);
-                        if (Logger.IsDebugEnabled)
+                        else
                         {
-                            Logger.Debug($"Update info on user: {result}");
+                            Logger.Warn("Duplicate request happened. The second data counts");
+                            friend.CopyToIfNull(result); //CreatedDate does not change
                         }
                     }
                 }
-                else
+                else//already registered. Logged-in again
                 {
-                    result = (Friend)friend.Clone();
-                    _dataRepo.Add(result);
-                    Logger.Info($"New user registered: {result}");
+                    friend.CopyToIfNull(result);
+                    Logger.Debug($"Update info on user: {result}");
                 }
                 _dataRepo.Commit();
-                return Ok(result);
+                //return Ok(result);
+                return result;
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Error while creating or updating");
-                return BadRequest("Error while creating or updating");
+                Logger.Error(e, "FacebookLogin error");
+                return BadRequest(new Message { Code = MessageCode.Unknown, Msg = "Unknown FacebookLogin error" });
             }
             finally
             {
-                if (Logger.IsDebugEnabled)
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpPut]
+        [Route("SaveBasicInfo")]
+        public IActionResult SaveBasicInfo([FromBody]Friend friend)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Logger.Debug($"BEGIN({friend})");
+            try
+            {
+                if (friend == null || !ModelState.IsValid)
                 {
-                    Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                    return BadRequest(new Message { Code = MessageCode.InvalidState, Msg = "Invalid State" });
                 }
+                else if (friend.Id == 0 || string.IsNullOrEmpty(friend.Email))
+                {
+                    return BadRequest(new Message { Code = MessageCode.IdOrEmailNull, Msg = "Id or Email is null" });
+                }
+                var result = _dataRepo.Get<Friend>(x => x.Id == friend.Id);
+                if (result == null)
+                {
+                    return BadRequest(new Message { Code = MessageCode.UserNotFound, Msg = "User not found." });
+                }
+
+                result.Name = friend.Name;
+                result.FirstName = friend.FirstName;
+                result.LastName = friend.LastName;
+                result.MiddleName = friend.MiddleName;
+                result.Birthday = friend.Birthday;
+                result.Gender = friend.Gender;
+                result.ModifiedDate = DateTime.Now;
+                Logger.Debug($"SaveBasicInfo ok: {result}");
+                _dataRepo.Commit();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "SaveBasicInfo error");
+                return BadRequest(new Message { Code = MessageCode.Unknown, Msg = "Unknown SaveBasicInfo error" });
+            }
+            finally
+            {
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

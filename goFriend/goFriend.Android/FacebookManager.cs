@@ -124,7 +124,7 @@ namespace goFriend.Droid
     public class FacebookProfileTracker : ProfileTracker
     {
         private static FacebookProfileTracker _instance;
-        private readonly ILogger _logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public static FacebookProfileTracker GetInstance()
         {
@@ -142,7 +142,7 @@ namespace goFriend.Droid
             {
                 try
                 {
-                    _logger.Debug("Send profile");
+                    Logger.Debug("Send profile");
                     MessagingCenter.Send(Application.Current as App, Constants.MsgProfile,
                         new Friend
                         {
@@ -157,7 +157,7 @@ namespace goFriend.Droid
             }
             else
             {
-                _logger.Debug("Profile null");
+                Logger.Debug("Profile null");
                 MessagingCenter.Send(Application.Current as App, Constants.MsgProfile, (Friend)null);
             }
         }

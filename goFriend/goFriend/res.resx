@@ -127,13 +127,13 @@
     <value>Account</value>
   </data>
   <data name="AppTitle" xml:space="preserve">
-    <value>GoFriend-9194</value>
+    <value>GoFriend Hanoi9194</value>
   </data>
   <data name="BasicInfos" xml:space="preserve">
     <value>Basic Informations</value>
   </data>
   <data name="BasicInfosDesc" xml:space="preserve">
-    <value>Name, date of birth, email address</value>
+    <value>Name, date of birth, gender, email address</value>
   </data>
   <data name="BirthDay" xml:space="preserve">
     <value>Birthday</value>
@@ -144,6 +144,9 @@
   <data name="Email" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="Female" xml:space="preserve">
+    <value>Female</value>
+  </data>
   <data name="FirstName" xml:space="preserve">
     <value>First Name</value>
   </data>
@@ -152,6 +155,9 @@
   </data>
   <data name="FullName" xml:space="preserve">
     <value>Full Name</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Gender</value>
   </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
@@ -167,6 +173,9 @@
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Logout</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Male</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
@@ -189,14 +198,23 @@
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacy Policy</value>
   </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Register</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>Saved with success</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value>Select gender</value>
   </data>
   <data name="Slogan" xml:space="preserve">
     <value>Connecting Love</value>

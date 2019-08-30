@@ -127,13 +127,13 @@
     <value>Tài khoản</value>
   </data>
   <data name="AppTitle" xml:space="preserve">
-    <value>GoFriend-9194</value>
+    <value>GoFriend Hanoi9194</value>
   </data>
   <data name="BasicInfos" xml:space="preserve">
     <value>Thông tin cơ bản</value>
   </data>
   <data name="BasicInfosDesc" xml:space="preserve">
-    <value>Tên, ngày sinh, địa chỉ email</value>
+    <value>Tên, ngày sinh, giới tính, địa chỉ email</value>
   </data>
   <data name="BirthDay" xml:space="preserve">
     <value>Ngày sinh</value>
@@ -144,6 +144,9 @@
   <data name="Email" xml:space="preserve">
     <value>Địa chỉ email</value>
   </data>
+  <data name="Female" xml:space="preserve">
+    <value>Nữ</value>
+  </data>
   <data name="FirstName" xml:space="preserve">
     <value>Tên</value>
   </data>
@@ -152,6 +155,9 @@
   </data>
   <data name="FullName" xml:space="preserve">
     <value>Họ và tên</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Giới tính</value>
   </data>
   <data name="Help" xml:space="preserve">
     <value>Trợ giúp</value>
@@ -167,6 +173,9 @@
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Đăng xuất</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Nam</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Bản đồ</value>
@@ -189,14 +198,23 @@
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Chính sách bảo mật</value>
   </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Đang xử lý</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Đăng ký</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Lưu trữ</value>
   </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>Lưu trữ thành công</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Tìm kiếm</value>
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value>Chọn giới tính</value>
   </data>
   <data name="Slogan" xml:space="preserve">
     <value>Kết nối yêu thương</value>

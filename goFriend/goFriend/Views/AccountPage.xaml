@@ -41,7 +41,13 @@
                                 <Label FontSize="{StaticResource LblDetailFontSize}" x:Name="LblMemberSince" HorizontalOptions="CenterAndExpand" />
                             </StackLayout>
                         </ViewCell>
-                        <ViewCell x:Name="CellBasicInfos">
+                        <ViewCell x:Name="CellBasicInfo">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.BasicInfos}" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell x:Name="CellInfo">
                             <StackLayout Padding="10" Orientation="Vertical">
                                 <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.BasicInfos}" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
@@ -50,13 +56,11 @@
                         <ViewCell x:Name="CellLogout">
                             <StackLayout Padding="10" Orientation="Vertical">
                                 <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Logout}" TextColor="{StaticResource ColorLabel}" />
-                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.Logout}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellLogin">
                             <StackLayout Padding="10" Orientation="Vertical">
                                 <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Login}" TextColor="{StaticResource ColorLabel}" />
-                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.Login}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellAbout">

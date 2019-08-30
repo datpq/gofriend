@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
+using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
 using Xamarin.Forms;
@@ -14,52 +13,56 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginPage : ContentPage
     {
+        private readonly AccountPage _accountPage;
         private static LoginPage _instance;
 
-        private readonly ILogger _logger = DependencyService.Get<ILogManager>().GetLog();
-        private readonly EventWaitHandle _waitHandle;
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        //private readonly EventWaitHandle _waitHandle;
 
-        public static LoginPage GetInstance()
+        public static LoginPage GetInstance(AccountPage accountPage)
         {
             if (_instance == null)
             {
-                _instance = new LoginPage();
+                _instance = new LoginPage(accountPage);
             }
             return _instance;
         }
 
-        private LoginPage()
+        private LoginPage(AccountPage accountPage)
         {
+            _accountPage = accountPage;
             InitializeComponent();
-            _waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-            Disappearing += (s, e) =>
-            {
-                _waitHandle.Set();
-            };
+            //_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+            //Disappearing += (s, e) =>
+            //{
+            //    _waitHandle.Set();
+            //};
 
             //Facebook event handlers
             BtnFacebook.OnSuccess = new Command<string>(authToken =>
             {
-                _logger.Debug("Facebook logged-in with success");
+                Logger.Debug("Facebook logged-in with success");
                 App.IsUserLoggedIn = true;
                 Settings.IsUserLoggedIn = App.IsUserLoggedIn;
+                Navigation.PopModalAsync();
+                UserDialogs.Instance.ShowLoading(res.Processing);
             });
             BtnFacebook.OnError = new Command<string>(err => App.DisplayMsgError($"Authentication failed: { err }"));
             BtnFacebook.OnCancel = new Command(() =>
             {
-                _logger.Debug("Authentication cancelled by the user");
+                Logger.Debug("Authentication cancelled by the user");
             });
 
             //Event message handlers
-            _logger.Debug("Subscribe");
+            Logger.Debug("Subscribe");
             MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfile, (sender, user) =>
             {
                 if (user == null)
                 {
-                    _logger.Error("Received NULL");
+                    Logger.Error("Received NULL");
                     return;
                 }
-                _logger.Debug($"Received: {Constants.MsgProfile} {user.ToString()}");
+                Logger.Debug($"Received: {Constants.MsgProfile} {user.ToString()}");
                 App.User = user;
                 App.User.DeviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
                 var avatarUrl = $"https://graph.facebook.com/{user.FacebookId}/picture?type=normal";
@@ -68,23 +71,24 @@ namespace goFriend.Views
                     App.User.Image = webClient.DownloadData(avatarUrl);
                 }
                 Settings.LastUser = App.User;
-                Navigation.PopModalAsync();
-                //(Application.Current as App).MainPage.DisplayAlert("Success", $"Authentication succeed: {user.Name}", "OK");
+                _accountPage.RefreshMenu();
             });
-            MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfileExt, (sender, user) =>
+            MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfileExt, async (sender, user) =>
             {
-                _logger.Debug($"Received: {Constants.MsgProfileExt} {user?.ToString()}");
+                Logger.Debug($"Received: {Constants.MsgProfileExt} {user?.ToString()}");
                 App.User.Email = user?.Email;
                 App.User.Birthday = user?.Birthday;
+                UserDialogs.Instance.HideLoading();
+                App.User = await App.FriendStore.LoginWithFacebook(App.User);
                 Settings.LastUser = App.User;
-                //App.FriendStore.AddOrUpdateFriendAsync(App.User);
+                _accountPage.RefreshMenu();
             });
         }
 
-        public async Task Wait()
-        {
-            await Task.Run(() => _waitHandle.WaitOne());
-        }
+        //public async Task Wait()
+        //{
+        //    await Task.Run(() => _waitHandle.WaitOne());
+        //}
 
         async void CmdSignUp_Click(object sender, EventArgs e)
         {

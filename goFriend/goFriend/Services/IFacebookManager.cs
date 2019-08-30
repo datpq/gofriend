@@ -1,9 +1,4 @@
-﻿using goFriend.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace goFriend.Services
+﻿namespace goFriend.Services
 {
     public interface IFacebookManager
     {

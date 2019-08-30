@@ -5,6 +5,7 @@ namespace goFriend.Services
 {
     public interface IFriendStore
     {
-        Task<bool> AddOrUpdateFriendAsync(Friend friend);
+        Task<Friend> LoginWithFacebook(Friend friend);
+        Task<bool> SaveBasicInfo(Friend friend);
     }
 }

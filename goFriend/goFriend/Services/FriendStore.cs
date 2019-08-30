@@ -4,31 +4,75 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
 using System;
+using Acr.UserDialogs;
 using goFriend.DataModel;
+using Xamarin.Forms;
 
 namespace goFriend.Services
 {
     public class FriendStore : IFriendStore
     {
-        HttpClient client;
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private readonly HttpClient _client;
         public FriendStore()
         {
-            client = new HttpClient();
-            client.BaseAddress = new Uri($"{App.AzureBackendUrl}/");
+            _client = new HttpClient {BaseAddress = new Uri($"{App.AzureBackendUrl}/")};
         }
 
-        bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
+        private static bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
 
-        public async Task<bool> AddOrUpdateFriendAsync(Friend friend)
+        public async Task<Friend> LoginWithFacebook(Friend friend)
         {
+            Logger.Debug($"LoginWithFacebook.BEGIN({friend})");
+            if (friend == null || !IsConnected)
+                return null;
+
+            var serializedFriend = JsonConvert.SerializeObject(friend);
+
+            UserDialogs.Instance.ShowLoading(res.Processing);
+            var response = await _client.PostAsync($"api/Friend/LoginWithFacebook", new StringContent(serializedFriend, Encoding.UTF8, "application/json"));
+
+            Friend result = null;
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsAsync<Friend>();
+            }
+            else
+            {
+                var msg = await response.Content.ReadAsAsync<Message>();
+                Logger.Error($"Error: {msg}");
+            }
+            UserDialogs.Instance.HideLoading();
+
+            Logger.Debug($"LoginWithFacebook.END({result})");
+            return result;
+        }
+
+        public async Task<bool> SaveBasicInfo(Friend friend)
+        {
+            Logger.Debug($"SaveBasicInfo.BEGIN({friend})");
             if (friend == null || !IsConnected)
                 return false;
 
-            var serializedItem = JsonConvert.SerializeObject(friend);
+            var serializedFriend = JsonConvert.SerializeObject(friend);
 
-            var response = await client.PostAsync($"api/Friend", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
+            UserDialogs.Instance.ShowLoading(res.Processing);
+            var response = await _client.PutAsync($"api/Friend/SaveBasicInfo", new StringContent(serializedFriend, Encoding.UTF8, "application/json"));
 
-            return response.IsSuccessStatusCode;
+            var result = false;
+            if (response.IsSuccessStatusCode)
+            {
+                result = true;
+            }
+            else
+            {
+                var msg = await response.Content.ReadAsAsync<Message>();
+                Logger.Error($"Error: {msg}");
+            }
+            UserDialogs.Instance.HideLoading();
+
+            Logger.Debug($"SaveBasicInfo.END({result})");
+            return result;
         }
     }
 }

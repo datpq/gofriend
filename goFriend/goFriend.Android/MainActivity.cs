@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Acr.UserDialogs;
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
@@ -40,6 +40,7 @@ namespace goFriend.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
             ImageCircleRenderer.Init();
+            UserDialogs.Init(this);
             _logger = DependencyService.Get<ILogManager>().GetLog();
 
             //facebook track of profile changing

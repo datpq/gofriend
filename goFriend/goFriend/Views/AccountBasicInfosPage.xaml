@@ -28,9 +28,9 @@
             <control:UcLabelEntry x:Name="LeFirstName" LabelText="{Static local:res.FirstName}" />
             <control:UcLabelEntry x:Name="LeFullName" LabelText="{Static local:res.FullName}" IsEnabled="False" />
             <control:UcLabelEntry x:Name="LeEmail" LabelText="{Static local:res.Email}" IsEnabled="False" />
-            <ContentView Padding="3">
-                <Label x:Name="LblBirthDay" Text="{Static local:res.BirthDay}" />
-            </ContentView>
+            <Label Text="{Static local:res.Gender}" />
+            <Picker x:Name="PkGender" Title="{Static local:res.SelectGender}" TitleColor="{StaticResource ColorPrimary}" />
+            <Label x:Name="LblBirthDay" Text="{Static local:res.BirthDay}" />
             <DatePicker x:Name="DpBirthDay" />
             <Button HorizontalOptions="FillAndExpand" Margin="0,10"
                     CornerRadius="{StaticResource BtnCornerRadius}"

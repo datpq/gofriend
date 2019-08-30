@@ -88,7 +88,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GoFriend-9194.
+        ///   Looks up a localized string similar to GoFriend Hanoi9194.
         /// </summary>
         internal static string AppTitle {
             get {
@@ -106,7 +106,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name, date of birth, email address.
+        ///   Looks up a localized string similar to Name, date of birth, gender, email address.
         /// </summary>
         internal static string BasicInfosDesc {
             get {
@@ -142,6 +142,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Female.
+        /// </summary>
+        internal static string Female {
+            get {
+                return ResourceManager.GetString("Female", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Name.
         /// </summary>
         internal static string FirstName {
@@ -165,6 +174,15 @@ namespace goFriend {
         internal static string FullName {
             get {
                 return ResourceManager.GetString("FullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gender.
+        /// </summary>
+        internal static string Gender {
+            get {
+                return ResourceManager.GetString("Gender", resourceCulture);
             }
         }
         
@@ -210,6 +228,15 @@ namespace goFriend {
         internal static string Logout {
             get {
                 return ResourceManager.GetString("Logout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Male.
+        /// </summary>
+        internal static string Male {
+            get {
+                return ResourceManager.GetString("Male", resourceCulture);
             }
         }
         
@@ -277,6 +304,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processing.
+        /// </summary>
+        internal static string Processing {
+            get {
+                return ResourceManager.GetString("Processing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Register.
         /// </summary>
         internal static string Register {
@@ -295,11 +331,29 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saved with success.
+        /// </summary>
+        internal static string SaveSuccess {
+            get {
+                return ResourceManager.GetString("SaveSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string Search {
             get {
                 return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select gender.
+        /// </summary>
+        internal static string SelectGender {
+            get {
+                return ResourceManager.GetString("SelectGender", resourceCulture);
             }
         }
         

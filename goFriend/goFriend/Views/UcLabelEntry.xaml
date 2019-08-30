@@ -7,9 +7,9 @@
              x:Class="goFriend.Views.UcLabelEntry">
   <ContentView.Content>
       <StackLayout Spacing="0">
-          <ContentView Padding="3">
+          <!--<ContentView Padding="0">-->
             <Label x:Name="LblMain" />
-          </ContentView>
+          <!--</ContentView>-->
           <Entry x:Name="TxtMain" FontSize="{StaticResource LblFontSize}" />
         </StackLayout>
   </ContentView.Content>

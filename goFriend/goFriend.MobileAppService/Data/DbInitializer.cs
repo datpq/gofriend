@@ -39,9 +39,15 @@ namespace goFriend.MobileAppService.Data
 
             var friends = new[]
             {
-                new Friend{Name = "DPH", FirstName = "DPH", LastName = "Phạm", Email = "gofriend9194@gmail.com", Gender = "Male", Birthday = new DateTime(1976, 9, 12) },
-                new Friend{Name = "Phạm Quốc Đạt", FirstName = "Quốc Đạt", LastName = "Phạm", Email = "datpq@free.fr", Gender = "Male", Birthday = new DateTime(1976, 9, 12) },
-                new Friend{Name = "Vũ Bảo Thoa", FirstName = "Bảo Thoa", LastName = "Vũ", Email = "phambaothoauk@gmail.com", Gender = "Female", Birthday = new DateTime(1979, 12, 3)}
+                new Friend{Name = "DPH", FirstName = "DPH", LastName = "Phạm",
+                    Email = "gofriend9194@gmail.com", Gender = "male", Birthday = new DateTime(1976, 9, 12),
+                    Active = true, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now},
+                new Friend{Name = "Phạm Quốc Đạt", FirstName = "Quốc Đạt", LastName = "Phạm",
+                    Email = "datpq@free.fr", Gender = "male", Birthday = new DateTime(1976, 9, 12),
+                    Active = true, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now},
+                new Friend{Name = "Vũ Bảo Thoa", FirstName = "Bảo Thoa", LastName = "Vũ",
+                    Email = "phambaothoauk@gmail.com", Gender = "female", Birthday = new DateTime(1979, 12, 3),
+                    Active = true, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now}
             };
             foreach (var x in friends)
             {
