@@ -29,7 +29,7 @@ namespace goFriend.Views
             set => TxtMain.Text = value;
         }
 
-        public bool IsEnabled
+        public new bool IsEnabled
         {
             get => TxtMain.IsEnabled;
             set => TxtMain.IsEnabled = value;

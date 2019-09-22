@@ -18,9 +18,10 @@ namespace goFriend.Views
             BindingContext = _viewModel = new AccountViewModel();
 
             CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage()); };
+            CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
             CellLogin.Tapped += (s, e) =>
             {
-                Navigation.PushModalAsync(LoginPage.GetInstance(this));
+                Navigation.PushAsync(LoginPage.GetInstance(this));
                 //await LoginPage.GetInstance().Wait();
                 //RefreshMenu();
             };
@@ -43,8 +44,11 @@ namespace goFriend.Views
             if (App.IsUserLoggedIn && App.User != null)
             {
                 TsShells.Add(CellAvatar);
-                TsShells.Add(CellBasicInfo);
-                TsShells.Add(CellInfo);
+                if (App.User.Active)
+                {
+                    TsShells.Add(CellBasicInfo);
+                }
+                TsShells.Add(CellGroups);
                 TsShells.Add(CellLogout);
                 if (App.User.Image != null)
                 {
@@ -56,6 +60,10 @@ namespace goFriend.Views
                 }
                 LblFullName.Text = App.User.Name;
                 LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
+                if (!App.User.Active)
+                {
+                    App.DisplayMsgInfo(res.MsgInactiveUserWarning);
+                }
             }
             else
             {

@@ -26,6 +26,7 @@ namespace goFriend
 
             System.AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
                 System.Exception ex = (System.Exception)args.ExceptionObject;
+                Logger.Error("UnhandledException exception");
                 Logger.Error(ex.ToString());
             };
 

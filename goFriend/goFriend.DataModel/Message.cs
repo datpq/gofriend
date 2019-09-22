@@ -3,10 +3,12 @@
     public enum MessageCode
     {
         Unknown = 12976,
+        MissingToken,
         InvalidState,
         FacebookIdNull,
         IdOrEmailNull,
-        UserNotFound
+        UserNotFound,
+        UserTokenError
     }
 
     public class Message

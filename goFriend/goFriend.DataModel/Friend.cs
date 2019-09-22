@@ -8,27 +8,25 @@ namespace goFriend.DataModel
 {
     public class Friend : ICloneable
     {
+        [Key]
         public int Id { get; set; }
 
-        [Required]
         [Column(TypeName = "NVARCHAR(100)")]
         public string Name { get; set; }
 
-        [Required]
         [Column(TypeName = "NVARCHAR(50)")]
         public string FirstName { get; set; }
 
-        [Required]
         [Column(TypeName = "NVARCHAR(50)")]
         public string LastName { get; set; }
 
         [Column(TypeName = "NVARCHAR(50)")]
         public string MiddleName { get; set; }
 
+        [Required]
         [Column(TypeName = "VARCHAR(20)")]
         public string FacebookId { get; set; }
 
-        [Required]
         [Column(TypeName = "VARCHAR(50)")]
         public string Email { get; set; }
 
@@ -43,10 +41,17 @@ namespace goFriend.DataModel
 
         public DateTime? ModifiedDate { get; set; }
 
+        [JsonIgnore]
         [Column(TypeName = "VARCHAR(170)")]
         public string DeviceInfo { get; set; }
 
         public byte[] Image { get; set; }
+
+        [JsonIgnore]
+        [Column(TypeName = "VARCHAR(255)")]
+        public string FacebookToken { get; set; }
+
+        public Guid Token { get; set; }
 
         [JsonIgnore]
         public ICollection<GroupFriend> GroupFriends { get; set; }
@@ -54,6 +59,11 @@ namespace goFriend.DataModel
         public override string ToString()
         {
             return $"{FacebookId}|{Id}|{Name}|{Email}";
+        }
+
+        public string ToFullString()
+        {
+            return $"{FacebookId}|{Id}|{Name}|{Email}|{LastName}|{MiddleName}|{FirstName}|{Birthday}|{Gender}";
         }
 
         public object Clone()

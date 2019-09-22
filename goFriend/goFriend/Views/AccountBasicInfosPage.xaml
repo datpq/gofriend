@@ -21,17 +21,17 @@
             <StackLayout.Padding>
                 <OnPlatform x:TypeArguments="Thickness">
                     <On Platform="Android, WinPhone">0</On>
-                    <On Platform="iOS">0,60,0,0</On>
+                    <On Platform="iOS">0,60,0,40</On>
                 </OnPlatform>
             </StackLayout.Padding>
             <control:UcLabelEntry x:Name="LeLastName" LabelText="{Static local:res.LastName}" />
             <control:UcLabelEntry x:Name="LeFirstName" LabelText="{Static local:res.FirstName}" />
             <control:UcLabelEntry x:Name="LeFullName" LabelText="{Static local:res.FullName}" IsEnabled="False" />
-            <control:UcLabelEntry x:Name="LeEmail" LabelText="{Static local:res.Email}" IsEnabled="False" />
+            <control:UcLabelEntry x:Name="LeEmail" LabelText="{Static local:res.Email}" />
             <Label Text="{Static local:res.Gender}" />
-            <Picker x:Name="PkGender" Title="{Static local:res.SelectGender}" TitleColor="{StaticResource ColorPrimary}" />
+            <Picker x:Name="PkGender" Title="{Static local:res.SelectGender}" TitleColor="{StaticResource ColorPrimary}" HeightRequest="40" />
             <Label x:Name="LblBirthDay" Text="{Static local:res.BirthDay}" />
-            <DatePicker x:Name="DpBirthDay" />
+            <DatePicker x:Name="DpBirthDay" HeightRequest="40" />
             <Button HorizontalOptions="FillAndExpand" Margin="0,10"
                     CornerRadius="{StaticResource BtnCornerRadius}"
                     BackgroundColor="{StaticResource ColorPrimary}"

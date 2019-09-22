@@ -21,6 +21,11 @@ namespace goFriend.MobileAppService
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
             Configuration = builder.Build();
         }
 
@@ -31,6 +36,12 @@ namespace goFriend.MobileAppService
         {
             services.AddDbContext<FriendDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("GoFriendConnection")));
+            //services.AddAuthentication().AddFacebook(facebookOptions =>
+            //{
+            //    facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+            //    facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            //});
+
             var sp = services.BuildServiceProvider();
             var dbContext = sp.GetRequiredService<FriendDbContext>();
             DbInitializer.Initialize(dbContext);

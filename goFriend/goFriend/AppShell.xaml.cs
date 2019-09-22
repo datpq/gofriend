@@ -9,9 +9,7 @@
 
         public void RefreshTabs()
         {
-            TabBrowse.IsEnabled = App.IsUserLoggedIn;
-            TabSearch.IsEnabled = App.IsUserLoggedIn;
-            TabMap.IsEnabled = App.IsUserLoggedIn;
+            TabBrowse.IsEnabled = TabSearch.IsEnabled = TabMap.IsEnabled = App.IsUserLoggedIn && App.User != null && App.User.Active;
         }
     }
 }

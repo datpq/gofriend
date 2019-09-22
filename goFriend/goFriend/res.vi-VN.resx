@@ -159,6 +159,12 @@
   <data name="Gender" xml:space="preserve">
     <value>Giới tính</value>
   </data>
+  <data name="GroupConnectionsInfos" xml:space="preserve">
+    <value>Nhóm và thông tin kết nối</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Nhóm</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Trợ giúp</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="MemberSince" xml:space="preserve">
     <value>Thành viên từ {0}</value>
+  </data>
+  <data name="MsgInactiveUserWarning" xml:space="preserve">
+    <value>Tài khoản của bạn chưa được kích hoạt. Xin vui lòng thử lại sau.</value>
   </data>
   <data name="MsgLogoutConfirm" xml:space="preserve">
     <value>Bạn thực sự muốn đăng xuất ?</value>

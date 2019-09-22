@@ -1,7 +1,5 @@
-﻿using System;
-using Facebook.CoreKit;
+﻿using Facebook.CoreKit;
 using Foundation;
-using goFriend.DataModel;
 using goFriend.Services;
 using ImageCircle.Forms.Plugin.iOS;
 using Xamarin.Forms;
@@ -28,36 +26,53 @@ namespace goFriend.iOS
         {
             //facebook track of profile changing
             Profile.EnableUpdatesOnAccessTokenChange(true);
+            /* If sending profile from Client
             Profile.Notifications.ObserveDidChange((sender, notification) => {
                 if (notification.NewProfile != null)
                 {
-                        _logger.Debug("Send profile");
-                        MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile,
-                            new Friend
-                            {
-                                Name = notification.NewProfile.Name,
-                                FirstName = notification.NewProfile.FirstName,
-                                LastName = notification.NewProfile.LastName,
-                                MiddleName = notification.NewProfile.MiddleName,
-                                FacebookId = notification.NewProfile.UserId
-                            });
-                        var request = new GraphRequest("/" + notification.NewProfile.UserId, new NSDictionary("fields", "id,name,email,gender,birthday"), AccessToken.CurrentAccessToken.TokenString, null, "GET");
-                        request.Start((connection, result, error) =>
+                    var friendProfile = new Friend
+                    {
+                        Name = notification.NewProfile.Name,
+                        FirstName = notification.NewProfile.FirstName,
+                        LastName = notification.NewProfile.LastName,
+                        MiddleName = notification.NewProfile.MiddleName,
+                        FacebookId = notification.NewProfile.UserId
+                    };
+                    _logger.Debug($"Send profile: {friendProfile}");
+                    MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, friendProfile);
+                    var request = new GraphRequest("/" + notification.NewProfile.UserId, new NSDictionary("fields", "id,name,email,gender,birthday"), AccessToken.CurrentAccessToken.TokenString, null, "GET");
+                    request.Start((connection, result, error) =>
+                    {
+                        try
                         {
                             var userInfo = result as NSDictionary;
                             _logger.Debug($"Send profile extension: {userInfo}");
                             var email = userInfo?["email"]?.ToString();
                             var birthdayStr = userInfo?["birthday"]?.ToString();
-                            var birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
+                            DateTime? birthday = null;
+                            try
+                            {
+                                birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                             var gender = userInfo?["gender"]?.ToString();
-                            MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfileExt,
-                                new Friend
-                                {
-                                    Email = email,
-                                    Birthday = birthday,
-                                    Gender = gender
-                                });
-                        });
+                            var friendProfileExt = new Friend
+                            {
+                                Email = email,
+                                Birthday = birthday,
+                                Gender = gender
+                            };
+                            _logger.Debug($"Send profile extension: Email={friendProfileExt.Email}|Birthday={friendProfileExt.Birthday}|Gender={friendProfileExt.Gender}");
+                            MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfileExt, friendProfileExt);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.Error(e.ToString());
+                        }
+                    });
                 }
                 else
                 {
@@ -65,12 +80,14 @@ namespace goFriend.iOS
                     MessagingCenter.Send(Xamarin.Forms.Application.Current as App, Constants.MsgProfile, (Friend)null);
                 }
             });
+            */
 
             Rg.Plugins.Popup.Popup.Init();
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Forms.Init();
             ImageCircleRenderer.Init();
             _logger = DependencyService.Get<ILogManager>().GetLog();
+            _logger.Debug("Loading application...");
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);

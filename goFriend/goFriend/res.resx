@@ -159,6 +159,12 @@
   <data name="Gender" xml:space="preserve">
     <value>Gender</value>
   </data>
+  <data name="GroupConnectionsInfos" xml:space="preserve">
+    <value>Groups &amp; connection infos</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="MemberSince" xml:space="preserve">
     <value>Member since {0}</value>
+  </data>
+  <data name="MsgInactiveUserWarning" xml:space="preserve">
+    <value>Your subscribtion is now inactive. Please check again later !</value>
   </data>
   <data name="MsgLogoutConfirm" xml:space="preserve">
     <value>Do you really want to logout ?</value>

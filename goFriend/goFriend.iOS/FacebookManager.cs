@@ -34,14 +34,14 @@ namespace goFriend.iOS
             if (Control == null)
             {
                 var fbLoginBtnView = e.NewElement as FacebookLoginButton;
-                var fbLoginbBtnCtrl = new LoginButton
+                var fbLoginBtnCtrl = new LoginButton
                 {
                     LoginBehavior = LoginBehavior.Native,
                     ReadPermissions = fbLoginBtnView?.Permissions
                 };
 
-                fbLoginbBtnCtrl.Completed += AuthCompleted;
-                SetNativeControl(fbLoginbBtnCtrl);
+                fbLoginBtnCtrl.Completed += AuthCompleted;
+                SetNativeControl(fbLoginBtnCtrl);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
@@ -13,6 +14,9 @@ namespace goFriend.DataModel
 
         [Column(TypeName = "NVARCHAR(255)")]
         public string Desc { get; set; }
+
+        [Column(TypeName = "NVARCHAR(2000)")]
+        public string Info { get; set; }
 
         [JsonIgnore]
         public ICollection<GroupFriend> GroupFriends { get; set; }
@@ -35,6 +39,14 @@ namespace goFriend.DataModel
         public string Cat8Desc { get; set; }
         [Column(TypeName = "NVARCHAR(50)")]
         public string Cat9Desc { get; set; }
+
+        public bool Active { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+
+        public byte[] Logo { get; set; }
 
         public override string ToString()
         {

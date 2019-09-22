@@ -15,6 +15,8 @@ namespace goFriend.DataModel
         [JsonIgnore]
         public Group Group { get; set; }
 
+        public bool Active { get; set; }
+
         [Column(TypeName = "NVARCHAR(50)")]
         public string Cat1 { get; set; }
         [Column(TypeName = "NVARCHAR(50)")]

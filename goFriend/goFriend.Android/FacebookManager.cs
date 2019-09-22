@@ -3,9 +3,6 @@ using Android.Content;
 using goFriend.Controls;
 using goFriend.Droid;
 using goFriend.Services;
-using Android.OS;
-using goFriend.DataModel;
-using Newtonsoft.Json.Linq;
 using Org.Json;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
@@ -31,15 +28,15 @@ namespace goFriend.Droid
             if (Control == null)
             {
                 var fbLoginBtnView = e.NewElement as FacebookLoginButton;
-                var fbLoginbBtnCtrl = new LoginButton(_ctx)
+                var fbLoginBtnCtrl = new LoginButton(_ctx)
                 {
                     LoginBehavior = LoginBehavior.NativeWithFallback
                 };
 
-                fbLoginbBtnCtrl.SetReadPermissions(fbLoginBtnView?.Permissions);
-                fbLoginbBtnCtrl.RegisterCallback(MainActivity.CallbackManager, new MyFacebookCallback(Element as FacebookLoginButton));
+                fbLoginBtnCtrl.SetReadPermissions(fbLoginBtnView?.Permissions);
+                fbLoginBtnCtrl.RegisterCallback(MainActivity.CallbackManager, new MyFacebookCallback(Element as FacebookLoginButton));
 
-                SetNativeControl(fbLoginbBtnCtrl);
+                SetNativeControl(fbLoginBtnCtrl);
             }
         }
 
@@ -87,36 +84,59 @@ namespace goFriend.Droid
                 var accessToken = ((LoginResult) result).AccessToken;
                 view.OnSuccess?.Execute(accessToken.Token);
 
+                /* If sending profile from Client
                 //var accessToken = AccessToken.CurrentAccessToken;
                 var request = GraphRequest.NewMeRequest(accessToken, this);
                 var parameters = new Bundle();
                 parameters.PutString("fields", "id,name,email,gender,birthday");
                 request.Parameters = parameters;
                 request.ExecuteAsync();
+                */
 
                 _logger.Debug("OnSuccess.END");
             }
 
             public void OnCompleted(JSONObject json, GraphResponse response)
             {
-                _logger.Debug("OnCompleted.BEGIN");
-                var data = json.ToString();
-                dynamic result = JObject.Parse(data);
-                string birthdayStr = result.birthday;
-                var birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
                 try
                 {
-                    _logger.Debug($"Send profile extension: {result.email} {birthdayStr} {result.gender}");
-                    MessagingCenter.Send(Application.Current as App, Constants.MsgProfileExt,
-                        new Friend
-                        {
-                            Email = result.email,
-                            Birthday = birthday,
-                            Gender = result.gender
-                        });
+                    _logger.Debug("OnCompleted.BEGIN");
+
+                    /* If sending profile from Client
+                    var data = json.ToString();
+                    dynamic result = JObject.Parse(data);
+                    string birthdayStr = result.birthday;
+                    DateTime? birthday = null;
+                    try
+                    {
+                        birthday = DateTime.ParseExact(birthdayStr, "MM/dd/yyyy", null);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    var friendProfileExt = new Friend
+                    {
+                        Email = result.email,
+                        Birthday = birthday,
+                        Gender = result.gender
+                    };
+                    _logger.Debug($"Send profile extension: Email={friendProfileExt.Email}|Birthday={friendProfileExt.Birthday}|Gender={friendProfileExt.Gender}");
+                    MessagingCenter.Send(Application.Current as App, Constants.MsgProfileExt, friendProfileExt);
+                    */
                 }
-                catch (Java.Lang.Exception) { }
-                _logger.Debug("OnCompleted.END");
+                catch (Java.Lang.Exception)
+                {
+                    // ignored
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.ToString());
+                }
+                finally
+                {
+                    _logger.Debug("OnCompleted.END");
+                }
             }
         }
     }
@@ -124,7 +144,7 @@ namespace goFriend.Droid
     public class FacebookProfileTracker : ProfileTracker
     {
         private static FacebookProfileTracker _instance;
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        //private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public static FacebookProfileTracker GetInstance()
         {
@@ -138,20 +158,21 @@ namespace goFriend.Droid
 
         protected override void OnCurrentProfileChanged(Profile oldProfile, Profile newProfile)
         {
+            /* If sending profile from Client
             if (newProfile != null)
             {
                 try
                 {
-                    Logger.Debug("Send profile");
-                    MessagingCenter.Send(Application.Current as App, Constants.MsgProfile,
-                        new Friend
-                        {
-                            Name = newProfile.Name,
-                            FirstName = newProfile.FirstName,
-                            LastName = newProfile.LastName,
-                            MiddleName = newProfile.MiddleName,
-                            FacebookId = newProfile.Id
-                        });
+                    var friendProfile = new Friend
+                    {
+                        Name = newProfile.Name,
+                        FirstName = newProfile.FirstName,
+                        LastName = newProfile.LastName,
+                        MiddleName = newProfile.MiddleName,
+                        FacebookId = newProfile.Id
+                    };
+                    Logger.Debug($"Send profile: {friendProfile}");
+                    MessagingCenter.Send(Application.Current as App, Constants.MsgProfile, friendProfile);
                 }
                 catch (Java.Lang.Exception) { }
             }
@@ -160,6 +181,7 @@ namespace goFriend.Droid
                 Logger.Debug("Profile null");
                 MessagingCenter.Send(Application.Current as App, Constants.MsgProfile, (Friend)null);
             }
+            */
         }
     }
 

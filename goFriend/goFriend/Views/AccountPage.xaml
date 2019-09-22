@@ -47,10 +47,10 @@
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
                             </StackLayout>
                         </ViewCell>
-                        <ViewCell x:Name="CellInfo">
+                        <ViewCell x:Name="CellGroups">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.BasicInfos}" />
-                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
+                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Groups}" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.GroupConnectionsInfos}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellLogout">

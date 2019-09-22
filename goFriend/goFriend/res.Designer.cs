@@ -187,6 +187,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Groups &amp; connection infos.
+        /// </summary>
+        internal static string GroupConnectionsInfos {
+            get {
+                return ResourceManager.GetString("GroupConnectionsInfos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Groups.
+        /// </summary>
+        internal static string Groups {
+            get {
+                return ResourceManager.GetString("Groups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         internal static string Help {
@@ -255,6 +273,15 @@ namespace goFriend {
         internal static string MemberSince {
             get {
                 return ResourceManager.GetString("MemberSince", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your subscribtion is now inactive. Please check again later !.
+        /// </summary>
+        internal static string MsgInactiveUserWarning {
+            get {
+                return ResourceManager.GetString("MsgInactiveUserWarning", resourceCulture);
             }
         }
         
