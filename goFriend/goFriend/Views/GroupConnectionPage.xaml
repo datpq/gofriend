@@ -23,9 +23,22 @@
                     <On Platform="iOS">0,60,0,40</On>
                 </OnPlatform>
             </StackLayout.Padding>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Grid x:Name="Grid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="LblGroup" Text="{Static local:res.Groups}" VerticalOptions="Center"
+                       TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"
+                       Grid.Row="0" Grid.Column="0">
+                </Label>
+                <Entry x:Name="TxtGroup" FontSize="{StaticResource LblFontSize}" VerticalOptions="Center"
+                       Grid.Row="0" Grid.Column="1"/>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

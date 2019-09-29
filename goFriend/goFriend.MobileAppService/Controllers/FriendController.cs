@@ -263,7 +263,7 @@ namespace goFriend.MobileAppService.Controllers
             ActionResult<IEnumerable<Tuple<Group, bool, bool>>> result = null;
             try
             {
-                Logger.Debug($"BEGIN(token={token})");
+                Logger.Debug($"BEGIN(friendId={friendId}, token={token})");
                 if (string.IsNullOrEmpty(token))
                 {
                     Logger.Warn(MsgMissingToken.Msg);

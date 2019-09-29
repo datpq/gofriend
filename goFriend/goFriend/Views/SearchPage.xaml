@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:goFriend"
+             x:Class="goFriend.Views.SearchPage">
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackground" />
+            </On>
+            <On Platform="iOS">White</On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout.Padding>
+                <OnPlatform x:TypeArguments="Thickness">
+                    <On Platform="Android, WinPhone">0</On>
+                    <On Platform="iOS">0,60,0,40</On>
+                </OnPlatform>
+            </StackLayout.Padding>
+            <SearchBar x:Name="Sb" Placeholder="{Static local:res.SearchBarPlaceHolder}" TextChanged="Sb_OnTextChanged"/>
+            <ListView x:Name="LvResults" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell Tapped="Cell_OnTapped">
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}"
+                                       LineBreakMode="NoWrap" 
+                                       Style="{DynamicResource ListItemTextStyle}" 
+                                       FontSize="{StaticResource LblFontSize}" />
+                                <Label Text="{Binding Description}"
+                                       LineBreakMode="NoWrap"
+                                       Style="{DynamicResource ListItemDetailTextStyle}"
+                                       FontSize="{StaticResource LblDetailFontSize}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

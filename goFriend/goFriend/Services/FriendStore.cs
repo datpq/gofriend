@@ -25,7 +25,7 @@ namespace goFriend.Services
         {
             var client = GetHttpClient();
             client.DefaultRequestHeaders.Add("token", App.User.Token.ToString());
-            Logger.Debug($"token={App.User.Token}");
+            Logger.Debug($"id={App.User.Id}, token={App.User.Token}");
             return client;
         }
 
@@ -113,22 +113,23 @@ namespace goFriend.Services
 
                 var client = GetSecuredHttpClient();
                 var response = await client.GetAsync($"api/Friend/GetGroups/{App.User.Id}");
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var jsonString = response.Content.ReadAsStringAsync();
-                    jsonString.Wait();
-                    //Logger.Debug($"jsonString: {jsonString.Result}");
                     result = JsonConvert.DeserializeObject<IEnumerable<Tuple<Group, bool, bool>>>(jsonString.Result);
                     //result = await response.Content.ReadAsAsync<IEnumerable<Tuple<Group, bool, bool>>>();
                 }
                 else
                 {
-                    var msg = await response.Content.ReadAsAsync<Message>();
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
                     Logger.Error($"Error: {msg}");
                 }
-                UserDialogs.Instance.HideLoading();
-
                 return result;
             }
             catch (Exception e)

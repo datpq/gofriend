@@ -222,6 +222,9 @@
   <data name="Search" xml:space="preserve">
     <value>Tìm kiếm</value>
   </data>
+  <data name="SearchBarPlaceHolder" xml:space="preserve">
+    <value>Nhập từ tìm kiếm</value>
+  </data>
   <data name="SelectGender" xml:space="preserve">
     <value>Chọn giới tính</value>
   </data>
