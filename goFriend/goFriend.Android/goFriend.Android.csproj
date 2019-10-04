@@ -87,6 +87,7 @@
     <Compile Include="NLogLogger.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="NLogManager.cs" />
+    <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Renderers\MyEntryRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -163,12 +164,6 @@
     <AndroidResource Include="Resources\drawable\splash_screen.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\eye_off24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\eye_on24.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\hn9194_25.png" />
   </ItemGroup>
   <ItemGroup>
@@ -187,10 +182,14 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\hn9194.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\default_female.jpg" />
+    <AndroidResource Include="Resources\drawable\group.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\default_male.jpg" />
+    <AndroidResource Include="Resources\drawable\group_admin.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

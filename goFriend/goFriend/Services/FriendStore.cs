@@ -6,6 +6,7 @@ using Xamarin.Essentials;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using Xamarin.Forms;
@@ -100,19 +101,21 @@ namespace goFriend.Services
             return result;
         }
 
-        public async Task<IEnumerable<Tuple<Group, bool, bool>>> GetGroups()
+        public async Task<GroupCategory> GetGroupCategory(int groupId, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
-            IEnumerable<Tuple<Group, bool, bool>> result = null;
+            GroupCategory result = null;
             try
             {
-                Logger.Debug("GetGroups.BEGIN");
+                Logger.Debug($"GetGroupCategory.BEGIN(groupId={groupId}, useCache={useCache})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
 
                 if (!IsConnected) return null;
 
                 var client = GetSecuredHttpClient();
-                var response = await client.GetAsync($"api/Friend/GetGroups/{App.User.Id}");
+                var requestUrl = $"api/Friend/GetGroupCategory/{App.User.Id}/{groupId}/useCache={useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
                 Logger.Debug($"StatusCode: {response.StatusCode}");
 
                 var jsonString = response.Content.ReadAsStringAsync();
@@ -121,18 +124,85 @@ namespace goFriend.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    result = JsonConvert.DeserializeObject<IEnumerable<Tuple<Group, bool, bool>>>(jsonString.Result);
-                    //result = await response.Content.ReadAsAsync<IEnumerable<Tuple<Group, bool, bool>>>();
+                    result = JsonConvert.DeserializeObject<GroupCategory>(jsonString.Result);
                 }
                 else
                 {
                     var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
                     //var msg = await response.Content.ReadAsAsync<Message>();
-                    Logger.Error($"Error: {msg}");
+                    throw new GoException(msg);
                 }
+
                 return result;
             }
-            catch (Exception e)
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw;
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                UserDialogs.Instance.HideLoading();
+                Logger.Debug($"GetGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<ApiGetGroupsModel>> GetGroups(bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<ApiGetGroupsModel> result = null;
+            try
+            {
+                Logger.Debug($"GetGroups.BEGIN(useCache={useCache})");
+                UserDialogs.Instance.ShowLoading(res.Processing);
+
+                if (!IsConnected) return null;
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetGroups/{App.User.Id}/useCache={useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupsModel>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw;
+            }
+            catch (Exception e) //Unknown error
             {
                 Logger.Error(e.ToString());
                 return result;

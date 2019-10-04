@@ -30,7 +30,7 @@ namespace goFriend.Views
         public void ImgShowPass_Tap(object sender, EventArgs args)
         {
             EntryPassword.IsPassword = !EntryPassword.IsPassword;
-            ImgShowPass.Source = EntryPassword.IsPassword ? "eye_off24.png" : "eye_on24.png";
+            //ImgShowPass.Source = EntryPassword.IsPassword ? "eye_off.png" : "eye_on.png";
         }
 
         private void CmdLogin_Click(object sender, EventArgs e)

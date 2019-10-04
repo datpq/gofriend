@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Facebook;
 using goFriend.DataModel;
 using goFriend.MobileAppService.Data;
+using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
 
@@ -16,8 +20,11 @@ namespace goFriend.MobileAppService.Controllers
     [Route("api/Friend")]
     public class FriendController : Controller
     {
+        private readonly IOptions<AppSettingsModel> _appSettings;
+        private readonly IMemoryCache _memoryCache;
         private readonly IDataRepository _dataRepo;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected readonly string CacheNameSpace;
 
         private static readonly Message MsgMissingToken = new Message { Code = MessageCode.MissingToken, Msg = "Missing Token" };
         private static readonly Message MsgInvalidState = new Message { Code = MessageCode.InvalidState, Msg = "Invalid State" };
@@ -27,9 +34,24 @@ namespace goFriend.MobileAppService.Controllers
         private static readonly Message MsgUserNotFound = new Message { Code = MessageCode.UserNotFound, Msg = "User not found." };
         private static readonly Message MsgWrongToken = new Message { Code = MessageCode.UserTokenError, Msg = "Wrong Token" };
 
-        public FriendController(IDataRepository dataRepo)
+        public FriendController(IOptions<AppSettingsModel> appSettings, IMemoryCache memoryCache, IDataRepository dataRepo)
         {
+            _appSettings = appSettings;
+            _memoryCache = memoryCache;
             _dataRepo = dataRepo;
+            CacheNameSpace = GetType().FullName;
+        }
+
+        protected string CurrentMethodName
+        {
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            get
+            {
+                var st = new StackTrace();
+                var sf = st.GetFrame(1);
+
+                return sf.GetMethod().Name;
+            }
         }
 
         // GET: api/Friend
@@ -249,21 +271,89 @@ namespace goFriend.MobileAppService.Controllers
             }
         }
 
-        /**
-         * return a collection of (Group, IsSubscribed, IsSubscriptionActive)
-         * Group, false, false ==> user is not member of this group
-         * Group, true, false ==> user has already subscribed to this group, but the membership is not active yet
-         * Group, true, true ==> user is totally active is this group
-         */
         [HttpGet]
-        [Route("GetGroups/{friendId}")]
-        public ActionResult<IEnumerable<Tuple<Group, bool, bool>>> GetGroups([FromRoute] int friendId, [FromHeader] string token)
+        [Route("GetGroupCategory/{friendId}/{groupId}/{useCache}")]
+        public ActionResult<GroupCategory> GetGroupCategory([FromHeader] string token, [FromRoute] int friendId,
+            [FromRoute] int groupId, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
-            ActionResult<IEnumerable<Tuple<Group, bool, bool>>> result = null;
+            ActionResult<GroupCategory> result = null;
             try
             {
-                Logger.Debug($"BEGIN(friendId={friendId}, token={token})");
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, useCache={useCache})");
+                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cacheTimeout = _appSettings.Value.CacheDefaultTimeout;
+                var cacheKey = $"{cachePrefix}.{friendId}.{groupId}";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as ActionResult<GroupCategory>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(MsgMissingToken.Msg);
+                    return BadRequest(MsgMissingToken);
+                }
+
+                result = _dataRepo.Get<GroupCategory>(x => x.Group.Id == groupId);
+
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddSeconds(cacheTimeout));
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, MsgWrongToken.Msg);
+                return BadRequest(MsgWrongToken);
+            }
+            catch (InvalidOperationException e)
+            {
+                Logger.Error(e, MsgUserNotFound.Msg);
+                return BadRequest(MsgUserNotFound);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, MsgUnknown.Msg);
+                return BadRequest(MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetGroups/{friendId}/{useCache}")]
+        public ActionResult<IEnumerable<ApiGetGroupsModel>> GetGroups([FromHeader] string token, [FromRoute] int friendId,
+            bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<IEnumerable<ApiGetGroupsModel>> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache})");
+                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cacheTimeout = _appSettings.Value.CacheDefaultTimeout;
+                var cacheKey = $"{cachePrefix}.{friendId}";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupsModel>>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
                 if (string.IsNullOrEmpty(token))
                 {
                     Logger.Warn(MsgMissingToken.Msg);
@@ -279,10 +369,26 @@ namespace goFriend.MobileAppService.Controllers
 
                 var registeredGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friend.Id).AsQueryable().Include(x => x.Group).ToList();
                 Logger.Debug($"registeredGroups={JsonConvert.SerializeObject(registeredGroups.Select(x => x.Group.Name))}");
-                result = registeredGroups.Select(x => new Tuple<Group, bool, bool>(x.Group, true, x.Active))
+
+                result = registeredGroups.Select(x => new ApiGetGroupsModel
+                {
+                    Group = x.Group,
+                    IsMember = true,
+                    IsActiveMember = x.Active,
+                    MemberCount = _dataRepo.GetMany<GroupFriend>(y => y.GroupId == x.GroupId && y.Active).Count()
+                })
                     .Union(_dataRepo.GetMany<Group>(x => x.Active && !registeredGroups.Select(y => y.GroupId).Contains(x.Id))
-                        .Select(x => new Tuple<Group, bool, bool>(x, false, false))).ToList();
+                        .Select(x => new ApiGetGroupsModel
+                        {
+                            Group = x,
+                            IsMember = false,
+                            IsActiveMember = false,
+                            MemberCount = _dataRepo.GetMany<GroupFriend>(y => y.GroupId == x.Id && y.Active).Count()
+                        })).ToList();
+
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddSeconds(cacheTimeout));
                 return result;
             }
             catch(FormatException e)

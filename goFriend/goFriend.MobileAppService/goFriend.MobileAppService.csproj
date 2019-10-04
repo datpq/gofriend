@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Models\AppSettingsModel.cs" />
     <Compile Include="Models\IItemRepository.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemRepository.cs" />

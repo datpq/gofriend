@@ -186,8 +186,14 @@
   <data name="Map" xml:space="preserve">
     <value>Bản đồ</value>
   </data>
+  <data name="members" xml:space="preserve">
+    <value>thành viên</value>
+  </data>
   <data name="MemberSince" xml:space="preserve">
     <value>Thành viên từ {0}</value>
+  </data>
+  <data name="MsgErrWrongToken" xml:space="preserve">
+    <value>Lỗi kết nối. Xin vui lòng đăng xuất và đăng nhập trở lại.</value>
   </data>
   <data name="MsgInactiveUserWarning" xml:space="preserve">
     <value>Tài khoản của bạn chưa được kích hoạt. Xin vui lòng thử lại sau.</value>

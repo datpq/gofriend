@@ -11,6 +11,14 @@
     <Compile Remove="Models\User.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Images\default_female.jpg" />
+    <None Remove="Images\default_male.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\default_female.jpg" />
+    <EmbeddedResource Include="Images\default_male.jpg" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Acr.UserDialogs" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Rg.Plugins.Popup">

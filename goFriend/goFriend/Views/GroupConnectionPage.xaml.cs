@@ -13,7 +13,7 @@ namespace goFriend.Views
     public partial class GroupConnectionPage : ContentPage
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
-        private IEnumerable<Tuple<Group, bool, bool>> _groups;
+        private IEnumerable<ApiGetGroupsModel> _groups;
 
         public GroupConnectionPage()
         {
@@ -23,12 +23,40 @@ namespace goFriend.Views
                 Navigation.PushAsync(
                     new SearchPage(res.Groups, async () =>
                     {
-                        _groups = await App.FriendStore.GetGroups();
-                        var groupList = _groups.OrderBy(x => x.Item2 ? 0 : 1).ThenBy(x => x.Item3 ? 0 : 1)
-                            .Select(x => new Tuple<string, string, int>(x.Item1.Name, x.Item1.Desc, x.Item1.Id));
-                        Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
-                        return groupList;
-                    }, (selectedItem) =>
+                        try
+                        {
+                            _groups = await App.FriendStore.GetGroups();
+                            var groupList = _groups.Select(x => new SearchItemModel
+                            {
+                                Text = x.Group.Name,
+                                Description = x.Group.Desc,
+                                Id = x.Group.Id,
+                                ItemType = x.IsActiveMember ? 0 : x.IsMember ? 1 : 2,
+                                SubItemCount = x.MemberCount,
+                                ImageSource = x.Group.Name == "Hanoi9194" ? "group_admin.png" : "group.png",
+                                ImageForeground = x.Group.Name == "Hanoi9194" ? Color.BlueViolet : (x.Group.Name == "Hanoi9194XaXu" ? (Color)Application.Current.Resources["ColorPrimary"] : (x.Group.Name == "Hanoi9194XaXu-Australia" ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.LightGray))
+                            }).OrderBy(x => x.ItemType);
+                            //Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
+                            return groupList;
+                        }
+                        catch (GoException ex)
+                        {
+                            switch (ex.Msg.Code)
+                            {
+                                case MessageCode.UserTokenError:
+                                    App.DisplayMsgError(res.MsgErrWrongToken);
+                                    return null;
+                                default:
+                                    App.DisplayMsgError(ex.Msg.Msg);
+                                    return null;
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            App.DisplayMsgError(ex.Message);
+                            return null;
+                        }
+                    }, async (selectedItem) =>
                     {
                         Logger.Debug($"selectedItem={JsonConvert.SerializeObject(selectedItem)}");
                         TxtGroup.Text = selectedItem.Text;
@@ -38,12 +66,13 @@ namespace goFriend.Views
                             Grid.Children.Remove(child);
                         }
 
-                        var selectedTuple = _groups.Single(x => x.Item1.Id == selectedItem.Id);
-                        var sg = selectedTuple.Item1;
+                        var selectedGroup = _groups.Single(x => x.Group.Id == selectedItem.Id).Group;
+                        var groupCategory = await App.FriendStore.GetGroupCategory(selectedGroup.Id);
+
                         var arrCatDesc = new[]
                         {
-                            sg.Cat1Desc, sg.Cat2Desc, sg.Cat3Desc, sg.Cat4Desc, sg.Cat5Desc,
-                            sg.Cat6Desc, sg.Cat7Desc, sg.Cat8Desc, sg.Cat9Desc
+                            selectedGroup.Cat1Desc, selectedGroup.Cat2Desc, selectedGroup.Cat3Desc, selectedGroup.Cat4Desc, selectedGroup.Cat5Desc,
+                            selectedGroup.Cat6Desc, selectedGroup.Cat7Desc, selectedGroup.Cat8Desc, selectedGroup.Cat9Desc
                         }.Where(x => !string.IsNullOrEmpty(x));
                         var row = 1;
                         foreach (var cat in arrCatDesc)

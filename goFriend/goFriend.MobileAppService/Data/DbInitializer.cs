@@ -34,7 +34,7 @@ namespace goFriend.MobileAppService.Data
                 new Group
                 {
                     Name = "Amser9497", Desc = "Cấp 3 khóa 94-97 Hà Nội Amsterdam", Cat1Desc = "Trường", Cat2Desc = "Niên khóa", Cat3Desc = "Lớp", Cat4Desc = null,
-                    Active = true, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now,
+                    Active = false, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now,
                     Info = null,
                     Logo = null
                 },

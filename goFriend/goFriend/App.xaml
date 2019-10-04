@@ -6,6 +6,7 @@
         <Color x:Key="ColorPageBackground">White</Color>
         <Color x:Key="ColorTabPageBackground">#F3F3F3</Color>
         <Color x:Key="ColorPrimary">#61A830</Color>
+        <Color x:Key="ColorPrimaryLight">#8bf244</Color>
         <Color x:Key="ColorTitle">White</Color>
         <Color x:Key="ColorLabel">Black</Color>
         <x:Int32 x:Key="BtnCornerRadius">20</x:Int32>

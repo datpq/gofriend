@@ -9,6 +9,7 @@ namespace goFriend.Services
     {
         Task<Friend> LoginWithFacebook(string authToken, string deviceInfo);
         Task<bool> SaveBasicInfo(Friend friend);
-        Task<IEnumerable<Tuple<Group, bool, bool>>> GetGroups();
+        Task<IEnumerable<ApiGetGroupsModel>> GetGroups(bool useCache = true);
+        Task<GroupCategory> GetGroupCategory(int groupId, bool useCache = true);
     }
 }

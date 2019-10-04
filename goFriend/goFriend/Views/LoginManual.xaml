@@ -19,7 +19,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions >
                     <Entry IsPassword="True" x:Name="EntryPassword" Placeholder="{x:Static local:res.Password}" PlaceholderColor="{StaticResource ColorPrimary}" Grid.Column="0" Grid.ColumnSpan="2"/>
-                    <Image x:Name="ImgShowPass" Source="eye_off24.png" HorizontalOptions="End" VerticalOptions="Center" Grid.Column="1" >
+                    <Image x:Name="ImgShowPass" HorizontalOptions="End" VerticalOptions="Center" Grid.Column="1" >
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Tapped="ImgShowPass_Tap" NumberOfTapsRequired="1" />
                         </Image.GestureRecognizers>

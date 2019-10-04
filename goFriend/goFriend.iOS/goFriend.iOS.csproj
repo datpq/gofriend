@@ -80,6 +80,7 @@
     <Compile Include="FacebookManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Renderers\MyEntryRenderer.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
@@ -201,5 +202,11 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ic_search_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\group.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\group_admin.png" />
   </ItemGroup>
 </Project>

@@ -268,11 +268,29 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to members.
+        /// </summary>
+        public static string members {
+            get {
+                return ResourceManager.GetString("members", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Member since {0}.
         /// </summary>
         public static string MemberSince {
             get {
                 return ResourceManager.GetString("MemberSince", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Api connection error. Please relogin and try again!.
+        /// </summary>
+        public static string MsgErrWrongToken {
+            get {
+                return ResourceManager.GetString("MsgErrWrongToken", resourceCulture);
             }
         }
         

@@ -186,8 +186,14 @@
   <data name="Map" xml:space="preserve">
     <value>Map</value>
   </data>
+  <data name="members" xml:space="preserve">
+    <value>members</value>
+  </data>
   <data name="MemberSince" xml:space="preserve">
     <value>Member since {0}</value>
+  </data>
+  <data name="MsgErrWrongToken" xml:space="preserve">
+    <value>Api connection error. Please relogin and try again!</value>
   </data>
   <data name="MsgInactiveUserWarning" xml:space="preserve">
     <value>Your subscribtion is now inactive. Please check again later !</value>

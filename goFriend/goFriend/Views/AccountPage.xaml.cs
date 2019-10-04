@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using goFriend.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -56,7 +57,8 @@ namespace goFriend.Views
                 }
                 else
                 {
-                    ImgAvatar.Source = App.User.Gender == "female" ? "default_female.jpg" : "default_male.jpg";
+                    ImgAvatar.Source = ImageSource.FromResource(App.User.Gender == "female" ?
+                        "goFriend.Images.default_female.jpg" : "goFriend.Images.default_male.jpg", typeof(ImageResourceExtension).GetTypeInfo().Assembly);
                 }
                 LblFullName.Text = App.User.Name;
                 LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());

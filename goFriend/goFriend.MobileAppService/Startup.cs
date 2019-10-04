@@ -47,6 +47,7 @@ namespace goFriend.MobileAppService
             DbInitializer.Initialize(dbContext);
 
             services.AddMvc();
+            services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IItemRepository, ItemRepository>();
             services.AddScoped<DbContext, FriendDbContext>();
             services.AddScoped<IDataRepository, DataRepository>();

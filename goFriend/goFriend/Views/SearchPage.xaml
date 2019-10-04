@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              x:Class="goFriend.Views.SearchPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -27,15 +28,41 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell Tapped="Cell_OnTapped">
-                            <StackLayout Padding="10">
-                                <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}"
-                                       LineBreakMode="NoWrap" 
-                                       Style="{DynamicResource ListItemTextStyle}" 
-                                       FontSize="{StaticResource LblFontSize}" />
-                                <Label Text="{Binding Description}"
-                                       LineBreakMode="NoWrap"
-                                       Style="{DynamicResource ListItemDetailTextStyle}"
-                                       FontSize="{StaticResource LblDetailFontSize}" />
+                            <StackLayout Padding="10,5,10,5" Orientation="Vertical">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--<Image Source="{local:ImageResource goFriend.Images.group.png}" Margin="10" BackgroundColor="Aqua"-->
+                                    <controls:IconView Source="{Binding ImageSource}" Foreground="{Binding ImageForeground}" Margin="5" WidthRequest="26" HeightRequest="26"
+                                           Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" />
+                                    <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
+                                           Grid.Row="0" Grid.Column="1"
+                                           LineBreakMode="TailTruncation"
+                                           Style="{DynamicResource ListItemTextStyle}" 
+                                           FontSize="{StaticResource LblFontSize}" />
+                                    <Label Text="{Binding SubItemCount}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
+                                           Grid.Row="0" Grid.Column="2"
+                                           LineBreakMode="NoWrap" HorizontalTextAlignment="Center"
+                                           Style="{DynamicResource ListItemTextStyle}"
+                                           FontSize="{StaticResource LblFontSize}" />
+                                    <Label Text="{Binding Description}"
+                                           Grid.Row="1" Grid.Column="1"
+                                           LineBreakMode="TailTruncation"
+                                           Style="{DynamicResource ListItemDetailTextStyle}"
+                                           FontSize="{StaticResource LblDetailFontSize}" />
+                                    <Label Text="{Static local:res.members}"
+                                           Grid.Row="1" Grid.Column="2"
+                                           LineBreakMode="NoWrap" HorizontalTextAlignment="Center"
+                                           Style="{DynamicResource ListItemDetailTextStyle}"
+                                           FontSize="{StaticResource LblDetailFontSize}" />
+                                </Grid>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
