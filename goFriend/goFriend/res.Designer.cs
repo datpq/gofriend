@@ -133,6 +133,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Common connection informations.
+        /// </summary>
+        public static string CommonConnectionInfo {
+            get {
+                return ResourceManager.GetString("CommonConnectionInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email.
         /// </summary>
         public static string Email {

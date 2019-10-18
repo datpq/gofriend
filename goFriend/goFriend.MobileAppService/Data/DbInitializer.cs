@@ -47,9 +47,9 @@ namespace goFriend.MobileAppService.Data
 
             var groupCatInfos = new[]
             {
-                new GroupCategory{Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Cat1 = "Hà nội", Cat2 = "91-94"},
-                new GroupCategory{Group = context.Groups.Single(x => x.Name=="Hanoi9194"), Cat1 = "Hà nội", Cat2 = "91-94"},
-                new GroupCategory{Group = context.Groups.Single(x => x.Name=="Amser9497"), Cat1 = "Amsterdam", Cat2 = "94-97"},
+                new GroupFixedCatValues{Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Cat1 = "Hà nội", Cat2 = "91-94"},
+                new GroupFixedCatValues{Group = context.Groups.Single(x => x.Name=="Hanoi9194"), Cat1 = "Hà nội", Cat2 = "91-94"},
+                new GroupFixedCatValues{Group = context.Groups.Single(x => x.Name=="Amser9497"), Cat1 = "Amsterdam", Cat2 = "94-97"},
             };
             foreach (var x in groupCatInfos)
             {
@@ -81,21 +81,21 @@ namespace goFriend.MobileAppService.Data
             var groupFriends = new[]
             {
                 new GroupFriend {Friend = context.Friends.Single(x => x.Email=="gofriend9194@gmail.com"),
-                    Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Active = true,
+                    Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Active = true, UserRight = UserType.Admin,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
                 new GroupFriend {Friend = context.Friends.First(x => x.Email=="gofriend9194@gmail.com"),
-                    Group = context.Groups.Single(x => x.Name == "Hanoi9194"), Active = true,
+                    Group = context.Groups.Single(x => x.Name == "Hanoi9194"), Active = true, UserRight = UserType.Admin,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"),
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"), UserRight = UserType.Basic,
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Active = true,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"),
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"), UserRight = UserType.Basic,
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194"), Active = true,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"),
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"), UserRight = UserType.Basic,
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Active = true,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Amsterdam", Cat4 = "Pháp"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"),
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"), UserRight = UserType.Admin,
                     Group = context.Groups.Single(x => x.Name == "Amser9497"), Active = true,
                     Cat1 = "Amsterdam", Cat2 = "94-97", Cat3 = "Pháp", Cat4 = null},
             };

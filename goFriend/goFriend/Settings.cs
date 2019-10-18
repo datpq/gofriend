@@ -20,5 +20,11 @@ namespace goFriend
             get => JsonConvert.DeserializeObject<Friend>(AppSettings.GetValueOrDefault(nameof(LastUser), string.Empty));
             set => AppSettings.AddOrUpdateValue(nameof(LastUser), JsonConvert.SerializeObject(value));
         }
+
+        public static string LastGroupName
+        {
+            get => AppSettings.GetValueOrDefault(nameof(LastGroupName), string.Empty);
+            set => AppSettings.AddOrUpdateValue(nameof(LastGroupName), value);
+        }
     }
 }

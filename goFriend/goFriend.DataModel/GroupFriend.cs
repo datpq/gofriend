@@ -16,6 +16,7 @@ namespace goFriend.DataModel
         public Group Group { get; set; }
 
         public bool Active { get; set; }
+        public UserType UserRight { get; set; }
 
         [Column(TypeName = "NVARCHAR(50)")]
         public string Cat1 { get; set; }
@@ -35,5 +36,19 @@ namespace goFriend.DataModel
         public string Cat8 { get; set; }
         [Column(TypeName = "NVARCHAR(50)")]
         public string Cat9 { get; set; }
+
+        public string GetCatByIdx(int idx)
+        {
+            var propertyInfo = GetType().GetProperty($"Cat{idx}");
+            var result = (string)propertyInfo?.GetValue(this, null);
+            return result;
+        }
+    }
+
+    public enum UserType
+    {
+        None = 0,
+        Admin = 1,
+        Basic
     }
 }

@@ -249,4 +249,7 @@
   <data name="UserName" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="CommonConnectionInfo" xml:space="preserve">
+    <value>Common connection informations</value>
+  </data>
 </root>

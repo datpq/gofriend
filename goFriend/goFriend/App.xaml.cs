@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using System.Collections.Generic;
+using Xamarin.Forms;
 using goFriend.Services;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -16,6 +18,9 @@ namespace goFriend
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         public static IFriendStore FriendStore;
 
+        public static Task InitTask;
+        public static IEnumerable<ApiGetGroupsModel> GroupModels;
+
         public App()
         {
             Logger.Info("GoFriend starting new instance...");
@@ -24,8 +29,8 @@ namespace goFriend
             //Thread.CurrentThread.CurrentCulture = res.Culture;
             //Thread.CurrentThread.CurrentUICulture = res.Culture;
 
-            System.AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
-                System.Exception ex = (System.Exception)args.ExceptionObject;
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
+                var ex = (Exception)args.ExceptionObject;
                 Logger.Error("UnhandledException exception");
                 Logger.Error(ex.ToString());
             };
@@ -47,6 +52,8 @@ namespace goFriend
             var appShell = new AppShell();
             appShell.RefreshTabs();
             MainPage = appShell;
+
+            Initialize();
         }
 
         protected override void OnStart()
@@ -66,17 +73,57 @@ namespace goFriend
 
         public static void DisplayMsgInfo(string message)
         {
-            Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
+            Device.BeginInvokeOnMainThread(() => {
+                Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
+            });
+            //Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
         }
 
         public static void DisplayMsgError(string message)
         {
-            Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
+            Device.BeginInvokeOnMainThread(() => {
+                Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
+            });
+            //Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
         }
 
         public static Task<bool> DisplayMsgQuestion(string message)
         {
             return Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept, res.Cancel);
+        }
+
+        public static void Initialize()
+        {
+            InitTask = new Task(async () =>
+            {
+                try
+                {
+                    Logger.Debug("BEGIN");
+                    GroupModels = await FriendStore.GetGroups();
+                }
+                catch (GoException e)
+                {
+                    Logger.Error(e.ToString());
+                    switch (e.Msg.Code)
+                    {
+                        case MessageCode.UserTokenError:
+                            DisplayMsgError(res.MsgErrWrongToken);
+                            break;
+                        default:
+                            DisplayMsgError(e.Msg.Msg);
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e.ToString());
+                }
+                finally
+                {
+                    Logger.Debug("END");
+                }
+            });
+            InitTask.Start();
         }
     }
 }

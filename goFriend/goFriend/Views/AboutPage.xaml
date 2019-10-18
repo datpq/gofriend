@@ -7,9 +7,11 @@
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackground" />
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
             </On>
-            <On Platform="iOS">White</On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
         </OnPlatform>
     </ContentPage.BackgroundColor>
     <ContentPage.BindingContext>

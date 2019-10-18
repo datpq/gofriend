@@ -1,5 +1,6 @@
 ﻿using goFriend.DataModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace goFriend.MobileAppService.Data
 {
@@ -15,8 +16,8 @@ namespace goFriend.MobileAppService.Data
             modelBuilder.Entity<Group>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Friend>().ToTable("Friends").HasIndex(x => x.FacebookId).IsUnique();
             modelBuilder.Entity<Friend>().Property(x => x.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<GroupCategory>().ToTable("GroupCategory");
-            modelBuilder.Entity<GroupCategory>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<GroupFixedCatValues>().ToTable("GroupFixedCatValues");
+            modelBuilder.Entity<GroupFixedCatValues>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<GroupFriend>().ToTable("GroupFriends");
             modelBuilder.Entity<GroupFriend>().HasKey(x => new { x.FriendId, x.GroupId });
             modelBuilder.Entity<GroupFriend>()
@@ -27,11 +28,15 @@ namespace goFriend.MobileAppService.Data
                 .HasOne(x => x.Friend)
                 .WithMany(x => x.GroupFriends)
                 .HasForeignKey(x => x.FriendId);
+            modelBuilder.Entity<GroupFriend>().Property(x => x.UserRight)
+                .HasConversion(new EnumToNumberConverter<UserType, int>());
+            modelBuilder.Entity<GroupPredefinedCategory>().ToTable("GroupPredefinedCategory");
+            modelBuilder.Entity<GroupPredefinedCategory>().Property(x => x.Id).ValueGeneratedOnAdd();
         }
 
         public DbSet<Friend> Friends { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupFriend> GroupFriends { get; set; }
-        public DbSet<GroupCategory> GroupCatInfos { get; set; }
+        public DbSet<GroupFixedCatValues> GroupCatInfos { get; set; }
     }
 }

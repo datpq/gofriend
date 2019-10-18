@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace goFriend.DataModel
@@ -51,6 +52,15 @@ namespace goFriend.DataModel
         public override string ToString()
         {
             return $"{Id}|{Name}";
+        }
+
+        public IEnumerable<string> GetCatDescList()
+        {
+            var result = new[]
+            {
+                Cat1Desc, Cat2Desc, Cat3Desc, Cat4Desc, Cat5Desc, Cat6Desc, Cat7Desc, Cat8Desc, Cat9Desc
+            }.Where(x => !string.IsNullOrEmpty(x));
+            return result;
         }
     }
 }

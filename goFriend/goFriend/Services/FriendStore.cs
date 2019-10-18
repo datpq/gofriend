@@ -101,19 +101,19 @@ namespace goFriend.Services
             return result;
         }
 
-        public async Task<GroupCategory> GetGroupCategory(int groupId, bool useCache = true)
+        public async Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
-            GroupCategory result = null;
+            GroupFixedCatValues result = null;
             try
             {
-                Logger.Debug($"GetGroupCategory.BEGIN(groupId={groupId}, useCache={useCache})");
-                UserDialogs.Instance.ShowLoading(res.Processing);
+                Logger.Debug($"GetGroupFixedCatValues.BEGIN(groupId={groupId}, useCache={useCache})");
+                //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 if (!IsConnected) return null;
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetGroupCategory/{App.User.Id}/{groupId}/useCache={useCache}";
+                var requestUrl = $"api/Friend/GetGroupFixedCatValues/{App.User.Id}/{groupId}/{useCache}";
                 Logger.Debug($"requestUrl: {requestUrl}");
                 var response = await client.GetAsync(requestUrl);
                 Logger.Debug($"StatusCode: {response.StatusCode}");
@@ -124,7 +124,7 @@ namespace goFriend.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    result = JsonConvert.DeserializeObject<GroupCategory>(jsonString.Result);
+                    result = JsonConvert.DeserializeObject<GroupFixedCatValues>(jsonString.Result);
                 }
                 else
                 {
@@ -152,8 +152,69 @@ namespace goFriend.Services
             }
             finally
             {
-                UserDialogs.Instance.HideLoading();
-                Logger.Debug($"GetGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //UserDialogs.Instance.HideLoading();
+                Logger.Debug($"GetGroupFixedCatValues.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues(int groupId, bool useCache = true, params string[] arrCatValues)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<ApiGetGroupCatValuesModel> result = null;
+            try
+            {
+                Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useCache={useCache}, {string.Join(", ", arrCatValues)})");
+                //UserDialogs.Instance.ShowLoading(res.Processing);
+
+                if (!IsConnected) return null;
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetGroupCatValues/{App.User.Id}/{groupId}/{useCache}";
+                if (arrCatValues.Length > 0)
+                {
+                    requestUrl = $"{requestUrl}?{string.Join("&", arrCatValues)}";
+                }
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupCatValuesModel>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupCatValuesModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw;
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                //UserDialogs.Instance.HideLoading();
+                Logger.Debug($"GetGroupCatValues.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -164,12 +225,12 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"GetGroups.BEGIN(useCache={useCache})");
-                UserDialogs.Instance.ShowLoading(res.Processing);
+                //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 if (!IsConnected) return null;
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetGroups/{App.User.Id}/useCache={useCache}";
+                var requestUrl = $"api/Friend/GetGroups/{App.User.Id}/{useCache}";
                 Logger.Debug($"requestUrl: {requestUrl}");
                 var response = await client.GetAsync(requestUrl);
                 Logger.Debug($"StatusCode: {response.StatusCode}");
@@ -209,7 +270,7 @@ namespace goFriend.Services
             }
             finally
             {
-                UserDialogs.Instance.HideLoading();
+                //UserDialogs.Instance.HideLoading();
                 Logger.Debug($"GetGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }

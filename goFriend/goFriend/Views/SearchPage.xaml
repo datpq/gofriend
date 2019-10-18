@@ -5,25 +5,50 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
-             xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
-             x:Class="goFriend.Views.SearchPage">
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             xmlns:views="clr-namespace:goFriend.Views"
+             xmlns:vm="clr-namespace:goFriend.ViewModels"
+             x:Class="goFriend.Views.SearchPage"
+             Title="{Binding Title}">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackground" />
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
             </On>
-            <On Platform="iOS">White</On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
         </OnPlatform>
     </ContentPage.BackgroundColor>
+    <ContentPage.BindingContext>
+        <vm:SearchViewModel />
+    </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout.Padding>
+            <StackLayout.Margin>
                 <OnPlatform x:TypeArguments="Thickness">
                     <On Platform="Android, WinPhone">0</On>
                     <On Platform="iOS">0,60,0,40</On>
                 </OnPlatform>
-            </StackLayout.Padding>
-            <SearchBar x:Name="Sb" Placeholder="{Static local:res.SearchBarPlaceHolder}" TextChanged="Sb_OnTextChanged"/>
+            </StackLayout.Margin>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <SearchBar x:Name="Sb" Placeholder="{Static local:res.SearchBarPlaceHolder}" Text="{Binding Text}" FontAttributes="Bold"
+                       SearchCommand="{Binding SearchCommand}" SearchCommandParameter="{Binding Text, Source={x:Reference Sb}}"
+                       Grid.Column="0">
+                    <SearchBar.Behaviors>
+                        <views:TextChangedBehavior />
+                    </SearchBar.Behaviors>
+                </SearchBar>
+                <Button BackgroundColor="LightGray"
+                        Text="OK" WidthRequest="45" Grid.Column="1" Clicked="Button_OnClicked" IsVisible="{Binding AcceptNotFoundValue}"/>
+            </Grid>
             <ListView x:Name="LvResults" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -40,7 +65,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <!--<Image Source="{local:ImageResource goFriend.Images.group.png}" Margin="10" BackgroundColor="Aqua"-->
-                                    <controls:IconView Source="{Binding ImageSource}" Foreground="{Binding ImageForeground}" Margin="5" WidthRequest="26" HeightRequest="26"
+                                    <controls:IconView Source="{Binding ImageSource}" Foreground="{Binding ImageForeground}" Margin="5" WidthRequest="{Binding ImageSize}" HeightRequest="{Binding ImageSize}"
                                            Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" />
                                     <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
                                            Grid.Row="0" Grid.Column="1"

@@ -10,35 +10,57 @@
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackground" />
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
             </On>
-            <On Platform="iOS">White</On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
         </OnPlatform>
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
-        <StackLayout Margin="10">
-            <StackLayout.Padding>
+        <StackLayout>
+            <StackLayout.Margin>
                 <OnPlatform x:TypeArguments="Thickness">
                     <On Platform="Android, WinPhone">0</On>
                     <On Platform="iOS">0,60,0,40</On>
                 </OnPlatform>
-            </StackLayout.Padding>
-            <Grid x:Name="Grid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Label x:Name="LblGroup" Text="{Static local:res.Groups}" VerticalOptions="Center"
-                       TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"
-                       Grid.Row="0" Grid.Column="0">
-                </Label>
-                <Entry x:Name="TxtGroup" FontSize="{StaticResource LblFontSize}" VerticalOptions="Center"
-                       Grid.Row="0" Grid.Column="1"/>
-            </Grid>
+            </StackLayout.Margin>
+            <SearchBar x:Name="SbGroup" Placeholder="{Static local:res.Groups}" TextChanged="SbGroup_OnTextChanged" FontAttributes="Bold" >
+                <SearchBar.BackgroundColor>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="Android, WinPhone">
+                            <StaticResource Key="ColorTabPageBackgroundAndroid" />
+                        </On>
+                        <On Platform="iOS">
+                            <StaticResource Key="ColorTabPageBackgroundIOS" />
+                        </On>
+                    </OnPlatform>
+                </SearchBar.BackgroundColor>
+            </SearchBar>
+            <Frame BorderColor="LightGray" CornerRadius="5" Padding="8" HorizontalOptions="Center" Margin="10">
+                <StackLayout Margin="10">
+                    <Label Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" HorizontalTextAlignment="Center"/>
+                    <BoxView Color="LightGray" HeightRequest="2" HorizontalOptions="Fill" />
+                    <Grid x:Name="Grid" ColumnSpacing="20" HorizontalOptions="Center" Margin="0,10,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+            <ScrollView>
+                <StackLayout x:Name="SlMain"></StackLayout>
+            </ScrollView>
+            <Button Margin="10" WidthRequest="100" x:Name="CmdSave" HorizontalOptions="Center" VerticalOptions="EndAndExpand"
+                    CornerRadius="{StaticResource BtnCornerRadius}"
+                    BackgroundColor="{StaticResource ColorPrimary}"
+                    TextColor="{StaticResource ColorTitle}"
+                    Text="{x:Static local:res.Save}" Clicked="CmdSave_OnClicked" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
