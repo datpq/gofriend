@@ -2,13 +2,13 @@
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Xamarin.Essentials;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using Acr.UserDialogs;
 using goFriend.DataModel;
+using Plugin.Connectivity;
 using Xamarin.Forms;
 
 namespace goFriend.Services
@@ -30,7 +30,15 @@ namespace goFriend.Services
             return client;
         }
 
-        private static bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
+        private static void Validate()
+        {
+            if (!CrossConnectivity.Current.IsConnected)
+            {
+                throw new GoException(Message.MsgNoInternet);
+            }
+        }
+
+        //private static bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
 
         public async Task<Friend> LoginWithFacebook(string authToken, string deviceInfo)
         {
@@ -41,8 +49,9 @@ namespace goFriend.Services
                 Logger.Debug($"LoginWithFacebook.BEGIN(authToken={authToken}, deviceInfo={deviceInfo})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
 
-                if (authToken == null || !IsConnected)
-                    return null;
+                Validate();
+
+                if (authToken == null) return null;
 
                 var client = GetHttpClient();
                 client.DefaultRequestHeaders.Add("authToken", authToken);
@@ -76,8 +85,9 @@ namespace goFriend.Services
         public async Task<bool> SaveBasicInfo(Friend friend)
         {
             Logger.Debug($"SaveBasicInfo.BEGIN({friend})");
-            if (friend == null || !IsConnected)
-                return false;
+
+            Validate();
+            if (friend == null) return false;
 
             var serializedFriend = JsonConvert.SerializeObject(friend);
 
@@ -110,7 +120,7 @@ namespace goFriend.Services
                 Logger.Debug($"GetGroupFixedCatValues.BEGIN(groupId={groupId}, useCache={useCache})");
                 //UserDialogs.Instance.ShowLoading(res.Processing);
 
-                if (!IsConnected) return null;
+                Validate();
 
                 var client = GetSecuredHttpClient();
                 var requestUrl = $"api/Friend/GetGroupFixedCatValues/{App.User.Id}/{groupId}/{useCache}";
@@ -143,7 +153,7 @@ namespace goFriend.Services
             catch (WebException e)
             {
                 Logger.Error(e.ToString());
-                throw;
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
             }
             catch (Exception e) //Unknown error
             {
@@ -166,7 +176,7 @@ namespace goFriend.Services
                 Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useCache={useCache}, {string.Join(", ", arrCatValues)})");
                 //UserDialogs.Instance.ShowLoading(res.Processing);
 
-                if (!IsConnected) return null;
+                Validate();
 
                 var client = GetSecuredHttpClient();
                 var requestUrl = $"api/Friend/GetGroupCatValues/{App.User.Id}/{groupId}/{useCache}";
@@ -204,7 +214,7 @@ namespace goFriend.Services
             catch (WebException e)
             {
                 Logger.Error(e.ToString());
-                throw;
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
             }
             catch (Exception e) //Unknown error
             {
@@ -218,19 +228,19 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<ApiGetGroupsModel>> GetGroups(bool useCache = true)
+        public async Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<ApiGetGroupsModel> result = null;
             try
             {
-                Logger.Debug($"GetGroups.BEGIN(useCache={useCache})");
+                Logger.Debug($"GetMyGroups.BEGIN(useCache={useCache})");
                 //UserDialogs.Instance.ShowLoading(res.Processing);
 
-                if (!IsConnected) return null;
+                Validate();
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetGroups/{App.User.Id}/{useCache}";
+                var requestUrl = $"api/Friend/GetMyGroups/{App.User.Id}/{useCache}";
                 Logger.Debug($"requestUrl: {requestUrl}");
                 var response = await client.GetAsync(requestUrl);
                 Logger.Debug($"StatusCode: {response.StatusCode}");
@@ -261,7 +271,64 @@ namespace goFriend.Services
             catch (WebException e)
             {
                 Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                //UserDialogs.Instance.HideLoading();
+                Logger.Debug($"GetMyGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<ApiGetGroupsModel>> GetGroups(string searchText = null, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<ApiGetGroupsModel> result = null;
+            try
+            {
+                Logger.Debug($"GetGroups.BEGIN(useCache={useCache})");
+                //UserDialogs.Instance.ShowLoading(res.Processing);
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetGroups/{App.User.Id}/{useCache}?searchText={searchText}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupsModel>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
                 throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message});
             }
             catch (Exception e) //Unknown error
             {
@@ -272,6 +339,53 @@ namespace goFriend.Services
             {
                 //UserDialogs.Instance.HideLoading();
                 Logger.Debug($"GetGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<bool> SubscribeGroup(GroupFriend groupFriend)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            var result = false;
+            try
+            {
+                Logger.Debug($"SubscribeGroup.BEGIN(groupFriend={groupFriend})");
+
+                Validate();
+
+                var serializedObject = JsonConvert.SerializeObject(groupFriend);
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = "api/Friend/GroupSubscription";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.PostAsync(requestUrl, new StringContent(serializedObject, Encoding.UTF8, "application/json"));
+
+                result = response.IsSuccessStatusCode;
+                if (!result)
+                {
+                    var msg = await response.Content.ReadAsAsync<Message>();
+                    Logger.Error($"Error: {msg}");
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"SubscribeGroup.END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
     }

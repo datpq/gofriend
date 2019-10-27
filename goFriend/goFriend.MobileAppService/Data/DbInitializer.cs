@@ -53,7 +53,7 @@ namespace goFriend.MobileAppService.Data
             };
             foreach (var x in groupCatInfos)
             {
-                context.GroupCatInfos.Add(x);
+                context.GroupFixedCatValues.Add(x);
             }
             context.SaveChanges();
 
@@ -86,13 +86,13 @@ namespace goFriend.MobileAppService.Data
                 new GroupFriend {Friend = context.Friends.First(x => x.Email=="gofriend9194@gmail.com"),
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194"), Active = true, UserRight = UserType.Admin,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"), UserRight = UserType.Basic,
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"), UserRight = UserType.Normal,
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Active = true,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"), UserRight = UserType.Basic,
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="datpq@free.fr"), UserRight = UserType.Normal,
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194"), Active = true,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Chuyên ĐHTH", Cat4 = "Toán A"},
-                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"), UserRight = UserType.Basic,
+                new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"), UserRight = UserType.Normal,
                     Group = context.Groups.Single(x => x.Name == "Hanoi9194XaXu"), Active = true,
                     Cat1 = "Hà nội", Cat2 = "91-94", Cat3 = "Amsterdam", Cat4 = "Pháp"},
                 new GroupFriend {Friend = context.Friends.First(x => x.Email=="phambaothoauk@gmail.com"), UserRight = UserType.Admin,

@@ -250,6 +250,12 @@
     <value>Email</value>
   </data>
   <data name="CommonConnectionInfo" xml:space="preserve">
-    <value>Điểm chung kết nối</value>
+    <value>ĐIỂM CHUNG</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>THÔNG TIN</value>
+  </data>
+  <data name="MsgGroupSubscriptionPending" xml:space="preserve">
+    <value>Yêu cầu gia nhập nhớm đang trong quá trình xét duyệt. Bạn có thể kiểm tra lại sau hoặc sửa đổi thông tin bằng cách ấn vào nút Sửa.</value>
   </data>
 </root>

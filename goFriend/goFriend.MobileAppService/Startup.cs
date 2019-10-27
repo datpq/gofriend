@@ -51,6 +51,7 @@ namespace goFriend.MobileAppService
             services.AddSingleton<IItemRepository, ItemRepository>();
             services.AddScoped<DbContext, FriendDbContext>();
             services.AddScoped<IDataRepository, DataRepository>();
+            services.AddScoped<ICacheConfigurationService, CacheConfigurationService>();
 
             services.AddSwaggerGen(c =>
             {

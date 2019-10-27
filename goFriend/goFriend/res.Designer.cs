@@ -133,7 +133,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Common connection informations.
+        ///   Looks up a localized string similar to Common connection information.
         /// </summary>
         public static string CommonConnectionInfo {
             get {
@@ -223,6 +223,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        public static string Information {
+            get {
+                return ResourceManager.GetString("Information", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last Name.
         /// </summary>
         public static string LastName {
@@ -300,6 +309,15 @@ namespace goFriend {
         public static string MsgErrWrongToken {
             get {
                 return ResourceManager.GetString("MsgErrWrongToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your subsciption to this group is now in pending. You can check again later or modify the information by clicking on Modify button..
+        /// </summary>
+        public static string MsgGroupSubscriptionPending {
+            get {
+                return ResourceManager.GetString("MsgGroupSubscriptionPending", resourceCulture);
             }
         }
         

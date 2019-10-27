@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using goFriend.DataModel;
 
@@ -9,8 +8,10 @@ namespace goFriend.Services
     {
         Task<Friend> LoginWithFacebook(string authToken, string deviceInfo);
         Task<bool> SaveBasicInfo(Friend friend);
-        Task<IEnumerable<ApiGetGroupsModel>> GetGroups(bool useCache = true);
+        Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useCache = true);
+        Task<IEnumerable<ApiGetGroupsModel>> GetGroups(string searchText = null, bool useCache = true);
         Task<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues(int groupId, bool useCache = true, params string[] arrCatValues);
         Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useCache = true);
+        Task<bool> SubscribeGroup(GroupFriend groupFriend);
     }
 }

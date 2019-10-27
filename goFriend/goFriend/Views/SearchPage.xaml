@@ -31,7 +31,7 @@
                     <On Platform="iOS">0,60,0,40</On>
                 </OnPlatform>
             </StackLayout.Margin>
-            <Grid>
+            <Grid ColumnSpacing="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -45,16 +45,25 @@
                     <SearchBar.Behaviors>
                         <views:TextChangedBehavior />
                     </SearchBar.Behaviors>
+                    <SearchBar.BackgroundColor>
+                        <OnPlatform x:TypeArguments="Color">
+                            <On Platform="Android, WinPhone">
+                                <StaticResource Key="ColorTabPageBackgroundAndroid" />
+                            </On>
+                            <On Platform="iOS">
+                                <StaticResource Key="ColorTabPageBackgroundIOS" />
+                            </On>
+                        </OnPlatform>
+                    </SearchBar.BackgroundColor>
                 </SearchBar>
-                <Button BackgroundColor="LightGray"
-                        Text="OK" WidthRequest="45" Grid.Column="1" Clicked="Button_OnClicked" IsVisible="{Binding AcceptNotFoundValue}"/>
+                <Button x:Name="CmdOk" Text="OK" WidthRequest="45" Grid.Column="1" Clicked="Button_OnClicked" IsVisible="{Binding AcceptNotFoundValue}"/>
             </Grid>
             <ListView x:Name="LvResults" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell Tapped="Cell_OnTapped">
                             <StackLayout Padding="10,5,10,5" Orientation="Vertical">
-                                <Grid>
+                                <Grid RowSpacing="0" ColumnSpacing="0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />

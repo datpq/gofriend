@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Acr.UserDialogs;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -25,6 +25,7 @@ namespace goFriend.Views
             Logger.Debug($"SearchPage.BEGIN(searchText={searchText})");
             InitializeComponent();
 
+            CmdOk.BackgroundColor = Sb.BackgroundColor;
             BindingContext = _searchViewModel = new SearchViewModel
             {
                 Title = title,
@@ -32,24 +33,24 @@ namespace goFriend.Views
                 Text = searchText,
                 SearchCommand = new Command<string>(text =>
                 {
+                    UserDialogs.Instance.ShowLoading(res.Processing);
                     getSearchItemsFunc(text).ContinueWith(task =>
                     {
                         Sb.IsEnabled = true;
                         var searchResults = task.Result;
                         _searchViewModel.Items.Clear();
-                        //TODO do not need to filter by text here, it should be already done on the server side API
-                        searchResults.Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.Text, text, CompareOptions.IgnoreCase) >= 0)
-                            .OrderByDescending(x => x.ItemType).ThenBy(x => x.Text).ForEach(x =>
+                        //searchResults.Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.Text, text, CompareOptions.IgnoreCase) >= 0)
+                        searchResults.OrderByDescending(x => x.ItemType).ThenBy(x => x.Text).ForEach(x =>
+                        {
+                            _searchViewModel.Items.Add(x);
+                            var lastCell = LvResults.TemplatedItems.Last();
+                            var stackLayout = ((ViewCell)lastCell).View as StackLayout;
+                            if (x.Description == null && x.ImageSource == null && stackLayout?.Children.First() is Grid grid)
                             {
-                                _searchViewModel.Items.Add(x);
-                                var lastCell = LvResults.TemplatedItems.Last();
-                                var stackLayout = ((ViewCell) lastCell).View as StackLayout;
-                                if (x.Description == null && x.ImageSource == null && stackLayout?.Children.First() is Grid grid)
-                                {
-                                    grid.RowDefinitions[1].Height = new GridLength(0);
-                                }
-                            });
-
+                                grid.RowDefinitions[1].Height = new GridLength(0);
+                            }
+                        });
+                        UserDialogs.Instance.HideLoading();
                     }, TaskScheduler.FromCurrentSynchronizationContext());
                 })
             };

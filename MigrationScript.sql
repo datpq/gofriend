@@ -3,12 +3,14 @@ select * from GroupFriends;
 select * from Groups;
 select * from Friends;
 select * from GroupPredefinedCategory;
+select * from CacheConfiguration;
 
 drop table GroupFixedCatValues;
 drop table GroupFriends;
 drop table Friends;
 drop table GroupPredefinedCategory;
 drop table Groups;
+drop table CacheConfiguration;
 
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
 
@@ -87,6 +89,15 @@ IF NOT EXISTS (SELECT * FROM GroupFixedCatValues WHERE GroupId = (SELECT Id FROM
 	VALUES((SELECT Id FROM Groups WHERE Name = 'Hanoi9194XaXu-Russia'), N'Hà nội', N'91-94', N'Nga',
 		NULL, NULL, NULL, NULL, NULL, NULL);
 
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroups')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroups', NULL, 3, 1);
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupFixedCatValues')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupFixedCatValues', NULL, 4, 1);
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupCatValues')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupCatValues', NULL, 5, 1);
 
 INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
 	SELECT Id, SchoolName, NULL FROM Groups,

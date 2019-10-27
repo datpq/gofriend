@@ -32,11 +32,14 @@ namespace goFriend.MobileAppService.Data
                 .HasConversion(new EnumToNumberConverter<UserType, int>());
             modelBuilder.Entity<GroupPredefinedCategory>().ToTable("GroupPredefinedCategory");
             modelBuilder.Entity<GroupPredefinedCategory>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CacheConfiguration>().ToTable("CacheConfiguration");
+            modelBuilder.Entity<CacheConfiguration>().Property(x => x.Id).ValueGeneratedOnAdd();
         }
 
         public DbSet<Friend> Friends { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupFriend> GroupFriends { get; set; }
-        public DbSet<GroupFixedCatValues> GroupCatInfos { get; set; }
+        public DbSet<GroupFixedCatValues> GroupFixedCatValues { get; set; }
+        public DbSet<CacheConfiguration> CacheConfigurations { get; set; }
     }
 }

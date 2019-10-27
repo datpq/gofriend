@@ -37,24 +37,26 @@
                     </OnPlatform>
                 </SearchBar.BackgroundColor>
             </SearchBar>
-            <Frame BorderColor="LightGray" CornerRadius="5" Padding="8" HorizontalOptions="Center" Margin="10">
-                <StackLayout Margin="10">
-                    <Label Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" HorizontalTextAlignment="Center"/>
-                    <BoxView Color="LightGray" HeightRequest="2" HorizontalOptions="Fill" />
-                    <Grid x:Name="Grid" ColumnSpacing="20" HorizontalOptions="Center" Margin="0,10,0,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
+            <BoxView Margin="0,10,0,0" HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <StackLayout Margin="20,10,20,0">
+                <Label TextColor="{StaticResource ColorLabel}" Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblSectionFontSize}" />
+                <Grid Margin="0,10" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </StackLayout>
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <ScrollView Margin="0,10,0,0">
+                <StackLayout x:Name="SlMain">
+                    <Label Margin="20,0,20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblSectionFontSize}" />
+                    <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}" />
                 </StackLayout>
-            </Frame>
-            <ScrollView>
-                <StackLayout x:Name="SlMain"></StackLayout>
             </ScrollView>
             <Button Margin="10" WidthRequest="100" x:Name="CmdSave" HorizontalOptions="Center" VerticalOptions="EndAndExpand"
                     CornerRadius="{StaticResource BtnCornerRadius}"

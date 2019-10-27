@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace goFriend.DataModel
@@ -37,18 +39,45 @@ namespace goFriend.DataModel
         [Column(TypeName = "NVARCHAR(50)")]
         public string Cat9 { get; set; }
 
+        public IEnumerable<string> GetCatList()
+        {
+            var result = new[]
+            {
+                Cat1, Cat2, Cat3, Cat4, Cat5, Cat6, Cat7, Cat8, Cat9
+            }.Where(x => !string.IsNullOrEmpty(x));
+            return result;
+        }
+
         public string GetCatByIdx(int idx)
         {
             var propertyInfo = GetType().GetProperty($"Cat{idx}");
             var result = (string)propertyInfo?.GetValue(this, null);
             return result;
         }
+
+        public void SetCatByIdx(int idx, string value)
+        {
+            var propertyInfo = GetType().GetProperty($"Cat{idx}");
+            propertyInfo?.SetValue(this, value);
+        }
+
+        public override string ToString()
+        {
+            var arrCatValues = new string[GetCatList().Count()];
+            for (var i=0; i<arrCatValues.Length; i++)
+            {
+                arrCatValues[i] = $"Cat{i+1}={GetCatByIdx(i+1)}";
+            }
+            var result = $"FriendId={FriendId}, GroupId={GroupId} {string.Join(",", arrCatValues)}";
+            return result;
+        }
     }
 
     public enum UserType
     {
-        None = 0,
-        Admin = 1,
-        Basic
+        NotMember = 0,
+        Pending = 1,
+        Normal = 2,
+        Admin = 3
     }
 }

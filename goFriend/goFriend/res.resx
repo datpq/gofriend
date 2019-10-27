@@ -250,6 +250,12 @@
     <value>Email</value>
   </data>
   <data name="CommonConnectionInfo" xml:space="preserve">
-    <value>Common connection informations</value>
+    <value>Common connection information</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="MsgGroupSubscriptionPending" xml:space="preserve">
+    <value>Your subsciption to this group is now in pending. You can check again later or modify the information by clicking on Modify button.</value>
   </data>
 </root>

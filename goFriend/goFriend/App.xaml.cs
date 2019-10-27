@@ -18,8 +18,9 @@ namespace goFriend
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         public static IFriendStore FriendStore;
 
-        public static Task InitTask;
-        public static IEnumerable<ApiGetGroupsModel> GroupModels;
+        public static Task TaskGetMyGroups;
+        public static IEnumerable<ApiGetGroupsModel> MyGroups;
+        public static IEnumerable<ApiGetGroupsModel> AllGroups;
 
         public App()
         {
@@ -94,12 +95,12 @@ namespace goFriend
 
         public static void Initialize()
         {
-            InitTask = new Task(async () =>
+            TaskGetMyGroups = new Task(async () =>
             {
                 try
                 {
-                    Logger.Debug("BEGIN");
-                    GroupModels = await FriendStore.GetGroups();
+                    Logger.Debug("TaskGetMyGroups.BEGIN");
+                    MyGroups = await FriendStore.GetMyGroups();
                 }
                 catch (GoException e)
                 {
@@ -120,10 +121,10 @@ namespace goFriend
                 }
                 finally
                 {
-                    Logger.Debug("END");
+                    Logger.Debug("TaskGetMyGroups.END");
                 }
             });
-            InitTask.Start();
+            TaskGetMyGroups.Start();
         }
     }
 }

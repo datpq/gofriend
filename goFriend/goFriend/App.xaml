@@ -5,7 +5,7 @@
     <Application.Resources>
         <Color x:Key="ColorPageBackground">White</Color>
         <Color x:Key="ColorTabPageBackgroundAndroid">#F3F3F3</Color>
-        <Color x:Key="ColorTabPageBackgroundIOS">White</Color>
+        <Color x:Key="ColorTabPageBackgroundIOS">#F3F3F3</Color>
         <Color x:Key="ColorPrimary">#61A830</Color>
         <Color x:Key="ColorPrimaryLight">#8bf244</Color>
         <Color x:Key="ColorTitle">White</Color>
@@ -13,6 +13,7 @@
         <Color x:Key="ColorLabelDetail">Gray</Color>
         <x:Int32 x:Key="BtnCornerRadius">20</x:Int32>
         <x:Double x:Key="LblFontSize">17</x:Double>
+        <x:Double x:Key="LblSectionFontSize">14</x:Double>
         <x:Double x:Key="LblDetailFontSize">13</x:Double>
     </Application.Resources>
 </Application>

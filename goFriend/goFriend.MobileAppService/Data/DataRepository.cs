@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Caching;
-using System.Configuration;
+using goFriend.MobileAppService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NLog;
 
 namespace goFriend.MobileAppService.Data
@@ -12,14 +13,15 @@ namespace goFriend.MobileAppService.Data
     public class DataRepository : IDataRepository, IDisposable
     {
         protected readonly DbContext DbContext;
-        protected readonly MemoryCache MemoryCache = MemoryCache.Default;
+        protected readonly IMemoryCache MemoryCache;
+        protected readonly IOptions<AppSettingsModel> AppSettings;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private const string TableCacheTimeoutSetting = "TableCacheTimeout";
-        private const string TableCacheTimeoutDefaultSetting = "TableCacheTimeout.DefaultValue";
 
-        public DataRepository(DbContext dbContext)
+        public DataRepository(DbContext dbContext, IMemoryCache memoryCache, IOptions<AppSettingsModel> appSettings)
         {
             DbContext = dbContext;
+            MemoryCache = memoryCache;
+            AppSettings = appSettings;
         }
 
         //public void EnableDebug(Action<string> action)
@@ -46,14 +48,15 @@ namespace goFriend.MobileAppService.Data
             var result = DbContext.Set<T>();
             if (useCache)
             {
-                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[$"{TableCacheTimeoutSetting}.{typeof(T).Name}"] ?? ConfigurationManager.AppSettings[TableCacheTimeoutDefaultSetting]);
+                //var cachePrefix = $"TableCacheTimeout.{typeof(T).Name}";
+                var cacheTimeout = AppSettings.Value.CacheTableTimeout;
                 if (Logger.IsDebugEnabled)
                 {
                     Logger.Debug($"Cached new TableCache: {cacheKey}, cacheTimeout={cacheTimeout}");
                 }
                 //MemoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddDays(86400));
                 var cacheValue = result.ToList().AsQueryable().SetComparer(StringComparison.CurrentCultureIgnoreCase);//ToList here is very important, force executing SQL to retrieve data
-                MemoryCache.Set(cacheKey, cacheValue, DateTimeOffset.Now.AddSeconds(cacheTimeout));
+                MemoryCache.Set(cacheKey, cacheValue, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return cacheValue;
             }
             return result;
