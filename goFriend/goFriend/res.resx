@@ -256,6 +256,36 @@
     <value>Information</value>
   </data>
   <data name="MsgGroupSubscriptionPending" xml:space="preserve">
-    <value>Your subsciption to this group is now in pending. You can check again later or modify the information by clicking on Modify button.</value>
+    <value>Your subsciption to this group is now in pending. You can check again later.</value>
+  </data>
+  <data name="SubscribeGroup" xml:space="preserve">
+    <value>Subscribe to group</value>
+  </data>
+  <data name="Modify" xml:space="preserve">
+    <value>Modify</value>
+  </data>
+  <data name="MsgCancelConfirmation" xml:space="preserve">
+    <value>Do you want to cancel the current changes and return to the initial state?</value>
+  </data>
+  <data name="MsgModifyConfirmation" xml:space="preserve">
+    <value>Do you want really to modify your current subscription?</value>
+  </data>
+  <data name="MsgGroupSubscriptionAdmin" xml:space="preserve">
+    <value>You are Admin of the group.</value>
+  </data>
+  <data name="MsgGroupSubscriptionNormal" xml:space="preserve">
+    <value>You are an active user of the group.</value>
+  </data>
+  <data name="MsgGroupSubscriptionNotMember" xml:space="preserve">
+    <value>You are not a member of the group. You can send the request to join the group if you have all necessary conditions.</value>
+  </data>
+  <data name="MsgSubscriptionSuccessful" xml:space="preserve">
+    <value>Subscription successful</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
   </data>
 </root>

@@ -124,6 +124,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse.
+        /// </summary>
+        public static string Browse {
+            get {
+                return ResourceManager.GetString("Browse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -304,6 +313,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modify.
+        /// </summary>
+        public static string Modify {
+            get {
+                return ResourceManager.GetString("Modify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to cancel the current changes and return to the initial state?.
+        /// </summary>
+        public static string MsgCancelConfirmation {
+            get {
+                return ResourceManager.GetString("MsgCancelConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Api connection error. Please relogin and try again!.
         /// </summary>
         public static string MsgErrWrongToken {
@@ -313,7 +340,34 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your subsciption to this group is now in pending. You can check again later or modify the information by clicking on Modify button..
+        ///   Looks up a localized string similar to You are Admin of the group..
+        /// </summary>
+        public static string MsgGroupSubscriptionAdmin {
+            get {
+                return ResourceManager.GetString("MsgGroupSubscriptionAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are an active user of the group..
+        /// </summary>
+        public static string MsgGroupSubscriptionNormal {
+            get {
+                return ResourceManager.GetString("MsgGroupSubscriptionNormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not a member of the group. You can send the request to join the group if you have all necessary conditions..
+        /// </summary>
+        public static string MsgGroupSubscriptionNotMember {
+            get {
+                return ResourceManager.GetString("MsgGroupSubscriptionNotMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your subsciption to this group is now in pending. You can check again later..
         /// </summary>
         public static string MsgGroupSubscriptionPending {
             get {
@@ -336,6 +390,24 @@ namespace goFriend {
         public static string MsgLogoutConfirm {
             get {
                 return ResourceManager.GetString("MsgLogoutConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want really to modify your current subscription?.
+        /// </summary>
+        public static string MsgModifyConfirmation {
+            get {
+                return ResourceManager.GetString("MsgModifyConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscription successful.
+        /// </summary>
+        public static string MsgSubscriptionSuccessful {
+            get {
+                return ResourceManager.GetString("MsgSubscriptionSuccessful", resourceCulture);
             }
         }
         
@@ -430,6 +502,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string Select {
+            get {
+                return ResourceManager.GetString("Select", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select gender.
         /// </summary>
         public static string SelectGender {
@@ -444,6 +525,15 @@ namespace goFriend {
         public static string Slogan {
             get {
                 return ResourceManager.GetString("Slogan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscribe to group.
+        /// </summary>
+        public static string SubscribeGroup {
+            get {
+                return ResourceManager.GetString("SubscribeGroup", resourceCulture);
             }
         }
         

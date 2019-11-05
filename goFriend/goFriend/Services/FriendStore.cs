@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Web;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using Plugin.Connectivity;
@@ -173,7 +174,7 @@ namespace goFriend.Services
             IEnumerable<ApiGetGroupCatValuesModel> result = null;
             try
             {
-                Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useCache={useCache}, {string.Join(", ", arrCatValues)})");
+                Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
                 //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
@@ -182,7 +183,11 @@ namespace goFriend.Services
                 var requestUrl = $"api/Friend/GetGroupCatValues/{App.User.Id}/{groupId}/{useCache}";
                 if (arrCatValues.Length > 0)
                 {
-                    requestUrl = $"{requestUrl}?{string.Join("&", arrCatValues)}";
+                    for (var i = 0; i < arrCatValues.Length; i++)
+                    {
+                        var sep = i == 0 ? "?" : "&";
+                        requestUrl = $"{requestUrl}{sep}Cat{i}={HttpUtility.UrlEncode(arrCatValues[i])}";
+                    }
                 }
                 Logger.Debug($"requestUrl: {requestUrl}");
                 var response = await client.GetAsync(requestUrl);

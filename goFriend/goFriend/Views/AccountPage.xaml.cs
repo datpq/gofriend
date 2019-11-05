@@ -28,8 +28,7 @@ namespace goFriend.Views
             };
             CellLogout.Tapped += async (s, e) =>
             {
-                var answer = await App.DisplayMsgQuestion(res.MsgLogoutConfirm);
-                if (!answer) return;
+                if (!await App.DisplayMsgQuestion(res.MsgLogoutConfirm)) return;
                 App.FaceBookManager.Logout();
                 App.IsUserLoggedIn = false;
                 Settings.IsUserLoggedIn = App.IsUserLoggedIn;

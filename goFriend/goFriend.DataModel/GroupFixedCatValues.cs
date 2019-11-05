@@ -8,6 +8,7 @@ namespace goFriend.DataModel
     public class GroupFixedCatValues
     {
         public int Id { get; set; }
+        public int GroupId { get; set; }
         [JsonIgnore]
         public Group Group { get; set; }
 

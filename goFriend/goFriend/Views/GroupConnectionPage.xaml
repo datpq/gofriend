@@ -43,7 +43,6 @@
                 <Grid Margin="0,10" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -55,14 +54,26 @@
             <ScrollView Margin="0,10,0,0">
                 <StackLayout x:Name="SlMain">
                     <Label Margin="20,0,20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblSectionFontSize}" />
-                    <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}" />
+                    <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblDetailFontSize}" />
                 </StackLayout>
             </ScrollView>
-            <Button Margin="10" WidthRequest="100" x:Name="CmdSave" HorizontalOptions="Center" VerticalOptions="EndAndExpand"
-                    CornerRadius="{StaticResource BtnCornerRadius}"
-                    BackgroundColor="{StaticResource ColorPrimary}"
-                    TextColor="{StaticResource ColorTitle}"
-                    Text="{x:Static local:res.Save}" Clicked="CmdSave_OnClicked" />
+            <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand" Padding="10" HorizontalOptions="Center">
+                <Button x:Name="CmdModify" HorizontalOptions="CenterAndExpand"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimary}"
+                        TextColor="{StaticResource ColorTitle}"
+                        Text="{x:Static local:res.Modify}" Clicked="CmdModify_OnClicked" />
+                <Button x:Name="CmdSubscribe" HorizontalOptions="CenterAndExpand"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimary}"
+                        TextColor="{StaticResource ColorTitle}"
+                        Text="{x:Static local:res.SubscribeGroup}" Clicked="CmdSubscribe_OnClicked" />
+                <Button x:Name="CmdCancel" HorizontalOptions="CenterAndExpand"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimary}"
+                        TextColor="{StaticResource ColorTitle}"
+                        Text="{x:Static local:res.Cancel}" Clicked="CmdCancel_OnClicked" />
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

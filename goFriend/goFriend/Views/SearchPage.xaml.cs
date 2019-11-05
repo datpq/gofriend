@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Acr.UserDialogs;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -18,6 +18,8 @@ namespace goFriend.Views
 
         private readonly SearchViewModel _searchViewModel;
         private readonly Action<string> _setSelectedItemAction;
+        //private string _lastNoResultText;
+        private string _lastSearchText;
 
         public SearchPage(string title, bool acceptNotFoundValue, Func<string, Task<IEnumerable<SearchItemModel>>> getSearchItemsFunc,
             Action<string> setSelectedItemAction = null, string searchText = "")
@@ -33,12 +35,17 @@ namespace goFriend.Views
                 Text = searchText,
                 SearchCommand = new Command<string>(text =>
                 {
-                    UserDialogs.Instance.ShowLoading(res.Processing);
+                    if (text == _lastSearchText) return;
+                    _lastSearchText = text;
+                    _searchViewModel.Items.Clear();
+                    //if (_lastNoResultText != null && text.StartsWith(
+                    //        _lastNoResultText, StringComparison.CurrentCultureIgnoreCase)) return; //search deeper always return nothing
+                    //UserDialogs.Instance.ShowLoading(res.Processing); // Do not display processing dialog as the keyboard will disappear. Search bar will lose focus
                     getSearchItemsFunc(text).ContinueWith(task =>
                     {
                         Sb.IsEnabled = true;
-                        var searchResults = task.Result;
-                        _searchViewModel.Items.Clear();
+                        Sb.Focus();
+                        var searchResults = task.Result.ToList();
                         //searchResults.Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.Text, text, CompareOptions.IgnoreCase) >= 0)
                         searchResults.OrderByDescending(x => x.ItemType).ThenBy(x => x.Text).ForEach(x =>
                         {
@@ -50,11 +57,13 @@ namespace goFriend.Views
                                 grid.RowDefinitions[1].Height = new GridLength(0);
                             }
                         });
-                        UserDialogs.Instance.HideLoading();
+                        //if (!searchResults.Any()) _lastNoResultText = text;
+                        //UserDialogs.Instance.HideLoading();
                     }, TaskScheduler.FromCurrentSynchronizationContext());
                 })
             };
             Sb.IsEnabled = false; //disabled when doing the search in background
+            _lastSearchText = $"{searchText}_"; //just something different from searchText
             Sb.SearchCommand?.Execute(searchText); // first time starting, TextChanged is not called automatically
 
             //_searchViewModel.Text = searchText; //do not set the Text in constructor as SearchCommand is still null. Here SearchCommand is already set
@@ -84,6 +93,9 @@ namespace goFriend.Views
 
     public class TextChangedBehavior : Behavior<SearchBar>
     {
+        private CancellationTokenSource _cancelToken = new CancellationTokenSource();
+        //private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+
         protected override void OnAttachedTo(SearchBar bindable)
         {
             base.OnAttachedTo(bindable);
@@ -98,7 +110,20 @@ namespace goFriend.Views
 
         private void Bindable_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ((SearchBar)sender).SearchCommand?.Execute(e.NewTextValue);
+            StopSearchCommand();
+            var cts = _cancelToken; // safe copy
+            Device.StartTimer(TimeSpan.FromMilliseconds(Constants.SearchCommandDelayTime),
+                () => {
+                    //Logger.Debug($"timer running: {e.NewTextValue}");
+                    if (cts.IsCancellationRequested) return false;
+                    ((SearchBar)sender).SearchCommand?.Execute(e.NewTextValue);
+                    return false; // or true for periodic behavior
+                });
+        }
+
+        private void StopSearchCommand()
+        {
+            Interlocked.Exchange(ref _cancelToken, new CancellationTokenSource()).Cancel();
         }
     }
 }

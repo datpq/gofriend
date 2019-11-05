@@ -256,6 +256,36 @@
     <value>THÔNG TIN</value>
   </data>
   <data name="MsgGroupSubscriptionPending" xml:space="preserve">
-    <value>Yêu cầu gia nhập nhớm đang trong quá trình xét duyệt. Bạn có thể kiểm tra lại sau hoặc sửa đổi thông tin bằng cách ấn vào nút Sửa.</value>
+    <value>Yêu cầu gia nhập nhớm đang trong quá trình xét duyệt. Xin vui lòng kiểm tra lại sau.</value>
+  </data>
+  <data name="SubscribeGroup" xml:space="preserve">
+    <value>Tham gia nhóm</value>
+  </data>
+  <data name="Modify" xml:space="preserve">
+    <value>Sửa</value>
+  </data>
+  <data name="MsgCancelConfirmation" xml:space="preserve">
+    <value>Bạn có muốn hủy bỏ những thay đổi hiện tại để quay lại tình trạng ban đầu?</value>
+  </data>
+  <data name="MsgModifyConfirmation" xml:space="preserve">
+    <value>Bạn có muốn sửa đổi thông tin kết nối?</value>
+  </data>
+  <data name="MsgGroupSubscriptionAdmin" xml:space="preserve">
+    <value>Bạn là quản trị viên của nhóm.</value>
+  </data>
+  <data name="MsgGroupSubscriptionNormal" xml:space="preserve">
+    <value>Bạn là thành viên của nhóm.</value>
+  </data>
+  <data name="MsgGroupSubscriptionNotMember" xml:space="preserve">
+    <value>Bạn chưa là thành viên của nhóm. Hãy gửi yêu cầu gia nhập nhóm nếu bạn đủ điều kiện.</value>
+  </data>
+  <data name="MsgSubscriptionSuccessful" xml:space="preserve">
+    <value>Yêu cầu tham gia nhóm đã được gửi thành công.</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Danh sách</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Chọn</value>
   </data>
 </root>

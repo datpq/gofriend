@@ -74,33 +74,39 @@ namespace goFriend
 
         public static void DisplayMsgInfo(string message)
         {
-            Device.BeginInvokeOnMainThread(() => {
-                Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
+            Device.BeginInvokeOnMainThread(async () => {
+                await Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
             });
             //Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept);
         }
 
         public static void DisplayMsgError(string message)
         {
-            Device.BeginInvokeOnMainThread(() => {
-                Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
+            Device.BeginInvokeOnMainThread(async () => {
+                await Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
             });
             //Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
         }
 
         public static Task<bool> DisplayMsgQuestion(string message)
         {
-            return Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept, res.Cancel);
+            var tcs = new TaskCompletionSource<bool>();
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                var result = await Current.MainPage.DisplayAlert(res.MsgTitleInfo, message, res.Accept, res.Cancel);
+                tcs.SetResult(result);
+            });
+            return tcs.Task;
         }
 
         public static void Initialize()
         {
-            TaskGetMyGroups = new Task(async () =>
+            TaskGetMyGroups = new Task(() =>
             {
                 try
                 {
                     Logger.Debug("TaskGetMyGroups.BEGIN");
-                    MyGroups = await FriendStore.GetMyGroups();
+                    MyGroups = FriendStore.GetMyGroups().Result;
                 }
                 catch (GoException e)
                 {

@@ -10,7 +10,6 @@ using goFriend.MobileAppService.Data;
 using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
@@ -22,21 +21,20 @@ namespace goFriend.MobileAppService.Controllers
     public class FriendController : Controller
     {
         private readonly IOptions<AppSettingsModel> _appSettings;
-        private readonly IMemoryCache _memoryCache;
         private readonly IDataRepository _dataRepo;
-        private readonly ICacheConfigurationService _cacheConfiguration;
+        private readonly ICacheService _cacheService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected readonly string CacheNameSpace;
 
-        public FriendController(IOptions<AppSettingsModel> appSettings, IMemoryCache memoryCache,
-            IDataRepository dataRepo, ICacheConfigurationService cacheConfiguration)
+        public FriendController(IOptions<AppSettingsModel> appSettings, IDataRepository dataRepo, ICacheService cacheService)
         {
             _appSettings = appSettings;
-            _memoryCache = memoryCache;
             _dataRepo = dataRepo;
-            _cacheConfiguration = cacheConfiguration;
+            _cacheService = cacheService;
             CacheNameSpace = GetType().FullName;
         }
+
+        #region Cache Functions
 
         protected string CurrentMethodName
         {
@@ -49,6 +47,8 @@ namespace goFriend.MobileAppService.Controllers
                 return sf.GetMethod().Name;
             }
         }
+
+        #endregion
 
         [HttpGet]
         [Route("LoginWithFacebook")]
@@ -243,13 +243,13 @@ namespace goFriend.MobileAppService.Controllers
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, useCache={useCache}, QueryString={Request.QueryString})");
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
-                var cacheTimeout = _cacheConfiguration.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{friendId}.{groupId}.{Request.QueryString}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{groupId}.{Request.QueryString}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupCatValuesModel>>;
+                    result = _cacheService.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupCatValuesModel>>;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -288,11 +288,11 @@ namespace goFriend.MobileAppService.Controllers
                 
                 #endregion
 
-                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.Group.Id == groupId);
+                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
-                // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat4 in QueryString
+                // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
                 var startCatIdx = groupFixedCatValues.GetCatList().Count() + 1;
-                var idx = startCatIdx;
+                var idx = 0;
                 var predefinedCategories = Enumerable.Empty<string>();
                 var groupFriends = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active);
                 if (!Request.Query.Keys.Contains($"Cat{idx}"))
@@ -307,13 +307,13 @@ namespace goFriend.MobileAppService.Controllers
                     {
                         var localIdx = idx;
                         var catVal = Request.Query[$"Cat{localIdx}"];
-                        var parentCategoryId = localIdx == startCatIdx ? null : currentPredefinedCategory?.Id;
-                        Logger.Debug($"groupId={groupId}, localIdx={localIdx}, startCatIdx={startCatIdx}, parentCategoryId={parentCategoryId}");
+                        var parentCategoryId = localIdx == 0 ? null : currentPredefinedCategory?.Id;
+                        Logger.Debug($"groupId={groupId}, localIdx={localIdx}, startCatIdx={startCatIdx}, parentCategoryId={parentCategoryId}, catVal={catVal}");
 
                         currentPredefinedCategory = _dataRepo.Get<GroupPredefinedCategory>(
-                            x => x.Group.Id == groupId && x.Category == catVal && x.ParentId == parentCategoryId);
-                        //Logger.Debug($"currentPredefinedCategory.Id={currentPredefinedCategory.Id}");
-                        groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx) == Request.Query[$"Cat{localIdx}"]);
+                            x => x.GroupId == groupId && x.Category == catVal && x.ParentId == parentCategoryId, true);
+                        Logger.Debug($"currentPredefinedCategory.Id={currentPredefinedCategory.Id}");
+                        groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]);
                         idx++;
                     }
 
@@ -327,15 +327,15 @@ namespace goFriend.MobileAppService.Controllers
 
                 var groupFiendList = groupFriends.ToList();
                 //Logger.Debug($"idx={idx}, groupFiendList={JsonConvert.SerializeObject(groupFiendList)}, predefinedCategories={JsonConvert.SerializeObject(predefinedCategories)}");
-                var groupCatValues = predefinedCategories.Union(groupFiendList.Select(x => x.GetCatByIdx(idx))).Distinct();
+                var groupCatValues = predefinedCategories.Union(groupFiendList.Select(x => x.GetCatByIdx(idx + startCatIdx))).Distinct();
                 result = groupCatValues.Select(x => new ApiGetGroupCatValuesModel
                 {
                     CatValue = x,
-                    MemberCount = groupFiendList.Count(y => y.GetCatByIdx(idx) == x)
+                    MemberCount = groupFiendList.Count(y => y.GetCatByIdx(idx + startCatIdx) == x)
                 }).ToList();
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (FormatException e)
@@ -366,13 +366,13 @@ namespace goFriend.MobileAppService.Controllers
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, useCache={useCache}, QueryString={Request.QueryString})");
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
-                var cacheTimeout = _cacheConfiguration.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{friendId}.{groupId}.{Request.QueryString}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{groupId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as ActionResult<GroupFixedCatValues>;
+                    result = _cacheService.Get(cacheKey) as ActionResult<GroupFixedCatValues>;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -411,10 +411,10 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                result = _dataRepo.Get<GroupFixedCatValues>(x => x.Group.Id == groupId);
+                result = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (FormatException e)
@@ -445,13 +445,13 @@ namespace goFriend.MobileAppService.Controllers
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache})");
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
-                var cacheTimeout = _cacheConfiguration.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{friendId}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{friendId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupsModel>>;
+                    result = _cacheService.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupsModel>>;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -483,7 +483,8 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group).ToList();
+                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group)
+                    .ToList().Select(x => { x.Group.Info = null; return x; }).ToList();
                 Logger.Debug($"myGroups={JsonConvert.SerializeObject(myGroups.Select(x => x.Group.Name))}");
 
                 result = myGroups.Select(x => new ApiGetGroupsModel
@@ -496,7 +497,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (FormatException e)
@@ -527,14 +528,14 @@ namespace goFriend.MobileAppService.Controllers
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache}, QueryString={Request.QueryString})");
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
-                var cacheTimeout = _cacheConfiguration.GetCacheTimeout(cachePrefix);
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var searchText = Request.Query["searchText"];
-                var cacheKey = $"{cachePrefix}.{searchText}";
+                var cacheKey = $"{cachePrefix}.{searchText}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupsModel>>;
+                    result = _cacheService.Get(cacheKey) as ActionResult<IEnumerable<ApiGetGroupsModel>>;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -578,7 +579,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch(FormatException e)
@@ -638,25 +639,33 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                if (_dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupFriend.GroupId && x.FriendId == groupFriend.FriendId).Any())
+                if (_dataRepo.GetMany<GroupFriend>(x => x.Active && x.GroupId == groupFriend.GroupId && x.FriendId == groupFriend.FriendId).Any())
                 {
                     Logger.Warn("GroupFriend already exists.");
                     return BadRequest(Message.MsgInvalidData);
                 }
 
-                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.Group.Id == groupFriend.GroupId).GetCatList().ToList();
+                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupFriend.GroupId, true).GetCatList().ToList();
                 var startCatIdx = groupFixedCatValues.Count() + 1;
 
                 var group = arrGroups.Single();
                 var endCatIdx = group.GetCatDescList().Count() + 1;
 
-                var newGroupFriend = new GroupFriend
+                var newGroupFriend = _dataRepo.Get<GroupFriend>(x => x.GroupId == groupFriend.GroupId && x.FriendId == groupFriend.FriendId);
+                if (newGroupFriend != null)
                 {
-                    FriendId = groupFriend.FriendId,
-                    GroupId = groupFriend.GroupId,
-                    Active = true,
-                    UserRight = UserType.Pending
-                };
+                    Logger.Debug("GroupFriend exists already. Just modify it");
+                } else
+                {
+                    newGroupFriend = new GroupFriend
+                    {
+                        FriendId = groupFriend.FriendId,
+                        GroupId = groupFriend.GroupId,
+                        Active = false,
+                        UserRight = UserType.Pending
+                    };
+                    _dataRepo.Add(newGroupFriend);
+                }
                 for (var i = 1; i < endCatIdx; i++)
                 {
                     if (i < startCatIdx)
@@ -675,8 +684,8 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                _dataRepo.Add(newGroupFriend);
                 _dataRepo.Commit();
+                _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}.");
 
                 return Ok();
             }

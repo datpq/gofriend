@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
@@ -19,6 +18,7 @@ namespace goFriend.Views
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private readonly IList<SearchBar> _lstCatSearchBars = new List<SearchBar>();
+        private readonly IList<string> _lstCatSearchBarsText = new List<string>();
         private IList<string> _arrFixedCatValues;
         private Group _selectedGroup;
 
@@ -34,7 +34,7 @@ namespace goFriend.Views
                     new SearchPage(res.Groups, false, async (searchText) =>
                     {
                         Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
-                        await App.TaskGetMyGroups;
+                        App.TaskGetMyGroups.Wait();
                         Logger.Debug("Get all groups");
                         App.AllGroups = await App.FriendStore.GetGroups(searchText);
                         var searchResult = App.MyGroups.Where(x => x.Group.Name.Contains(searchText)).Union(App.AllGroups.Where(
@@ -67,11 +67,6 @@ namespace goFriend.Views
 
                 //remove all the grid rows
                 Grid.Children.Clear();
-                //var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= 0).ToList();
-                //foreach (var child in rowToRemove)
-                //{
-                //    Grid.Children.Remove(child);
-                //}
 
                 //Remove all the search bar after the grid
                 //while (SlMain.Children[SlMain.Children.Count - 1] is SearchBar)
@@ -81,17 +76,20 @@ namespace goFriend.Views
                 _lstCatSearchBars.ForEach(x => SlMain.Children.Remove(x));
                 LblSubscriptionMsg.Text = string.Empty;
                 _lstCatSearchBars.Clear();
+                _lstCatSearchBarsText.Clear();
                 LblInfoCats.Text = res.Information;
                 _arrFixedCatValues = null;
 
-                CmdSave.IsVisible = !string.IsNullOrEmpty(groupName);
+                CmdSubscribe.IsVisible = CmdModify.IsVisible = CmdCancel.IsVisible = false;
+
                 if (string.IsNullOrEmpty(groupName)) return;
 
                 Settings.LastGroupName = groupName;
 
-                Logger.Debug("Before Wait");
-                await App.TaskGetMyGroups; //Make sure everything is initialized. (MyGroups)
-                Logger.Debug($"After Wait: {App.MyGroups?.Count()}");
+                //Logger.Debug("Before Wait");
+                App.TaskGetMyGroups.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread
+                //Logger.Debug($"MyGroups={JsonConvert.SerializeObject(App.MyGroups)}");
+                //Logger.Debug($"After Wait: {App.MyGroups?.Count()}");
 
                 var selectedApiGroup = App.MyGroups?.SingleOrDefault(x => x.Group.Name == groupName);
                 if (selectedApiGroup == null)
@@ -104,7 +102,9 @@ namespace goFriend.Views
                 }
 
                 Logger.Debug($"selectedApiGroup={JsonConvert.SerializeObject(selectedApiGroup)}");
-                CmdSave.IsEnabled = selectedApiGroup?.UserRight != UserType.NotMember;
+                CmdModify.IsVisible = selectedApiGroup?.UserRight == UserType.Pending; // Modify button visible when subscription is in pending
+                CmdSubscribe.IsVisible = selectedApiGroup?.UserRight == UserType.NotMember;
+                CmdSubscribe.IsEnabled = false;
 
                 _selectedGroup = selectedApiGroup?.Group;
 
@@ -160,13 +160,13 @@ namespace goFriend.Views
                             BackgroundColor = SbGroup.BackgroundColor,
                             IsEnabled = i == _arrFixedCatValues.Count // only first SearchBar is enabled
                         };
-                        if (sb.Text != string.Empty) sb.IsEnabled = false; // search bar is disable the user's Group
+                        if (!string.IsNullOrEmpty(sb.Text)) sb.IsEnabled = false; // search bar is disable when user is a member of Group
                         var sbIdx = i;
                         sb.TextChanged += (o, args) =>
                         {
                             if (sbIdx == arrCatDesc.Count - 1)
                             {
-                                CmdSave.IsEnabled = sb.Text != string.Empty;
+                                CmdSubscribe.IsEnabled = sb.Text != string.Empty;
                             }
                             else
                             {
@@ -176,20 +176,19 @@ namespace goFriend.Views
                         };
                         sb.Focused += (s, args) =>
                         {
-                            var arrCatValues = new string[sbIdx - _arrFixedCatValues.Count + 1];
-                            for (var j = _arrFixedCatValues.Count; j < sbIdx; j++)
+                            var arrCatValues = new string[sbIdx - _arrFixedCatValues.Count];
+                            for (var j = 0; j < arrCatValues.Length; j++)
                             {
-                                arrCatValues[j - _arrFixedCatValues.Count] = $"Cat{j + 1}={HttpUtility.UrlEncode(_lstCatSearchBars[j - _arrFixedCatValues.Count].Text)}";
+                                arrCatValues[j] = _lstCatSearchBars[j].Text;
                             }
                             Navigation.PushAsync(
                                 new SearchPage(arrCatDesc[sbIdx], true, async (searchText) =>
                                 {
                                     Logger.Debug($"Search.{arrCatDesc[sbIdx]}.BEGIN(searchText={searchText})");
-                                    arrCatValues[sbIdx - _arrFixedCatValues.Count] = $"SearchText={HttpUtility.UrlEncode(searchText)}";
 
                                     var catValueList = await App.FriendStore.GetGroupCatValues(_selectedGroup.Id, true, arrCatValues);
                                     var searchResult = catValueList.Where(x =>
-                                            CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.CatValue, searchText, CompareOptions.IgnoreCase) >= 0)
+                                            CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.CatValue, searchText ?? string.Empty, CompareOptions.IgnoreCase) >= 0)
                                         .Select(x => new SearchItemModel
                                         {
                                             Text = x.CatValue,
@@ -202,6 +201,7 @@ namespace goFriend.Views
                         };
                         SlMain.Children.Insert(SlMain.Children.Count - 1, sb);
                         _lstCatSearchBars.Add(sb);
+                        _lstCatSearchBarsText.Add(sb.Text);
                     }
                 }
 
@@ -209,8 +209,17 @@ namespace goFriend.Views
                 {
                     switch (selectedApiGroup.UserRight)
                     {
+                        case UserType.NotMember:
+                            LblSubscriptionMsg.Text = res.MsgGroupSubscriptionNotMember;
+                            break;
                         case UserType.Pending:
                             LblSubscriptionMsg.Text = res.MsgGroupSubscriptionPending;
+                            break;
+                        case UserType.Normal:
+                            LblSubscriptionMsg.Text = res.MsgGroupSubscriptionNormal;
+                            break;
+                        case UserType.Admin:
+                            LblSubscriptionMsg.Text = res.MsgGroupSubscriptionAdmin;
                             break;
                     }
                 }
@@ -227,7 +236,7 @@ namespace goFriend.Views
             }
         }
 
-        private async void CmdSave_OnClicked(object sender, EventArgs e)
+        private async void CmdSubscribe_OnClicked(object sender, EventArgs e)
         {
             try
             {
@@ -252,7 +261,9 @@ namespace goFriend.Views
                 var result = await App.FriendStore.SubscribeGroup(groupFriend);
                 if (result)
                 {
-                    App.DisplayMsgInfo("Subscription successful");
+                    App.DisplayMsgInfo(res.MsgSubscriptionSuccessful);
+                    App.Initialize();
+                    SbGroup_OnTextChanged(null, null);
                 }
             }
             catch (Exception ex)
@@ -265,6 +276,32 @@ namespace goFriend.Views
                 UserDialogs.Instance.HideLoading();
                 Logger.Debug("END");
             }
+        }
+
+        private async void CmdCancel_OnClicked(object sender, EventArgs e)
+        {
+            if (!await App.DisplayMsgQuestion(res.MsgCancelConfirmation)) return;
+            for (var i=0; i < _lstCatSearchBars.Count; i++)
+            {
+                _lstCatSearchBars[i].IsEnabled = false;
+                _lstCatSearchBars[i].Text = _lstCatSearchBarsText[i];
+            }
+            CmdCancel.IsVisible = false;
+            CmdSubscribe.IsVisible = false;
+            CmdModify.IsVisible = true;
+        }
+
+        private async void CmdModify_OnClicked(object sender, EventArgs e)
+        {
+            if (!await App.DisplayMsgQuestion(res.MsgModifyConfirmation)) return;
+            foreach (var sb in _lstCatSearchBars)
+            {
+                sb.IsEnabled = true;
+            }
+            CmdCancel.IsVisible = true;
+            CmdSubscribe.IsVisible = true;
+            CmdSubscribe.IsEnabled = true;
+            CmdModify.IsVisible = false;
         }
     }
 }
