@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             mc:Ignorable="d"
+             x:Class="goFriend.Controls.DphListView">
+  <ContentView.Content>
+      <StackLayout>
+            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell Tapped="Cell_OnTapped">
+                            <StackLayout Orientation="Vertical">
+                                <Grid RowSpacing="0" ColumnSpacing="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ff:CachedImage x:Name="ImgAvatar" Source="{Binding ImageUrl}"
+                                                    WidthRequest="50" HeightRequest="50" HorizontalOptions="CenterAndExpand"
+                                                    Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="10,5,5,5">
+                                        <ff:CachedImage.Transformations>
+                                            <ffTransformations:CircleTransformation/>
+                                        </ff:CachedImage.Transformations>
+                                    </ff:CachedImage>
+                                    <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
+                                           Grid.Row="0" Grid.Column="1"
+                                           LineBreakMode="TailTruncation"
+                                           Style="{DynamicResource ListItemTextStyle}" 
+                                           FontSize="{StaticResource LblFontSize}" />
+                                    <Label Text="{Binding Description}"
+                                           Grid.Row="1" Grid.Column="1"
+                                           LineBreakMode="TailTruncation"
+                                           Style="{DynamicResource ListItemDetailTextStyle}"
+                                           FontSize="{StaticResource LblDetailFontSize}" />
+                                </Grid>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+      </StackLayout>
+  </ContentView.Content>
+</ContentView>

@@ -67,17 +67,17 @@
 
     <!-- Your Pages -->
     <ShellItem>
-        <ShellSection x:Name="TabAccount" x:FieldModifier="public" Title="{Static loc:res.Account}" Icon="navigation_account_green.png">
-            <ShellContent x:Name="TabAccountContent" x:FieldModifier="public" ContentTemplate="{DataTemplate local:AccountPage}" />
+        <ShellSection x:Name="TabAccount" Title="{Static loc:res.Home}" Icon="tab_home.png">
+            <ShellContent ContentTemplate="{DataTemplate local:AccountPage}" />
         </ShellSection>
-        <ShellSection x:Name="TabBrowse" Title="{Static loc:res.Browse}" Icon="tab_feed.png">
+        <ShellSection x:Name="TabBrowse" Title="{Static loc:res.Browse}" Icon="tab_browse.png">
             <ShellContent ContentTemplate="{DataTemplate local:BrowsePage}" />
-        </ShellSection>
-        <ShellSection x:Name="TabSearch" Title="{Static loc:res.Search}" Icon="ic_search_grey.png">
-            <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
         <ShellSection x:Name="TabMap" Title="{Static loc:res.Map}" Icon="navigation_map_green.png">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
+        </ShellSection>
+        <ShellSection x:Name="TabAdmin" Title="{Static loc:res.Admin}" Icon="tab_admin.png">
+            <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </ShellSection>
     </ShellItem>
 

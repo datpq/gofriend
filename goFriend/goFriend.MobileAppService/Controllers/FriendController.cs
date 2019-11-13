@@ -147,7 +147,13 @@ namespace goFriend.MobileAppService.Controllers
                     Logger.Debug($"DeviceInfo updated: {result.DeviceInfo}");
                     isUpdated = true;
                 }
-                result.Token = Guid.NewGuid();
+
+                if (result.ModifiedDate != null && result.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
+                {
+                    result.Token = Guid.NewGuid();
+                    Logger.Debug($"Token expired. new Token = {result.Token}");
+                    isUpdated = true;
+                }
                 if (!string.IsNullOrEmpty(fbUser.birthday))
                 {
                     try
@@ -242,6 +248,38 @@ namespace goFriend.MobileAppService.Controllers
             try
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, useCache={useCache}, QueryString={Request.QueryString})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                var arrGroups = _dataRepo.GetMany<Group>(x => x.Active && x.Id == groupId).ToList();
+                if (arrGroups.Count != 1)
+                {
+                    Logger.Warn(Message.MsgGroupNotFound.Msg);
+                    return BadRequest(Message.MsgGroupNotFound);
+                }
+
+                #endregion
+
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{groupId}.{Request.QueryString}.";
@@ -257,37 +295,6 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
                 
-                #region Data Validation
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    Logger.Warn(Message.MsgMissingToken.Msg);
-                    return BadRequest(Message.MsgMissingToken);
-                }
-
-                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
-                if (arrFriends.Count() != 1)
-                {
-                    Logger.Warn(Message.MsgUserNotFound.Msg);
-                    return BadRequest(Message.MsgUserNotFound);
-                }
-                var friend = arrFriends.Single();
-                if (friend.Token != Guid.Parse(token))
-                {
-                    Logger.Warn(Message.MsgWrongToken.Msg);
-                    return BadRequest(Message.MsgWrongToken);
-                }
-                Logger.Debug($"friend={friend}");
-
-                var arrGroups = _dataRepo.GetMany<Group>(x => x.Active && x.Id == groupId).ToList();
-                if (arrGroups.Count() != 1)
-                {
-                    Logger.Warn(Message.MsgGroupNotFound.Msg);
-                    return BadRequest(Message.MsgGroupNotFound);
-                }
-                
-                #endregion
-
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
@@ -365,6 +372,38 @@ namespace goFriend.MobileAppService.Controllers
             try
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, useCache={useCache}, QueryString={Request.QueryString})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                var arrGroups = _dataRepo.GetMany<Group>(x => x.Active && x.Id == groupId).ToList();
+                if (arrGroups.Count != 1)
+                {
+                    Logger.Warn(Message.MsgGroupNotFound.Msg);
+                    return BadRequest(Message.MsgGroupNotFound);
+                }
+
+                #endregion
+
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{groupId}.";
@@ -380,6 +419,40 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
+                result = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
+                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetGroupFriends/{friendId}/{groupId}/{isActive}/{useCache}")]
+        public ActionResult<IEnumerable<GroupFriend>> GetGroupFriends([FromHeader] string token, [FromRoute] int friendId,
+            [FromRoute] int groupId, bool isActive = true, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<IEnumerable<GroupFriend>> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, isActive={isActive}, useCache={useCache}, QueryString={Request.QueryString})");
+
                 #region Data Validation
 
                 if (string.IsNullOrEmpty(token))
@@ -389,7 +462,7 @@ namespace goFriend.MobileAppService.Controllers
                 }
 
                 var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
-                if (arrFriends.Count() != 1)
+                if (arrFriends.Count != 1)
                 {
                     Logger.Warn(Message.MsgUserNotFound.Msg);
                     return BadRequest(Message.MsgUserNotFound);
@@ -403,7 +476,7 @@ namespace goFriend.MobileAppService.Controllers
                 Logger.Debug($"friend={friend}");
 
                 var arrGroups = _dataRepo.GetMany<Group>(x => x.Active && x.Id == groupId).ToList();
-                if (arrGroups.Count() != 1)
+                if (arrGroups.Count != 1)
                 {
                     Logger.Warn(Message.MsgGroupNotFound.Msg);
                     return BadRequest(Message.MsgGroupNotFound);
@@ -411,7 +484,148 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                result = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
+                var groupFriendMe = _dataRepo.Get<GroupFriend>(x => x.GroupId == groupId && x.FriendId == friendId && x.Active);
+                if (groupFriendMe == null) // if user is not an Active member --> can not get the group's friend list
+                {
+                    Logger.Warn($"User is not an Active member of group: {Message.MsgUserNoPermission.Msg}");
+                    return BadRequest(Message.MsgUserNoPermission);
+                }
+                if (!isActive && groupFriendMe.UserRight < UserType.Admin) // in order to get pending friend list ==> need to be Admin
+                {
+                    Logger.Warn($"User is not Admin: {Message.MsgUserNoPermission.Msg}");
+                    return BadRequest(Message.MsgUserNoPermission);
+                }
+                var groupFriends = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active == isActive);
+
+                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{Request.QueryString}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _cacheService.Get(cacheKey) as ActionResult<IEnumerable<GroupFriend>>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
+
+                // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
+                var startCatIdx = groupFixedCatValues.GetCatList().Count() + 1;
+                var idx = 0;
+                while (Request.Query.Keys.Contains($"Cat{idx}"))
+                {
+                    var localIdx = idx;
+                    //Logger.Debug($"Cat{localIdx + startCatIdx}={Request.Query[$"Cat{localIdx}"]}");
+                    groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]);
+                    idx++;
+                }
+
+                result = groupFriends.ToList();
+
+                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetFriend/{friendId}/{groupId}/{otherFriendId}/{useCache}")]
+        public ActionResult<Friend> GetFriend([FromHeader] string token, [FromRoute] int friendId,
+            [FromRoute] int groupId, [FromRoute] int otherFriendId, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<Friend> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, otherFriendId={otherFriendId}, useCache={useCache})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                var arrGroups = _dataRepo.GetMany<Group>(x => x.Active && x.Id == groupId).ToList();
+                if (arrGroups.Count != 1)
+                {
+                    Logger.Warn(Message.MsgGroupNotFound.Msg);
+                    return BadRequest(Message.MsgGroupNotFound);
+                }
+
+                #endregion
+
+                var groupFriendMe = _dataRepo.Get<GroupFriend>(x => x.GroupId == groupId && x.FriendId == friendId && x.Active);
+                if (groupFriendMe == null) // if user is not an Active member --> can not get other friend's information
+                {
+                    Logger.Warn($"User is not an Active member of group: {Message.MsgUserNoPermission.Msg}");
+                    return BadRequest(Message.MsgUserNoPermission);
+                }
+                var groupFriendOther = _dataRepo.Get<GroupFriend>(x => x.GroupId == groupId && x.FriendId == otherFriendId);
+                if (groupFriendOther == null)
+                {
+                    Logger.Warn($"Other user is not a member of group: {Message.MsgUserNoPermission.Msg}");
+                    return BadRequest(Message.MsgUserNoPermission);
+                }
+                if (!groupFriendOther.Active && groupFriendMe.UserRight < UserType.Admin) // in order to get pending user's information ==> need to be Admin
+                {
+                    Logger.Warn($"User is not Admin: {Message.MsgUserNoPermission.Msg}");
+                    return BadRequest(Message.MsgUserNoPermission);
+                }
+
+                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{otherFriendId}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _cacheService.Get(cacheKey) as ActionResult<Friend>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                result = _dataRepo.Get<Friend>(x => x.Id == otherFriendId);
+
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
@@ -444,6 +658,31 @@ namespace goFriend.MobileAppService.Controllers
             try
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{friendId}.";
@@ -459,32 +698,8 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                #region Data Validation
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    Logger.Warn(Message.MsgMissingToken.Msg);
-                    return BadRequest(Message.MsgMissingToken);
-                }
-
-                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
-                if (arrFriends.Count() != 1)
-                {
-                    Logger.Warn(Message.MsgUserNotFound.Msg);
-                    return BadRequest(Message.MsgUserNotFound);
-                }
-                var friend = arrFriends.Single();
-                if (friend.Token != Guid.Parse(token))
-                {
-                    Logger.Warn(Message.MsgWrongToken.Msg);
-                    return BadRequest(Message.MsgWrongToken);
-                }
-                Logger.Debug($"friend={friend}");
-
-                #endregion
-
-                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group)
-                    .ToList().Select(x => { x.Group.Info = null; return x; }).ToList();
+                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group) // Include is no more necessary as we can set JsonIgnore
+                    .ToList().Select(x => { x.Group.Info = null; return x; }).ToList(); // .Info = null is no more necessary as we can set JsonIgnore
                 Logger.Debug($"myGroups={JsonConvert.SerializeObject(myGroups.Select(x => x.Group.Name))}");
 
                 result = myGroups.Select(x => new ApiGetGroupsModel
@@ -493,6 +708,11 @@ namespace goFriend.MobileAppService.Controllers
                     GroupFriend = x,
                     UserRight = x.UserRight,
                     MemberCount = _dataRepo.GetMany<GroupFriend>(y => y.GroupId == x.GroupId && y.Active).Count()
+                }).Select(x => {
+                    // there's no JsonIgnore in class GroupFriend, so we need to empty Group and Friend here to make object lighter
+                    x.GroupFriend.Group = null;
+                    x.GroupFriend.Friend = null;
+                    return x;
                 }).ToList();
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
@@ -527,6 +747,31 @@ namespace goFriend.MobileAppService.Controllers
             try
             {
                 Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache}, QueryString={Request.QueryString})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var searchText = Request.Query["searchText"];
@@ -542,30 +787,6 @@ namespace goFriend.MobileAppService.Controllers
                         return result;
                     }
                 }
-
-                #region Data Validation
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    Logger.Warn(Message.MsgMissingToken.Msg);
-                    return BadRequest(Message.MsgMissingToken);
-                }
-
-                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
-                if (arrFriends.Count() != 1)
-                {
-                    Logger.Warn(Message.MsgUserNotFound.Msg);
-                    return BadRequest(Message.MsgUserNotFound);
-                }
-                var friend = arrFriends.Single();
-                if (friend.Token != Guid.Parse(token))
-                {
-                    Logger.Warn(Message.MsgWrongToken.Msg);
-                    return BadRequest(Message.MsgWrongToken);
-                }
-                Logger.Debug($"friend={friend}");
-
-                #endregion
 
                 result = _dataRepo.GetMany<Group>(
                         x => x.Active && (string.IsNullOrEmpty(searchText)
@@ -617,7 +838,7 @@ namespace goFriend.MobileAppService.Controllers
                 }
 
                 var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == groupFriend.FriendId).ToList();
-                if (arrFriends.Count() != 1)
+                if (arrFriends.Count != 1)
                 {
                     Logger.Warn(Message.MsgUserNotFound.Msg);
                     return BadRequest(Message.MsgUserNotFound);
@@ -631,7 +852,7 @@ namespace goFriend.MobileAppService.Controllers
                 Logger.Debug($"friend={friend}");
 
                 var arrGroups = _dataRepo.GetMany<Group>(x => x.Active && x.Id == groupFriend.GroupId).ToList();
-                if (arrGroups.Count() != 1)
+                if (arrGroups.Count != 1)
                 {
                     Logger.Warn(Message.MsgGroupNotFound.Msg);
                     return BadRequest(Message.MsgGroupNotFound);

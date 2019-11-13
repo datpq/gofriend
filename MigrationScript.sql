@@ -91,14 +91,23 @@ IF NOT EXISTS (SELECT * FROM GroupFixedCatValues WHERE GroupId = (SELECT Id FROM
 
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroups')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
-	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroups', NULL, 3, 1);
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroups', NULL, 15, 1);
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetFriend')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetFriend', NULL, 60, 1);
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupFixedCatValues')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
 	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupFixedCatValues', NULL, 60, 1);
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupCatValues')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
 	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupCatValues', NULL, 5, 1);
-
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetMyGroups')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetMyGroups', NULL, 15, 1);
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupFriends')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupFriends', NULL, 15, 1);
+	
 INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
 	SELECT Id, SchoolName, NULL FROM Groups,
 		(SELECT N'Chuyên ĐHTH' SchoolName

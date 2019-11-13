@@ -17,6 +17,7 @@ namespace goFriend.DataModel
         public string Desc { get; set; }
 
         [Column(TypeName = "NVARCHAR(2000)")]
+        [JsonIgnore]
         public string Info { get; set; }
 
         [JsonIgnore]

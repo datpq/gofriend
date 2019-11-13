@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Reflection;
-using goFriend.ViewModels;
+﻿using goFriend.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -18,7 +16,7 @@ namespace goFriend.Views
 
             BindingContext = _viewModel = new AccountViewModel();
 
-            CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage()); };
+            CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage(App.User)); };
             CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
             CellLogin.Tapped += (s, e) =>
             {
@@ -50,15 +48,8 @@ namespace goFriend.Views
                 }
                 TsShells.Add(CellGroups);
                 TsShells.Add(CellLogout);
-                if (App.User.Image != null)
-                {
-                    ImgAvatar.Source = ImageSource.FromStream(() => new MemoryStream(App.User.Image));
-                }
-                else
-                {
-                    ImgAvatar.Source = ImageSource.FromResource(App.User.Gender == "female" ?
-                        "goFriend.Images.default_female.jpg" : "goFriend.Images.default_male.jpg", typeof(ImageResourceExtension).GetTypeInfo().Assembly);
-                }
+                ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
+                //ImgAvatar.Source = Extension.GetImageSourceFromFile("admin.png"); // normal 100 x 100
                 LblFullName.Text = App.User.Name;
                 LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
                 if (!App.User.Active)

@@ -45,6 +45,7 @@ namespace goFriend.DataModel
         [Column(TypeName = "VARCHAR(170)")]
         public string DeviceInfo { get; set; }
 
+        [JsonIgnore]
         public byte[] Image { get; set; }
 
         [JsonIgnore]

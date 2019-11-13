@@ -119,7 +119,6 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"GetGroupFixedCatValues.BEGIN(groupId={groupId}, useCache={useCache})");
-                //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
 
@@ -163,7 +162,6 @@ namespace goFriend.Services
             }
             finally
             {
-                //UserDialogs.Instance.HideLoading();
                 Logger.Debug($"GetGroupFixedCatValues.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
@@ -175,7 +173,6 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
-                //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
 
@@ -228,8 +225,70 @@ namespace goFriend.Services
             }
             finally
             {
-                //UserDialogs.Instance.HideLoading();
                 Logger.Debug($"GetGroupCatValues.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive, bool useCache = true, params string[] arrCatValues)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<GroupFriend> result = null;
+            try
+            {
+                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/{isActive}/{useCache}";
+                if (arrCatValues.Length > 0)
+                {
+                    for (var i = 0; i < arrCatValues.Length; i++)
+                    {
+                        var sep = i == 0 ? "?" : "&";
+                        requestUrl = $"{requestUrl}{sep}Cat{i}={HttpUtility.UrlEncode(arrCatValues[i])}";
+                    }
+                }
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<GroupFriend>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupCatValuesModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetGroupFriends.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -240,7 +299,6 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"GetMyGroups.BEGIN(useCache={useCache})");
-                //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
 
@@ -285,7 +343,6 @@ namespace goFriend.Services
             }
             finally
             {
-                //UserDialogs.Instance.HideLoading();
                 Logger.Debug($"GetMyGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
@@ -297,7 +354,6 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"GetGroups.BEGIN(useCache={useCache})");
-                //UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
 
@@ -342,8 +398,60 @@ namespace goFriend.Services
             }
             finally
             {
-                //UserDialogs.Instance.HideLoading();
                 Logger.Debug($"GetGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<Friend> GetFriend(int groupId, int otherFriendId, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Friend result = null;
+            try
+            {
+                Logger.Debug($"GetFriend.BEGIN(useCache={useCache})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetFriend/{App.User.Id}/{groupId}/{otherFriendId}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<Friend> (jsonString.Result);
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetFriend.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

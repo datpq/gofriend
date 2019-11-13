@@ -1,7 +1,7 @@
 ﻿using Facebook.CoreKit;
+using FFImageLoading.Forms.Platform;
 using Foundation;
 using goFriend.Services;
-using ImageCircle.Forms.Plugin.iOS;
 using Xamarin.Forms;
 using UIKit;
 
@@ -85,7 +85,10 @@ namespace goFriend.iOS
             Rg.Plugins.Popup.Popup.Init();
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Forms.Init();
-            ImageCircleRenderer.Init();
+
+            CachedImageRenderer.Init();
+            CachedImageRenderer.InitImageSourceHandler();;
+
             _logger = DependencyService.Get<ILogManager>().GetLog();
             _logger.Debug("Loading application...");
             LoadApplication(new App());

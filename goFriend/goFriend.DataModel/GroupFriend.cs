@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace goFriend.DataModel
 {
@@ -9,12 +8,12 @@ namespace goFriend.DataModel
     {
         public int FriendId { get; set; }
         //[ForeignKey("FriendId")]
-        [JsonIgnore]
+        //[JsonIgnore]
         public Friend Friend { get; set; }
 
         public int GroupId { get; set; }
         //[ForeignKey("GroupId")]
-        [JsonIgnore]
+        //[JsonIgnore]
         public Group Group { get; set; }
 
         public bool Active { get; set; }
@@ -46,6 +45,17 @@ namespace goFriend.DataModel
                 Cat1, Cat2, Cat3, Cat4, Cat5, Cat6, Cat7, Cat8, Cat9
             }.Where(x => !string.IsNullOrEmpty(x));
             return result;
+        }
+
+        public string GetCatValueDisplay(int startIdx)
+        {
+            var arrCats = Group.GetCatDescList().ToList();
+            var arrCatValueDisplay = new string[arrCats.Count - startIdx];
+            for (var i = startIdx; i < arrCats.Count; i++)
+            {
+                arrCatValueDisplay[i - startIdx] = $"{arrCats[i]} {GetCatByIdx(i + 1)}";
+            }
+            return string.Join(", ", arrCatValueDisplay);
         }
 
         public string GetCatByIdx(int idx)

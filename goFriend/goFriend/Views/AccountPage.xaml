@@ -5,9 +5,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
-             Title="{Static local:res.Account}"
-             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             Title="{Static local:res.Home}"
              xmlns:ctl="clr-namespace:goFriend.Controls"
+             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              x:Class="goFriend.Views.AccountPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -25,20 +26,27 @@
                     <TableSection x:Name="TsShells">
                         <ViewCell x:Name="CellAvatar">
                             <StackLayout Margin="10" HorizontalOptions="CenterAndExpand">
-                                <controls:CircleImage x:Name="ImgAvatar" Aspect="AspectFit" HorizontalOptions="CenterAndExpand">
-                                    <controls:CircleImage.WidthRequest>
+                                <ff:CachedImage x:Name="ImgAvatar" WidthRequest="100" HeightRequest="100">
+                                    <ff:CachedImage.Transformations>
+                                        <ffTransformations:CircleTransformation/>
+                                    </ff:CachedImage.Transformations>
+                                </ff:CachedImage>
+                                <!--
+                                <imagecircle:CircleImage x:Name="ImgAvatar" Aspect="AspectFit" HorizontalOptions="CenterAndExpand">
+                                    <imagecircle:CircleImage.WidthRequest>
                                         <OnPlatform x:TypeArguments="x:Double">
                                             <On Platform="Android, iOS">100</On>
                                             <On Platform="WinPhone">75</On>
                                         </OnPlatform>
-                                    </controls:CircleImage.WidthRequest>
-                                    <controls:CircleImage.HeightRequest>
+                                    </imagecircle:CircleImage.WidthRequest>
+                                    <imagecircle:CircleImage.HeightRequest>
                                         <OnPlatform x:TypeArguments="x:Double">
                                             <On Platform="Android, iOS">100</On>
                                             <On Platform="WinPhone">75</On>
                                         </OnPlatform>
-                                    </controls:CircleImage.HeightRequest>
-                                </controls:CircleImage>
+                                    </imagecircle:CircleImage.HeightRequest>
+                                </imagecircle:CircleImage>
+                                -->
                                 <Label FontSize="20" TextColor="{StaticResource ColorLabel}" x:Name="LblFullName" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" x:Name="LblMemberSince" HorizontalOptions="CenterAndExpand" />
                             </StackLayout>

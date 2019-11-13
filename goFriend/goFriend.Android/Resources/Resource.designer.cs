@@ -115,8 +115,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Attribute.behavior_overlapTop = global::goFriend.Droid.Resource.Attribute.behavior_overlapTop;
 			global::Acr.UserDialogs.Resource.Attribute.behavior_peekHeight = global::goFriend.Droid.Resource.Attribute.behavior_peekHeight;
 			global::Acr.UserDialogs.Resource.Attribute.behavior_skipCollapsed = global::goFriend.Droid.Resource.Attribute.behavior_skipCollapsed;
-			global::Acr.UserDialogs.Resource.Attribute.borderWidth = global::goFriend.Droid.Resource.Attribute.borderWidth;
 			global::Acr.UserDialogs.Resource.Attribute.borderlessButtonStyle = global::goFriend.Droid.Resource.Attribute.borderlessButtonStyle;
+			global::Acr.UserDialogs.Resource.Attribute.borderWidth = global::goFriend.Droid.Resource.Attribute.borderWidth;
 			global::Acr.UserDialogs.Resource.Attribute.bottomSheetDialogTheme = global::goFriend.Droid.Resource.Attribute.bottomSheetDialogTheme;
 			global::Acr.UserDialogs.Resource.Attribute.bottomSheetStyle = global::goFriend.Droid.Resource.Attribute.bottomSheetStyle;
 			global::Acr.UserDialogs.Resource.Attribute.buttonBarButtonStyle = global::goFriend.Droid.Resource.Attribute.buttonBarButtonStyle;
@@ -135,9 +135,9 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Attribute.closeIcon = global::goFriend.Droid.Resource.Attribute.closeIcon;
 			global::Acr.UserDialogs.Resource.Attribute.closeItemLayout = global::goFriend.Droid.Resource.Attribute.closeItemLayout;
 			global::Acr.UserDialogs.Resource.Attribute.collapseContentDescription = global::goFriend.Droid.Resource.Attribute.collapseContentDescription;
-			global::Acr.UserDialogs.Resource.Attribute.collapseIcon = global::goFriend.Droid.Resource.Attribute.collapseIcon;
 			global::Acr.UserDialogs.Resource.Attribute.collapsedTitleGravity = global::goFriend.Droid.Resource.Attribute.collapsedTitleGravity;
 			global::Acr.UserDialogs.Resource.Attribute.collapsedTitleTextAppearance = global::goFriend.Droid.Resource.Attribute.collapsedTitleTextAppearance;
+			global::Acr.UserDialogs.Resource.Attribute.collapseIcon = global::goFriend.Droid.Resource.Attribute.collapseIcon;
 			global::Acr.UserDialogs.Resource.Attribute.color = global::goFriend.Droid.Resource.Attribute.color;
 			global::Acr.UserDialogs.Resource.Attribute.colorAccent = global::goFriend.Droid.Resource.Attribute.colorAccent;
 			global::Acr.UserDialogs.Resource.Attribute.colorBackgroundFloating = global::goFriend.Droid.Resource.Attribute.colorBackgroundFloating;
@@ -174,8 +174,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Attribute.dividerVertical = global::goFriend.Droid.Resource.Attribute.dividerVertical;
 			global::Acr.UserDialogs.Resource.Attribute.drawableSize = global::goFriend.Droid.Resource.Attribute.drawableSize;
 			global::Acr.UserDialogs.Resource.Attribute.drawerArrowStyle = global::goFriend.Droid.Resource.Attribute.drawerArrowStyle;
-			global::Acr.UserDialogs.Resource.Attribute.dropDownListViewStyle = global::goFriend.Droid.Resource.Attribute.dropDownListViewStyle;
 			global::Acr.UserDialogs.Resource.Attribute.dropdownListPreferredItemHeight = global::goFriend.Droid.Resource.Attribute.dropdownListPreferredItemHeight;
+			global::Acr.UserDialogs.Resource.Attribute.dropDownListViewStyle = global::goFriend.Droid.Resource.Attribute.dropDownListViewStyle;
 			global::Acr.UserDialogs.Resource.Attribute.editTextBackground = global::goFriend.Droid.Resource.Attribute.editTextBackground;
 			global::Acr.UserDialogs.Resource.Attribute.editTextColor = global::goFriend.Droid.Resource.Attribute.editTextColor;
 			global::Acr.UserDialogs.Resource.Attribute.editTextStyle = global::goFriend.Droid.Resource.Attribute.editTextStyle;
@@ -219,9 +219,9 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Attribute.homeAsUpIndicator = global::goFriend.Droid.Resource.Attribute.homeAsUpIndicator;
 			global::Acr.UserDialogs.Resource.Attribute.homeLayout = global::goFriend.Droid.Resource.Attribute.homeLayout;
 			global::Acr.UserDialogs.Resource.Attribute.icon = global::goFriend.Droid.Resource.Attribute.icon;
+			global::Acr.UserDialogs.Resource.Attribute.iconifiedByDefault = global::goFriend.Droid.Resource.Attribute.iconifiedByDefault;
 			global::Acr.UserDialogs.Resource.Attribute.iconTint = global::goFriend.Droid.Resource.Attribute.iconTint;
 			global::Acr.UserDialogs.Resource.Attribute.iconTintMode = global::goFriend.Droid.Resource.Attribute.iconTintMode;
-			global::Acr.UserDialogs.Resource.Attribute.iconifiedByDefault = global::goFriend.Droid.Resource.Attribute.iconifiedByDefault;
 			global::Acr.UserDialogs.Resource.Attribute.imageButtonStyle = global::goFriend.Droid.Resource.Attribute.imageButtonStyle;
 			global::Acr.UserDialogs.Resource.Attribute.indeterminateProgressStyle = global::goFriend.Droid.Resource.Attribute.indeterminateProgressStyle;
 			global::Acr.UserDialogs.Resource.Attribute.initialActivityCount = global::goFriend.Droid.Resource.Attribute.initialActivityCount;
@@ -374,9 +374,9 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Attribute.titleMargin = global::goFriend.Droid.Resource.Attribute.titleMargin;
 			global::Acr.UserDialogs.Resource.Attribute.titleMarginBottom = global::goFriend.Droid.Resource.Attribute.titleMarginBottom;
 			global::Acr.UserDialogs.Resource.Attribute.titleMarginEnd = global::goFriend.Droid.Resource.Attribute.titleMarginEnd;
+			global::Acr.UserDialogs.Resource.Attribute.titleMargins = global::goFriend.Droid.Resource.Attribute.titleMargins;
 			global::Acr.UserDialogs.Resource.Attribute.titleMarginStart = global::goFriend.Droid.Resource.Attribute.titleMarginStart;
 			global::Acr.UserDialogs.Resource.Attribute.titleMarginTop = global::goFriend.Droid.Resource.Attribute.titleMarginTop;
-			global::Acr.UserDialogs.Resource.Attribute.titleMargins = global::goFriend.Droid.Resource.Attribute.titleMargins;
 			global::Acr.UserDialogs.Resource.Attribute.titleTextAppearance = global::goFriend.Droid.Resource.Attribute.titleTextAppearance;
 			global::Acr.UserDialogs.Resource.Attribute.titleTextColor = global::goFriend.Droid.Resource.Attribute.titleTextColor;
 			global::Acr.UserDialogs.Resource.Attribute.titleTextStyle = global::goFriend.Droid.Resource.Attribute.titleTextStyle;
@@ -726,6 +726,11 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Drawable.abc_switch_track_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_switch_track_mtrl_alpha;
 			global::Acr.UserDialogs.Resource.Drawable.abc_tab_indicator_material = global::goFriend.Droid.Resource.Drawable.abc_tab_indicator_material;
 			global::Acr.UserDialogs.Resource.Drawable.abc_tab_indicator_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_tab_indicator_mtrl_alpha;
+			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_activated_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_activated_mtrl_alpha;
+			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_default_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_default_mtrl_alpha;
+			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_search_activated_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_search_activated_mtrl_alpha;
+			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_search_default_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_search_default_mtrl_alpha;
+			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_search_material = global::goFriend.Droid.Resource.Drawable.abc_textfield_search_material;
 			global::Acr.UserDialogs.Resource.Drawable.abc_text_cursor_material = global::goFriend.Droid.Resource.Drawable.abc_text_cursor_material;
 			global::Acr.UserDialogs.Resource.Drawable.abc_text_select_handle_left_mtrl_dark = global::goFriend.Droid.Resource.Drawable.abc_text_select_handle_left_mtrl_dark;
 			global::Acr.UserDialogs.Resource.Drawable.abc_text_select_handle_left_mtrl_light = global::goFriend.Droid.Resource.Drawable.abc_text_select_handle_left_mtrl_light;
@@ -733,11 +738,6 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Drawable.abc_text_select_handle_middle_mtrl_light = global::goFriend.Droid.Resource.Drawable.abc_text_select_handle_middle_mtrl_light;
 			global::Acr.UserDialogs.Resource.Drawable.abc_text_select_handle_right_mtrl_dark = global::goFriend.Droid.Resource.Drawable.abc_text_select_handle_right_mtrl_dark;
 			global::Acr.UserDialogs.Resource.Drawable.abc_text_select_handle_right_mtrl_light = global::goFriend.Droid.Resource.Drawable.abc_text_select_handle_right_mtrl_light;
-			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_activated_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_activated_mtrl_alpha;
-			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_default_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_default_mtrl_alpha;
-			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_search_activated_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_search_activated_mtrl_alpha;
-			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_search_default_mtrl_alpha = global::goFriend.Droid.Resource.Drawable.abc_textfield_search_default_mtrl_alpha;
-			global::Acr.UserDialogs.Resource.Drawable.abc_textfield_search_material = global::goFriend.Droid.Resource.Drawable.abc_textfield_search_material;
 			global::Acr.UserDialogs.Resource.Drawable.abc_vector_test = global::goFriend.Droid.Resource.Drawable.abc_vector_test;
 			global::Acr.UserDialogs.Resource.Drawable.avd_hide_password = global::goFriend.Droid.Resource.Drawable.avd_hide_password;
 			global::Acr.UserDialogs.Resource.Drawable.avd_show_password = global::goFriend.Droid.Resource.Drawable.avd_show_password;
@@ -766,13 +766,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Drawable.roundedbgdark = global::goFriend.Droid.Resource.Drawable.roundedbgdark;
 			global::Acr.UserDialogs.Resource.Drawable.tooltip_frame_dark = global::goFriend.Droid.Resource.Drawable.tooltip_frame_dark;
 			global::Acr.UserDialogs.Resource.Drawable.tooltip_frame_light = global::goFriend.Droid.Resource.Drawable.tooltip_frame_light;
-			global::Acr.UserDialogs.Resource.Id.ALT = global::goFriend.Droid.Resource.Id.ALT;
-			global::Acr.UserDialogs.Resource.Id.CTRL = global::goFriend.Droid.Resource.Id.CTRL;
-			global::Acr.UserDialogs.Resource.Id.FUNCTION = global::goFriend.Droid.Resource.Id.FUNCTION;
-			global::Acr.UserDialogs.Resource.Id.META = global::goFriend.Droid.Resource.Id.META;
-			global::Acr.UserDialogs.Resource.Id.SHIFT = global::goFriend.Droid.Resource.Id.SHIFT;
-			global::Acr.UserDialogs.Resource.Id.SYM = global::goFriend.Droid.Resource.Id.SYM;
 			global::Acr.UserDialogs.Resource.Id.action0 = global::goFriend.Droid.Resource.Id.action0;
+			global::Acr.UserDialogs.Resource.Id.actions = global::goFriend.Droid.Resource.Id.actions;
 			global::Acr.UserDialogs.Resource.Id.action_bar = global::goFriend.Droid.Resource.Id.action_bar;
 			global::Acr.UserDialogs.Resource.Id.action_bar_activity_content = global::goFriend.Droid.Resource.Id.action_bar_activity_content;
 			global::Acr.UserDialogs.Resource.Id.action_bar_container = global::goFriend.Droid.Resource.Id.action_bar_container;
@@ -790,11 +785,11 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.action_mode_bar_stub = global::goFriend.Droid.Resource.Id.action_mode_bar_stub;
 			global::Acr.UserDialogs.Resource.Id.action_mode_close_button = global::goFriend.Droid.Resource.Id.action_mode_close_button;
 			global::Acr.UserDialogs.Resource.Id.action_text = global::goFriend.Droid.Resource.Id.action_text;
-			global::Acr.UserDialogs.Resource.Id.actions = global::goFriend.Droid.Resource.Id.actions;
 			global::Acr.UserDialogs.Resource.Id.activity_chooser_view_content = global::goFriend.Droid.Resource.Id.activity_chooser_view_content;
 			global::Acr.UserDialogs.Resource.Id.add = global::goFriend.Droid.Resource.Id.add;
 			global::Acr.UserDialogs.Resource.Id.alertTitle = global::goFriend.Droid.Resource.Id.alertTitle;
 			global::Acr.UserDialogs.Resource.Id.all = global::goFriend.Droid.Resource.Id.all;
+			global::Acr.UserDialogs.Resource.Id.ALT = global::goFriend.Droid.Resource.Id.ALT;
 			global::Acr.UserDialogs.Resource.Id.always = global::goFriend.Droid.Resource.Id.always;
 			global::Acr.UserDialogs.Resource.Id.async = global::goFriend.Droid.Resource.Id.async;
 			global::Acr.UserDialogs.Resource.Id.auto = global::goFriend.Droid.Resource.Id.auto;
@@ -814,6 +809,7 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.container = global::goFriend.Droid.Resource.Id.container;
 			global::Acr.UserDialogs.Resource.Id.contentPanel = global::goFriend.Droid.Resource.Id.contentPanel;
 			global::Acr.UserDialogs.Resource.Id.coordinator = global::goFriend.Droid.Resource.Id.coordinator;
+			global::Acr.UserDialogs.Resource.Id.CTRL = global::goFriend.Droid.Resource.Id.CTRL;
 			global::Acr.UserDialogs.Resource.Id.custom = global::goFriend.Droid.Resource.Id.custom;
 			global::Acr.UserDialogs.Resource.Id.customPanel = global::goFriend.Droid.Resource.Id.customPanel;
 			global::Acr.UserDialogs.Resource.Id.decor_content_parent = global::goFriend.Droid.Resource.Id.decor_content_parent;
@@ -830,13 +826,14 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.enterAlways = global::goFriend.Droid.Resource.Id.enterAlways;
 			global::Acr.UserDialogs.Resource.Id.enterAlwaysCollapsed = global::goFriend.Droid.Resource.Id.enterAlwaysCollapsed;
 			global::Acr.UserDialogs.Resource.Id.exitUntilCollapsed = global::goFriend.Droid.Resource.Id.exitUntilCollapsed;
-			global::Acr.UserDialogs.Resource.Id.expand_activities_button = global::goFriend.Droid.Resource.Id.expand_activities_button;
 			global::Acr.UserDialogs.Resource.Id.expanded_menu = global::goFriend.Droid.Resource.Id.expanded_menu;
+			global::Acr.UserDialogs.Resource.Id.expand_activities_button = global::goFriend.Droid.Resource.Id.expand_activities_button;
 			global::Acr.UserDialogs.Resource.Id.fill = global::goFriend.Droid.Resource.Id.fill;
 			global::Acr.UserDialogs.Resource.Id.fill_horizontal = global::goFriend.Droid.Resource.Id.fill_horizontal;
 			global::Acr.UserDialogs.Resource.Id.fill_vertical = global::goFriend.Droid.Resource.Id.fill_vertical;
 			global::Acr.UserDialogs.Resource.Id.@fixed = global::goFriend.Droid.Resource.Id.@fixed;
 			global::Acr.UserDialogs.Resource.Id.forever = global::goFriend.Droid.Resource.Id.forever;
+			global::Acr.UserDialogs.Resource.Id.FUNCTION = global::goFriend.Droid.Resource.Id.FUNCTION;
 			global::Acr.UserDialogs.Resource.Id.ghost_view = global::goFriend.Droid.Resource.Id.ghost_view;
 			global::Acr.UserDialogs.Resource.Id.home = global::goFriend.Droid.Resource.Id.home;
 			global::Acr.UserDialogs.Resource.Id.homeAsUp = global::goFriend.Droid.Resource.Id.homeAsUp;
@@ -859,6 +856,7 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.masked = global::goFriend.Droid.Resource.Id.masked;
 			global::Acr.UserDialogs.Resource.Id.media_actions = global::goFriend.Droid.Resource.Id.media_actions;
 			global::Acr.UserDialogs.Resource.Id.message = global::goFriend.Droid.Resource.Id.message;
+			global::Acr.UserDialogs.Resource.Id.META = global::goFriend.Droid.Resource.Id.META;
 			global::Acr.UserDialogs.Resource.Id.middle = global::goFriend.Droid.Resource.Id.middle;
 			global::Acr.UserDialogs.Resource.Id.mini = global::goFriend.Droid.Resource.Id.mini;
 			global::Acr.UserDialogs.Resource.Id.multiply = global::goFriend.Droid.Resource.Id.multiply;
@@ -884,10 +882,10 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.save_scale_type = global::goFriend.Droid.Resource.Id.save_scale_type;
 			global::Acr.UserDialogs.Resource.Id.screen = global::goFriend.Droid.Resource.Id.screen;
 			global::Acr.UserDialogs.Resource.Id.scroll = global::goFriend.Droid.Resource.Id.scroll;
+			global::Acr.UserDialogs.Resource.Id.scrollable = global::goFriend.Droid.Resource.Id.scrollable;
 			global::Acr.UserDialogs.Resource.Id.scrollIndicatorDown = global::goFriend.Droid.Resource.Id.scrollIndicatorDown;
 			global::Acr.UserDialogs.Resource.Id.scrollIndicatorUp = global::goFriend.Droid.Resource.Id.scrollIndicatorUp;
 			global::Acr.UserDialogs.Resource.Id.scrollView = global::goFriend.Droid.Resource.Id.scrollView;
-			global::Acr.UserDialogs.Resource.Id.scrollable = global::goFriend.Droid.Resource.Id.scrollable;
 			global::Acr.UserDialogs.Resource.Id.search_badge = global::goFriend.Droid.Resource.Id.search_badge;
 			global::Acr.UserDialogs.Resource.Id.search_bar = global::goFriend.Droid.Resource.Id.search_bar;
 			global::Acr.UserDialogs.Resource.Id.search_button = global::goFriend.Droid.Resource.Id.search_button;
@@ -899,6 +897,7 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.search_src_text = global::goFriend.Droid.Resource.Id.search_src_text;
 			global::Acr.UserDialogs.Resource.Id.search_voice_btn = global::goFriend.Droid.Resource.Id.search_voice_btn;
 			global::Acr.UserDialogs.Resource.Id.select_dialog_listview = global::goFriend.Droid.Resource.Id.select_dialog_listview;
+			global::Acr.UserDialogs.Resource.Id.SHIFT = global::goFriend.Droid.Resource.Id.SHIFT;
 			global::Acr.UserDialogs.Resource.Id.shortcut = global::goFriend.Droid.Resource.Id.shortcut;
 			global::Acr.UserDialogs.Resource.Id.showCustom = global::goFriend.Droid.Resource.Id.showCustom;
 			global::Acr.UserDialogs.Resource.Id.showHome = global::goFriend.Droid.Resource.Id.showHome;
@@ -916,16 +915,17 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Id.status_bar_latest_event_content = global::goFriend.Droid.Resource.Id.status_bar_latest_event_content;
 			global::Acr.UserDialogs.Resource.Id.submenuarrow = global::goFriend.Droid.Resource.Id.submenuarrow;
 			global::Acr.UserDialogs.Resource.Id.submit_area = global::goFriend.Droid.Resource.Id.submit_area;
+			global::Acr.UserDialogs.Resource.Id.SYM = global::goFriend.Droid.Resource.Id.SYM;
 			global::Acr.UserDialogs.Resource.Id.tabMode = global::goFriend.Droid.Resource.Id.tabMode;
 			global::Acr.UserDialogs.Resource.Id.tag_transition_group = global::goFriend.Droid.Resource.Id.tag_transition_group;
 			global::Acr.UserDialogs.Resource.Id.text = global::goFriend.Droid.Resource.Id.text;
 			global::Acr.UserDialogs.Resource.Id.text2 = global::goFriend.Droid.Resource.Id.text2;
+			global::Acr.UserDialogs.Resource.Id.textinput_counter = global::goFriend.Droid.Resource.Id.textinput_counter;
+			global::Acr.UserDialogs.Resource.Id.textinput_error = global::goFriend.Droid.Resource.Id.textinput_error;
 			global::Acr.UserDialogs.Resource.Id.textSpacerNoButtons = global::goFriend.Droid.Resource.Id.textSpacerNoButtons;
 			global::Acr.UserDialogs.Resource.Id.textSpacerNoTitle = global::goFriend.Droid.Resource.Id.textSpacerNoTitle;
 			global::Acr.UserDialogs.Resource.Id.textViewStatus = global::goFriend.Droid.Resource.Id.textViewStatus;
 			global::Acr.UserDialogs.Resource.Id.text_input_password_toggle = global::goFriend.Droid.Resource.Id.text_input_password_toggle;
-			global::Acr.UserDialogs.Resource.Id.textinput_counter = global::goFriend.Droid.Resource.Id.textinput_counter;
-			global::Acr.UserDialogs.Resource.Id.textinput_error = global::goFriend.Droid.Resource.Id.textinput_error;
 			global::Acr.UserDialogs.Resource.Id.time = global::goFriend.Droid.Resource.Id.time;
 			global::Acr.UserDialogs.Resource.Id.title = global::goFriend.Droid.Resource.Id.title;
 			global::Acr.UserDialogs.Resource.Id.titleDividerNoCustom = global::goFriend.Droid.Resource.Id.titleDividerNoCustom;
@@ -1022,8 +1022,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.String.abc_action_bar_up_description = global::goFriend.Droid.Resource.String.abc_action_bar_up_description;
 			global::Acr.UserDialogs.Resource.String.abc_action_menu_overflow_description = global::goFriend.Droid.Resource.String.abc_action_menu_overflow_description;
 			global::Acr.UserDialogs.Resource.String.abc_action_mode_done = global::goFriend.Droid.Resource.String.abc_action_mode_done;
-			global::Acr.UserDialogs.Resource.String.abc_activity_chooser_view_see_all = global::goFriend.Droid.Resource.String.abc_activity_chooser_view_see_all;
 			global::Acr.UserDialogs.Resource.String.abc_activitychooserview_choose_application = global::goFriend.Droid.Resource.String.abc_activitychooserview_choose_application;
+			global::Acr.UserDialogs.Resource.String.abc_activity_chooser_view_see_all = global::goFriend.Droid.Resource.String.abc_activity_chooser_view_see_all;
 			global::Acr.UserDialogs.Resource.String.abc_capital_off = global::goFriend.Droid.Resource.String.abc_capital_off;
 			global::Acr.UserDialogs.Resource.String.abc_capital_on = global::goFriend.Droid.Resource.String.abc_capital_on;
 			global::Acr.UserDialogs.Resource.String.abc_font_family_body_1_material = global::goFriend.Droid.Resource.String.abc_font_family_body_1_material;
@@ -1038,12 +1038,12 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.String.abc_font_family_menu_material = global::goFriend.Droid.Resource.String.abc_font_family_menu_material;
 			global::Acr.UserDialogs.Resource.String.abc_font_family_subhead_material = global::goFriend.Droid.Resource.String.abc_font_family_subhead_material;
 			global::Acr.UserDialogs.Resource.String.abc_font_family_title_material = global::goFriend.Droid.Resource.String.abc_font_family_title_material;
-			global::Acr.UserDialogs.Resource.String.abc_search_hint = global::goFriend.Droid.Resource.String.abc_search_hint;
 			global::Acr.UserDialogs.Resource.String.abc_searchview_description_clear = global::goFriend.Droid.Resource.String.abc_searchview_description_clear;
 			global::Acr.UserDialogs.Resource.String.abc_searchview_description_query = global::goFriend.Droid.Resource.String.abc_searchview_description_query;
 			global::Acr.UserDialogs.Resource.String.abc_searchview_description_search = global::goFriend.Droid.Resource.String.abc_searchview_description_search;
 			global::Acr.UserDialogs.Resource.String.abc_searchview_description_submit = global::goFriend.Droid.Resource.String.abc_searchview_description_submit;
 			global::Acr.UserDialogs.Resource.String.abc_searchview_description_voice = global::goFriend.Droid.Resource.String.abc_searchview_description_voice;
+			global::Acr.UserDialogs.Resource.String.abc_search_hint = global::goFriend.Droid.Resource.String.abc_search_hint;
 			global::Acr.UserDialogs.Resource.String.abc_shareactionprovider_share_with = global::goFriend.Droid.Resource.String.abc_shareactionprovider_share_with;
 			global::Acr.UserDialogs.Resource.String.abc_shareactionprovider_share_with_application = global::goFriend.Droid.Resource.String.abc_shareactionprovider_share_with_application;
 			global::Acr.UserDialogs.Resource.String.abc_toolbar_collapse_description = global::goFriend.Droid.Resource.String.abc_toolbar_collapse_description;
@@ -1069,8 +1069,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Base_Animation_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_Animation_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_Animation_AppCompat_DropDownUp = global::goFriend.Droid.Resource.Style.Base_Animation_AppCompat_DropDownUp;
 			global::Acr.UserDialogs.Resource.Style.Base_Animation_AppCompat_Tooltip = global::goFriend.Droid.Resource.Style.Base_Animation_AppCompat_Tooltip;
-			global::Acr.UserDialogs.Resource.Style.Base_DialogWindowTitle_AppCompat = global::goFriend.Droid.Resource.Style.Base_DialogWindowTitle_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_DialogWindowTitleBackground_AppCompat = global::goFriend.Droid.Resource.Style.Base_DialogWindowTitleBackground_AppCompat;
+			global::Acr.UserDialogs.Resource.Style.Base_DialogWindowTitle_AppCompat = global::goFriend.Droid.Resource.Style.Base_DialogWindowTitle_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_TextAppearance_AppCompat = global::goFriend.Droid.Resource.Style.Base_TextAppearance_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_TextAppearance_AppCompat_Body1 = global::goFriend.Droid.Resource.Style.Base_TextAppearance_AppCompat_Body1;
 			global::Acr.UserDialogs.Resource.Style.Base_TextAppearance_AppCompat_Body2 = global::goFriend.Droid.Resource.Style.Base_TextAppearance_AppCompat_Body2;
@@ -1119,20 +1119,6 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Base_TextAppearance_Widget_AppCompat_ExpandedMenu_Item = global::goFriend.Droid.Resource.Style.Base_TextAppearance_Widget_AppCompat_ExpandedMenu_Item;
 			global::Acr.UserDialogs.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Subtitle = global::goFriend.Droid.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Subtitle;
 			global::Acr.UserDialogs.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Title = global::goFriend.Droid.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Title;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_CompactMenu = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_CompactMenu;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog_Alert = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog_Alert;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog_FixedSize = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog_FixedSize;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog_MinWidth;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_DialogWhenLarge;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_DarkActionBar = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_DarkActionBar;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog_Alert = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog_Alert;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog_FixedSize = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog_FixedSize;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog_MinWidth;
-			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Base_ThemeOverlay_AppCompat = global::goFriend.Droid.Resource.Style.Base_ThemeOverlay_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_ThemeOverlay_AppCompat_ActionBar = global::goFriend.Droid.Resource.Style.Base_ThemeOverlay_AppCompat_ActionBar;
 			global::Acr.UserDialogs.Resource.Style.Base_ThemeOverlay_AppCompat_Dark = global::goFriend.Droid.Resource.Style.Base_ThemeOverlay_AppCompat_Dark;
@@ -1140,17 +1126,31 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Base_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_ThemeOverlay_AppCompat_Dialog_Alert = global::goFriend.Droid.Resource.Style.Base_ThemeOverlay_AppCompat_Dialog_Alert;
 			global::Acr.UserDialogs.Resource.Style.Base_ThemeOverlay_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_ThemeOverlay_AppCompat_Light;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_CompactMenu = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_CompactMenu;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_DialogWhenLarge;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog_Alert = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog_Alert;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog_FixedSize = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog_FixedSize;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Dialog_MinWidth;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_DarkActionBar = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_DarkActionBar;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_DialogWhenLarge;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog_Alert = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog_Alert;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog_FixedSize = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog_FixedSize;
+			global::Acr.UserDialogs.Resource.Style.Base_Theme_AppCompat_Light_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Base_Theme_AppCompat_Light_Dialog_MinWidth;
+			global::Acr.UserDialogs.Resource.Style.Base_V11_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V11_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V11_Theme_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V11_Theme_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V11_Theme_AppCompat_Light_Dialog = global::goFriend.Droid.Resource.Style.Base_V11_Theme_AppCompat_Light_Dialog;
-			global::Acr.UserDialogs.Resource.Style.Base_V11_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V11_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V12_Widget_AppCompat_AutoCompleteTextView = global::goFriend.Droid.Resource.Style.Base_V12_Widget_AppCompat_AutoCompleteTextView;
 			global::Acr.UserDialogs.Resource.Style.Base_V12_Widget_AppCompat_EditText = global::goFriend.Droid.Resource.Style.Base_V12_Widget_AppCompat_EditText;
 			global::Acr.UserDialogs.Resource.Style.Base_V14_Widget_Design_AppBarLayout = global::goFriend.Droid.Resource.Style.Base_V14_Widget_Design_AppBarLayout;
+			global::Acr.UserDialogs.Resource.Style.Base_V21_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V21_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V21_Theme_AppCompat = global::goFriend.Droid.Resource.Style.Base_V21_Theme_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_V21_Theme_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V21_Theme_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V21_Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_V21_Theme_AppCompat_Light;
 			global::Acr.UserDialogs.Resource.Style.Base_V21_Theme_AppCompat_Light_Dialog = global::goFriend.Droid.Resource.Style.Base_V21_Theme_AppCompat_Light_Dialog;
-			global::Acr.UserDialogs.Resource.Style.Base_V21_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V21_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V21_Widget_Design_AppBarLayout = global::goFriend.Droid.Resource.Style.Base_V21_Widget_Design_AppBarLayout;
 			global::Acr.UserDialogs.Resource.Style.Base_V22_Theme_AppCompat = global::goFriend.Droid.Resource.Style.Base_V22_Theme_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_V22_Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_V22_Theme_AppCompat_Light;
@@ -1160,11 +1160,11 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Base_V26_Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_V26_Theme_AppCompat_Light;
 			global::Acr.UserDialogs.Resource.Style.Base_V26_Widget_AppCompat_Toolbar = global::goFriend.Droid.Resource.Style.Base_V26_Widget_AppCompat_Toolbar;
 			global::Acr.UserDialogs.Resource.Style.Base_V26_Widget_Design_AppBarLayout = global::goFriend.Droid.Resource.Style.Base_V26_Widget_Design_AppBarLayout;
+			global::Acr.UserDialogs.Resource.Style.Base_V7_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V7_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Theme_AppCompat = global::goFriend.Droid.Resource.Style.Base_V7_Theme_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Theme_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V7_Theme_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Base_V7_Theme_AppCompat_Light;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Theme_AppCompat_Light_Dialog = global::goFriend.Droid.Resource.Style.Base_V7_Theme_AppCompat_Light_Dialog;
-			global::Acr.UserDialogs.Resource.Style.Base_V7_ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Base_V7_ThemeOverlay_AppCompat_Dialog;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Widget_AppCompat_AutoCompleteTextView = global::goFriend.Droid.Resource.Style.Base_V7_Widget_AppCompat_AutoCompleteTextView;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Widget_AppCompat_EditText = global::goFriend.Droid.Resource.Style.Base_V7_Widget_AppCompat_EditText;
 			global::Acr.UserDialogs.Resource.Style.Base_V7_Widget_AppCompat_Toolbar = global::goFriend.Droid.Resource.Style.Base_V7_Widget_AppCompat_Toolbar;
@@ -1180,13 +1180,13 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_ActivityChooserView = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_ActivityChooserView;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_AutoCompleteTextView = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_AutoCompleteTextView;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_Button = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_Button;
+			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_ButtonBar = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_ButtonBar;
+			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_ButtonBar_AlertDialog = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_ButtonBar_AlertDialog;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_Button_Borderless = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_Button_Borderless;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_Button_Borderless_Colored = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_Button_Borderless_Colored;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_Button_ButtonBar_AlertDialog = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_Button_ButtonBar_AlertDialog;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_Button_Colored = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_Button_Colored;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_Button_Small = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_Button_Small;
-			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_ButtonBar = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_ButtonBar;
-			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_ButtonBar_AlertDialog = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_ButtonBar_AlertDialog;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_CompoundButton_CheckBox = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_CompoundButton_CheckBox;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_CompoundButton_RadioButton = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_CompoundButton_RadioButton;
 			global::Acr.UserDialogs.Resource.Style.Base_Widget_AppCompat_CompoundButton_Switch = global::goFriend.Droid.Resource.Style.Base_Widget_AppCompat_CompoundButton_Switch;
@@ -1247,12 +1247,12 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_InternalGroup = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_InternalGroup;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_Text = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_Text;
+			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_SearchView_MagIcon = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_SearchView_MagIcon;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon1 = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon1;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon2 = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon2;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Query = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Query;
 			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Text = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Text;
-			global::Acr.UserDialogs.Resource.Style.RtlOverlay_Widget_AppCompat_SearchView_MagIcon = global::goFriend.Droid.Resource.Style.RtlOverlay_Widget_AppCompat_SearchView_MagIcon;
 			global::Acr.UserDialogs.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton = global::goFriend.Droid.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton;
 			global::Acr.UserDialogs.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow = global::goFriend.Droid.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow;
 			global::Acr.UserDialogs.Resource.Style.TextAppearance_AppCompat = global::goFriend.Droid.Resource.Style.TextAppearance_AppCompat;
@@ -1323,25 +1323,32 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.TextAppearance_Widget_AppCompat_ExpandedMenu_Item = global::goFriend.Droid.Resource.Style.TextAppearance_Widget_AppCompat_ExpandedMenu_Item;
 			global::Acr.UserDialogs.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Subtitle = global::goFriend.Droid.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Subtitle;
 			global::Acr.UserDialogs.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Title = global::goFriend.Droid.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Title;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_ActionBar = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_ActionBar;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dark = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dark;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dark_ActionBar = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dark_ActionBar;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dialog;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dialog_Alert = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dialog_Alert;
+			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Light = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Light;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat = global::goFriend.Droid.Resource.Style.Theme_AppCompat;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_CompactMenu = global::goFriend.Droid.Resource.Style.Theme_AppCompat_CompactMenu;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_DarkActionBar = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_DarkActionBar;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_Dialog = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_Dialog;
+			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_Dialog_Alert = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_Dialog_Alert;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_Dialog_MinWidth;
-			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DayNight_NoActionBar = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DayNight_NoActionBar;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Dialog;
+			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Dialog_Alert = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Dialog_Alert;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Dialog_MinWidth;
-			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Theme_AppCompat_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_DarkActionBar = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_DarkActionBar;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_Dialog = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_Dialog;
+			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_Dialog_Alert = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_Dialog_Alert;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_Dialog_MinWidth = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_Dialog_MinWidth;
-			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_DialogWhenLarge = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_DialogWhenLarge;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_Light_NoActionBar = global::goFriend.Droid.Resource.Style.Theme_AppCompat_Light_NoActionBar;
 			global::Acr.UserDialogs.Resource.Style.Theme_AppCompat_NoActionBar = global::goFriend.Droid.Resource.Style.Theme_AppCompat_NoActionBar;
 			global::Acr.UserDialogs.Resource.Style.Theme_Design = global::goFriend.Droid.Resource.Style.Theme_Design;
@@ -1350,13 +1357,6 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Theme_Design_Light_BottomSheetDialog = global::goFriend.Droid.Resource.Style.Theme_Design_Light_BottomSheetDialog;
 			global::Acr.UserDialogs.Resource.Style.Theme_Design_Light_NoActionBar = global::goFriend.Droid.Resource.Style.Theme_Design_Light_NoActionBar;
 			global::Acr.UserDialogs.Resource.Style.Theme_Design_NoActionBar = global::goFriend.Droid.Resource.Style.Theme_Design_NoActionBar;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_ActionBar = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_ActionBar;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dark = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dark;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dark_ActionBar = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dark_ActionBar;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dialog = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dialog;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Dialog_Alert = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Dialog_Alert;
-			global::Acr.UserDialogs.Resource.Style.ThemeOverlay_AppCompat_Light = global::goFriend.Droid.Resource.Style.ThemeOverlay_AppCompat_Light;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ActionBar = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ActionBar;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ActionBar_Solid = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ActionBar_Solid;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ActionBar_TabBar = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ActionBar_TabBar;
@@ -1369,13 +1369,13 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ActivityChooserView = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ActivityChooserView;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_AutoCompleteTextView = global::goFriend.Droid.Resource.Style.Widget_AppCompat_AutoCompleteTextView;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_Button = global::goFriend.Droid.Resource.Style.Widget_AppCompat_Button;
+			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ButtonBar = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ButtonBar;
+			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ButtonBar_AlertDialog = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ButtonBar_AlertDialog;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_Button_Borderless = global::goFriend.Droid.Resource.Style.Widget_AppCompat_Button_Borderless;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_Button_Borderless_Colored = global::goFriend.Droid.Resource.Style.Widget_AppCompat_Button_Borderless_Colored;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_Button_ButtonBar_AlertDialog = global::goFriend.Droid.Resource.Style.Widget_AppCompat_Button_ButtonBar_AlertDialog;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_Button_Colored = global::goFriend.Droid.Resource.Style.Widget_AppCompat_Button_Colored;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_Button_Small = global::goFriend.Droid.Resource.Style.Widget_AppCompat_Button_Small;
-			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ButtonBar = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ButtonBar;
-			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_ButtonBar_AlertDialog = global::goFriend.Droid.Resource.Style.Widget_AppCompat_ButtonBar_AlertDialog;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_CompoundButton_CheckBox = global::goFriend.Droid.Resource.Style.Widget_AppCompat_CompoundButton_CheckBox;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_CompoundButton_RadioButton = global::goFriend.Droid.Resource.Style.Widget_AppCompat_CompoundButton_RadioButton;
 			global::Acr.UserDialogs.Resource.Style.Widget_AppCompat_CompoundButton_Switch = global::goFriend.Droid.Resource.Style.Widget_AppCompat_CompoundButton_Switch;
@@ -1443,6 +1443,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Style.Widget_Design_TabLayout = global::goFriend.Droid.Resource.Style.Widget_Design_TabLayout;
 			global::Acr.UserDialogs.Resource.Style.Widget_Design_TextInputLayout = global::goFriend.Droid.Resource.Style.Widget_Design_TextInputLayout;
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar = global::goFriend.Droid.Resource.Styleable.ActionBar;
+			global::Acr.UserDialogs.Resource.Styleable.ActionBarLayout = global::goFriend.Droid.Resource.Styleable.ActionBarLayout;
+			global::Acr.UserDialogs.Resource.Styleable.ActionBarLayout_android_layout_gravity = global::goFriend.Droid.Resource.Styleable.ActionBarLayout_android_layout_gravity;
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar_background = global::goFriend.Droid.Resource.Styleable.ActionBar_background;
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar_backgroundSplit = global::goFriend.Droid.Resource.Styleable.ActionBar_backgroundSplit;
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar_backgroundStacked = global::goFriend.Droid.Resource.Styleable.ActionBar_backgroundStacked;
@@ -1472,8 +1474,6 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar_subtitleTextStyle = global::goFriend.Droid.Resource.Styleable.ActionBar_subtitleTextStyle;
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar_title = global::goFriend.Droid.Resource.Styleable.ActionBar_title;
 			global::Acr.UserDialogs.Resource.Styleable.ActionBar_titleTextStyle = global::goFriend.Droid.Resource.Styleable.ActionBar_titleTextStyle;
-			global::Acr.UserDialogs.Resource.Styleable.ActionBarLayout = global::goFriend.Droid.Resource.Styleable.ActionBarLayout;
-			global::Acr.UserDialogs.Resource.Styleable.ActionBarLayout_android_layout_gravity = global::goFriend.Droid.Resource.Styleable.ActionBarLayout_android_layout_gravity;
 			global::Acr.UserDialogs.Resource.Styleable.ActionMenuItemView = global::goFriend.Droid.Resource.Styleable.ActionMenuItemView;
 			global::Acr.UserDialogs.Resource.Styleable.ActionMenuItemView_android_minWidth = global::goFriend.Droid.Resource.Styleable.ActionMenuItemView_android_minWidth;
 			global::Acr.UserDialogs.Resource.Styleable.ActionMenuView = global::goFriend.Droid.Resource.Styleable.ActionMenuView;
@@ -1496,14 +1496,14 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.AlertDialog_showTitle = global::goFriend.Droid.Resource.Styleable.AlertDialog_showTitle;
 			global::Acr.UserDialogs.Resource.Styleable.AlertDialog_singleChoiceItemLayout = global::goFriend.Droid.Resource.Styleable.AlertDialog_singleChoiceItemLayout;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout = global::goFriend.Droid.Resource.Styleable.AppBarLayout;
+			global::Acr.UserDialogs.Resource.Styleable.AppBarLayoutStates = global::goFriend.Droid.Resource.Styleable.AppBarLayoutStates;
+			global::Acr.UserDialogs.Resource.Styleable.AppBarLayoutStates_state_collapsed = global::goFriend.Droid.Resource.Styleable.AppBarLayoutStates_state_collapsed;
+			global::Acr.UserDialogs.Resource.Styleable.AppBarLayoutStates_state_collapsible = global::goFriend.Droid.Resource.Styleable.AppBarLayoutStates_state_collapsible;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_android_background = global::goFriend.Droid.Resource.Styleable.AppBarLayout_android_background;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_android_keyboardNavigationCluster = global::goFriend.Droid.Resource.Styleable.AppBarLayout_android_keyboardNavigationCluster;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_android_touchscreenBlocksFocus = global::goFriend.Droid.Resource.Styleable.AppBarLayout_android_touchscreenBlocksFocus;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_elevation = global::goFriend.Droid.Resource.Styleable.AppBarLayout_elevation;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_expanded = global::goFriend.Droid.Resource.Styleable.AppBarLayout_expanded;
-			global::Acr.UserDialogs.Resource.Styleable.AppBarLayoutStates = global::goFriend.Droid.Resource.Styleable.AppBarLayoutStates;
-			global::Acr.UserDialogs.Resource.Styleable.AppBarLayoutStates_state_collapsed = global::goFriend.Droid.Resource.Styleable.AppBarLayoutStates_state_collapsed;
-			global::Acr.UserDialogs.Resource.Styleable.AppBarLayoutStates_state_collapsible = global::goFriend.Droid.Resource.Styleable.AppBarLayoutStates_state_collapsible;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_Layout = global::goFriend.Droid.Resource.Styleable.AppBarLayout_Layout;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_Layout_layout_scrollFlags = global::goFriend.Droid.Resource.Styleable.AppBarLayout_Layout_layout_scrollFlags;
 			global::Acr.UserDialogs.Resource.Styleable.AppBarLayout_Layout_layout_scrollInterpolator = global::goFriend.Droid.Resource.Styleable.AppBarLayout_Layout_layout_scrollInterpolator;
@@ -1598,8 +1598,8 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_dialogTheme = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_dialogTheme;
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_dividerHorizontal = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_dividerHorizontal;
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_dividerVertical = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_dividerVertical;
-			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_dropDownListViewStyle = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_dropDownListViewStyle;
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_dropdownListPreferredItemHeight = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_dropdownListPreferredItemHeight;
+			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_dropDownListViewStyle = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_dropDownListViewStyle;
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_editTextBackground = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_editTextBackground;
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_editTextColor = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_editTextColor;
 			global::Acr.UserDialogs.Resource.Styleable.AppCompatTheme_editTextStyle = global::goFriend.Droid.Resource.Styleable.AppCompatTheme_editTextStyle;
@@ -1677,15 +1677,15 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginStart = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginStart;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginTop = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginTop;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_expandedTitleTextAppearance = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_expandedTitleTextAppearance;
+			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_Layout = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_Layout;
+			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseMode = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseMode;
+			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_scrimAnimationDuration = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_scrimAnimationDuration;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_scrimVisibleHeightTrigger = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_scrimVisibleHeightTrigger;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_statusBarScrim = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_statusBarScrim;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_title = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_title;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_titleEnabled = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_titleEnabled;
 			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_toolbarId = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_toolbarId;
-			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_Layout = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_Layout;
-			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseMode = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseMode;
-			global::Acr.UserDialogs.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier = global::goFriend.Droid.Resource.Styleable.CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier;
 			global::Acr.UserDialogs.Resource.Styleable.ColorStateListItem = global::goFriend.Droid.Resource.Styleable.ColorStateListItem;
 			global::Acr.UserDialogs.Resource.Styleable.ColorStateListItem_alpha = global::goFriend.Droid.Resource.Styleable.ColorStateListItem_alpha;
 			global::Acr.UserDialogs.Resource.Styleable.ColorStateListItem_android_alpha = global::goFriend.Droid.Resource.Styleable.ColorStateListItem_android_alpha;
@@ -1696,7 +1696,6 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.CompoundButton_buttonTintMode = global::goFriend.Droid.Resource.Styleable.CompoundButton_buttonTintMode;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_keylines = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_keylines;
-			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_statusBarBackground = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_statusBarBackground;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_Layout = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_Layout;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_Layout_android_layout_gravity = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_Layout_android_layout_gravity;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_Layout_layout_anchor = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_anchor;
@@ -1705,6 +1704,7 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_Layout_layout_dodgeInsetEdges = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_dodgeInsetEdges;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_Layout_layout_insetEdge = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_insetEdge;
 			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_Layout_layout_keyline = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_keyline;
+			global::Acr.UserDialogs.Resource.Styleable.CoordinatorLayout_statusBarBackground = global::goFriend.Droid.Resource.Styleable.CoordinatorLayout_statusBarBackground;
 			global::Acr.UserDialogs.Resource.Styleable.DesignTheme = global::goFriend.Droid.Resource.Styleable.DesignTheme;
 			global::Acr.UserDialogs.Resource.Styleable.DesignTheme_bottomSheetDialogTheme = global::goFriend.Droid.Resource.Styleable.DesignTheme_bottomSheetDialogTheme;
 			global::Acr.UserDialogs.Resource.Styleable.DesignTheme_bottomSheetStyle = global::goFriend.Droid.Resource.Styleable.DesignTheme_bottomSheetStyle;
@@ -1721,21 +1721,15 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton = global::goFriend.Droid.Resource.Styleable.FloatingActionButton;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_backgroundTint = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_backgroundTint;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_backgroundTintMode = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_backgroundTintMode;
+			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_Behavior_Layout = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_Behavior_Layout;
+			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_Behavior_Layout_behavior_autoHide = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_Behavior_Layout_behavior_autoHide;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_borderWidth = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_borderWidth;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_elevation = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_elevation;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_fabSize = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_fabSize;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_pressedTranslationZ = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_pressedTranslationZ;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_rippleColor = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_rippleColor;
 			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_useCompatPadding = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_useCompatPadding;
-			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_Behavior_Layout = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_Behavior_Layout;
-			global::Acr.UserDialogs.Resource.Styleable.FloatingActionButton_Behavior_Layout_behavior_autoHide = global::goFriend.Droid.Resource.Styleable.FloatingActionButton_Behavior_Layout_behavior_autoHide;
 			global::Acr.UserDialogs.Resource.Styleable.FontFamily = global::goFriend.Droid.Resource.Styleable.FontFamily;
-			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderAuthority = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderAuthority;
-			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderCerts = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderCerts;
-			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderFetchStrategy = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderFetchStrategy;
-			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderFetchTimeout = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderFetchTimeout;
-			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderPackage = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderPackage;
-			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderQuery = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderQuery;
 			global::Acr.UserDialogs.Resource.Styleable.FontFamilyFont = global::goFriend.Droid.Resource.Styleable.FontFamilyFont;
 			global::Acr.UserDialogs.Resource.Styleable.FontFamilyFont_android_font = global::goFriend.Droid.Resource.Styleable.FontFamilyFont_android_font;
 			global::Acr.UserDialogs.Resource.Styleable.FontFamilyFont_android_fontStyle = global::goFriend.Droid.Resource.Styleable.FontFamilyFont_android_fontStyle;
@@ -1743,6 +1737,12 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.FontFamilyFont_font = global::goFriend.Droid.Resource.Styleable.FontFamilyFont_font;
 			global::Acr.UserDialogs.Resource.Styleable.FontFamilyFont_fontStyle = global::goFriend.Droid.Resource.Styleable.FontFamilyFont_fontStyle;
 			global::Acr.UserDialogs.Resource.Styleable.FontFamilyFont_fontWeight = global::goFriend.Droid.Resource.Styleable.FontFamilyFont_fontWeight;
+			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderAuthority = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderAuthority;
+			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderCerts = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderCerts;
+			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderFetchStrategy = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderFetchStrategy;
+			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderFetchTimeout = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderFetchTimeout;
+			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderPackage = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderPackage;
+			global::Acr.UserDialogs.Resource.Styleable.FontFamily_fontProviderQuery = global::goFriend.Droid.Resource.Styleable.FontFamily_fontProviderQuery;
 			global::Acr.UserDialogs.Resource.Styleable.ForegroundLinearLayout = global::goFriend.Droid.Resource.Styleable.ForegroundLinearLayout;
 			global::Acr.UserDialogs.Resource.Styleable.ForegroundLinearLayout_android_foreground = global::goFriend.Droid.Resource.Styleable.ForegroundLinearLayout_android_foreground;
 			global::Acr.UserDialogs.Resource.Styleable.ForegroundLinearLayout_android_foregroundGravity = global::goFriend.Droid.Resource.Styleable.ForegroundLinearLayout_android_foregroundGravity;
@@ -1755,13 +1755,13 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_android_weightSum = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_android_weightSum;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_divider = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_divider;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_dividerPadding = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_dividerPadding;
-			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_measureWithLargestChild = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_measureWithLargestChild;
-			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_showDividers = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_showDividers;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_Layout = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_Layout;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_gravity = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_gravity;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_height = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_height;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_weight = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_weight;
 			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_width = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_width;
+			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_measureWithLargestChild = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_measureWithLargestChild;
+			global::Acr.UserDialogs.Resource.Styleable.LinearLayoutCompat_showDividers = global::goFriend.Droid.Resource.Styleable.LinearLayoutCompat_showDividers;
 			global::Acr.UserDialogs.Resource.Styleable.ListPopupWindow = global::goFriend.Droid.Resource.Styleable.ListPopupWindow;
 			global::Acr.UserDialogs.Resource.Styleable.ListPopupWindow_android_dropDownHorizontalOffset = global::goFriend.Droid.Resource.Styleable.ListPopupWindow_android_dropDownHorizontalOffset;
 			global::Acr.UserDialogs.Resource.Styleable.ListPopupWindow_android_dropDownVerticalOffset = global::goFriend.Droid.Resource.Styleable.ListPopupWindow_android_dropDownVerticalOffset;
@@ -1818,11 +1818,11 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.NavigationView_itemTextColor = global::goFriend.Droid.Resource.Styleable.NavigationView_itemTextColor;
 			global::Acr.UserDialogs.Resource.Styleable.NavigationView_menu = global::goFriend.Droid.Resource.Styleable.NavigationView_menu;
 			global::Acr.UserDialogs.Resource.Styleable.PopupWindow = global::goFriend.Droid.Resource.Styleable.PopupWindow;
+			global::Acr.UserDialogs.Resource.Styleable.PopupWindowBackgroundState = global::goFriend.Droid.Resource.Styleable.PopupWindowBackgroundState;
+			global::Acr.UserDialogs.Resource.Styleable.PopupWindowBackgroundState_state_above_anchor = global::goFriend.Droid.Resource.Styleable.PopupWindowBackgroundState_state_above_anchor;
 			global::Acr.UserDialogs.Resource.Styleable.PopupWindow_android_popupAnimationStyle = global::goFriend.Droid.Resource.Styleable.PopupWindow_android_popupAnimationStyle;
 			global::Acr.UserDialogs.Resource.Styleable.PopupWindow_android_popupBackground = global::goFriend.Droid.Resource.Styleable.PopupWindow_android_popupBackground;
 			global::Acr.UserDialogs.Resource.Styleable.PopupWindow_overlapAnchor = global::goFriend.Droid.Resource.Styleable.PopupWindow_overlapAnchor;
-			global::Acr.UserDialogs.Resource.Styleable.PopupWindowBackgroundState = global::goFriend.Droid.Resource.Styleable.PopupWindowBackgroundState;
-			global::Acr.UserDialogs.Resource.Styleable.PopupWindowBackgroundState_state_above_anchor = global::goFriend.Droid.Resource.Styleable.PopupWindowBackgroundState_state_above_anchor;
 			global::Acr.UserDialogs.Resource.Styleable.ProgressWheel = global::goFriend.Droid.Resource.Styleable.ProgressWheel;
 			global::Acr.UserDialogs.Resource.Styleable.ProgressWheel_ahBarColor = global::goFriend.Droid.Resource.Styleable.ProgressWheel_ahBarColor;
 			global::Acr.UserDialogs.Resource.Styleable.ProgressWheel_ahBarLength = global::goFriend.Droid.Resource.Styleable.ProgressWheel_ahBarLength;
@@ -1975,17 +1975,12 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMargin = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMargin;
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMarginBottom = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMarginBottom;
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMarginEnd = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMarginEnd;
+			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMargins = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMargins;
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMarginStart = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMarginStart;
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMarginTop = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMarginTop;
-			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleMargins = global::goFriend.Droid.Resource.Styleable.Toolbar_titleMargins;
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleTextAppearance = global::goFriend.Droid.Resource.Styleable.Toolbar_titleTextAppearance;
 			global::Acr.UserDialogs.Resource.Styleable.Toolbar_titleTextColor = global::goFriend.Droid.Resource.Styleable.Toolbar_titleTextColor;
 			global::Acr.UserDialogs.Resource.Styleable.View = global::goFriend.Droid.Resource.Styleable.View;
-			global::Acr.UserDialogs.Resource.Styleable.View_android_focusable = global::goFriend.Droid.Resource.Styleable.View_android_focusable;
-			global::Acr.UserDialogs.Resource.Styleable.View_android_theme = global::goFriend.Droid.Resource.Styleable.View_android_theme;
-			global::Acr.UserDialogs.Resource.Styleable.View_paddingEnd = global::goFriend.Droid.Resource.Styleable.View_paddingEnd;
-			global::Acr.UserDialogs.Resource.Styleable.View_paddingStart = global::goFriend.Droid.Resource.Styleable.View_paddingStart;
-			global::Acr.UserDialogs.Resource.Styleable.View_theme = global::goFriend.Droid.Resource.Styleable.View_theme;
 			global::Acr.UserDialogs.Resource.Styleable.ViewBackgroundHelper = global::goFriend.Droid.Resource.Styleable.ViewBackgroundHelper;
 			global::Acr.UserDialogs.Resource.Styleable.ViewBackgroundHelper_android_background = global::goFriend.Droid.Resource.Styleable.ViewBackgroundHelper_android_background;
 			global::Acr.UserDialogs.Resource.Styleable.ViewBackgroundHelper_backgroundTint = global::goFriend.Droid.Resource.Styleable.ViewBackgroundHelper_backgroundTint;
@@ -1994,6 +1989,11 @@ namespace goFriend.Droid
 			global::Acr.UserDialogs.Resource.Styleable.ViewStubCompat_android_id = global::goFriend.Droid.Resource.Styleable.ViewStubCompat_android_id;
 			global::Acr.UserDialogs.Resource.Styleable.ViewStubCompat_android_inflatedId = global::goFriend.Droid.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::Acr.UserDialogs.Resource.Styleable.ViewStubCompat_android_layout = global::goFriend.Droid.Resource.Styleable.ViewStubCompat_android_layout;
+			global::Acr.UserDialogs.Resource.Styleable.View_android_focusable = global::goFriend.Droid.Resource.Styleable.View_android_focusable;
+			global::Acr.UserDialogs.Resource.Styleable.View_android_theme = global::goFriend.Droid.Resource.Styleable.View_android_theme;
+			global::Acr.UserDialogs.Resource.Styleable.View_paddingEnd = global::goFriend.Droid.Resource.Styleable.View_paddingEnd;
+			global::Acr.UserDialogs.Resource.Styleable.View_paddingStart = global::goFriend.Droid.Resource.Styleable.View_paddingStart;
+			global::Acr.UserDialogs.Resource.Styleable.View_theme = global::goFriend.Droid.Resource.Styleable.View_theme;
 			global::AndroidHUD.Resource.Attribute.ahBarColor = global::goFriend.Droid.Resource.Attribute.ahBarColor;
 			global::AndroidHUD.Resource.Attribute.ahBarLength = global::goFriend.Droid.Resource.Attribute.ahBarLength;
 			global::AndroidHUD.Resource.Attribute.ahBarWidth = global::goFriend.Droid.Resource.Attribute.ahBarWidth;
@@ -2971,9 +2971,9 @@ namespace goFriend.Droid
 			global::Xamarin.Forms.Platform.Android.Resource.Id.listMode = global::goFriend.Droid.Resource.Id.listMode;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.list_item = global::goFriend.Droid.Resource.Id.list_item;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.main_appbar = global::goFriend.Droid.Resource.Id.main_appbar;
-			global::Xamarin.Forms.Platform.Android.Resource.Id.main_scrollview = global::goFriend.Droid.Resource.Id.main_scrollview;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.main_tablayout = global::goFriend.Droid.Resource.Id.main_tablayout;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.main_toolbar = global::goFriend.Droid.Resource.Id.main_toolbar;
+			global::Xamarin.Forms.Platform.Android.Resource.Id.main_viewpager = global::goFriend.Droid.Resource.Id.main_viewpager;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.masked = global::goFriend.Droid.Resource.Id.masked;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.media_actions = global::goFriend.Droid.Resource.Id.media_actions;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.message = global::goFriend.Droid.Resource.Id.message;
@@ -3018,7 +3018,6 @@ namespace goFriend.Droid
 			global::Xamarin.Forms.Platform.Android.Resource.Id.search_voice_btn = global::goFriend.Droid.Resource.Id.search_voice_btn;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.select_dialog_listview = global::goFriend.Droid.Resource.Id.select_dialog_listview;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.shellcontent_appbar = global::goFriend.Droid.Resource.Id.shellcontent_appbar;
-			global::Xamarin.Forms.Platform.Android.Resource.Id.shellcontent_scrollview = global::goFriend.Droid.Resource.Id.shellcontent_scrollview;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.shellcontent_toolbar = global::goFriend.Droid.Resource.Id.shellcontent_toolbar;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.shortcut = global::goFriend.Droid.Resource.Id.shortcut;
 			global::Xamarin.Forms.Platform.Android.Resource.Id.showCustom = global::goFriend.Droid.Resource.Id.showCustom;
@@ -3566,6 +3565,7 @@ namespace goFriend.Droid
 			global::Xamarin.Forms.Platform.Android.Resource.Style.Widget_Design_Snackbar = global::goFriend.Droid.Resource.Style.Widget_Design_Snackbar;
 			global::Xamarin.Forms.Platform.Android.Resource.Style.Widget_Design_TabLayout = global::goFriend.Droid.Resource.Style.Widget_Design_TabLayout;
 			global::Xamarin.Forms.Platform.Android.Resource.Style.Widget_Design_TextInputLayout = global::goFriend.Droid.Resource.Style.Widget_Design_TextInputLayout;
+			global::Xamarin.Forms.Platform.Android.Resource.Style.collectionViewStyle = global::goFriend.Droid.Resource.Style.collectionViewStyle;
 			global::Xamarin.Forms.Platform.Android.Resource.Styleable.ActionBar = global::goFriend.Droid.Resource.Styleable.ActionBar;
 			global::Xamarin.Forms.Platform.Android.Resource.Styleable.ActionBar_background = global::goFriend.Droid.Resource.Styleable.ActionBar_background;
 			global::Xamarin.Forms.Platform.Android.Resource.Styleable.ActionBar_backgroundSplit = global::goFriend.Droid.Resource.Styleable.ActionBar_backgroundSplit;
@@ -7443,16 +7443,22 @@ namespace goFriend.Droid
 			public const int tab_about = 2131165544;
 			
 			// aapt resource value: 0x7F070169
-			public const int tab_feed = 2131165545;
+			public const int tab_admin = 2131165545;
 			
 			// aapt resource value: 0x7F07016A
-			public const int tooltip_frame_dark = 2131165546;
+			public const int tab_browse = 2131165546;
 			
 			// aapt resource value: 0x7F07016B
-			public const int tooltip_frame_light = 2131165547;
+			public const int tab_home = 2131165547;
 			
 			// aapt resource value: 0x7F07016C
-			public const int xamarin_logo = 2131165548;
+			public const int tooltip_frame_dark = 2131165548;
+			
+			// aapt resource value: 0x7F07016D
+			public const int tooltip_frame_light = 2131165549;
+			
+			// aapt resource value: 0x7F07016E
+			public const int xamarin_logo = 2131165550;
 			
 			static Drawable()
 			{
@@ -7798,13 +7804,13 @@ namespace goFriend.Droid
 			public const int main_appbar = 2131230832;
 			
 			// aapt resource value: 0x7F080071
-			public const int main_scrollview = 2131230833;
+			public const int main_tablayout = 2131230833;
 			
 			// aapt resource value: 0x7F080072
-			public const int main_tablayout = 2131230834;
+			public const int main_toolbar = 2131230834;
 			
 			// aapt resource value: 0x7F080073
-			public const int main_toolbar = 2131230835;
+			public const int main_viewpager = 2131230835;
 			
 			// aapt resource value: 0x7F080074
 			public const int masked = 2131230836;
@@ -8032,172 +8038,169 @@ namespace goFriend.Droid
 			public const int shellcontent_appbar = 2131230909;
 			
 			// aapt resource value: 0x7F0800BE
-			public const int shellcontent_scrollview = 2131230910;
-			
-			// aapt resource value: 0x7F0800BF
-			public const int shellcontent_toolbar = 2131230911;
+			public const int shellcontent_toolbar = 2131230910;
 			
 			// aapt resource value: 0x7F080004
 			public const int SHIFT = 2131230724;
 			
+			// aapt resource value: 0x7F0800BF
+			public const int shortcut = 2131230911;
+			
 			// aapt resource value: 0x7F0800C0
-			public const int shortcut = 2131230912;
+			public const int showCustom = 2131230912;
 			
 			// aapt resource value: 0x7F0800C1
-			public const int showCustom = 2131230913;
+			public const int showHome = 2131230913;
 			
 			// aapt resource value: 0x7F0800C2
-			public const int showHome = 2131230914;
+			public const int showTitle = 2131230914;
 			
 			// aapt resource value: 0x7F0800C3
-			public const int showTitle = 2131230915;
+			public const int sliding_tabs = 2131230915;
 			
 			// aapt resource value: 0x7F0800C4
-			public const int sliding_tabs = 2131230916;
+			public const int small = 2131230916;
 			
 			// aapt resource value: 0x7F0800C5
-			public const int small = 2131230917;
+			public const int smallLabel = 2131230917;
 			
 			// aapt resource value: 0x7F0800C6
-			public const int smallLabel = 2131230918;
+			public const int snackbar_action = 2131230918;
 			
 			// aapt resource value: 0x7F0800C7
-			public const int snackbar_action = 2131230919;
+			public const int snackbar_text = 2131230919;
 			
 			// aapt resource value: 0x7F0800C8
-			public const int snackbar_text = 2131230920;
+			public const int snap = 2131230920;
 			
 			// aapt resource value: 0x7F0800C9
-			public const int snap = 2131230921;
+			public const int spacer = 2131230921;
 			
 			// aapt resource value: 0x7F0800CA
-			public const int spacer = 2131230922;
+			public const int split_action_bar = 2131230922;
 			
 			// aapt resource value: 0x7F0800CB
-			public const int split_action_bar = 2131230923;
+			public const int src_atop = 2131230923;
 			
 			// aapt resource value: 0x7F0800CC
-			public const int src_atop = 2131230924;
+			public const int src_in = 2131230924;
 			
 			// aapt resource value: 0x7F0800CD
-			public const int src_in = 2131230925;
+			public const int src_over = 2131230925;
 			
 			// aapt resource value: 0x7F0800CE
-			public const int src_over = 2131230926;
+			public const int standard = 2131230926;
 			
 			// aapt resource value: 0x7F0800CF
-			public const int standard = 2131230927;
+			public const int start = 2131230927;
 			
 			// aapt resource value: 0x7F0800D0
-			public const int start = 2131230928;
+			public const int status_bar_latest_event_content = 2131230928;
 			
 			// aapt resource value: 0x7F0800D1
-			public const int status_bar_latest_event_content = 2131230929;
+			public const int submenuarrow = 2131230929;
 			
 			// aapt resource value: 0x7F0800D2
-			public const int submenuarrow = 2131230930;
-			
-			// aapt resource value: 0x7F0800D3
-			public const int submit_area = 2131230931;
+			public const int submit_area = 2131230930;
 			
 			// aapt resource value: 0x7F080005
 			public const int SYM = 2131230725;
 			
+			// aapt resource value: 0x7F0800D3
+			public const int tabMode = 2131230931;
+			
 			// aapt resource value: 0x7F0800D4
-			public const int tabMode = 2131230932;
+			public const int tag_transition_group = 2131230932;
 			
 			// aapt resource value: 0x7F0800D5
-			public const int tag_transition_group = 2131230933;
+			public const int text = 2131230933;
 			
 			// aapt resource value: 0x7F0800D6
-			public const int text = 2131230934;
-			
-			// aapt resource value: 0x7F0800D7
-			public const int text2 = 2131230935;
-			
-			// aapt resource value: 0x7F0800DC
-			public const int textinput_counter = 2131230940;
-			
-			// aapt resource value: 0x7F0800DD
-			public const int textinput_error = 2131230941;
-			
-			// aapt resource value: 0x7F0800D8
-			public const int textSpacerNoButtons = 2131230936;
-			
-			// aapt resource value: 0x7F0800D9
-			public const int textSpacerNoTitle = 2131230937;
-			
-			// aapt resource value: 0x7F0800DA
-			public const int textViewStatus = 2131230938;
+			public const int text2 = 2131230934;
 			
 			// aapt resource value: 0x7F0800DB
-			public const int text_input_password_toggle = 2131230939;
+			public const int textinput_counter = 2131230939;
+			
+			// aapt resource value: 0x7F0800DC
+			public const int textinput_error = 2131230940;
+			
+			// aapt resource value: 0x7F0800D7
+			public const int textSpacerNoButtons = 2131230935;
+			
+			// aapt resource value: 0x7F0800D8
+			public const int textSpacerNoTitle = 2131230936;
+			
+			// aapt resource value: 0x7F0800D9
+			public const int textViewStatus = 2131230937;
+			
+			// aapt resource value: 0x7F0800DA
+			public const int text_input_password_toggle = 2131230938;
+			
+			// aapt resource value: 0x7F0800DD
+			public const int time = 2131230941;
 			
 			// aapt resource value: 0x7F0800DE
-			public const int time = 2131230942;
+			public const int title = 2131230942;
 			
 			// aapt resource value: 0x7F0800DF
-			public const int title = 2131230943;
+			public const int titleDividerNoCustom = 2131230943;
 			
 			// aapt resource value: 0x7F0800E0
-			public const int titleDividerNoCustom = 2131230944;
+			public const int title_template = 2131230944;
 			
 			// aapt resource value: 0x7F0800E1
-			public const int title_template = 2131230945;
+			public const int toolbar = 2131230945;
 			
 			// aapt resource value: 0x7F0800E2
-			public const int toolbar = 2131230946;
+			public const int top = 2131230946;
 			
 			// aapt resource value: 0x7F0800E3
-			public const int top = 2131230947;
+			public const int topPanel = 2131230947;
 			
 			// aapt resource value: 0x7F0800E4
-			public const int topPanel = 2131230948;
+			public const int touch_outside = 2131230948;
 			
 			// aapt resource value: 0x7F0800E5
-			public const int touch_outside = 2131230949;
+			public const int transition_current_scene = 2131230949;
 			
 			// aapt resource value: 0x7F0800E6
-			public const int transition_current_scene = 2131230950;
+			public const int transition_layout_save = 2131230950;
 			
 			// aapt resource value: 0x7F0800E7
-			public const int transition_layout_save = 2131230951;
+			public const int transition_position = 2131230951;
 			
 			// aapt resource value: 0x7F0800E8
-			public const int transition_position = 2131230952;
+			public const int transition_scene_layoutid_cache = 2131230952;
 			
 			// aapt resource value: 0x7F0800E9
-			public const int transition_scene_layoutid_cache = 2131230953;
+			public const int transition_transform = 2131230953;
 			
 			// aapt resource value: 0x7F0800EA
-			public const int transition_transform = 2131230954;
+			public const int uniform = 2131230954;
 			
 			// aapt resource value: 0x7F0800EB
-			public const int uniform = 2131230955;
+			public const int unknown = 2131230955;
 			
 			// aapt resource value: 0x7F0800EC
-			public const int unknown = 2131230956;
+			public const int up = 2131230956;
 			
 			// aapt resource value: 0x7F0800ED
-			public const int up = 2131230957;
+			public const int useLogo = 2131230957;
 			
 			// aapt resource value: 0x7F0800EE
-			public const int useLogo = 2131230958;
+			public const int view_offset_helper = 2131230958;
 			
 			// aapt resource value: 0x7F0800EF
-			public const int view_offset_helper = 2131230959;
+			public const int visible = 2131230959;
 			
 			// aapt resource value: 0x7F0800F0
-			public const int visible = 2131230960;
+			public const int volume_item_container = 2131230960;
 			
 			// aapt resource value: 0x7F0800F1
-			public const int volume_item_container = 2131230961;
+			public const int withText = 2131230961;
 			
 			// aapt resource value: 0x7F0800F2
-			public const int withText = 2131230962;
-			
-			// aapt resource value: 0x7F0800F3
-			public const int wrap_content = 2131230963;
+			public const int wrap_content = 2131230962;
 			
 			static Id()
 			{
@@ -9382,31 +9385,34 @@ namespace goFriend.Droid
 			public const int CardView_Light = 2131624109;
 			
 			// aapt resource value: 0x7F0E01A0
-			public const int com_facebook_activity_theme = 2131624352;
+			public const int collectionViewStyle = 2131624352;
 			
 			// aapt resource value: 0x7F0E01A1
-			public const int com_facebook_auth_dialog = 2131624353;
+			public const int com_facebook_activity_theme = 2131624353;
 			
 			// aapt resource value: 0x7F0E01A2
-			public const int com_facebook_auth_dialog_instructions_textview = 2131624354;
+			public const int com_facebook_auth_dialog = 2131624354;
 			
 			// aapt resource value: 0x7F0E01A3
-			public const int com_facebook_button = 2131624355;
+			public const int com_facebook_auth_dialog_instructions_textview = 2131624355;
 			
 			// aapt resource value: 0x7F0E01A4
-			public const int com_facebook_button_like = 2131624356;
+			public const int com_facebook_button = 2131624356;
 			
 			// aapt resource value: 0x7F0E01A5
-			public const int com_facebook_button_send = 2131624357;
+			public const int com_facebook_button_like = 2131624357;
 			
 			// aapt resource value: 0x7F0E01A6
-			public const int com_facebook_button_share = 2131624358;
+			public const int com_facebook_button_send = 2131624358;
 			
 			// aapt resource value: 0x7F0E01A7
-			public const int com_facebook_loginview_default_style = 2131624359;
+			public const int com_facebook_button_share = 2131624359;
 			
 			// aapt resource value: 0x7F0E01A8
-			public const int com_facebook_loginview_silver_style = 2131624360;
+			public const int com_facebook_loginview_default_style = 2131624360;
+			
+			// aapt resource value: 0x7F0E01A9
+			public const int com_facebook_loginview_silver_style = 2131624361;
 			
 			// aapt resource value: 0x7F0E00AE
 			public const int MainTheme = 2131624110;
@@ -9540,8 +9546,8 @@ namespace goFriend.Droid
 			// aapt resource value: 0x7F0E00D9
 			public const int RtlUnderlay_Widget_AppCompat_ActionButton_Overflow = 2131624153;
 			
-			// aapt resource value: 0x7F0E01A9
-			public const int splashTheme = 2131624361;
+			// aapt resource value: 0x7F0E01AA
+			public const int splashTheme = 2131624362;
 			
 			// aapt resource value: 0x7F0E00DA
 			public const int TextAppearance_AppCompat = 2131624154;
@@ -9876,8 +9882,8 @@ namespace goFriend.Droid
 			// aapt resource value: 0x7F0E013E
 			public const int Theme_MediaRouter_Light_DarkControlPanel = 2131624254;
 			
-			// aapt resource value: 0x7F0E01AA
-			public const int tooltip_bubble_text = 2131624362;
+			// aapt resource value: 0x7F0E01AB
+			public const int tooltip_bubble_text = 2131624363;
 			
 			// aapt resource value: 0x7F0E0149
 			public const int Widget_AppCompat_ActionBar = 2131624265;

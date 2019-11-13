@@ -35,7 +35,6 @@ namespace goFriend.Views
                     {
                         Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
                         App.TaskGetMyGroups.Wait();
-                        Logger.Debug("Get all groups");
                         App.AllGroups = await App.FriendStore.GetGroups(searchText);
                         var searchResult = App.MyGroups.Where(x => x.Group.Name.Contains(searchText)).Union(App.AllGroups.Where(
                             x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(x => new SearchItemModel
@@ -87,7 +86,8 @@ namespace goFriend.Views
                 Settings.LastGroupName = groupName;
 
                 //Logger.Debug("Before Wait");
-                App.TaskGetMyGroups.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread
+                //App.TaskGetMyGroups.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread
+                await App.TaskGetMyGroups; // await will block this thread but return the control to the parent thread, so the processing dialog can be seen.
                 //Logger.Debug($"MyGroups={JsonConvert.SerializeObject(App.MyGroups)}");
                 //Logger.Debug($"After Wait: {App.MyGroups?.Count()}");
 

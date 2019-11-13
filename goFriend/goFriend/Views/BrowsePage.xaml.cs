@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.ViewModels;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -21,15 +22,136 @@ namespace goFriend.Views
             PickerGroups.Title = $"{res.Select} {res.Groups}";
             LblGroup.Text = $"{res.Groups}:";
 
-            try
+            UserDialogs.Instance.ShowLoading(res.Processing);
+            //can not await TaskGetMyGroups because we are in a constructor, and not in an async method.
+            Task.Run(() =>
             {
-                UserDialogs.Instance.ShowLoading(res.Processing);
                 App.TaskGetMyGroups.Wait();
+                //Task.Delay(5000).Wait();
+            }).ContinueWith(task =>
+            {
                 PickerGroups.ItemsSource = App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
+                UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
                 if (PickerGroups.Items.Count > 0)
                 {
                     PickerGroups.SelectedIndex = 0;
                 }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async void PickerGroups_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                if (!(PickerGroups.SelectedItem is ApiGetGroupsModel selectedGroup)) return;
+                var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) > 0).ToList();
+                foreach (var child in rowToRemove)
+                {
+                    Grid.Children.Remove(child);
+                }
+                while (Grid.RowDefinitions.Count > 1)
+                {
+                    Grid.RowDefinitions.RemoveAt(1);
+                }
+                var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(selectedGroup.Group.Id);
+                var arrCats = selectedGroup.Group.GetCatDescList().ToList();
+                var arrFixedCats = groupFixedCatValues.GetCatList().ToList();
+                var arrPickers = new Picker[arrCats.Count - arrFixedCats.Count];
+                for (var i = 0; i < arrCats.Count - arrFixedCats.Count; i++)
+                {
+                    //Logger.Debug($"i={i}");
+                    var lbl = new Label
+                    {
+                        FontSize = LblGroup.FontSize,
+                        VerticalOptions = LblGroup.VerticalOptions,
+                        TextColor = LblGroup.TextColor,
+                        Text = $"{arrCats[i + arrFixedCats.Count]}:"
+                    };
+                    Grid.SetColumn(lbl, 0);
+                    Grid.SetRow(lbl, i + 1);
+                    Grid.Children.Add(lbl);
+                    var picker = new Picker
+                    {
+                        FontSize = PickerGroups.FontSize,
+                        HeightRequest = PickerGroups.HeightRequest,
+                        //ItemDisplayBinding = new Binding("Display"),
+                        ItemDisplayBinding = PickerGroups.ItemDisplayBinding,
+                        Title = $"{res.Select} {arrCats[i + arrFixedCats.Count]}"
+                    };
+                    arrPickers[i] = picker;
+                    if (i == 0)
+                    {
+                        var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id);
+                        picker.ItemsSource = groupCatValues.ToList();
+                        //await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id).ContinueWith(task =>
+                        //    {
+                        //        picker.ItemsSource = task.Result.ToList();
+                        //    }, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+                    var localI = i;
+                    picker.SelectedIndexChanged += async (o, args) =>
+                    {
+                        UserDialogs.Instance.ShowLoading(res.Processing);
+                        //Logger.Debug($"localI={localI}");
+                        var arrCatValues = new string[localI+1];
+                        for (var k = 0; k < arrCatValues.Length; k++)
+                        {
+                            //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
+                            arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
+                        }
+                        Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(arrCatValues)}");
+                        for (var j = localI + 1; j < arrPickers.Length; j++)
+                        {
+                            arrPickers[j].ItemsSource = null;
+                            //Logger.Debug($"j={j}");
+                            if (j == localI + 1)
+                            {
+                                var localJ = j;
+                                var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues);
+                                arrPickers[localJ].ItemsSource = groupCatValues.ToList();
+                                //await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues).ContinueWith(task =>
+                                //{
+                                //    arrPickers[localJ].ItemsSource = task.Result.ToList();
+                                //}, TaskScheduler.FromCurrentSynchronizationContext());
+                            }
+                        }
+                        UserDialogs.Instance.HideLoading();
+                        Logger.Debug("Calling DphListView.Initialize");
+                        DphListView.Initialize(async () =>
+                        {
+                            var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, true, arrCatValues);
+                            var result = catGroupFriends.Select(x => new DphListViewItemModel
+                            {
+                                Id = x.FriendId,
+                                Text = x.Friend.Name,
+                                Description = x.GetCatValueDisplay(arrFixedCats.Count),
+                                ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small) // small 50 x 50
+                            });
+                            return result;
+                        }, selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                    };
+                    Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto});
+                    Grid.SetColumn(picker, 1);
+                    Grid.SetRow(picker, i + 1);
+                    Grid.Children.Add(picker);
+                }
+
+                UserDialogs.Instance.HideLoading();
+                Logger.Debug("Calling DphListView.Initialize");
+                DphListView.Initialize(async () =>
+                {
+                    var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id);
+                    var result = groupFriends.Select(x => new DphListViewItemModel
+                    {
+                        Id = x.FriendId,
+                        Text = x.Friend.Name,
+                        ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small), // small 50 x 50
+                        Description = x.GetCatValueDisplay(arrFixedCats.Count)
+                    });
+                    return result;
+                }, selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
             }
             catch (Exception ex)
             {
@@ -38,77 +160,7 @@ namespace goFriend.Views
             }
             finally
             {
-                UserDialogs.Instance.HideLoading();
-            }
-        }
-
-        private async void PickerGroups_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            Logger.Debug($"SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={PickerGroups.SelectedItem}");
-            if (!(PickerGroups.SelectedItem is ApiGetGroupsModel selectedGroup)) return;
-            var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) > 0).ToList();
-            foreach (var child in rowToRemove)
-            {
-                Grid.Children.Remove(child);
-            }
-            var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(selectedGroup.Group.Id);
-            var arrCats = selectedGroup.Group.GetCatDescList().ToList();
-            var arrFixedCats = groupFixedCatValues.GetCatList().ToList();
-            var arrPickers = new Picker[arrCats.Count() - arrFixedCats.Count];
-            for (var i = 0; i < arrCats.Count() - arrFixedCats.Count(); i++)
-            {
-                //Logger.Debug($"i={i}");
-                var lbl = new Label
-                {
-                    FontSize = LblGroup.FontSize,
-                    VerticalOptions = LblGroup.VerticalOptions,
-                    TextColor = LblGroup.TextColor,
-                    Text = $"{arrCats[i + arrFixedCats.Count()]}:"
-                };
-                Grid.SetColumn(lbl, 0);
-                Grid.SetRow(lbl, i + 1);
-                Grid.Children.Add(lbl);
-                var picker = new Picker
-                {
-                    FontSize = PickerGroups.FontSize,
-                    ItemDisplayBinding = new Binding("CatValue"),
-                    Title = $"{res.Select} {arrCats[i + arrFixedCats.Count()]}"
-                };
-                arrPickers[i] = picker;
-                if (i == 0)
-                {
-                    await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id).ContinueWith(task =>
-                        {
-                            picker.ItemsSource = task.Result.ToList();
-                        }, TaskScheduler.FromCurrentSynchronizationContext());
-                }
-                var localI = i;
-                picker.SelectedIndexChanged += async (o, args) =>
-                {
-                    //Logger.Debug($"localI={localI}");
-                    for (var j = localI + 1; j < arrPickers.Length; j++)
-                    {
-                        arrPickers[j].ItemsSource = null;
-                        //Logger.Debug($"j={j}");
-                        if (j == localI + 1)
-                        {
-                            var arrCatValues = new string[j];
-                            for (var k = 0; k < j; k++)
-                            {
-                                //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
-                                arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
-                            }
-                            Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(arrCatValues)}");
-                            await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues).ContinueWith(task =>
-                            {
-                                arrPickers[j].ItemsSource = task.Result.ToList();
-                            }, TaskScheduler.FromCurrentSynchronizationContext());
-                        }
-                    }
-                };
-                Grid.SetColumn(picker, 1);
-                Grid.SetRow(picker, i + 1);
-                Grid.Children.Add(picker);
+                Logger.Debug("PickerGroups_OnSelectedIndexChanged.END");
             }
         }
     }

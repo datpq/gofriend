@@ -6,5 +6,7 @@
         public GroupFriend GroupFriend { get; set; }
         public UserType UserRight { get; set; }
         public int MemberCount { get; set; }
+
+        public string Display => $"{Group?.Name} ({MemberCount})";
     }
 }

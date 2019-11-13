@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using goFriend.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -44,11 +43,11 @@ namespace goFriend.Views
                 await Navigation.PopAsync();
                 var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
                 App.User = await App.FriendStore.LoginWithFacebook(authToken, deviceInfo);
-                var avatarUrl = $"https://graph.facebook.com/{App.User.FacebookId}/picture?type=normal";
-                using (var webClient = new WebClient())
-                {
-                    App.User.Image = webClient.DownloadData(avatarUrl);
-                }
+                //var avatarUrl = $"https://graph.facebook.com/{App.User.FacebookId}/picture?type=normal";
+                //using (var webClient = new WebClient())
+                //{
+                //    App.User.Image = webClient.DownloadData(avatarUrl);
+                //}
                 Settings.LastUser = App.User;
                 accountPage.RefreshMenu();
 

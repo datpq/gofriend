@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.Browse}"
              x:Class="goFriend.Views.BrowsePage">
     <ContentPage.BackgroundColor>
@@ -32,11 +33,11 @@
                            Grid.Row="0" Grid.Column="0"/>
                     <Picker x:Name="PickerGroups" FontSize="{StaticResource LblFontSize}"
                             Grid.Row="0" Grid.Column="1" SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
-                            ItemDisplayBinding="{Binding Group.Name}" />
+                            ItemDisplayBinding="{Binding Display}" />
                 </Grid>
             </StackLayout>
             <StackLayout>
-
+                <controls:DphListView x:Name="DphListView"></controls:DphListView>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

@@ -5,11 +5,13 @@
         public AppShell()
         {
             InitializeComponent();
+            //TabAdmin.Icon = Extension.GetImageSourceFromFile("admin.png");
+            //TabAdmin.Icon = Extension.GetImageUrl("admin.png");
         }
 
         public void RefreshTabs()
         {
-            TabBrowse.IsEnabled = TabSearch.IsEnabled = TabMap.IsEnabled = App.IsUserLoggedIn && App.User != null && App.User.Active;
+            TabBrowse.IsEnabled = TabAdmin.IsEnabled = TabMap.IsEnabled = App.IsUserLoggedIn && App.User != null && App.User.Active;
         }
     }
 }

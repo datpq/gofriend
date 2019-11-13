@@ -7,8 +7,8 @@ using Android.OS;
 using Xamarin.Facebook;
 using Xamarin.Forms;
 using Android.Content;
+using FFImageLoading.Forms.Platform;
 using goFriend.Services;
-using ImageCircle.Forms.Plugin.Droid;
 
 namespace goFriend.Droid
 {
@@ -39,8 +39,11 @@ namespace goFriend.Droid
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
-            ImageCircleRenderer.Init();
             UserDialogs.Init(this);
+
+            CachedImageRenderer.Init(true);
+            CachedImageRenderer.InitImageViewHandler();
+
             _logger = DependencyService.Get<ILogManager>().GetLog();
 
             //facebook track of profile changing

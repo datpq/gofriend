@@ -108,18 +108,29 @@ namespace goFriend
                     Logger.Debug("TaskGetMyGroups.BEGIN");
                     MyGroups = FriendStore.GetMyGroups().Result;
                 }
-                catch (GoException e)
+                catch (AggregateException e)
                 {
-                    Logger.Error(e.ToString());
-                    switch (e.Msg.Code)
+                    e.Handle(x =>
                     {
-                        case MessageCode.UserTokenError:
-                            DisplayMsgError(res.MsgErrWrongToken);
-                            break;
-                        default:
-                            DisplayMsgError(e.Msg.Msg);
-                            break;
-                    }
+                        if (x is GoException goe)
+                        {
+                            Logger.Error(goe.ToString());
+                            switch (goe.Msg.Code)
+                            {
+                                case MessageCode.UserTokenError:
+                                    DisplayMsgError(res.MsgErrWrongToken);
+                                    break;
+                                default:
+                                    DisplayMsgError(goe.Msg.Msg);
+                                    break;
+                            }
+                            return true;
+                        }
+
+                        Logger.Error(x.ToString());
+                        return true;
+                        //return false; // Let anything else stop the application.
+                    });
                 }
                 catch (Exception e)
                 {

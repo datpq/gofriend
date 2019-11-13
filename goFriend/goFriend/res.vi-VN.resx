@@ -136,13 +136,13 @@
     <value>Tên, ngày sinh, giới tính, địa chỉ email</value>
   </data>
   <data name="BirthDay" xml:space="preserve">
-    <value>Ngày sinh</value>
+    <value>Ngày sinh:</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Hủy bỏ</value>
   </data>
   <data name="Email" xml:space="preserve">
-    <value>Địa chỉ email</value>
+    <value>Email:</value>
   </data>
   <data name="Female" xml:space="preserve">
     <value>Nữ</value>
@@ -157,7 +157,7 @@
     <value>Họ và tên</value>
   </data>
   <data name="Gender" xml:space="preserve">
-    <value>Giới tính</value>
+    <value>Giới tính:</value>
   </data>
   <data name="GroupConnectionsInfos" xml:space="preserve">
     <value>Nhóm và thông tin kết nối</value>
@@ -287,5 +287,11 @@
   </data>
   <data name="Select" xml:space="preserve">
     <value>Chọn</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Quản lý</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Nhà</value>
   </data>
 </root>

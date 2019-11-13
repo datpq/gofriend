@@ -58,17 +58,17 @@
                 </StackLayout>
             </ScrollView>
             <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand" Padding="10" HorizontalOptions="Center">
-                <Button x:Name="CmdModify" HorizontalOptions="CenterAndExpand"
+                <Button x:Name="CmdModify" HorizontalOptions="FillAndExpand" Margin="10,0,10,0"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}"
                         TextColor="{StaticResource ColorTitle}"
                         Text="{x:Static local:res.Modify}" Clicked="CmdModify_OnClicked" />
-                <Button x:Name="CmdSubscribe" HorizontalOptions="CenterAndExpand"
+                <Button x:Name="CmdSubscribe" HorizontalOptions="FillAndExpand" Margin="10,0,10,0"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}"
                         TextColor="{StaticResource ColorTitle}"
                         Text="{x:Static local:res.SubscribeGroup}" Clicked="CmdSubscribe_OnClicked" />
-                <Button x:Name="CmdCancel" HorizontalOptions="CenterAndExpand"
+                <Button x:Name="CmdCancel" HorizontalOptions="FillAndExpand" Margin="10,0,10,0"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}"
                         TextColor="{StaticResource ColorTitle}"

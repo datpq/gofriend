@@ -11,7 +11,8 @@
         GroupNotFound,
         UserTokenError,
         InvalidData,
-        NoInternet
+        NoInternet,
+        UserNoPermission
     }
 
     public class Message
@@ -26,6 +27,7 @@
         public static readonly Message MsgWrongToken = new Message { Code = MessageCode.UserTokenError, Msg = "Wrong Token" };
         public static readonly Message MsgInvalidData = new Message { Code = MessageCode.InvalidData, Msg = "Invalid data" };
         public static readonly Message MsgNoInternet = new Message { Code = MessageCode.NoInternet, Msg = "No internet" };
+        public static readonly Message MsgUserNoPermission = new Message { Code = MessageCode.UserNoPermission, Msg = "User has no permission" };
 
         public MessageCode Code { get; set; }
         public string Msg { get; set; }
