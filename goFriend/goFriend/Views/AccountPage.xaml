@@ -21,7 +21,7 @@
         </OnPlatform>
     </ContentPage.BackgroundColor>
         <StackLayout>
-            <TableView Intent="Data" HasUnevenRows="True" VerticalOptions="FillAndExpand">
+            <TableView Intent="Data" HasUnevenRows="True" VerticalOptions="FillAndExpand" x:Name="Tv">
                 <TableRoot>
                     <TableSection x:Name="TsShells">
                         <ViewCell x:Name="CellAvatar">

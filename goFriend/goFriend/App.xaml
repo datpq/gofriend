@@ -11,6 +11,7 @@
         <Color x:Key="ColorTitle">White</Color>
         <Color x:Key="ColorLabel">Black</Color>
         <Color x:Key="ColorLabelDetail">Gray</Color>
+        <Color x:Key="ColorListViewSelectedItem">#E5E5E5</Color>
         <x:Int32 x:Key="BtnCornerRadius">20</x:Int32>
         <x:Double x:Key="LblFontSize">17</x:Double>
         <x:Double x:Key="LblSectionFontSize">14</x:Double>

@@ -1,4 +1,5 @@
-﻿using goFriend.DataModel;
+﻿using System;
+using goFriend.DataModel;
 using goFriend.Services;
 using Xamarin.Forms;
 
@@ -37,6 +38,26 @@ namespace goFriend
         public static string GetImageUrl(string fileName)
         {
             return $"resource://goFriend.Images.{fileName}";
+        }
+
+        public static string GetSpentTime(this DateTime dateTime)
+        {
+            int quantity;
+            string result;
+            if (dateTime < DateTime.Now.AddDays(-1))
+            {
+                quantity = (DateTime.Now - dateTime).Days;
+                result = $"{quantity}{res.SpentTimeInDays}";
+            } else if (dateTime < DateTime.Now.AddHours(-1))
+            {
+                quantity = (DateTime.Now - dateTime).Hours;
+                result = $"{quantity}{res.SpentTimeInHours}";
+            } else
+            {
+                quantity = (DateTime.Now - dateTime).Minutes;
+                result = $"{quantity}{res.SpentTimeInMinutes}";
+            }
+            return result;
         }
 
         /*

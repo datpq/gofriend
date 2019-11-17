@@ -49,9 +49,10 @@ namespace goFriend.Views
                 //    App.User.Image = webClient.DownloadData(avatarUrl);
                 //}
                 Settings.LastUser = App.User;
-                accountPage.RefreshMenu();
 
                 App.Initialize(); //redo the initialization background task
+
+                accountPage.RefreshMenu();
             });
             BtnFacebook.OnError = new Command<string>(err => App.DisplayMsgError($"Authentication failed: { err }"));
             BtnFacebook.OnCancel = new Command(() =>

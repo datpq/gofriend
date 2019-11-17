@@ -294,4 +294,16 @@
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="AskedToJoinGroup" xml:space="preserve">
+    <value>asked to join the group.</value>
+  </data>
+  <data name="SpentTimeInDays" xml:space="preserve">
+    <value>day(s) ago.</value>
+  </data>
+  <data name="SpentTimeInHours" xml:space="preserve">
+    <value>h ago.</value>
+  </data>
+  <data name="SpentTimeInMinutes" xml:space="preserve">
+    <value>minute(s) ago.</value>
+  </data>
 </root>

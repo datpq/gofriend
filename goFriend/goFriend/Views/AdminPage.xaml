@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             Title="{Static local:res.Admin}"
+             x:Class="goFriend.Views.AdminPage">
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
+            </On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout Margin="10,10,10,5">
+                <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="LblGroup" FontSize="{StaticResource LblFontSize}" VerticalOptions="Center"
+                           Grid.Row="0" Grid.Column="0"/>
+                    <Picker x:Name="PickerGroups" FontSize="{StaticResource LblFontSize}"
+                            Grid.Row="0" Grid.Column="1" SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
+                            ItemDisplayBinding="{Binding DisplayNameOnly}" />
+                </Grid>
+            </StackLayout>
+            <StackLayout>
+                <controls:DphListView x:Name="DphListView"></controls:DphListView>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -106,6 +106,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to asked to join the group..
+        /// </summary>
+        public static string AskedToJoinGroup {
+            get {
+                return ResourceManager.GetString("AskedToJoinGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Basic Informations.
         /// </summary>
         public static string BasicInfos {
@@ -543,6 +552,33 @@ namespace goFriend {
         public static string Slogan {
             get {
                 return ResourceManager.GetString("Slogan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to day(s) ago..
+        /// </summary>
+        public static string SpentTimeInDays {
+            get {
+                return ResourceManager.GetString("SpentTimeInDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to h ago..
+        /// </summary>
+        public static string SpentTimeInHours {
+            get {
+                return ResourceManager.GetString("SpentTimeInHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to minute(s) ago..
+        /// </summary>
+        public static string SpentTimeInMinutes {
+            get {
+                return ResourceManager.GetString("SpentTimeInMinutes", resourceCulture);
             }
         }
         

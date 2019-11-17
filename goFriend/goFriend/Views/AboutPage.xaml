@@ -26,12 +26,6 @@
     </ContentPage.Resources>
 
     <Grid>
-        <Grid.Padding>
-            <OnPlatform x:TypeArguments="Thickness">
-                <On Platform="Android, WinPhone">0</On>
-                <On Platform="iOS">0,60,0,40</On>
-            </OnPlatform>
-        </Grid.Padding>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

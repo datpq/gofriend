@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -37,6 +38,10 @@ namespace goFriend.DataModel
         public string Cat8 { get; set; }
         [Column(TypeName = "NVARCHAR(50)")]
         public string Cat9 { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
 
         public IEnumerable<string> GetCatList()
         {

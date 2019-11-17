@@ -9,41 +9,65 @@
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphListView">
   <ContentView.Content>
-      <StackLayout>
-            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true">
+      <StackLayout Orientation="Vertical">
+            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
+                      IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell Tapped="Cell_OnTapped">
+                        <controls:DphViewCell Tapped="Cell_OnTapped">
                             <StackLayout Orientation="Vertical">
                                 <Grid RowSpacing="0" ColumnSpacing="5">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <ff:CachedImage x:Name="ImgAvatar" Source="{Binding ImageUrl}"
-                                                    WidthRequest="50" HeightRequest="50" HorizontalOptions="CenterAndExpand"
-                                                    Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="10,5,5,5">
+                                                    WidthRequest="65" HeightRequest="65" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                                                    Grid.Row="0" Grid.Column="0" Margin="10,5,5,5">
                                         <ff:CachedImage.Transformations>
                                             <ffTransformations:CircleTransformation/>
                                         </ff:CachedImage.Transformations>
                                     </ff:CachedImage>
-                                    <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
-                                           Grid.Row="0" Grid.Column="1"
-                                           LineBreakMode="TailTruncation"
-                                           Style="{DynamicResource ListItemTextStyle}" 
-                                           FontSize="{StaticResource LblFontSize}" />
-                                    <Label Text="{Binding Description}"
-                                           Grid.Row="1" Grid.Column="1"
-                                           LineBreakMode="TailTruncation"
-                                           Style="{DynamicResource ListItemDetailTextStyle}"
-                                           FontSize="{StaticResource LblDetailFontSize}" />
+                                    <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1"
+                                           FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
+                                    <!--Style="{DynamicResource ListItemDetailTextStyle}"-->
+                                    <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Padding="10">
+                                        <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button1Radius}" HorizontalOptions="Center" VerticalOptions="Center"
+                                                WidthRequest="{Binding Button1Width}" HeightRequest="{Binding Button1Height}"
+                                                ImageSource="{Binding Button1ImageSource}" Clicked="Button1_OnClicked" >
+                                            <Button.BackgroundColor>
+                                                <OnPlatform x:TypeArguments="Color">
+                                                    <On Platform="Android, WinPhone">
+                                                        <StaticResource Key="ColorTabPageBackgroundAndroid" />
+                                                    </On>
+                                                    <On Platform="iOS">
+                                                        <StaticResource Key="ColorTabPageBackgroundIOS" />
+                                                    </On>
+                                                </OnPlatform>
+                                            </Button.BackgroundColor>
+                                        </Button>
+                                        <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button2Radius}" HorizontalOptions="Center" VerticalOptions="Center"
+                                                WidthRequest="{Binding Button2Width}" HeightRequest="{Binding Button2Height}"
+                                                ImageSource="{Binding Button2ImageSource}" Clicked="Button2_OnClicked" >
+                                            <Button.BackgroundColor>
+                                                <OnPlatform x:TypeArguments="Color">
+                                                    <On Platform="Android, WinPhone">
+                                                        <StaticResource Key="ColorTabPageBackgroundAndroid" />
+                                                    </On>
+                                                    <On Platform="iOS">
+                                                        <StaticResource Key="ColorTabPageBackgroundIOS" />
+                                                    </On>
+                                                </OnPlatform>
+                                            </Button.BackgroundColor>
+                                        </Button>
+                                    </StackLayout>
                                 </Grid>
                             </StackLayout>
-                        </ViewCell>
+                        </controls:DphViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

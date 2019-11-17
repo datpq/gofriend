@@ -116,6 +116,8 @@ namespace goFriend.Views
 
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(_selectedGroup.Id);
 
+                Logger.Debug($"groupFixedCatValues.GetCatList.Count = {groupFixedCatValues?.GetCatList().Count()}");
+
                 _arrFixedCatValues = groupFixedCatValues.GetCatList().ToList();
                 var arrCatDesc = _selectedGroup.GetCatDescList().ToList();
                 LblInfoCats.Text = $"{LblInfoCats.Text} {string.Join(", ", arrCatDesc.ToArray(), _arrFixedCatValues.Count, arrCatDesc.Count - _arrFixedCatValues.Count).ToUpper()}";

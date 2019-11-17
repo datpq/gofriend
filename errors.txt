@@ -1,0 +1,146 @@
+- Facebook key hash does not match any stored key hashes
+	Copy the key to facebook developers. Make sure there's is a keystore in "%LocalAppData%\Xamarin\Mono for Android\release.keystore", use this keystore to generate key
+- MSB6006: "java.exe" exited with code 1.
+  The security strength of SHA-1 digest algorithm is not sufficient for this key size (java.security.InvalidKeyException: Failed to sign using signer "ANDROIDD")
+	generate key store with  -keysize 1024
+	keytool -genkey -v -keystore "c:\Users\dat\.android\debug.keystore" -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US" -keysize 1024
+- A valid Facebook app id must be set in the AndroidManifest.xml or set by calling FacebookSdk.setApplicationId before initializing the sdk.
+	problem with AndroidManifest.xml file. Try to use code: FacebookSdk.ApplicationId = "390965618178021";
+- java.lang.ClassNotFoundException: bolts.AppLinks base.OnCreate(bundle);
+	[assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
+	[assembly: MetaData("com.facebook.sdk.ApplicationName", Value = "@string/app_name")]
+	maybe typo in @string/... @String/...
+- Unhandled Exception: Xamarin.Facebook.FacebookException: <Timeout exceeded getting exception details> occurred
+	rerun again
+- java.security.SignatureException: private key algorithm is not compatible with signature algorithm
+	genkey with -keyalg RSA
+- package Nuget uninstalled automaticly
+	install manually in the .csproj file
+- System.MissingMethodException: Method 'Xamarin.Auth.Authenticator.GetUI' not found
+	Turn linker on for SDK assemblies only. Android project
+- working with facebook
+	- Xamarin.Facebook.Android, Xamarin.Facebook.iOS nuget package
+    - https://evgenyzborovsky.com/2018/03/09/using-native-facebook-login-button-in-xamarin-forms/
+	- https://github.com/yuv4ik/XFFacebookLoginButtonExample
+	- https://www.c-sharpcorner.com/article/xamarin-android-login-with-facebook-authentication/
+- Sign in with Facebook error code: 1349195
+	- "C:\Program Files\Android\jdk\microsoft_dist_openjdk_1.8.0.25\bin\keytool.exe" -list -printcert -jarfile C:\Users\dat\source\repos\goFriend\goFriend\goFriend.Android\bin\Debug\com.dph.GoFriend-Signed.apk
+	- Copy the SHA1 value to your clip board like this
+		CD:A1:EA:A3:5C:5C:68:FB:FA:0A:6B:E5:5A:72:64:DD:26:8D:44:84 and open http://tomeko.net/online_tools/hex_to_base64.php
+	- get the generated hash " ********************= " and copy the key hash to the facebook app
+- Sign in with Facebook error: in development mode --> add facebok user as a test user of GoFriend
+- Samsung does not show up in Visual Studio
+	- Find and Usb cable that make telephone show up in Device Manager/Portable devices
+	- Enable USB debugging option in Settings > Developer options 
+- Nlog
+	- https://martynnw.wordpress.com/2016/10/16/logging-with-nlog-in-xamarin-forms/
+- Test on iOS
+	- Install VMware Workstation 15 Player
+	- Install macOS Mojave 10.14 on VMware workstation on Windows https://www.intoguide.com/install-macos-mojave-vmware-windows/
+	- Pair to Mac https://docs.microsoft.com/en-us/xamarin/ios/get-started/installation/windows/connecting-to-mac/
+		- %LOCALAPPDATA%\Xamarin\Logs\16.0
+		- A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+			- disconnect from VPN
+	- connect Iphone to VMWare:
+		shut down the VMWare and do like https://stackoverflow.com/questions/36139020/macos-on-vmware-doesnt-recognize-ios-device
+			Set the USB compatibility to be 2.0 instead of 3.0
+			Check the setting "Show all USB input devices"
+	- https://forums.xamarin.com/discussion/52894/iphone-device-is-not-showing-in-debug-list-in-project
+	- https://docs.microsoft.com/en-us/xamarin/ios/get-started/installation/device-provisioning/
+	- Could not find any available provisioning profiles for iOS
+		In Visual Studio for Windows, go to Tools > Options > Xamarin > Apple Accounts,
+		you will get a prompt to install FastLane before your Apple ID will show up under Automatic Provisioning.
+	- reduce the target version to be compatible with Iphone
+	- An error occurred on the receiver while executing a post for topic
+	- Error: error MT1001: Could not find an application at the specified directory
+		Build the project first
+	- iOS code signing key 'iPhone Developer: Quoc Dat PHAM (U394Q43T36)' not found in keychain.
+		Provisioning your device (Tools\Options\Xamarin\Apple Accounts... Create certificate for new machine
+	- No iOS signing identities match the specified provisioning profile 'VS: WildCard Development'.
+		Download your certificate to your Mac, then double click the .cer file to install in Keychain Access. Make sure to save a backup copy of your private and public keys somewhere secure.
+		Edit the profile in Apple account, and include the certificate in this profile
+			developer.apple.com/account/resources/profiles/edit/4Z89GS337Q
+	- when successful
+		3>  Detected signing identity:
+		3>    Code Signing Key: "iPhone Developer: Quoc Dat PHAM (U394Q43T36)" (CB58F93E3DEF9E0EEC25434A922A91E8C0E6C2B5)
+		3>    Provisioning Profile: "VS: WildCard Development" (0e59402f-3cf1-40de-84ed-6f42572e396f)
+		3>    Bundle Id: com.dph.GoFriend
+		3>    App Id: 77WDKHWFLA.com.dph.GoFriend
+	- framework not found WatchKit
+		- Downgrade XCode from 11 to 10
+	- APIInternalError: Failed to unhide archs in executable
+	- Sequence contains more than one matching element
+		- Update Xamarin.Forms to pre2 release
+	- Updating Nuget caused Exception Unhandled: System.TypeLoadException
+		Downgrade xamarin.forms and xamarin.forms.maps to v4.1.0.778454
+
+- ApplicationVerificationFailed: Failed to verify code signature of .. (A valid provisioning profile for this executable was not found.)
+	- create device manually in https://developer.apple.com/account/resources/profiles/list (get UDID from iTunes https://bjango.com/help/iphoneudid/)
+	- create profile for this device
+- ApplicationVerificationFailed: Failed to verify code signature of .. (An unknown error has occurred.)
+
+- IncorrectArchitecture: Failed to find matching arch for 64-bit Mach-O input file 
+	Open the iOS Build menu from your Project > Properties (Options in Visual Studio for Mac)
+	Find the Supported Architectures drop-down menu
+	Choose the option for Armv7+Arm64
+	Rebuild and deploy your app
+- Unable to connect to Mac Server with Address='192.168.42.129' and User='datios'. The build can't continue without a connection
+	- https://docs.microsoft.com/en-us/xamarin/ios/get-started/installation/windows/connecting-to-mac/troubleshooting
+	Make sure that Remote Login is enabled on the Mac. Set access for Only these users, and make sure your Mac user is included in the list or group:
+
+- error MT1006: Could not install the application on the device 'KISA007': AMDeviceSecureInstallApplicationBundle returned: 0xe8000087 (kAMDIncorrectArchitectureError).
+	- restart iphone, mac
+- Could not decompress the native framework '*' from '*'. Please review the build log for more information from the native 'zip' command.
+	- go to mac computer and remove cache directory: /User/dat/Library/Caches/Xamarin/mtbs/builds/goFriend.iOS/a14...
+- Error: System.IO.FileNotFoundException: /Users/.../obj/iPhone/Release/actool/bundle/AppIcon20x20@2x.png does not exist
+	- should not rename *.jpg to *.png. We must save as from *.jpg to *.png. Save as all the files in  Assets.xcassets\AppIcon.appiconset\ to *.png
+- Crash
+		- FontSize must be a double
+- System.MissingMethodException: Method not found: void Xamarin.Forms.InputView.set_Text(string): this error often occurs when you updated the forms package in your PCL, but not in your iOS project
+at least in my case this was the issue
+- ViewCell height work when HasUnevenRows="True"
+- TableSection without header: Intent="Data" Title=""
+- NavigationBar overlap content issue:	
+            <StackLayout.Padding>
+                <OnPlatform x:TypeArguments="Thickness">
+                    <On Platform="Android, WinPhone">0</On>
+                    <On Platform="iOS">0,60,0,0</On>
+                </OnPlatform>
+            </StackLayout.Padding>	
+- IIS Error
+		- HTTP Error 500.19 - Internal Server Error.
+		The AspNetCoreModule has to be installed on your server and is part of the ASP.NET Core Server Hosting Bundle. http://go.microsoft.com/fwlink/?LinkId=798480
+- Login failed for user 'IIS APPPOOL\ASP.NET v4.0'
+	https://stackoverflow.com/questions/7698286/login-failed-for-user-iis-apppool-asp-net-v4-0
+- “Unable to cast object of type 'ConcreteTypeMapping' to type 'Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping”
+	- Downgrade Microsoft.AspNetCore.All, Microsoft.EntityFrameworkCore, Microsoft.NETCore.App to 2.1.x
+- KUDU
+	https://gofriend.scm.azurewebsites.net
+- An error occurred while starting the application.
+	https://docs.microsoft.com/en-us/aspnet/core/test/troubleshoot-azure-iis?view=aspnetcore-2.2
+	dotnet gofriend.mobileappservice.dll --> to show error
+	if error come from connection string which is not well configured in json file:
+		go to App Services\gofriend - Application settings (Classic), set the ASPNETCORE_ENVIRONMENT = Staging (appsettings.Staging.json)
+- Failed to load API definition. Fetch error Internal Server Error /swagger/v1/swagger.json
+	- check if there's double post(put, get...) on a same end point
+	-  missing a HttpGet attribute for one of my api methods
+- Configuration["Authentication:Facebook:AppId"] return null
+	        if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+- Nlog configuration for .NET Core
+	https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-2
+- Connect from Samsung to local machine:
+	- Deploy on IIS (with binding www.gofriend.com, gofriend.azurewebsites.net)
+	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)
+	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
+	
+	
+	
+	
+	
+	
+	
+

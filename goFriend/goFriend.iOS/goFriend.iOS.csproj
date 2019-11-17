@@ -80,6 +80,7 @@
     <Compile Include="FacebookManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Renderers\DphViewCellRenderer.cs" />
     <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Renderers\MyEntryRenderer.cs" />
     <None Include="Entitlements.plist" />
@@ -192,12 +193,6 @@
     <BundleResource Include="Resources\hn9194_25.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\navigation_account_green.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\navigation_map_green.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\ic_help_green.png" />
   </ItemGroup>
   <ItemGroup>
@@ -217,5 +212,14 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\accept.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\deny.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\tab_map.png" />
   </ItemGroup>
 </Project>

@@ -19,12 +19,6 @@
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout.Margin>
-                <OnPlatform x:TypeArguments="Thickness">
-                    <On Platform="Android, WinPhone">0</On>
-                    <On Platform="iOS">0,60,0,40</On>
-                </OnPlatform>
-            </StackLayout.Margin>
             <SearchBar x:Name="SbGroup" Placeholder="{Static local:res.Groups}" TextChanged="SbGroup_OnTextChanged" FontAttributes="Bold" >
                 <SearchBar.BackgroundColor>
                     <OnPlatform x:TypeArguments="Color">
@@ -37,7 +31,7 @@
                     </OnPlatform>
                 </SearchBar.BackgroundColor>
             </SearchBar>
-            <BoxView Margin="0,10,0,0" HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
             <StackLayout Margin="20,10,20,0">
                 <Label TextColor="{StaticResource ColorLabel}" Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblSectionFontSize}" />
                 <Grid Margin="0,10" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
@@ -52,23 +46,23 @@
             </StackLayout>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
             <ScrollView Margin="0,10,0,0">
-                <StackLayout x:Name="SlMain">
+                <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand" HeightRequest="230">
                     <Label Margin="20,0,20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblSectionFontSize}" />
                     <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblDetailFontSize}" />
                 </StackLayout>
             </ScrollView>
-            <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand" Padding="10" HorizontalOptions="Center">
-                <Button x:Name="CmdModify" HorizontalOptions="FillAndExpand" Margin="10,0,10,0"
+            <StackLayout Orientation="Horizontal" VerticalOptions="End" Margin="10" HorizontalOptions="Center">
+                <Button x:Name="CmdModify" WidthRequest="120"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}"
                         TextColor="{StaticResource ColorTitle}"
                         Text="{x:Static local:res.Modify}" Clicked="CmdModify_OnClicked" />
-                <Button x:Name="CmdSubscribe" HorizontalOptions="FillAndExpand" Margin="10,0,10,0"
+                <Button x:Name="CmdSubscribe" WidthRequest="140"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}"
                         TextColor="{StaticResource ColorTitle}"
                         Text="{x:Static local:res.SubscribeGroup}" Clicked="CmdSubscribe_OnClicked" />
-                <Button x:Name="CmdCancel" HorizontalOptions="FillAndExpand" Margin="10,0,10,0"
+                <Button x:Name="CmdCancel" WidthRequest="120"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}"
                         TextColor="{StaticResource ColorTitle}"

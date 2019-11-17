@@ -1,4 +1,7 @@
-﻿using goFriend.ViewModels;
+﻿using System;
+using goFriend.Services;
+using goFriend.ViewModels;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -7,11 +10,18 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AccountPage : ContentPage
     {
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private AccountViewModel _viewModel;
 
         public AccountPage()
         {
             InitializeComponent();
+            Tv.Margin = DeviceInfo.Platform == DevicePlatform.iOS ?
+                DeviceInfo.Version <= new Version(10, 3, 4) ?
+                    new Thickness(0, -62, 0, 0) : new Thickness(0, -30, 0, 0)
+                : new Thickness(0, 0, 0, 0);
+            Logger.Debug($"Platform={DeviceInfo.Platform}, Version={DeviceInfo.Version}, Margin.Top={Tv.Margin.Top}");
+
             RefreshMenu();
 
             BindingContext = _viewModel = new AccountViewModel();

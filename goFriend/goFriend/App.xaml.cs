@@ -5,6 +5,7 @@ using goFriend.Services;
 using System.Globalization;
 using System.Threading.Tasks;
 using goFriend.DataModel;
+using Xamarin.Essentials;
 
 namespace goFriend
 {
@@ -25,6 +26,8 @@ namespace goFriend
         public App()
         {
             Logger.Info("GoFriend starting new instance...");
+            var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
+            Logger.Debug(deviceInfo);
             res.Culture = new CultureInfo("vi-VN");
             //res.Culture = new CultureInfo("");
             //Thread.CurrentThread.CurrentCulture = res.Culture;
@@ -50,11 +53,12 @@ namespace goFriend
             {
                 User = Settings.LastUser;
             }
+
+            Initialize();
+
             var appShell = new AppShell();
             appShell.RefreshTabs();
             MainPage = appShell;
-
-            Initialize();
         }
 
         protected override void OnStart()

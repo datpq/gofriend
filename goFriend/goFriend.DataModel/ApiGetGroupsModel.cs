@@ -8,5 +8,6 @@
         public int MemberCount { get; set; }
 
         public string Display => $"{Group?.Name} ({MemberCount})";
+        public string DisplayNameOnly => Group?.Name;
     }
 }

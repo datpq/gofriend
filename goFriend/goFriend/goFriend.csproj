@@ -43,6 +43,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>res.resx</DependentUpon>
     </Compile>
+    <Compile Update="Views\AdminPage.xaml.cs">
+      <DependentUpon>AdminPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\UcLabelEntry.xaml.cs">
       <DependentUpon>UcLabelEntry.xaml</DependentUpon>
     </Compile>

@@ -118,19 +118,31 @@ namespace goFriend.Views
                             }
                         }
                         UserDialogs.Instance.HideLoading();
-                        Logger.Debug("Calling DphListView.Initialize");
-                        DphListView.Initialize(async () =>
+                        DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                        Logger.Debug("Calling DphListView.LoadItems");
+                        DphListView.LoadItems(async () =>
                         {
                             var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, true, arrCatValues);
                             var result = catGroupFriends.Select(x => new DphListViewItemModel
                             {
                                 Id = x.FriendId,
-                                Text = x.Friend.Name,
-                                Description = x.GetCatValueDisplay(arrFixedCats.Count),
-                                ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small) // small 50 x 50
+                                //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small) // small 50 x 50
+                                ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
+                                FormattedText = new FormattedString
+                                {
+                                    Spans =
+                                    {
+                                        new Span {Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
+                                            FontSize = (double)Application.Current.Resources["LblDetailFontSize"], LineHeight = 1.2},
+                                        new Span {Text = Environment.NewLine},
+                                        new Span {Text = x.GetCatValueDisplay(arrFixedCats.Count), LineHeight = 1.2},
+                                        new Span {Text = Environment.NewLine},
+                                        new Span {Text = "Vương Quốc Anh", LineHeight = 1.2}
+                                    }
+                                }
                             });
                             return result;
-                        }, selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                        });
                     };
                     Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto});
                     Grid.SetColumn(picker, 1);
@@ -139,19 +151,31 @@ namespace goFriend.Views
                 }
 
                 UserDialogs.Instance.HideLoading();
-                Logger.Debug("Calling DphListView.Initialize");
-                DphListView.Initialize(async () =>
+                DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                Logger.Debug("Calling DphListView.LoadItems");
+                DphListView.LoadItems(async () =>
                 {
                     var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id);
                     var result = groupFriends.Select(x => new DphListViewItemModel
                     {
                         Id = x.FriendId,
-                        Text = x.Friend.Name,
-                        ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small), // small 50 x 50
-                        Description = x.GetCatValueDisplay(arrFixedCats.Count)
+                        //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small), // small 50 x 50
+                        ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
+                        FormattedText = new FormattedString
+                        {
+                            Spans =
+                            {
+                                new Span {Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
+                                    FontSize = (double)Application.Current.Resources["LblDetailFontSize"], LineHeight = 1.2},
+                                new Span {Text = Environment.NewLine},
+                                new Span {Text = x.GetCatValueDisplay(arrFixedCats.Count), LineHeight = 1.2},
+                                new Span {Text = Environment.NewLine},
+                                new Span {Text = "Vương Quốc Anh", LineHeight = 1.2}
+                            }
+                        }
                     });
                     return result;
-                }, selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                });
             }
             catch (Exception ex)
             {

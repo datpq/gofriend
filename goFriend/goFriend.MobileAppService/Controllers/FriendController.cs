@@ -495,7 +495,6 @@ namespace goFriend.MobileAppService.Controllers
                     Logger.Warn($"User is not Admin: {Message.MsgUserNoPermission.Msg}");
                     return BadRequest(Message.MsgUserNoPermission);
                 }
-                var groupFriends = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active == isActive);
 
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
@@ -512,6 +511,7 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
+                var groupFriends = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active == isActive);
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
@@ -525,7 +525,7 @@ namespace goFriend.MobileAppService.Controllers
                     idx++;
                 }
 
-                result = groupFriends.ToList();
+                result = groupFriends.AsQueryable().Include(x => x.Friend).ToList();
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
@@ -698,7 +698,7 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group) // Include is no more necessary as we can set JsonIgnore
+                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group)
                     .ToList().Select(x => { x.Group.Info = null; return x; }).ToList(); // .Info = null is no more necessary as we can set JsonIgnore
                 Logger.Debug($"myGroups={JsonConvert.SerializeObject(myGroups.Select(x => x.Group.Name))}");
 
@@ -883,6 +883,7 @@ namespace goFriend.MobileAppService.Controllers
                         FriendId = groupFriend.FriendId,
                         GroupId = groupFriend.GroupId,
                         Active = false,
+                        CreatedDate = DateTime.Now,
                         UserRight = UserType.Pending
                     };
                     _dataRepo.Add(newGroupFriend);
@@ -905,8 +906,12 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
+                newGroupFriend.ModifiedDate = DateTime.Now;
+
                 _dataRepo.Commit();
-                _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}.");
+
+                //remove Cache
+                _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}."); //Active and Inactive
 
                 return Ok();
             }

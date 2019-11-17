@@ -21,12 +21,6 @@
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout Margin="10">
-            <StackLayout.Padding>
-                <OnPlatform x:TypeArguments="Thickness">
-                    <On Platform="Android, WinPhone">0</On>
-                    <On Platform="iOS">0,60,0,40</On>
-                </OnPlatform>
-            </StackLayout.Padding>
             <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
