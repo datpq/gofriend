@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Essentials;
@@ -28,6 +30,7 @@ namespace goFriend.Views
 
             CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage(App.User)); };
             CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
+            CellAdmin.Tapped += (s, e) => { Navigation.PushAsync(new AdminPage()); };
             CellLogin.Tapped += (s, e) =>
             {
                 Navigation.PushAsync(LoginPage.GetInstance(this));
@@ -45,7 +48,7 @@ namespace goFriend.Views
             CellAbout.Tapped += (s, e) => { Navigation.PushAsync(new AboutPage()); };
         }
 
-        public void RefreshMenu()
+        public async void RefreshMenu()
         {
             (App.Current.MainPage as AppShell).RefreshTabs();
             TsShells.Clear();
@@ -55,14 +58,23 @@ namespace goFriend.Views
                 if (App.User.Active)
                 {
                     TsShells.Add(CellBasicInfo);
+                    TsShells.Add(CellGroups);
                 }
-                TsShells.Add(CellGroups);
                 TsShells.Add(CellLogout);
+                TsShells.Add(CellAbout);
                 ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
                 //ImgAvatar.Source = Extension.GetImageSourceFromFile("admin.png"); // normal 100 x 100
                 LblFullName.Text = App.User.Name;
                 LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
-                if (!App.User.Active)
+                if (App.User.Active)
+                {
+                    await App.TaskGetMyGroups;
+                    if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                    {
+                        TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
+                    }
+                }
+                else
                 {
                     App.DisplayMsgInfo(res.MsgInactiveUserWarning);
                 }
@@ -70,8 +82,8 @@ namespace goFriend.Views
             else
             {
                 TsShells.Add(CellLogin);
+                TsShells.Add(CellAbout);
             }
-            TsShells.Add(CellAbout);
         }
     }
 }

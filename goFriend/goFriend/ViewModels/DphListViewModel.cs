@@ -77,11 +77,15 @@ namespace goFriend.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public ICommand Button1Command { get; set; }
+        public ICommand Button2Command { get; set; }
     }
 
     public class DphListViewItemModel
     {
         public int Id { get; set; }
+        public object[] Infos { get; set; }
         public FormattedString FormattedText { get; set; }
         public string ImageUrl { get; set; }
 

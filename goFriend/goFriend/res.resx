@@ -306,4 +306,19 @@
   <data name="SpentTimeInMinutes" xml:space="preserve">
     <value>minute(s) ago.</value>
   </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Notifiation</value>
+  </data>
+  <data name="MsgSubscriptionApproveConfirm" xml:space="preserve">
+    <value>You are about to approve the subscription?</value>
+  </data>
+  <data name="MsgSubscriptionRejectConfirm" xml:space="preserve">
+    <value>You are about to reject the subscription?</value>
+  </data>
+  <data name="AdminDesc" xml:space="preserve">
+    <value>Appove/Reject group member</value>
+  </data>
+  <data name="ClearSelection" xml:space="preserve">
+    <value>[Clear selection]</value>
+  </data>
 </root>

@@ -10,20 +10,13 @@ namespace goFriend
             InitializeComponent();
             //TabAdmin.Icon = Extension.GetImageSourceFromFile("admin.png");
             //TabAdmin.Icon = Extension.GetImageUrl("admin.png");
+            //TabNotification.Appearing += (sender, args) => TabNotification.Icon = "tab_notification_selected.png";
+            //TabNotification.Disappearing += (sender, args) => TabNotification.Icon = "tab_notification.png";
         }
 
-        public async void RefreshTabs()
+        public void RefreshTabs()
         {
-            TabBrowse.IsEnabled = TabMap.IsEnabled = App.IsUserLoggedIn && App.User != null && App.User.Active;
-            if (App.User != null && App.User.Active)
-            {
-                await App.TaskGetMyGroups;
-                TabAdmin.IsEnabled = App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin);
-            }
-            else
-            {
-                TabAdmin.IsEnabled = false;
-            }
+            TabBrowse.IsEnabled = TabMap.IsEnabled = TabNotification.IsEnabled = App.IsUserLoggedIn && App.User != null && App.User.Active;
         }
     }
 }

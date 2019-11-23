@@ -50,16 +50,39 @@ namespace goFriend.Views
                 var arrFixedCats = groupFixedCatValues.GetCatList().ToList();
 
                 UserDialogs.Instance.HideLoading();
-                DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)),
-                    selectedItem => App.DisplayMsgInfo("Denying"),
-                    selectedItem => App.DisplayMsgInfo("Accepting"));
+                DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, (int)selectedItem.Infos[0])),
+                    async selectedItem =>
+                    {
+                        Logger.Debug($"selectedItem.Id={selectedItem.Id}");
+                        if (await App.DisplayMsgQuestion(res.MsgSubscriptionRejectConfirm))
+                        {
+                            var result = await App.FriendStore.GroupSubscriptionReact(selectedItem.Id, UserType.NotMember);
+                            if (result)
+                            {
+                                DphListView.Refresh();
+                            }
+                        }
+                    },
+                    async selectedItem =>
+                    {
+                        Logger.Debug($"selectedItem.Id={selectedItem.Id}");
+                        if (await App.DisplayMsgQuestion(res.MsgSubscriptionApproveConfirm))
+                        {
+                            var result = await App.FriendStore.GroupSubscriptionReact(selectedItem.Id, UserType.Normal);
+                            if (result)
+                            {
+                                DphListView.Refresh();
+                            }
+                        }
+                    });
                 Logger.Debug("Calling DphListView.LoadItems");
                 DphListView.LoadItems(async () =>
                 {
                     var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, false);
                     var result = groupFriends?.Select(x => new DphListViewItemModel
                     {
-                        Id = x.FriendId,
+                        Id = x.Id,
+                        Infos = new[] {(object)x.FriendId, x.GroupId},
                         //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small), // small 50 x 50
                         ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                         FormattedText = new FormattedString
@@ -67,11 +90,11 @@ namespace goFriend.Views
                             Spans =
                             {
                                 new Span { Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
-                                    FontSize = (double)Application.Current.Resources["LblDetailFontSize"]},
+                                    FontSize = (double)Application.Current.Resources["LblFontSize"]},
                                 new Span {Text = arrFixedCats.Count == 0 ? res.AskedToJoinGroup : $", {x.GetCatValueDisplay(arrFixedCats.Count)}, {res.AskedToJoinGroup}"},
                                 new Span {Text = Environment.NewLine},
                                 new Span {Text = x.ModifiedDate.HasValue ? x.ModifiedDate.Value.GetSpentTime()
-                                    : string.Empty, LineHeight = 1.5}
+                                    : string.Empty, LineHeight = 1.3}
                             }
                         },
                         Button1ImageSource = "deny.png",

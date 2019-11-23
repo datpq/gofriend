@@ -19,6 +19,7 @@ namespace goFriend.MobileAppService.Data
             modelBuilder.Entity<GroupFixedCatValues>().ToTable("GroupFixedCatValues");
             modelBuilder.Entity<GroupFixedCatValues>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<GroupFriend>().ToTable("GroupFriends");
+            modelBuilder.Entity<GroupFriend>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<GroupFriend>().HasKey(x => new { x.FriendId, x.GroupId });
             modelBuilder.Entity<GroupFriend>()
                 .HasOne(x => x.Group)
@@ -34,6 +35,10 @@ namespace goFriend.MobileAppService.Data
             modelBuilder.Entity<GroupPredefinedCategory>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<CacheConfiguration>().ToTable("CacheConfiguration");
             modelBuilder.Entity<CacheConfiguration>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Notification>().ToTable("Notification");
+            modelBuilder.Entity<Notification>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Notification>().Property(x => x.Type)
+                .HasConversion(new EnumToNumberConverter<NotificationType, int>());
         }
 
         public DbSet<Friend> Friends { get; set; }
@@ -41,5 +46,8 @@ namespace goFriend.MobileAppService.Data
         public DbSet<GroupFriend> GroupFriends { get; set; }
         public DbSet<GroupFixedCatValues> GroupFixedCatValues { get; set; }
         public DbSet<CacheConfiguration> CacheConfigurations { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        //public DbSet<NotifNewSubscriptionRequest> NotifNewSubscriptionRequests { get; set; }
+        //public DbSet<NotifSubscriptionApproved> NotifSubscriptionApproveds { get; set; }
     }
 }

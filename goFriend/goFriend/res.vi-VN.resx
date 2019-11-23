@@ -306,4 +306,19 @@
   <data name="SpentTimeInMinutes" xml:space="preserve">
     <value> phút trước.</value>
   </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Tin mới</value>
+  </data>
+  <data name="MsgSubscriptionApproveConfirm" xml:space="preserve">
+    <value>Bạn đồng ý yêu cầu gia nhập nhóm?</value>
+  </data>
+  <data name="MsgSubscriptionRejectConfirm" xml:space="preserve">
+    <value>Bạn từ chối yêu cầu gia nhập nhóm?</value>
+  </data>
+  <data name="AdminDesc" xml:space="preserve">
+    <value>Quản lý người vào ra nhóm</value>
+  </data>
+  <data name="ClearSelection" xml:space="preserve">
+    <value>[Xóa lựa chọn]</value>
+  </data>
 </root>

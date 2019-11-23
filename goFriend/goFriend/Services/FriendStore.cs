@@ -353,7 +353,7 @@ namespace goFriend.Services
             IEnumerable<ApiGetGroupsModel> result = null;
             try
             {
-                Logger.Debug($"GetGroups.BEGIN(useCache={useCache})");
+                Logger.Debug($"GetGroups.BEGIN(searchText={searchText}, useCache={useCache})");
 
                 Validate();
 
@@ -408,7 +408,7 @@ namespace goFriend.Services
             Friend result = null;
             try
             {
-                Logger.Debug($"GetFriend.BEGIN(useCache={useCache})");
+                Logger.Debug($"GetFriend.BEGIN(groupId={groupId}, otherFriendId={otherFriendId}, useCache={useCache})");
 
                 Validate();
 
@@ -452,6 +452,105 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"GetFriend.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<Notification>> GetNotifications(bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<Notification> result = null;
+            try
+            {
+                Logger.Debug($"GetNotifications.BEGIN(useCache={useCache})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetNotifications/{App.User.Id}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<Notification>>(jsonString.Result);
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetNotifications.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            var result = false;
+            try
+            {
+                Logger.Debug($"GroupSubscriptionReact.BEGIN(groupFriendId={groupFriendId}, userRight={userRight})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GroupSubscriptionReact/{App.User.Id}/{groupFriendId}/{userRight}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.PostAsync(requestUrl, new StringContent(string.Empty, Encoding.UTF8, "application/json"));
+
+                result = response.IsSuccessStatusCode;
+                if (!result)
+                {
+                    var msg = await response.Content.ReadAsAsync<Message>();
+                    Logger.Error($"Error: {msg}");
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GroupSubscriptionReact.END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

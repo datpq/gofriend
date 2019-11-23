@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,11 +12,7 @@ namespace goFriend.Controls
     {
         private readonly DphListViewModel _dphListViewModel;
         private Action<DphListViewItemModel> _cellOnTapped;
-        private Action<DphListViewItemModel> _button1OnClicked;
-        private Action<DphListViewItemModel> _button2OnClicked;
         //private Func<Task<IEnumerable<DphListViewItemModel>>> _getListViewItemsFunc;
-
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public DphListView()
         {
@@ -29,8 +24,14 @@ namespace goFriend.Controls
             Action<DphListViewItemModel> button1OnClicked = null, Action<DphListViewItemModel> button2OnClicked = null)
         {
             _cellOnTapped = cellOnTapped;
-            _button1OnClicked = button1OnClicked;
-            _button2OnClicked = button2OnClicked;
+            _dphListViewModel.Button1Command = new Command(selectedItem =>
+            {
+                button1OnClicked?.Invoke(selectedItem as DphListViewItemModel);
+            });
+            _dphListViewModel.Button2Command = new Command(selectedItem =>
+            {
+                button2OnClicked?.Invoke(selectedItem as DphListViewItemModel);
+            });
         }
 
         public void LoadItems(Func<Task<IEnumerable<DphListViewItemModel>>> getListViewItemsFunc)
@@ -53,22 +54,15 @@ namespace goFriend.Controls
             //}, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
+        public void Refresh()
+        {
+            _dphListViewModel.RefreshCommand.Execute(null);
+        }
+
         private void Cell_OnTapped(object sender, EventArgs e)
         {
             var selectedItem = (DphListViewItemModel)Lv.SelectedItem;
             _cellOnTapped?.Invoke(selectedItem);
-        }
-
-        private void Button1_OnClicked(object sender, EventArgs e)
-        {
-            var selectedItem = (DphListViewItemModel)Lv.SelectedItem;
-            _button1OnClicked?.Invoke(selectedItem);
-        }
-
-        private void Button2_OnClicked(object sender, EventArgs e)
-        {
-            var selectedItem = (DphListViewItemModel)Lv.SelectedItem;
-            _button2OnClicked?.Invoke(selectedItem);
         }
     }
 }

@@ -32,13 +32,16 @@
                                             <ffTransformations:CircleTransformation/>
                                         </ff:CachedImage.Transformations>
                                     </ff:CachedImage>
-                                    <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1"
+                                    <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1" Margin="0,5,0,5"
                                            FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
                                     <!--Style="{DynamicResource ListItemDetailTextStyle}"-->
                                     <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Padding="10">
                                         <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button1Radius}" HorizontalOptions="Center" VerticalOptions="Center"
                                                 WidthRequest="{Binding Button1Width}" HeightRequest="{Binding Button1Height}"
-                                                ImageSource="{Binding Button1ImageSource}" Clicked="Button1_OnClicked" >
+                                                ImageSource="{Binding Button1ImageSource}"
+                                                Command="{Binding Path=BindingContext.Button1Command, Source={x:Reference Lv}}"
+                                                CommandParameter="{Binding .}">
+                                                <!--Clicked="Button1_OnClicked" we don't Clicked as we have to pass parameter in command-->
                                             <Button.BackgroundColor>
                                                 <OnPlatform x:TypeArguments="Color">
                                                     <On Platform="Android, WinPhone">
@@ -52,7 +55,9 @@
                                         </Button>
                                         <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button2Radius}" HorizontalOptions="Center" VerticalOptions="Center"
                                                 WidthRequest="{Binding Button2Width}" HeightRequest="{Binding Button2Height}"
-                                                ImageSource="{Binding Button2ImageSource}" Clicked="Button2_OnClicked" >
+                                                ImageSource="{Binding Button2ImageSource}"
+                                                Command="{Binding Path=BindingContext.Button2Command, Source={x:Reference Lv}}"
+                                                CommandParameter="{Binding .}">
                                             <Button.BackgroundColor>
                                                 <OnPlatform x:TypeArguments="Color">
                                                     <On Platform="Android, WinPhone">

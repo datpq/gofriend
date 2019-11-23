@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
@@ -84,18 +85,18 @@ namespace goFriend.Views
                     if (i == 0)
                     {
                         var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id);
-                        picker.ItemsSource = groupCatValues.ToList();
-                        //await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id).ContinueWith(task =>
-                        //    {
-                        //        picker.ItemsSource = task.Result.ToList();
-                        //    }, TaskScheduler.FromCurrentSynchronizationContext());
+                        var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
+                            .Concat(groupCatValues.ToList());
+                        picker.ItemsSource = itemSourceList.ToList();
                     }
                     var localI = i;
                     picker.SelectedIndexChanged += async (o, args) =>
                     {
                         UserDialogs.Instance.ShowLoading(res.Processing);
                         //Logger.Debug($"localI={localI}");
-                        var arrCatValues = new string[localI+1];
+                        var arrCatValuesLen = localI + 1;
+                        if (picker.SelectedIndex <= 0) arrCatValuesLen = localI; //nothing or first element selected
+                        var arrCatValues = new string[arrCatValuesLen];
                         for (var k = 0; k < arrCatValues.Length; k++)
                         {
                             //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
@@ -106,26 +107,25 @@ namespace goFriend.Views
                         {
                             arrPickers[j].ItemsSource = null;
                             //Logger.Debug($"j={j}");
-                            if (j == localI + 1)
+                            if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
                             {
                                 var localJ = j;
                                 var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues);
-                                arrPickers[localJ].ItemsSource = groupCatValues.ToList();
-                                //await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues).ContinueWith(task =>
-                                //{
-                                //    arrPickers[localJ].ItemsSource = task.Result.ToList();
-                                //}, TaskScheduler.FromCurrentSynchronizationContext());
+                                var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
+                                    .Concat(groupCatValues.ToList());
+                                arrPickers[localJ].ItemsSource = itemSourceList.ToList();
                             }
                         }
                         UserDialogs.Instance.HideLoading();
-                        DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                        DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, (int)selectedItem.Infos[0])));
                         Logger.Debug("Calling DphListView.LoadItems");
                         DphListView.LoadItems(async () =>
                         {
                             var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, true, arrCatValues);
                             var result = catGroupFriends.Select(x => new DphListViewItemModel
                             {
-                                Id = x.FriendId,
+                                Id = x.Id,
+                                Infos = new[] { (object)x.FriendId, x.GroupId },
                                 //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small) // small 50 x 50
                                 ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                                 FormattedText = new FormattedString
@@ -133,7 +133,7 @@ namespace goFriend.Views
                                     Spans =
                                     {
                                         new Span {Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
-                                            FontSize = (double)Application.Current.Resources["LblDetailFontSize"], LineHeight = 1.2},
+                                            FontSize = (double)Application.Current.Resources["LblFontSize"], LineHeight = 1.2},
                                         new Span {Text = Environment.NewLine},
                                         new Span {Text = x.GetCatValueDisplay(arrFixedCats.Count), LineHeight = 1.2},
                                         new Span {Text = Environment.NewLine},
@@ -151,14 +151,15 @@ namespace goFriend.Views
                 }
 
                 UserDialogs.Instance.HideLoading();
-                DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, selectedItem.Id)));
+                DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, (int)selectedItem.Infos[0])));
                 Logger.Debug("Calling DphListView.LoadItems");
                 DphListView.LoadItems(async () =>
                 {
                     var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id);
                     var result = groupFriends.Select(x => new DphListViewItemModel
                     {
-                        Id = x.FriendId,
+                        Id = x.Id,
+                        Infos = new[] { (object)x.FriendId, x.GroupId },
                         //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small), // small 50 x 50
                         ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                         FormattedText = new FormattedString
@@ -166,7 +167,7 @@ namespace goFriend.Views
                             Spans =
                             {
                                 new Span {Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
-                                    FontSize = (double)Application.Current.Resources["LblDetailFontSize"], LineHeight = 1.2},
+                                    FontSize = (double)Application.Current.Resources["LblFontSize"], LineHeight = 1.2},
                                 new Span {Text = Environment.NewLine},
                                 new Span {Text = x.GetCatValueDisplay(arrFixedCats.Count), LineHeight = 1.2},
                                 new Span {Text = Environment.NewLine},

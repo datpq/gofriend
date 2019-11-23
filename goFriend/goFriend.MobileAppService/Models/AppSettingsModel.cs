@@ -2,6 +2,7 @@
 {
     public class AppSettingsModel
     {
+        public int NotificationFetchingDays { get; set; }
         public int CacheTableTimeout { get; set; }
         public int CacheDefaultTimeout { get; set; }
     }

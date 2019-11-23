@@ -97,6 +97,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Appove/Reject group member.
+        /// </summary>
+        public static string AdminDesc {
+            get {
+                return ResourceManager.GetString("AdminDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to GoFriend Hanoi9194.
         /// </summary>
         public static string AppTitle {
@@ -156,6 +165,15 @@ namespace goFriend {
         public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [Clear selection].
+        /// </summary>
+        public static string ClearSelection {
+            get {
+                return ResourceManager.GetString("ClearSelection", resourceCulture);
             }
         }
         
@@ -430,6 +448,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are about to approve the subscription?.
+        /// </summary>
+        public static string MsgSubscriptionApproveConfirm {
+            get {
+                return ResourceManager.GetString("MsgSubscriptionApproveConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are about to reject the subscription?.
+        /// </summary>
+        public static string MsgSubscriptionRejectConfirm {
+            get {
+                return ResourceManager.GetString("MsgSubscriptionRejectConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subscription successful.
         /// </summary>
         public static string MsgSubscriptionSuccessful {
@@ -453,6 +489,15 @@ namespace goFriend {
         public static string MsgTitleInfo {
             get {
                 return ResourceManager.GetString("MsgTitleInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notifiation.
+        /// </summary>
+        public static string Notification {
+            get {
+                return ResourceManager.GetString("Notification", resourceCulture);
             }
         }
         

@@ -63,6 +63,12 @@
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.GroupConnectionsInfos}" />
                             </StackLayout>
                         </ViewCell>
+                        <ViewCell x:Name="CellAdmin">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Admin}" />
+                                <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.AdminDesc}" />
+                            </StackLayout>
+                        </ViewCell>
                         <ViewCell x:Name="CellLogout">
                             <StackLayout Padding="10" Orientation="Vertical">
                                 <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Logout}" TextColor="{StaticResource ColorLabel}" />

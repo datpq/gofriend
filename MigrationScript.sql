@@ -4,6 +4,7 @@ select * from Groups;
 select * from Friends;
 select * from GroupPredefinedCategory;
 select * from CacheConfiguration;
+select * from Notification;
 
 drop table GroupFixedCatValues;
 drop table GroupFriends;
@@ -11,8 +12,12 @@ drop table Friends;
 drop table GroupPredefinedCategory;
 drop table Groups;
 drop table CacheConfiguration;
+drop table Notification;
 
+--ALTER TABLE GroupFriends ADD [Id] [int] IDENTITY(1,1) NOT NULL
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
+
+ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null
 
 BEGIN
 IF NOT EXISTS (SELECT * FROM Groups WHERE Name = 'Hanoi9194XaXu-UK')
@@ -107,6 +112,9 @@ IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.Mobi
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupFriends')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
 	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupFriends', NULL, 15, 1);
+IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetNotifications')
+	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetNotifications', NULL, 5, 1);
 	
 INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
 	SELECT Id, SchoolName, NULL FROM Groups,

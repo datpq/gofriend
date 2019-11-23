@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             Title="{Static local:res.Notification}"
+             x:Class="goFriend.Views.NotificationPage">
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
+            </On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout>
+                <controls:DphListView x:Name="DphListView"></controls:DphListView>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
