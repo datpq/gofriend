@@ -88,6 +88,7 @@ namespace goFriend.ViewModels
         public object[] Infos { get; set; }
         public FormattedString FormattedText { get; set; }
         public string ImageUrl { get; set; }
+        public string OverlappingImageUrl { get; set; }
 
         public double Button1Width => Button1ImageSource == null ? 0 : 30;
         public double Button1Height => Button1Width;

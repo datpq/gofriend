@@ -20,7 +20,6 @@ namespace goFriend.MobileAppService.Controllers
     [Route("api/Friend")]
     public class FriendController : Controller
     {
-        private const string NotifIdSep = ",";
         private readonly IOptions<AppSettingsModel> _appSettings;
         private readonly IDataRepository _dataRepo;
         private readonly ICacheService _cacheService;
@@ -875,13 +874,14 @@ namespace goFriend.MobileAppService.Controllers
 
                 result = _dataRepo.GetMany<Notification>(
                         x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now
-                                                    && $"{NotifIdSep}{x.Destination}{NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) >= 0
-                                                    && $"{NotifIdSep}{x.Deletions}{NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) < 0)
+                                                    && $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) >= 0
+                                                    && $"{Notification.NotifIdSep}{x.Deletions}{Notification.NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) < 0)
                     .Select(x =>
                     {
                         x.Deletions = null; //privacy reason
                         x.Destination = null; //privacy reason
-                        x.Reads = $"{NotifIdSep}{x.Reads}{NotifIdSep}".IndexOf($"u{friendId}",
+                        x.OwnerId = 0; //privacy reason
+                        x.Reads = $"{Notification.NotifIdSep}{x.Reads}{Notification.NotifIdSep}".IndexOf($"u{friendId}",
                             StringComparison.Ordinal).ToString(); //Reads = -1 ==> not read
                         return x;
                     }).ToList();
@@ -905,6 +905,76 @@ namespace goFriend.MobileAppService.Controllers
             finally
             {
                 Logger.Debug($"END(Count={result?.Value.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpPut]
+        [Route("ReadNotification/{friendId}")]
+        public IActionResult ReadNotification([FromHeader] string token, [FromRoute] int friendId, [FromBody] string notifIds)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, notifIds={notifIds})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                var isUpdated = false;
+                var listIds = notifIds.Split(Notification.NotifIdSep).ToList();
+                foreach (var notif in _dataRepo.GetMany<Notification>(x => listIds.Contains(x.Id.ToString())))
+                {
+                    if (notif.DoRead(friendId))
+                    {
+                        isUpdated = true;
+                    }
+                }
+
+                if (isUpdated)
+                {
+                    _dataRepo.Commit();
+                }
+
+                //remove Cache
+                _cacheService.Remove($".GetNotifications.{friendId}.");
+
+                return Ok();
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -942,7 +1012,9 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var groupFriend = _dataRepo.Get<GroupFriend>(x => x.Id == groupFriendId);
+                //var groupFriend = _dataRepo.Get<GroupFriend>(x => x.Id == groupFriendId);
+                var groupFriend = _dataRepo.GetMany<GroupFriend>(x => x.Id == groupFriendId)
+                    .AsQueryable().Include(x => x.Friend).Include(x => x.Group).FirstOrDefault();
                 if (groupFriend == null)
                 {
                     if (userRight < UserType.Normal)
@@ -991,26 +1063,40 @@ namespace goFriend.MobileAppService.Controllers
                     Logger.Debug("Subscription rejected");
                     _dataRepo.Delete<GroupFriend>(x => x.Id == groupFriendId); //reject
                 }
+                var groupAdmins = _dataRepo.GetMany<GroupFriend>(
+                    x => x.GroupId == groupFriend.GroupId && x.UserRight >= UserType.Admin).Select(x => x.FriendId).ToList();
+                var jointGroupAdmins = string.Join(Notification.NotifIdSep, groupAdmins.Select(x => $"u{x}"));
                 _dataRepo.Add(new Notification
                 {
                     CreatedDate = DateTime.Now,
                     OwnerId = friendId,
-                    Destination = $"u{groupFriend.FriendId}",
+                    Destination = $"u{groupFriend.FriendId},{jointGroupAdmins}",
                     NotificationObject = groupFriend.UserRight >= UserType.Normal ?
-                        (INotification) new NotifSubscriptionApproved
+                        (GroupSubscriptionNotifBase)new NotifSubscriptionApproved
                         {
                             FriendId = groupFriend.FriendId,
-                            GroupId = groupFriend.GroupId
+                            FriendName = groupFriend.Friend.Name,
+                            FacebookId = groupFriend.Friend.FacebookId,
+                            GroupId = groupFriend.GroupId,
+                            GroupName = groupFriend.Group.Name
                         } : new NotifSubscriptionRejected
                         {
                             FriendId = groupFriend.FriendId,
-                            GroupId = groupFriend.GroupId
+                            FriendName = groupFriend.Friend.Name,
+                            FacebookId = groupFriend.Friend.FacebookId,
+                            GroupId = groupFriend.GroupId,
+                            GroupName = groupFriend.Group.Name
                         }
                 });
                 _dataRepo.Commit();
 
                 //remove Cache
-                _cacheService.Remove($".GetGroupFriends.{friendId}."); //remove subscription from the list
+                _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}."); // refresh my groups of the approved/rejected user
+                groupAdmins.ForEach(x =>
+                {
+                    _cacheService.Remove($".GetGroupFriends.{x}."); // refresh subscription of all Admin
+                    _cacheService.Remove($".GetNotifications.{x}."); // refresh notification of all Admin
+                }); 
 
                 return Ok();
             }
@@ -1024,7 +1110,7 @@ namespace goFriend.MobileAppService.Controllers
                 Logger.Error(e.ToString());
                 Logger.Error(e, Message.MsgUnknown.Msg);
                 return BadRequest(Message.MsgUnknown);
-}
+            }
             finally
             {
                 Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
@@ -1084,10 +1170,12 @@ namespace goFriend.MobileAppService.Controllers
                 var endCatIdx = group.GetCatDescList().Count() + 1;
 
                 var newGroupFriend = _dataRepo.Get<GroupFriend>(x => x.GroupId == groupFriend.GroupId && x.FriendId == groupFriend.FriendId);
-                var groupAdmins = string.Join(NotifIdSep, _dataRepo.GetMany<GroupFriend>(
-                        x => x.GroupId == groupFriend.GroupId && x.UserRight >= UserType.Admin)
-                    .Select(x => $"u{x.FriendId}"));
-                Logger.Debug($"Notification sent to the groupAdmins={groupAdmins}");
+                var groupAdmins = _dataRepo.GetMany<GroupFriend>(
+                    x => x.GroupId == groupFriend.GroupId && x.UserRight >= UserType.Admin).Select(x => x.FriendId).ToList();
+                var jointGroupAdmins = string.Join(Notification.NotifIdSep, groupAdmins.Select(x => $"u{x}"));
+                Logger.Debug($"Notification sent to the groupAdmins={jointGroupAdmins}");
+                var f = _dataRepo.Get<Friend>(x => x.Id == groupFriend.FriendId);
+                var g = _dataRepo.Get<Group>(x => x.Id == groupFriend.GroupId);
                 if (newGroupFriend != null)
                 {
                     Logger.Debug("GroupFriend exists already. Just modify it");
@@ -1096,11 +1184,14 @@ namespace goFriend.MobileAppService.Controllers
                     {
                         CreatedDate = DateTime.Now,
                         OwnerId = groupFriend.FriendId,
-                        Destination = groupAdmins,
+                        Destination = jointGroupAdmins,
                         NotificationObject = new NotifUpdateSubscriptionRequest
                         {
                             FriendId = groupFriend.FriendId,
-                            GroupId = groupFriend.GroupId
+                            FriendName = f?.Name,
+                            FacebookId = f?.FacebookId,
+                            GroupId = groupFriend.GroupId,
+                            GroupName = g?.Name
                         }
                     });
                 }
@@ -1121,11 +1212,14 @@ namespace goFriend.MobileAppService.Controllers
                     {
                         CreatedDate = DateTime.Now,
                         OwnerId = groupFriend.FriendId,
-                        Destination = groupAdmins,
+                        Destination = jointGroupAdmins,
                         NotificationObject = new NotifNewSubscriptionRequest
                         {
                             FriendId = groupFriend.FriendId,
-                            GroupId = groupFriend.GroupId
+                            FriendName = f?.Name,
+                            FacebookId = f?.FacebookId,
+                            GroupId = groupFriend.GroupId,
+                            GroupName = g?.Name
                         }
                     });
                 }
@@ -1153,6 +1247,10 @@ namespace goFriend.MobileAppService.Controllers
 
                 //remove Cache
                 _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}."); //Active and Inactive
+                groupAdmins.ForEach(x =>
+                {
+                    _cacheService.Remove($".GetGroupFriends.{x}."); // refresh subscription of all Admin
+                });
 
                 return Ok();
             }

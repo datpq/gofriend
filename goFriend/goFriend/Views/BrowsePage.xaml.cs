@@ -20,6 +20,7 @@ namespace goFriend.Views
         public BrowsePage()
         {
             InitializeComponent();
+
             PickerGroups.Title = $"{res.Select} {res.Groups}";
             LblGroup.Text = $"{res.Groups}:";
 
@@ -37,6 +38,7 @@ namespace goFriend.Views
                 {
                     PickerGroups.SelectedIndex = 0;
                 }
+                Appearing += (sender, args) => DphListView.Refresh();
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

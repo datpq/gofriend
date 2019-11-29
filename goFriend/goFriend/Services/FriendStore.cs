@@ -92,7 +92,6 @@ namespace goFriend.Services
 
             var serializedFriend = JsonConvert.SerializeObject(friend);
 
-            UserDialogs.Instance.ShowLoading(res.Processing);
             var client = GetSecuredHttpClient();
             var response = await client.PutAsync($"api/Friend/SaveBasicInfo", new StringContent(serializedFriend, Encoding.UTF8, "application/json"));
 
@@ -106,7 +105,6 @@ namespace goFriend.Services
                 var msg = await response.Content.ReadAsAsync<Message>();
                 Logger.Error($"Error: {msg}");
             }
-            UserDialogs.Instance.HideLoading();
 
             Logger.Debug($"SaveBasicInfo.END({result})");
             return result;
@@ -506,6 +504,54 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"GetNotifications.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<bool> ReadNotification(string notifIds)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            var result = false;
+            try
+            {
+                Logger.Debug($"ReadNotification.BEGIN(notifIds={notifIds})");
+
+                Validate();
+
+                var serializedObject = JsonConvert.SerializeObject(
+                    new { notifIds = notifIds });
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/ReadNotification/{App.User.Id}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.PutAsync(requestUrl, new StringContent(serializedObject, Encoding.UTF8, "application/json"));
+
+                result = response.IsSuccessStatusCode;
+                if (!result)
+                {
+                    var msg = await response.Content.ReadAsAsync<Message>();
+                    Logger.Error($"Error: {msg}");
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GroupSubscriptionReact.END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

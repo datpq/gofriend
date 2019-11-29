@@ -25,13 +25,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <ff:CachedImage x:Name="ImgAvatar" Source="{Binding ImageUrl}"
-                                                    WidthRequest="65" HeightRequest="65" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
-                                                    Grid.Row="0" Grid.Column="0" Margin="10,5,5,5">
-                                        <ff:CachedImage.Transformations>
-                                            <ffTransformations:CircleTransformation/>
-                                        </ff:CachedImage.Transformations>
-                                    </ff:CachedImage>
+                                    <controls:DphOverlapImage WidthRequest="65" HeightRequest="65" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                                                              Grid.Row="0" Grid.Column="0" Margin="10,5,5,5"
+                                                              Source1="{Binding ImageUrl}"
+                                                              Source2="{Binding OverlappingImageUrl}">
+                                    </controls:DphOverlapImage>
                                     <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1" Margin="0,5,0,5"
                                            FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
                                     <!--Style="{DynamicResource ListItemDetailTextStyle}"-->
@@ -41,7 +39,7 @@
                                                 ImageSource="{Binding Button1ImageSource}"
                                                 Command="{Binding Path=BindingContext.Button1Command, Source={x:Reference Lv}}"
                                                 CommandParameter="{Binding .}">
-                                                <!--Clicked="Button1_OnClicked" we don't Clicked as we have to pass parameter in command-->
+                                                <!--Clicked="Button1_OnClicked" we don't use Clicked as we have to pass parameter in command-->
                                             <Button.BackgroundColor>
                                                 <OnPlatform x:TypeArguments="Color">
                                                     <On Platform="Android, WinPhone">

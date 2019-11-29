@@ -37,7 +37,7 @@
                 </Grid>
             </StackLayout>
             <StackLayout>
-                <controls:DphListView x:Name="DphListView"></controls:DphListView>
+                <controls:DphListView x:Name="DphListView" Timeout="5" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

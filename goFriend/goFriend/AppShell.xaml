@@ -74,7 +74,7 @@
             <ShellContent ContentTemplate="{DataTemplate local:BrowsePage}" />
         </ShellSection>
         <ShellSection x:Name="TabMap" Title="{Static loc:res.Map}" Icon="tab_map.png" IsEnabled="False">
-            <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
+            <ShellContent ContentTemplate="{DataTemplate local:MapPage}" />
         </ShellSection>
         <ShellSection x:Name="TabNotification" Title="{Static loc:res.Notification}" Icon="tab_notification_selected.png" IsEnabled="False">
             <ShellContent ContentTemplate="{DataTemplate local:NotificationPage}" />

@@ -18,6 +18,7 @@ namespace goFriend.Views
         public AdminPage()
         {
             InitializeComponent();
+
             PickerGroups.Title = $"{res.Select} {res.Groups}";
             LblGroup.Text = $"{res.Groups}:";
 
@@ -35,6 +36,7 @@ namespace goFriend.Views
                 {
                     PickerGroups.SelectedIndex = 0;
                 }
+                Appearing += (sender, args) => DphListView.Refresh();
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -59,7 +61,7 @@ namespace goFriend.Views
                             var result = await App.FriendStore.GroupSubscriptionReact(selectedItem.Id, UserType.NotMember);
                             if (result)
                             {
-                                DphListView.Refresh();
+                                DphListView.Refresh(true);
                             }
                         }
                     },
@@ -71,11 +73,10 @@ namespace goFriend.Views
                             var result = await App.FriendStore.GroupSubscriptionReact(selectedItem.Id, UserType.Normal);
                             if (result)
                             {
-                                DphListView.Refresh();
+                                DphListView.Refresh(true);
                             }
                         }
                     });
-                Logger.Debug("Calling DphListView.LoadItems");
                 DphListView.LoadItems(async () =>
                 {
                     var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, false);

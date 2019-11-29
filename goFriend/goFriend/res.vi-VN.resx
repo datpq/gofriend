@@ -295,7 +295,7 @@
     <value>Nhà</value>
   </data>
   <data name="AskedToJoinGroup" xml:space="preserve">
-    <value>xin gia nhập nhóm.</value>
+    <value>xin gia nhập nhóm</value>
   </data>
   <data name="SpentTimeInDays" xml:space="preserve">
     <value> ngày trước.</value>
@@ -320,5 +320,14 @@
   </data>
   <data name="ClearSelection" xml:space="preserve">
     <value>[Xóa lựa chọn]</value>
+  </data>
+  <data name="NotifSubscriptionApproved" xml:space="preserve">
+    <value>bắt đầu là thành viên của nhóm</value>
+  </data>
+  <data name="NotifSubscriptionRejected" xml:space="preserve">
+    <value>bị từ chối làm thành viên nhóm</value>
+  </data>
+  <data name="NotifUpdateSubscriptionRequest" xml:space="preserve">
+    <value>sửa thông tin kết nối trong yêu cầu tham gia nhóm</value>
   </data>
 </root>

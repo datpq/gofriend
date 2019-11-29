@@ -115,7 +115,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to asked to join the group..
+        ///   Looks up a localized string similar to asked to join the group.
         /// </summary>
         public static string AskedToJoinGroup {
             get {
@@ -498,6 +498,33 @@ namespace goFriend {
         public static string Notification {
             get {
                 return ResourceManager.GetString("Notification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to become a member of the group.
+        /// </summary>
+        public static string NotifSubscriptionApproved {
+            get {
+                return ResourceManager.GetString("NotifSubscriptionApproved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to has been refused joining the group.
+        /// </summary>
+        public static string NotifSubscriptionRejected {
+            get {
+                return ResourceManager.GetString("NotifSubscriptionRejected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to has modified the connection information while subscribing to the group.
+        /// </summary>
+        public static string NotifUpdateSubscriptionRequest {
+            get {
+                return ResourceManager.GetString("NotifUpdateSubscriptionRequest", resourceCulture);
             }
         }
         

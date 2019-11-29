@@ -52,12 +52,26 @@ namespace goFriend.Views
                         //Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
                         Logger.Debug("Search.Group.END");
                         return searchResult;
-                    }, groupName => { SbGroup.Text = groupName; }, SbGroup.Text));
+                    }, groupName => Settings.LastGroupName = SbGroup.Text = groupName, SbGroup.Text));
             };
         }
 
+        private bool _badTextChangedHappened; //happened with Android only. It's called when user go to another shell tab and come back to the Account tab
         private async void SbGroup_OnTextChanged(object sender, TextChangedEventArgs e)
         {
+            if (e.NewTextValue != Settings.LastGroupName && e.OldTextValue == Settings.LastGroupName)
+            {
+                _badTextChangedHappened = true;
+                SbGroup.Text = Settings.LastGroupName;
+                Logger.Warn("TextChanged happened unexpectedly");
+                return;
+            }
+            if (_badTextChangedHappened)
+            {
+                _badTextChangedHappened = false;
+                Logger.Warn("TextChanged happened unexpectedly. Fixed.");
+                return;
+            }
             try
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
@@ -82,8 +96,6 @@ namespace goFriend.Views
                 CmdSubscribe.IsVisible = CmdModify.IsVisible = CmdCancel.IsVisible = false;
 
                 if (string.IsNullOrEmpty(groupName)) return;
-
-                Settings.LastGroupName = groupName;
 
                 //Logger.Debug("Before Wait");
                 //App.TaskGetMyGroups.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread

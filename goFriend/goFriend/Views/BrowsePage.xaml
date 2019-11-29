@@ -36,8 +36,8 @@
                             ItemDisplayBinding="{Binding Display}" />
                 </Grid>
             </StackLayout>
-            <StackLayout>
-                <controls:DphListView x:Name="DphListView"></controls:DphListView>
+            <StackLayout VerticalOptions="FillAndExpand">
+                <controls:DphListView x:Name="DphListView" Timeout="15" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

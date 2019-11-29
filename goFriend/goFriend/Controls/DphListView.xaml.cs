@@ -13,6 +13,14 @@ namespace goFriend.Controls
         private readonly DphListViewModel _dphListViewModel;
         private Action<DphListViewItemModel> _cellOnTapped;
         //private Func<Task<IEnumerable<DphListViewItemModel>>> _getListViewItemsFunc;
+        private DateTime _lastRefreshDateTime = DateTime.Today.AddYears(-1); //default value is a very small value
+
+        public static readonly BindableProperty TimeoutProperty = BindableProperty.CreateAttached(nameof(Timeout), typeof(int), typeof(DphListView), 0);
+        public int Timeout
+        {
+            get => (int)GetValue(TimeoutProperty);
+            set => SetValue(TimeoutProperty, value);
+        }
 
         public DphListView()
         {
@@ -38,6 +46,7 @@ namespace goFriend.Controls
         {
             _dphListViewModel.GetListViewItemsFunc = getListViewItemsFunc;
             _dphListViewModel.RefreshCommand.Execute(null);
+            _lastRefreshDateTime = DateTime.Now;
             //UserDialogs.Instance.ShowLoading(res.Processing);
             //_dphListViewModel.Items.Clear();
             //_getListViewItemsFunc = getListViewItemsFunc;
@@ -54,9 +63,13 @@ namespace goFriend.Controls
             //}, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public void Refresh()
+        public void Refresh(bool forced = false)
         {
-            _dphListViewModel.RefreshCommand.Execute(null);
+            if (!_dphListViewModel.IsRefreshing && (forced || _lastRefreshDateTime.AddMinutes(Timeout) < DateTime.Now))
+            {
+                _dphListViewModel.RefreshCommand.Execute(null);
+                _lastRefreshDateTime = DateTime.Now;
+            }
         }
 
         private void Cell_OnTapped(object sender, EventArgs e)

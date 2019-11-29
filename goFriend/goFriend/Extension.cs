@@ -40,22 +40,74 @@ namespace goFriend
             return $"resource://goFriend.Images.{fileName}";
         }
 
+        public static string GetImageUrlByFacebookId(string facebookId, FacebookImageType imageType = FacebookImageType.normal)
+        {
+            string result;
+            if (!string.IsNullOrEmpty(facebookId))
+            {
+                result = $"https://graph.facebook.com/{facebookId}/picture?type={imageType}";
+                Logger.Debug($"URL = {result}");
+            }
+            else
+            {
+                result = GetImageUrl("default_male.jpg");
+            }
+            return result;
+        }
+
         public static string GetSpentTime(this DateTime dateTime)
         {
-            int quantity;
             string result;
-            if (dateTime < DateTime.Now.AddDays(-1))
+            var spentTime = DateTime.Now - dateTime;
+            if (spentTime > TimeSpan.FromDays(3))
             {
-                quantity = (DateTime.Now - dateTime).Days;
-                result = $"{quantity}{res.SpentTimeInDays}";
-            } else if (dateTime < DateTime.Now.AddHours(-1))
+                result = $"{spentTime.Days}{res.SpentTimeInDays}";
+            } else if (spentTime > TimeSpan.FromHours(1))
             {
-                quantity = (DateTime.Now - dateTime).Hours;
-                result = $"{quantity}{res.SpentTimeInHours}";
+                result = $"{spentTime.Days * 12 + spentTime.Hours}{res.SpentTimeInHours}";
             } else
             {
-                quantity = (DateTime.Now - dateTime).Minutes;
-                result = $"{quantity}{res.SpentTimeInMinutes}";
+                result = $"{spentTime.Minutes}{res.SpentTimeInMinutes}";
+            }
+            return result;
+        }
+
+        public static FormattedString GetNotificationMessage(this Notification notification, int friendId = 0)
+        {
+            FormattedString result;
+            var groupSubscriptionNotif = notification.NotificationObject as GroupSubscriptionNotifBase;
+            switch (notification.Type)
+            {
+                case NotificationType.NewSubscriptionRequest:
+                case NotificationType.UpdateSubscriptionRequest:
+                case NotificationType.SubscriptionApproved:
+                case NotificationType.SubscriptionRejected:
+                    var notifMsg = notification.Type == NotificationType.NewSubscriptionRequest ? res.AskedToJoinGroup :
+                        notification.Type == NotificationType.UpdateSubscriptionRequest ? res.NotifUpdateSubscriptionRequest :
+                        notification.Type == NotificationType.SubscriptionApproved ? res.NotifSubscriptionApproved : res.NotifSubscriptionRejected;
+
+                    result = new FormattedString
+                    {
+                        Spans =
+                        {
+                            new Span
+                            {
+                                Text = groupSubscriptionNotif?.FriendName, FontAttributes = FontAttributes.Bold,
+                                FontSize = (double)Application.Current.Resources["LblDetailFontSize"]
+                            },
+                            new Span { Text = $" {notifMsg} " },
+                            new Span
+                            {
+                                Text = groupSubscriptionNotif?.GroupName, FontAttributes = FontAttributes.Bold,
+                                FontSize = (double)Application.Current.Resources["LblDetailFontSize"]
+                            },
+                            new Span { Text = Environment.NewLine },
+                            new Span { Text = notification.CreatedDate.HasValue ? notification.CreatedDate.Value.GetSpentTime() : string.Empty, LineHeight = 1.3 }
+                        }
+                    };
+                    break;
+                default:
+                    throw new ArgumentException();
             }
             return result;
         }

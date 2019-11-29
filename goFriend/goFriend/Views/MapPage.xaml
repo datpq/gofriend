@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:goFriend"
+             Title="{Static local:res.Map}"
+             x:Class="goFriend.Views.MapPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <controls:DphOverlapImage HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="65" HeightRequest="65"
+                                      Source1="https://graph.facebook.com/10217327271725297/picture?type=normal"
+                                      Source2="resource://goFriend.Images.notif_NewSubscriptionRequest.png">
+            </controls:DphOverlapImage>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

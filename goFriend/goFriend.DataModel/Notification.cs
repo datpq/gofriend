@@ -7,18 +7,42 @@ namespace goFriend.DataModel
 {
     public class Notification
     {
+        public const string NotifIdSep = ",";
+
         [Key]
         public int Id { get; set; }
 
         public NotificationType Type { get; set; }
 
-        private INotification _notificationObj;
+        private object _notificationObject;
+        [JsonIgnore]
         [NotMapped]
-        public INotification NotificationObject { get => _notificationObj;
+        public object NotificationObject
+        {
+            get => _notificationObject;
             set
             {
-                _notificationObj = value;
-                Type = _notificationObj.Type;
+                _notificationObject = value;
+                if (_notificationObject is NotifNewSubscriptionRequest)
+                {
+                    Type = NotificationType.NewSubscriptionRequest;
+                }
+                else if (_notificationObject is NotifUpdateSubscriptionRequest)
+                {
+                    Type = NotificationType.UpdateSubscriptionRequest;
+                }
+                else if (_notificationObject is NotifSubscriptionApproved)
+                {
+                    Type = NotificationType.SubscriptionApproved;
+                }
+                else if (_notificationObject is NotifSubscriptionRejected)
+                {
+                    Type = NotificationType.SubscriptionRejected;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
             }
         }
 
@@ -62,28 +86,37 @@ namespace goFriend.DataModel
         public int OwnerId { get; set; }
         //[ForeignKey("OwnerId")]
         //public Friend Owner { get; set; }
-    }
 
-    public interface INotification
-    {
-        NotificationType Type { get; }
-        string GetMessage(int friendId);
+        public bool IsRead(int friendId)
+        {
+            return $"{NotifIdSep}{Reads}{NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) >= 0;
+        }
+
+        public bool DoRead(int friendId)
+        {
+            if (IsRead(friendId)) return false;
+            Reads = string.IsNullOrEmpty(Reads) ? $"u{friendId}" : $"{Reads},u{friendId}";
+            return true;
+        }
     }
 
     public enum NotificationType
     {
         NewSubscriptionRequest = 0, // sent to all admins of the group. u1g2 ==> user 1 want to join group 2
+        UpdateSubscriptionRequest, // sent to all admins of the group. u1g2 ==> user 1 modified connection info when joining the group 2
         SubscriptionApproved, // sent to the owner of the request. u1g2 ==> user 1's subscription to the group 2 request has been approved.
-        SubscriptionRejected, // sent to the owner of the request. u1g2 ==> user 1's subscription to the group 2 request has been rejected.
-        UpdateSubscriptionRequest // sent to all admins of the group. u1g2 ==> user 1 modified connection info when joining the group 2
+        SubscriptionRejected // sent to the owner of the request. u1g2 ==> user 1's subscription to the group 2 request has been rejected.
     }
 
-    public abstract class GroupSubscriptionNotifBase : INotification
+    public abstract class GroupSubscriptionNotifBase
     {
         private Friend _friend;
         private Group _group;
 
         public int FriendId { get; set; }
+        public string FriendName { get; set; }
+        public string FacebookId { get; set; }
+
         [ForeignKey("FriendId")]
         [JsonIgnore]
         //public Friend Friend { get; set; }
@@ -94,9 +127,14 @@ namespace goFriend.DataModel
             {
                 _friend = value;
                 FriendId = _friend.Id;
+                FriendName = _friend.Name;
+                FacebookId = _friend.FacebookId;
             }
         }
+
         public int GroupId { get; set; }
+        public string GroupName { get; set; }
+
         [ForeignKey("GroupId")]
         [JsonIgnore]
         //public Group Group { get; set; }
@@ -107,50 +145,33 @@ namespace goFriend.DataModel
             {
                 _group = value;
                 GroupId = _group.Id;
+                GroupName = _group.Name;
             }
         }
 
         //[Key]
         //protected int Id { get; set; }
         public abstract NotificationType Type { get; }
-        public abstract string GetMessage(int friendId);
+        public virtual string ImageFile => $"notif_{Type}.png";
     }
 
     public class NotifNewSubscriptionRequest : GroupSubscriptionNotifBase
     {
         public override NotificationType Type => NotificationType.NewSubscriptionRequest;
-        public override string GetMessage(int friendId)
-        {
-            return $"{Friend.Name} wanted to join the group {Group.Name}";
-        }
     }
 
     public class NotifUpdateSubscriptionRequest : GroupSubscriptionNotifBase
     {
         public override NotificationType Type => NotificationType.UpdateSubscriptionRequest;
-        public override string GetMessage(int friendId)
-        {
-            return $"{Friend.Name} updated connection information when joining the group {Group.Name}";
-        }
     }
 
     public class NotifSubscriptionApproved : GroupSubscriptionNotifBase
     {
         public override NotificationType Type => NotificationType.SubscriptionApproved;
-        public override string GetMessage(int friendId)
-        {
-            return friendId == FriendId ? $"You are now a member of {Group.Name}"
-                : $"{Friend.Name} is now a member of {Group.Name}";
-        }
     }
 
     public class NotifSubscriptionRejected : GroupSubscriptionNotifBase
     {
         public override NotificationType Type => NotificationType.SubscriptionRejected;
-        public override string GetMessage(int friendId)
-        {
-            return friendId == FriendId ? $"Your subscription to the group {Group.Name} has been rejected."
-                : $"{Friend.Name}'s subscription to the group {Group.Name} has been rejected.";
-        }
     }
 }

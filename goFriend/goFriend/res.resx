@@ -295,7 +295,7 @@
     <value>Home</value>
   </data>
   <data name="AskedToJoinGroup" xml:space="preserve">
-    <value>asked to join the group.</value>
+    <value>asked to join the group</value>
   </data>
   <data name="SpentTimeInDays" xml:space="preserve">
     <value>day(s) ago.</value>
@@ -320,5 +320,14 @@
   </data>
   <data name="ClearSelection" xml:space="preserve">
     <value>[Clear selection]</value>
+  </data>
+  <data name="NotifSubscriptionApproved" xml:space="preserve">
+    <value>become a member of the group</value>
+  </data>
+  <data name="NotifSubscriptionRejected" xml:space="preserve">
+    <value>has been refused joining the group</value>
+  </data>
+  <data name="NotifUpdateSubscriptionRequest" xml:space="preserve">
+    <value>has modified the connection information while subscribing to the group</value>
   </data>
 </root>
