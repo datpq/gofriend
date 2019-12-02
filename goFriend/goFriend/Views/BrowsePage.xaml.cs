@@ -119,7 +119,13 @@ namespace goFriend.Views
                             }
                         }
                         UserDialogs.Instance.HideLoading();
-                        DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, (int)selectedItem.Infos[0])));
+                        DphListView.Initialize(selectedItem =>
+                        {
+                            var selectedGroupFriend = (GroupFriend)selectedItem.SelectedObject;
+                            var accountBasicInfoPage = new AccountBasicInfosPage(selectedGroup.Group.Id, selectedGroupFriend.FriendId);
+                            accountBasicInfoPage.LoadGroupConnectionInfo(selectedGroup.Group.Name, selectedGroupFriend, arrFixedCats.Count);
+                            Navigation.PushAsync(accountBasicInfoPage);
+                        });
                         Logger.Debug("Calling DphListView.LoadItems");
                         DphListView.LoadItems(async () =>
                         {
@@ -127,7 +133,7 @@ namespace goFriend.Views
                             var result = catGroupFriends.Select(x => new DphListViewItemModel
                             {
                                 Id = x.Id,
-                                Infos = new[] { (object)x.FriendId, x.GroupId },
+                                SelectedObject = x,
                                 //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small) // small 50 x 50
                                 ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                                 FormattedText = new FormattedString
@@ -153,7 +159,13 @@ namespace goFriend.Views
                 }
 
                 UserDialogs.Instance.HideLoading();
-                DphListView.Initialize(selectedItem => Navigation.PushAsync(new AccountBasicInfosPage(selectedGroup.Group.Id, (int)selectedItem.Infos[0])));
+                DphListView.Initialize(selectedItem =>
+                {
+                    var selectedGroupFriend = (GroupFriend)selectedItem.SelectedObject;
+                    var accountBasicInfoPage = new AccountBasicInfosPage(selectedGroup.Group.Id, selectedGroupFriend.FriendId);
+                    accountBasicInfoPage.LoadGroupConnectionInfo(selectedGroup.Group.Name, selectedGroupFriend, arrFixedCats.Count);
+                    Navigation.PushAsync(accountBasicInfoPage);
+                });
                 Logger.Debug("Calling DphListView.LoadItems");
                 DphListView.LoadItems(async () =>
                 {
@@ -161,7 +173,7 @@ namespace goFriend.Views
                     var result = groupFriends.Select(x => new DphListViewItemModel
                     {
                         Id = x.Id,
-                        Infos = new[] { (object)x.FriendId, x.GroupId },
+                        SelectedObject = x,
                         //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small), // small 50 x 50
                         ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                         FormattedText = new FormattedString

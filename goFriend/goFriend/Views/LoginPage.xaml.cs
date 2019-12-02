@@ -1,8 +1,6 @@
-﻿using System;
-using goFriend.Services;
+﻿using goFriend.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Rg.Plugins.Popup.Services;
 using Xamarin.Essentials;
 
 namespace goFriend.Views
@@ -13,7 +11,6 @@ namespace goFriend.Views
         private static LoginPage _instance;
 
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
-        //private readonly EventWaitHandle _waitHandle;
 
         public static LoginPage GetInstance(AccountPage accountPage)
         {
@@ -28,11 +25,6 @@ namespace goFriend.Views
         {
             Title = res.Login;
             InitializeComponent();
-            //_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-            //Disappearing += (s, e) =>
-            //{
-            //    _waitHandle.Set();
-            //};
 
             //Facebook event handlers
             BtnFacebook.OnSuccess = new Command<string>(async authToken =>
@@ -43,11 +35,6 @@ namespace goFriend.Views
                 await Navigation.PopAsync();
                 var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
                 App.User = await App.FriendStore.LoginWithFacebook(authToken, deviceInfo);
-                //var avatarUrl = $"https://graph.facebook.com/{App.User.FacebookId}/picture?type=normal";
-                //using (var webClient = new WebClient())
-                //{
-                //    App.User.Image = webClient.DownloadData(avatarUrl);
-                //}
                 Settings.LastUser = App.User;
 
                 App.Initialize(); //redo the initialization background task
@@ -60,77 +47,11 @@ namespace goFriend.Views
                 Logger.Debug("Authentication cancelled by the user");
             });
 
-            /*
-            //Event message handlers
-            Logger.Debug("Subscribe");
-            MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfile, (sender, user) =>
-            {
-                if (user == null)
-                {
-                    Logger.Error("Received NULL");
-                    return;
-                }
-                Logger.Debug($"Received: {Constants.MsgProfile} {user.ToString()}");
-                App.User = user;
-                App.User.DeviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
-                var avatarUrl = $"https://graph.facebook.com/{user.FacebookId}/picture?type=normal";
-                using (var webClient = new WebClient())
-                {
-                    App.User.Image = webClient.DownloadData(avatarUrl);
-                }
-                Settings.LastUser = App.User;
-            });
-            MessagingCenter.Subscribe<App, Friend>(this, Constants.MsgProfileExt, async (sender, user) =>
-            {
-                Logger.Debug($"Received: {Constants.MsgProfileExt} {user?.Birthday}|{user?.Gender}|{user?.Email}");
-                App.User.Email = user?.Email;
-                App.User.Birthday = user?.Birthday;
-                App.User.Gender = user?.Gender;
-                UserDialogs.Instance.HideLoading();
-                App.User = await App.FriendStore.LoginWithFacebook(App.User);
-                Settings.LastUser = App.User;
-                _accountPage.RefreshMenu();
-            });
-            */
         }
 
-        //public async Task Wait()
+        //private void CmdLogin_Click(object sender, EventArgs e)
         //{
-        //    await Task.Run(() => _waitHandle.WaitOne());
-        //}
-
-        async void CmdSignUp_Click(object sender, EventArgs e)
-        {
-            //await Navigation.PushAsync(new SignUpPage());
-        }
-
-        private void CmdLogin_Click(object sender, EventArgs e)
-        {
-            PopupNavigation.Instance.PushAsync(new LoginManual());
-        }
-
-        //async void cmdLogin_Click(object sender, EventArgs e)
-        //{
-        //    return;
-        //    //var user = new User
-        //    //{
-        //    //    Username = usernameEntry.Text,
-        //    //    Password = passwordEntry.Text
-        //    //};
-
-        //    //var isValid = AreCredentialsCorrect(user);
-        //    var isValid = true;
-        //    if (isValid)
-        //    {
-        //        App.IsUserLoggedIn = true;
-        //        Navigation.InsertPageBefore(new AppShell(), this);
-        //        await Navigation.PopAsync();
-        //    }
-        //    else
-        //    {
-        //        //messageLabel.Text = "Login failed";
-        //        //passwordEntry.Text = string.Empty;
-        //    }
+        //    PopupNavigation.Instance.PushAsync(new LoginManual());
         //}
     }
 }

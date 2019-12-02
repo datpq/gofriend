@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Acr.UserDialogs;
+using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
@@ -26,6 +27,7 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
+            _textChangedCorrect = true;
             SbGroup.Text = Settings.LastGroupName;
 
             SbGroup.Focused += (s, e) =>
@@ -52,26 +54,33 @@ namespace goFriend.Views
                         //Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
                         Logger.Debug("Search.Group.END");
                         return searchResult;
-                    }, groupName => Settings.LastGroupName = SbGroup.Text = groupName, SbGroup.Text));
+                    }, groupName =>
+                    {
+                        _textChangedCorrect = true;
+                        Settings.LastGroupName = SbGroup.Text = groupName;
+                    }, SbGroup.Text));
             };
         }
 
-        private bool _badTextChangedHappened; //happened with Android only. It's called when user go to another shell tab and come back to the Account tab
+        private bool _textChangedCorrect; //happened with Android only. It's called when user go to another shell tab and come back to the Account tab
         private async void SbGroup_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.NewTextValue != Settings.LastGroupName && e.OldTextValue == Settings.LastGroupName)
+            if (!_textChangedCorrect)
             {
-                _badTextChangedHappened = true;
-                SbGroup.Text = Settings.LastGroupName;
-                Logger.Warn("TextChanged happened unexpectedly");
-                return;
+                var correctTextVal = Settings.LastGroupName;
+                if (e.NewTextValue != correctTextVal && e.OldTextValue == correctTextVal)
+                {
+                    SbGroup.Text = correctTextVal;
+                    Logger.Warn("TextChanged happened unexpectedly. Group Picker's text is reset");
+                    return;
+                }
+                else
+                {
+                    Logger.Warn("TextChanged happened unexpectedly. Group Picker Fixed.");
+                    return;
+                }
             }
-            if (_badTextChangedHappened)
-            {
-                _badTextChangedHappened = false;
-                Logger.Warn("TextChanged happened unexpectedly. Fixed.");
-                return;
-            }
+            _textChangedCorrect = false; //once consumed --> set to false for not being consumed unexpectedly
             try
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
@@ -165,7 +174,7 @@ namespace goFriend.Views
                     }
                     else
                     {
-                        var sb = new SearchBar
+                        var sb = new DphSearchBar
                         {
                             Placeholder = arrCatDesc[i],
                             FontAttributes = FontAttributes.Bold,
@@ -174,10 +183,27 @@ namespace goFriend.Views
                             BackgroundColor = SbGroup.BackgroundColor,
                             IsEnabled = i == _arrFixedCatValues.Count // only first SearchBar is enabled
                         };
+                        sb.LastText = sb.Text;
                         if (!string.IsNullOrEmpty(sb.Text)) sb.IsEnabled = false; // search bar is disable when user is a member of Group
                         var sbIdx = i;
                         sb.TextChanged += (o, args) =>
                         {
+                            if (!sb.TextChangedCorrect)
+                            {
+                                var correctTextVal = sb.LastText;
+                                if (args.NewTextValue != correctTextVal && args.OldTextValue == correctTextVal)
+                                {
+                                    sb.Text = correctTextVal;
+                                    Logger.Warn("TextChanged happened unexpectedly. Category Picker's text is reset");
+                                    return;
+                                }
+                                else
+                                {
+                                    Logger.Warn("TextChanged happened unexpectedly. Category Picker Fixed.");
+                                    return;
+                                }
+                            }
+                            sb.TextChangedCorrect = false;
                             if (sbIdx == arrCatDesc.Count - 1)
                             {
                                 CmdSubscribe.IsEnabled = sb.Text != string.Empty;
@@ -211,7 +237,11 @@ namespace goFriend.Views
                                     //Logger.Debug($"searchResult={JsonConvert.SerializeObject(searchResult)}");
                                     Logger.Debug($"Search.{arrCatDesc[sbIdx]}.END");
                                     return searchResult;
-                                }, selectedValue => { sb.Text = selectedValue; }, sb.Text));
+                                }, selectedValue =>
+                                {
+                                    sb.TextChangedCorrect = true;
+                                    sb.LastText = sb.Text = selectedValue;
+                                }, sb.Text));
                         };
                         SlMain.Children.Insert(SlMain.Children.Count - 1, sb);
                         _lstCatSearchBars.Add(sb);
@@ -277,6 +307,8 @@ namespace goFriend.Views
                 {
                     App.DisplayMsgInfo(res.MsgSubscriptionSuccessful);
                     App.Initialize();
+
+                    _textChangedCorrect = true;
                     SbGroup_OnTextChanged(null, null);
                 }
             }

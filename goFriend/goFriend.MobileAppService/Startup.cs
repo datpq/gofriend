@@ -48,10 +48,9 @@ namespace goFriend.MobileAppService
 
             services.AddMvc();
             services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IItemRepository, ItemRepository>();
-            services.AddScoped<DbContext, FriendDbContext>();
+            services.AddScoped<DbContext, FriendDbContext>(); // same http session requests have the same object
             services.AddScoped<IDataRepository, DataRepository>();
-            services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<ICacheService, CacheService>(); // all requests have the same object
 
             services.AddSwaggerGen(c =>
             {

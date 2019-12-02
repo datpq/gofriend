@@ -17,7 +17,7 @@ using NLog;
 namespace goFriend.MobileAppService.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Friend")]
+    [Route("api/[controller]")]
     public class FriendController : Controller
     {
         private readonly IOptions<AppSettingsModel> _appSettings;
@@ -908,6 +908,16 @@ namespace goFriend.MobileAppService.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ClearCache/{keyPart}")]
+        public IActionResult ClearCache([FromRoute] string keyPart)
+        {
+            Logger.Debug($"BEGIN(keyPart={keyPart})");
+            _cacheService.Remove(keyPart);
+            Logger.Debug("END");
+            return Ok();
+        }
+
         [HttpPut]
         [Route("ReadNotification/{friendId}")]
         public IActionResult ReadNotification([FromHeader] string token, [FromRoute] int friendId, [FromBody] string notifIds)
@@ -1184,7 +1194,7 @@ namespace goFriend.MobileAppService.Controllers
                     {
                         CreatedDate = DateTime.Now,
                         OwnerId = groupFriend.FriendId,
-                        Destination = jointGroupAdmins,
+                        Destination = $"{jointGroupAdmins},u{groupFriend.FriendId}", //admins and the owner himself
                         NotificationObject = new NotifUpdateSubscriptionRequest
                         {
                             FriendId = groupFriend.FriendId,
@@ -1212,7 +1222,7 @@ namespace goFriend.MobileAppService.Controllers
                     {
                         CreatedDate = DateTime.Now,
                         OwnerId = groupFriend.FriendId,
-                        Destination = jointGroupAdmins,
+                        Destination = $"{jointGroupAdmins},u{groupFriend.FriendId}", //admins and the owner himself
                         NotificationObject = new NotifNewSubscriptionRequest
                         {
                             FriendId = groupFriend.FriendId,
@@ -1251,6 +1261,7 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     _cacheService.Remove($".GetGroupFriends.{x}."); // refresh subscription of all Admin
                 });
+                //there is a change in Notification but we leave the Cache expiration doing the job
 
                 return Ok();
             }

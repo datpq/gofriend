@@ -45,7 +45,7 @@
                             <FormattedString.Spans>
                                 <Span Text="GoFriend Hanoi9194" FontAttributes="Bold" FontSize="22" />
                                 <Span Text=" " />
-                                <Span Text="1.0" ForegroundColor="{StaticResource LightTextColor}" />
+                                <Span Text="1.0" ForegroundColor="{StaticResource LightTextColor}" FontSize="13" />
                             </FormattedString.Spans>
                         </FormattedString>
                     </Label.FormattedText>
@@ -54,7 +54,7 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="Chương trình được viết bởi DPH, 1 thành viên của nhóm" />
+                                <Span Text="Chương trình được viết bởi DPH, một thành viên của nhóm" />
                                 <Span Text=" " />
                                 <Span Text="Hanoi9194" FontAttributes="Bold" />
                                 <Span Text="." />

@@ -36,7 +36,7 @@
                             ItemDisplayBinding="{Binding DisplayNameOnly}" />
                 </Grid>
             </StackLayout>
-            <StackLayout>
+            <StackLayout VerticalOptions="FillAndExpand">
                 <controls:DphListView x:Name="DphListView" Timeout="5" />
             </StackLayout>
         </StackLayout>

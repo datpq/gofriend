@@ -85,7 +85,7 @@ namespace goFriend.ViewModels
     public class DphListViewItemModel
     {
         public int Id { get; set; }
-        public object[] Infos { get; set; }
+        public object SelectedObject { get; set; }
         public FormattedString FormattedText { get; set; }
         public string ImageUrl { get; set; }
         public string OverlappingImageUrl { get; set; }
