@@ -89,7 +89,7 @@ namespace goFriend.DataModel
 
         public bool IsRead(int friendId)
         {
-            return $"{NotifIdSep}{Reads}{NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) >= 0;
+            return $"{NotifIdSep}{Reads}{NotifIdSep}".IndexOf($"{NotifIdSep}u{friendId}{NotifIdSep}", StringComparison.Ordinal) >= 0;
         }
 
         public bool DoRead(int friendId)

@@ -31,8 +31,8 @@
                     </OnPlatform>
                 </SearchBar.BackgroundColor>
             </SearchBar>
-            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <StackLayout Margin="20,10,20,0">
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" x:Name="CommonConnectionInfoLine" />
+            <StackLayout Margin="20,10,20,0" x:Name="CommonConnectionInfoLayout">
                 <Label TextColor="{StaticResource ColorLabel}" Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblSectionFontSize}" />
                 <Grid Margin="0,10" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
                     <Grid.RowDefinitions>

@@ -195,7 +195,7 @@ namespace goFriend.MobileAppService.Controllers
         public IActionResult SaveBasicInfo([FromBody]Friend friend)
         {
             var stopWatch = Stopwatch.StartNew();
-            Logger.Debug($"BEGIN({friend})");
+            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.Y})");
             try
             {
                 if (friend == null || !ModelState.IsValid)
@@ -215,13 +215,14 @@ namespace goFriend.MobileAppService.Controllers
                     return BadRequest(Message.MsgUserNotFound);
                 }
 
-                result.Name = friend.Name;
-                result.FirstName = friend.FirstName;
-                result.LastName = friend.LastName;
-                result.MiddleName = friend.MiddleName;
-                result.Email = friend.Email;
-                result.Birthday = friend.Birthday;
-                result.Gender = friend.Gender;
+                //result.Name = friend.Name;
+                //result.FirstName = friend.FirstName;
+                //result.LastName = friend.LastName;
+                //result.MiddleName = friend.MiddleName;
+                //result.Email = friend.Email;
+                //result.Birthday = friend.Birthday;
+                //result.Gender = friend.Gender;
+                result.Location = friend.Location;
                 result.ModifiedDate = DateTime.Now;
                 Logger.Debug($"SaveBasicInfo ok: {result}");
                 _dataRepo.Commit();
@@ -298,7 +299,7 @@ namespace goFriend.MobileAppService.Controllers
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
-                var startCatIdx = groupFixedCatValues.GetCatList().Count() + 1;
+                var startCatIdx = groupFixedCatValues?.GetCatList().Count() + 1 ?? 1;
                 var idx = 0;
                 var predefinedCategories = Enumerable.Empty<string>();
                 var groupFriends = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active);
@@ -516,7 +517,7 @@ namespace goFriend.MobileAppService.Controllers
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
-                var startCatIdx = groupFixedCatValues.GetCatList().Count() + 1;
+                var startCatIdx = groupFixedCatValues?.GetCatList().Count() + 1 ?? 1;
                 var idx = 0;
                 while (Request.Query.Keys.Contains($"Cat{idx}"))
                 {
@@ -776,7 +777,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
-                var searchText = Request.Query["searchText"];
+                string searchText = Request.Query["searchText"];
                 var cacheKey = $"{cachePrefix}.{searchText}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
@@ -790,9 +791,10 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                result = _dataRepo.GetMany<Group>(
-                        x => x.Active && (string.IsNullOrEmpty(searchText)
-                                          || CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.Name, searchText, CompareOptions.IgnoreCase) >= 0))
+                //Where clause is done in 2 times to avoid the error LINQ could not be translated. Either rewrite the query in a form that can be translated
+                //There is already an open DataReader associated with this Command which must be closed first. ==> ToList()
+                result = _dataRepo.GetMany<Group>(x => x.Active).ToList().Where(
+                    x => string.IsNullOrEmpty(searchText) || x.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0)
                     .Select(x => new ApiGetGroupsModel
                     {
                         Group = x,
@@ -872,16 +874,16 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                result = _dataRepo.GetMany<Notification>(
-                        x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now
-                                                    && $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) >= 0
-                                                    && $"{Notification.NotifIdSep}{x.Deletions}{Notification.NotifIdSep}".IndexOf($"u{friendId}", StringComparison.Ordinal) < 0)
+                //Where clause is done in 2 times to avoid the error LINQ could not be translated. Either rewrite the query in a form that can be translated
+                result = _dataRepo.GetMany<Notification>(x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now).Where(
+                    x => $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0
+                    && $"{Notification.NotifIdSep}{x.Deletions}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) < 0)
                     .Select(x =>
                     {
                         x.Deletions = null; //privacy reason
                         x.Destination = null; //privacy reason
                         x.OwnerId = 0; //privacy reason
-                        x.Reads = $"{Notification.NotifIdSep}{x.Reads}{Notification.NotifIdSep}".IndexOf($"u{friendId}",
+                        x.Reads = $"{Notification.NotifIdSep}{x.Reads}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}",
                             StringComparison.Ordinal).ToString(); //Reads = -1 ==> not read
                         return x;
                     }).ToList();
@@ -1173,7 +1175,8 @@ namespace goFriend.MobileAppService.Controllers
                     return BadRequest(Message.MsgInvalidData);
                 }
 
-                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupFriend.GroupId, true).GetCatList().ToList();
+                var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupFriend.GroupId, true)
+                                              ?.GetCatList().ToList() ?? new List<string>();
                 var startCatIdx = groupFixedCatValues.Count + 1;
 
                 var group = arrGroups.Single();

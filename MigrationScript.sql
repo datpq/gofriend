@@ -17,9 +17,19 @@ drop table Notification;
 --ALTER TABLE GroupFriends ADD [Id] [int] IDENTITY(1,1) NOT NULL
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
 
-ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null
+ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null;
+
+--Approve subscription
+UPDATE GroupFriends SET Active = 1, UserRight = 3 WHERE Id = 19;
+INSERT INTO Notification(Type, NotificationJson, CreatedDate, Destination, Reads, Deletions, OwnerId)
+	VALUES(2, N'{"Type":2,"FriendId":4,"FriendName":"BảoAnh BảoLinh BảoChâu","FacebookId":"10217327271725297","GroupId":12,"GroupName":"A0-ĐHTH","ImageFile":"notif_SubscriptionApproved.png"}',
+	GetDate(), 'u4', NULL, NULL, 1);
 
 BEGIN
+IF NOT EXISTS (SELECT * FROM Groups WHERE Name = 'A0-ĐHTH')
+	INSERT INTO Groups(Name, "Desc", Info, Cat1Desc, Cat2Desc, Cat3Desc, Cat4Desc, Cat5Desc, Cat6Desc, Cat7Desc, Cat8Desc, Cat9Desc, Active, CreatedDate, ModifiedDate, Logo)
+	VALUES('A0-ĐHTH', 	N'Khối chuyên toán A0-ĐHTH Hà Nội', NULL,
+		N'Niên khóa', N'Lớp', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, GETDATE(), GETDATE(), NULL);
 IF NOT EXISTS (SELECT * FROM Groups WHERE Name = 'Hanoi9194XaXu-UK')
 	INSERT INTO Groups(Name, "Desc", Info, Cat1Desc, Cat2Desc, Cat3Desc, Cat4Desc, Cat5Desc, Cat6Desc, Cat7Desc, Cat8Desc, Cat9Desc, Active, CreatedDate, ModifiedDate, Logo)
 	VALUES('Hanoi9194XaXu-UK', 	N'Cấp 3 khóa 91-94 Hà Nội Xa xứ ở Vương quốc Anh',
@@ -115,6 +125,13 @@ IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.Mobi
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetNotifications')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
 	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetNotifications', NULL, 5, 1);
+
+INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
+	SELECT Id, N'K26(91-94)', NULL  FROM Groups WHERE Name = 'A0-ĐHTH';
+INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
+	SELECT Id, N'Toán A', (SELECT Id FROM GroupPredefinedCategory WHERE Name = 'A0-ĐHTH' AND Category = N'K26(91-94)')  FROM Groups WHERE Name = 'A0-ĐHTH';
+INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
+	SELECT Id, N'Toán B', (SELECT Id FROM GroupPredefinedCategory WHERE Name = 'A0-ĐHTH' AND Category = N'K26(91-94)')  FROM Groups WHERE Name = 'A0-ĐHTH';
 	
 INSERT INTO GroupPredefinedCategory(GroupId, Category, ParentId)
 	SELECT Id, SchoolName, NULL FROM Groups,

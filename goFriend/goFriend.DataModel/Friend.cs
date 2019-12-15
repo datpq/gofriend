@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using NetTopologySuite.Geometries;
 
 namespace goFriend.DataModel
 {
@@ -38,8 +39,44 @@ namespace goFriend.DataModel
         public bool Active { get; set; }
 
         public DateTime? CreatedDate { get; set; }
-
         public DateTime? ModifiedDate { get; set; }
+
+        private Point _location;
+        [Column(TypeName = "GEOMETRY")]
+        [JsonIgnore]
+        public Point Location {
+            get => _location;
+            set
+            {
+                _location = value;
+                _latitude = _location?.Y;
+                _longitude = _location?.X;
+            }
+
+        }
+
+        private double? _latitude;
+        private double? _longitude;
+        [NotMapped]
+        public double? Latitude
+        {
+            get => _latitude;
+            set
+            {
+                _latitude = value;
+                _location = new Point(_longitude ?? 0, _latitude ?? 0);
+            }
+        }
+        [NotMapped]
+        public double? Longitude
+        {
+            get => _longitude;
+            set
+            {
+                _longitude = value;
+                _location = new Point(_longitude ?? 0, _latitude ?? 0);
+            }
+        }
 
         [JsonIgnore]
         [Column(TypeName = "VARCHAR(170)")]

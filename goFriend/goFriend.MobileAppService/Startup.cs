@@ -3,10 +3,12 @@ using goFriend.MobileAppService.Data;
 using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Geometries;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace goFriend.MobileAppService
@@ -35,7 +37,7 @@ namespace goFriend.MobileAppService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<FriendDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("GoFriendConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("GoFriendConnection"), x => x.UseNetTopologySuite()));
             //services.AddAuthentication().AddFacebook(facebookOptions =>
             //{
             //    facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
@@ -46,7 +48,10 @@ namespace goFriend.MobileAppService
             var dbContext = sp.GetRequiredService<FriendDbContext>();
             DbInitializer.Initialize(dbContext);
 
-            services.AddMvc();
+            //Error Operation does not support GeometryCollection arguments ==> ignore Point in validation
+            var validator = new SuppressChildValidationMetadataProvider(typeof(Point));
+            services.AddMvc(options => options.ModelMetadataDetailsProviders.Add(validator));
+            //services.AddMvc();
             services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
             services.AddScoped<DbContext, FriendDbContext>(); // same http session requests have the same object
             services.AddScoped<IDataRepository, DataRepository>();

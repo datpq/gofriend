@@ -86,6 +86,7 @@ namespace goFriend.iOS
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Forms.Init();
 
+            Xamarin.FormsMaps.Init();
             CachedImageRenderer.Init();
             CachedImageRenderer.InitImageSourceHandler();;
 

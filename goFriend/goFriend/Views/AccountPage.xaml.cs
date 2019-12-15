@@ -28,7 +28,7 @@ namespace goFriend.Views
 
             BindingContext = _viewModel = new AccountViewModel();
 
-            CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage(App.User)); };
+            CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage(this, App.User)); };
             CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
             CellAdmin.Tapped += (s, e) => { Navigation.PushAsync(new AdminPage()); };
             CellLogin.Tapped += (s, e) =>
@@ -40,12 +40,20 @@ namespace goFriend.Views
             CellLogout.Tapped += async (s, e) =>
             {
                 if (!await App.DisplayMsgQuestion(res.MsgLogoutConfirm)) return;
-                App.FaceBookManager.Logout();
-                App.IsUserLoggedIn = false;
-                Settings.IsUserLoggedIn = App.IsUserLoggedIn;
-                RefreshMenu();
+                Logout();
             };
             CellAbout.Tapped += (s, e) => { Navigation.PushAsync(new AboutPage()); };
+            MessagingCenter.Subscribe<Application>(this, "Logout", obj => Logout());
+        }
+
+        private void Logout()
+        {
+            Logger.Debug("BEGIN");
+            App.FaceBookManager.Logout();
+            App.IsUserLoggedIn = false;
+            Settings.IsUserLoggedIn = App.IsUserLoggedIn;
+            RefreshMenu();
+            Logger.Debug("END");
         }
 
         public async void RefreshMenu()
@@ -58,6 +66,10 @@ namespace goFriend.Views
                 if (App.User.Active)
                 {
                     TsShells.Add(CellBasicInfo);
+                }
+
+                if (App.User.Active && App.User.Location != null)
+                {
                     TsShells.Add(CellGroups);
                 }
                 TsShells.Add(CellLogout);
@@ -68,10 +80,18 @@ namespace goFriend.Views
                 LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
                 if (App.User.Active)
                 {
-                    await App.TaskGetMyGroups;
-                    if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                    if (App.User.Location != null)
                     {
-                        TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
+                        await App.TaskGetMyGroups;
+                        if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                        {
+                            TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
+                        }
+                    }
+                    else
+                    {
+                        App.DisplayMsgInfo(res.MsgNoLocationWarning);
+                        await Navigation.PushAsync(new AccountBasicInfosPage(this, App.User));
                     }
                 }
                 else

@@ -448,6 +448,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to set your location before joining groups. You can do by drag and drop marker point and then click Save..
+        /// </summary>
+        public static string MsgNoLocationWarning {
+            get {
+                return ResourceManager.GetString("MsgNoLocationWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to save?.
+        /// </summary>
+        public static string MsgSaveConfirm {
+            get {
+                return ResourceManager.GetString("MsgSaveConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are about to approve the subscription?.
         /// </summary>
         public static string MsgSubscriptionApproveConfirm {

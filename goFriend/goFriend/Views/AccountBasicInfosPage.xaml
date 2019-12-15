@@ -7,6 +7,7 @@
              xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.BasicInfos}"
              x:Class="goFriend.Views.AccountBasicInfosPage">
     <ContentPage.BackgroundColor>
@@ -33,7 +34,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ff:CachedImage x:Name="ImgAvatar" WidthRequest="100" HeightRequest="100" HorizontalOptions="CenterAndExpand"
+                <ff:CachedImage Source="{Binding ImageUrl}"  WidthRequest="100" HeightRequest="100" HorizontalOptions="CenterAndExpand"
                                 Grid.Row="0" Grid.Column="0" Grid.RowSpan="4">
                     <ff:CachedImage.Transformations>
                         <ffTransformations:CircleTransformation/>
@@ -49,7 +50,7 @@
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
                 <Label Text="{Static local:res.Gender}" Grid.Row="2" Grid.Column="1"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                <Label x:Name="LblGender" Grid.Row="2" Grid.Column="2"
+                <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
                 <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1"
@@ -59,10 +60,13 @@
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
             </Grid>
             <StackLayout x:Name="GroupConnectionSection" />
-            <Button HorizontalOptions="FillAndExpand" Margin="0,10"
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <controls:DphMap x:Name="Map" IsShowingUser="True" MoveToLastRegionOnLayoutChange="False" />
+            <Button HorizontalOptions="FillAndExpand"
                     CornerRadius="{StaticResource BtnCornerRadius}"
                     BackgroundColor="{StaticResource ColorPrimary}"
                     TextColor="{StaticResource ColorTitle}"
+                    IsVisible="{Binding PositionDraggable}"
                     Text="{x:Static local:res.Save}"
                     Clicked="CmdSave_Click" />
         </StackLayout>

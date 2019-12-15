@@ -94,11 +94,21 @@
 	- go to mac computer and remove cache directory: /User/dat/Library/Caches/Xamarin/mtbs/builds/goFriend.iOS/a14...
 - Error: System.IO.FileNotFoundException: /Users/.../obj/iPhone/Release/actool/bundle/AppIcon20x20@2x.png does not exist
 	- should not rename *.jpg to *.png. We must save as from *.jpg to *.png. Save as all the files in  Assets.xcassets\AppIcon.appiconset\ to *.png
+- Severity	Code	Description	Project	File	Line	Suppression State   --> install Nuget package Xamarin.Build.Download
+- Error		The "XamarinBuildAndroidAarProguardConfigs" task failed unexpectedly.  --> restart Visual Studio
+Severity	Code	Description	Project	File	Line	Suppression State
+Error		MSB4064: The "AllowUnsecureUrls" parameter is not supported by the "XamarinDownloadArchives" task. Verify the parameter exists on the task, and it is a settable public instance property.		 	0	
+Severity	Code	Description	Project	File	Line	Suppression State
+Error		MSB4063: The "XamarinDownloadArchives" task could not be initialized with its input parameters.		 	0	
+
+System.IO.InvalidDataException: Central Directory corrupt. ---> System.IO.IOException: An attempt was made to move the file pointer before the beginning of the file.
 - Crash
 		- FontSize must be a double
 - System.MissingMethodException: Method not found: void Xamarin.Forms.InputView.set_Text(string): this error often occurs when you updated the forms package in your PCL, but not in your iOS project
 at least in my case this was the issue
 - ViewCell height work when HasUnevenRows="True"
+- ImageButton.Source = Extension.GetImageSourceFromFile("accept.png"); --> OK
+- Button.ImageSource = Extension.GetImageSourceFromFile("accept.png"); --> KO
 - TableSection without header: Intent="Data" Title=""
 - NavigationBar overlap content issue:	
             <StackLayout.Padding>
@@ -107,6 +117,11 @@ at least in my case this was the issue
                     <On Platform="iOS">0,60,0,0</On>
                 </OnPlatform>
             </StackLayout.Padding>	
+- EF Core error
+	- LINQ could not be translated. Either rewrite the query in a form that can be translated
+		- Where clause should be done in 2 times
+	- There is already an open DataReader associated with this Command which must be closed first. ==> ToList()
+		- ToList()
 - IIS Error
 		- HTTP Error 500.19 - Internal Server Error.
 		The AspNetCoreModule has to be installed on your server and is part of the ASP.NET Core Server Hosting Bundle. http://go.microsoft.com/fwlink/?LinkId=798480

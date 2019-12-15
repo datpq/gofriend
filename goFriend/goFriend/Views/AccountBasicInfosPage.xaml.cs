@@ -1,23 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
+using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.ViewModels;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
+using Point = NetTopologySuite.Geometries.Point;
 
 namespace goFriend.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AccountBasicInfosPage : ContentPage
     {
+        private readonly AccountPage _accountPage;
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private AccountBasicInfosViewModel _viewModel;
 
-        public AccountBasicInfosPage(Friend friend)
+        public AccountBasicInfosPage(AccountPage accountPage, Friend friend)
         {
+            _accountPage = accountPage;
             InitializeComponent();
-            Initialize(friend);
+            BindingContext = _viewModel = new AccountBasicInfosViewModel
+            {
+                Friend = friend,
+                PositionDraggable = true
+            };
+            Initialize();
         }
 
         public AccountBasicInfosPage(int groupId, int otherFriendId)
@@ -28,15 +41,32 @@ namespace goFriend.Views
             {
                 UserDialogs.Instance.HideLoading();
                 var otherFriend = friendTask.Result;
-                Initialize(otherFriend);
+                BindingContext = _viewModel = new AccountBasicInfosViewModel
+                {
+                    Friend = otherFriend,
+                    PositionDraggable = false
+                };
+                Initialize();
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void Initialize(Friend friend)
+        private async void Initialize()
         {
-            BindingContext = friend;
-            LblGender.Text = friend.Gender == "male" ? res.Male : res.Female;
-            ImgAvatar.Source = friend.GetImageUrl();
+            var position = await _viewModel.GetPosition();
+            var pin = new DphPin
+            {
+                Position = position,
+                Label = _viewModel.Name,
+                Address = _viewModel.Email,
+                IconUrl = _viewModel.ImageUrl,
+                Draggable = _viewModel.PositionDraggable,
+                Type = PinType.Place
+            };
+            //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
+            Map.AllPins = new List<DphPin> { pin };
+            Map.Pins.Add(pin);
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                new Position(pin.Position.Latitude, pin.Position.Longitude), Distance.FromKilometers(5)));
         }
 
         public void LoadGroupConnectionInfo(string groupName, GroupFriend groupFriend, int startCatIdx)
@@ -99,27 +129,25 @@ namespace goFriend.Views
 
         private async void CmdSave_Click(object sender, EventArgs e)
         {
+            if (!await App.DisplayMsgQuestion(res.MsgSaveConfirm)) return;
             try
             {
                 Logger.Debug("CmdSave_Click.BEGIN");
-                var oldName = App.User.Name;
-                var oldEmail = App.User.Email;
-                var oldBirthDay = App.User.Birthday;
-                var oldGender = App.User.Gender;
-                Logger.Debug("Calling SaveBasicInfo...");
+                var oldLocation = App.User.Location;
+                var position = Map.AllPins.Single().Position;
+                App.User.Location = new Point(position.Longitude, position.Latitude);
+                Logger.Debug($"Latitude={App.User.Location.Y}, Longitude={App.User.Location.X}");
                 var result = await App.FriendStore.SaveBasicInfo(App.User);
                 if (result)
                 {
                     Settings.LastUser = App.User;
+                    _accountPage?.RefreshMenu();
                     App.DisplayMsgInfo(res.SaveSuccess);
                 }
                 else
                 {
                     Logger.Error("Saving failed.");
-                    App.User.Name = oldName;
-                    App.User.Email = oldEmail;
-                    App.User.Birthday = oldBirthDay;
-                    App.User.Gender = oldGender;
+                    App.User.Location = oldLocation;
                 }
             }
             catch (Exception ex)

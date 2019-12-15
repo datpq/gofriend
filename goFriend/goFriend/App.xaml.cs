@@ -122,6 +122,8 @@ namespace goFriend
                             switch (goe.Msg.Code)
                             {
                                 case MessageCode.UserTokenError:
+                                    Logger.Debug("Wrong token. Logout");
+                                    MessagingCenter.Send(App.Current, "Logout");
                                     DisplayMsgError(res.MsgErrWrongToken);
                                     break;
                                 default:

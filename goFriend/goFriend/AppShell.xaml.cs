@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using goFriend.DataModel;
-
-namespace goFriend
+﻿namespace goFriend
 {
     public partial class AppShell : Xamarin.Forms.Shell
     {
@@ -16,7 +13,8 @@ namespace goFriend
 
         public void RefreshTabs()
         {
-            TabBrowse.IsEnabled = TabMap.IsEnabled = TabNotification.IsEnabled = App.IsUserLoggedIn && App.User != null && App.User.Active;
+            TabBrowse.IsEnabled = TabMap.IsEnabled = TabNotification.IsEnabled =
+                App.IsUserLoggedIn && App.User != null && App.User.Active && App.User.Location != null;
         }
     }
 }

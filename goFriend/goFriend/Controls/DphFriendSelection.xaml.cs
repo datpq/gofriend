@@ -6,18 +6,19 @@ using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
+using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace goFriend.Views
+namespace goFriend.Controls
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class BrowsePage : ContentPage
+    public partial class DphFriendSelection : ContentView
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        public BrowsePage()
+        public DphFriendSelection()
         {
             InitializeComponent();
 
@@ -38,7 +39,7 @@ namespace goFriend.Views
                 {
                     PickerGroups.SelectedIndex = 0;
                 }
-                Appearing += (sender, args) => DphListView.Refresh();
+                //Appearing += (sender, args) => DphListView.Refresh();
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -152,7 +153,7 @@ namespace goFriend.Views
                             return result;
                         });
                     };
-                    Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto});
+                    Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                     Grid.SetColumn(picker, 1);
                     Grid.SetRow(picker, i + 1);
                     Grid.Children.Add(picker);

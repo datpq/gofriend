@@ -220,10 +220,10 @@
     <value>Đăng ký</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Lưu trữ</value>
+    <value>Cập nhật</value>
   </data>
   <data name="SaveSuccess" xml:space="preserve">
-    <value>Lưu trữ thành công</value>
+    <value>Cập nhật thành công</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Tìm kiếm</value>
@@ -329,5 +329,11 @@
   </data>
   <data name="NotifUpdateSubscriptionRequest" xml:space="preserve">
     <value>sửa thông tin kết nối trong yêu cầu tham gia nhóm</value>
+  </data>
+  <data name="MsgNoLocationWarning" xml:space="preserve">
+    <value>Bạn cần gửi thông tin vị trí để có được đầy đủ chức năng. Thay đổi vị trí bằng cách dịch chuyển con trỏ đến vị trí mong muốn rồi ấn Cập Nhật</value>
+  </data>
+  <data name="MsgSaveConfirm" xml:space="preserve">
+    <value>Bạn muốn cập nhật vị trí?</value>
   </data>
 </root>

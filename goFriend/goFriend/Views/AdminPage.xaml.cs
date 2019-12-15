@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
@@ -49,7 +50,7 @@ namespace goFriend.Views
 
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(selectedGroup.Group.Id);
-                var arrFixedCats = groupFixedCatValues.GetCatList().ToList();
+                var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
 
                 UserDialogs.Instance.HideLoading();
                 DphListView.Initialize(selectedItem =>

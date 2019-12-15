@@ -1,5 +1,6 @@
 ﻿using System;
 using Acr.UserDialogs;
+using Android;
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
@@ -17,6 +18,31 @@ namespace goFriend.Droid
     {
         public static ICallbackManager CallbackManager;
         private ILogger _logger;
+
+        const int RequestLocationId = 0;
+
+        readonly string[] LocationPermissions =
+        {
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation
+        };
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            if ((int)Build.VERSION.SdkInt >= 23)
+            {
+                if (CheckSelfPermission(Manifest.Permission.AccessFineLocation) != Permission.Granted)
+                {
+                    RequestPermissions(LocationPermissions, RequestLocationId);
+                }
+                else
+                {
+                    // Permissions already granted - display a message.
+                }
+            }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -41,6 +67,7 @@ namespace goFriend.Droid
             Forms.Init(this, savedInstanceState);
             UserDialogs.Init(this);
 
+            Xamarin.FormsMaps.Init(this, savedInstanceState);
             CachedImageRenderer.Init(true);
             CachedImageRenderer.InitImageViewHandler();
 
@@ -53,9 +80,22 @@ namespace goFriend.Droid
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == RequestLocationId)
+            {
+                if ((grantResults.Length == 1) && (grantResults[0] == (int) Permission.Granted))
+                {
+                    // Permissions granted - display a message.
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+                Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+                base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
         }
 
         protected override void OnActivityResult(

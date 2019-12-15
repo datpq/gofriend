@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Acr.UserDialogs;
 using goFriend.Controls;
@@ -38,8 +37,10 @@ namespace goFriend.Views
                         Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
                         App.TaskGetMyGroups.Wait();
                         App.AllGroups = await App.FriendStore.GetGroups(searchText);
-                        var searchResult = App.MyGroups.Where(x => x.Group.Name.Contains(searchText)).Union(App.AllGroups.Where(
-                            x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(x => new SearchItemModel
+                        var searchResult = App.MyGroups.Where(
+                            x => x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
+                            App.AllGroups.Where(x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(
+                            x => new SearchItemModel
                         {
                             Text = x.Group.Name,
                             Description = x.Group.Desc,
@@ -136,10 +137,11 @@ namespace goFriend.Views
                 }
 
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(_selectedGroup.Id);
+                _arrFixedCatValues = groupFixedCatValues == null ? new List<string>() : groupFixedCatValues.GetCatList().ToList();
 
-                Logger.Debug($"groupFixedCatValues.GetCatList.Count = {groupFixedCatValues?.GetCatList().Count()}");
+                Logger.Debug($"groupFixedCatValues.GetCatList.Count = {_arrFixedCatValues.Count}");
+                CommonConnectionInfoLine.IsVisible = CommonConnectionInfoLayout.IsVisible = _arrFixedCatValues.Count > 0;
 
-                _arrFixedCatValues = groupFixedCatValues.GetCatList().ToList();
                 var arrCatDesc = _selectedGroup.GetCatDescList().ToList();
                 LblInfoCats.Text = $"{LblInfoCats.Text} {string.Join(", ", arrCatDesc.ToArray(), _arrFixedCatValues.Count, arrCatDesc.Count - _arrFixedCatValues.Count).ToUpper()}";
 
@@ -227,8 +229,7 @@ namespace goFriend.Views
                                     Logger.Debug($"Search.{arrCatDesc[sbIdx]}.BEGIN(searchText={searchText})");
 
                                     var catValueList = await App.FriendStore.GetGroupCatValues(_selectedGroup.Id, true, arrCatValues);
-                                    var searchResult = catValueList.Where(x =>
-                                            CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.CatValue, searchText ?? string.Empty, CompareOptions.IgnoreCase) >= 0)
+                                    var searchResult = catValueList.Where(x => x.CatValue.IndexOf(searchText ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) >= 0)
                                         .Select(x => new SearchItemModel
                                         {
                                             Text = x.CatValue,
