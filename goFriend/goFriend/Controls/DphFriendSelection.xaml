@@ -7,7 +7,7 @@
              x:Class="goFriend.Controls.DphFriendSelection">
   <ContentView.Content>
       <StackLayout>
-          <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
+          <Grid x:Name="Grid" ColumnSpacing="10" RowSpacing="0" HorizontalOptions="FillAndExpand">
               <Grid.RowDefinitions>
                   <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
@@ -15,11 +15,11 @@
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
               </Grid.ColumnDefinitions>
-              <Label x:Name="LblGroup" FontSize="{StaticResource LblFontSize}" VerticalOptions="Center"
+              <Label x:Name="LblGroup" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center"
                      Grid.Row="0" Grid.Column="0"/>
-              <Picker x:Name="PickerGroups" FontSize="{StaticResource LblFontSize}"
+              <Picker x:Name="PickerGroups" FontSize="{StaticResource LblDetailFontSize}"
                       Grid.Row="0" Grid.Column="1" SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
-                      ItemDisplayBinding="{Binding Display}" />
+                      ItemDisplayBinding="{Binding Display}" HeightRequest="40" />
           </Grid>
       </StackLayout>
   </ContentView.Content>

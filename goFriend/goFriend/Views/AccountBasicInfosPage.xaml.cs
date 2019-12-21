@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
@@ -17,60 +16,67 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AccountBasicInfosPage : ContentPage
     {
-        private readonly AccountPage _accountPage;
+        private AccountPage _accountPage;
+        private DphPin _pin;
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private AccountBasicInfosViewModel _viewModel;
 
-        public AccountBasicInfosPage(AccountPage accountPage, Friend friend)
+        public AccountBasicInfosPage()
+        {
+            InitializeComponent();
+        }
+
+        public async void Initialize(AccountPage accountPage, Friend friend)
         {
             _accountPage = accountPage;
-            InitializeComponent();
             BindingContext = _viewModel = new AccountBasicInfosViewModel
             {
                 Friend = friend,
                 PositionDraggable = true
             };
-            Initialize();
-        }
+            CmdSave.IsEnabled = _viewModel.Friend.Location == null;
+            CmdReset.IsEnabled = false;
+            CmdSetGps.IsEnabled = true;
 
-        public AccountBasicInfosPage(int groupId, int otherFriendId)
-        {
-            InitializeComponent();
-            UserDialogs.Instance.ShowLoading(res.Processing);
-            Task.Run(() => App.FriendStore.GetFriend(groupId, otherFriendId)).ContinueWith(friendTask =>
-            {
-                UserDialogs.Instance.HideLoading();
-                var otherFriend = friendTask.Result;
-                BindingContext = _viewModel = new AccountBasicInfosViewModel
-                {
-                    Friend = otherFriend,
-                    PositionDraggable = false
-                };
-                Initialize();
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
+            MessagingCenter.Subscribe<Application, Pin>(this,
+                Constants.MsgLocationChanged, (obj, pin) => CmdSave.IsEnabled = CmdReset.IsEnabled = true);
 
-        private async void Initialize()
-        {
-            var position = await _viewModel.GetPosition();
-            var pin = new DphPin
+            //set up Pins
+            var position = await _viewModel.Friend.Location.GetPosition();
+            _pin = new DphPin
             {
                 Position = position,
-                Label = _viewModel.Name,
-                Address = _viewModel.Email,
+                Title = _viewModel.Name,
+                SubTitle1 = _viewModel.Address,
+                SubTitle2 = _viewModel.CountryName,
                 IconUrl = _viewModel.ImageUrl,
                 Draggable = _viewModel.PositionDraggable,
                 Type = PinType.Place
             };
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
-            Map.AllPins = new List<DphPin> { pin };
-            Map.Pins.Add(pin);
+            Map.Pins.Clear();
+            Map.Pins.Add(_pin);
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(pin.Position.Latitude, pin.Position.Longitude), Distance.FromKilometers(5)));
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+
         }
 
-        public void LoadGroupConnectionInfo(string groupName, GroupFriend groupFriend, int startCatIdx)
+        public async void Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
         {
+            UserDialogs.Instance.ShowLoading(res.Processing);
+            var otherFriend = await App.FriendStore.GetFriend(group.Id, groupFriend.FriendId);
+            UserDialogs.Instance.HideLoading();
+
+            BindingContext = _viewModel = new AccountBasicInfosViewModel
+            {
+                Group = group,
+                GroupFriend = groupFriend,
+                FixedCatsCount = fixedCatsCount,
+                Friend = otherFriend,
+                PositionDraggable = false
+            };
+
+            //Load connection info section
             GroupConnectionSection.Children.Add(new BoxView
             {
                 HorizontalOptions = LayoutOptions.Fill,
@@ -82,7 +88,7 @@ namespace goFriend.Views
                 VerticalOptions = LayoutOptions.Center,
                 FontSize = (double)Application.Current.Resources["LblFontSize"],
                 TextColor = (Color)Application.Current.Resources["ColorLabel"],
-                Text = groupName
+                Text = _viewModel.Group.Name
             });
             var gr = new Grid
             {
@@ -102,7 +108,7 @@ namespace goFriend.Views
             var selectedGroup = App.MyGroups.FirstOrDefault(x => x.Group.Id == groupFriend.GroupId);
             if (selectedGroup == null) return;
             var arrCats = selectedGroup.Group.GetCatDescList().ToList();
-            for (var i = startCatIdx; i < arrCats.Count; i++)
+            for (var i = _viewModel.FixedCatsCount; i < arrCats.Count; i++)
             {
                 var lblCat = new Label
                 {
@@ -112,7 +118,7 @@ namespace goFriend.Views
                     TextColor = (Color)Application.Current.Resources["ColorLabel"]
                 };
                 Grid.SetColumn(lblCat, 0);
-                Grid.SetRow(lblCat, i - startCatIdx);
+                Grid.SetRow(lblCat, i - _viewModel.FixedCatsCount);
                 gr.Children.Add(lblCat);
                 var lblCatVal = new Label
                 {
@@ -122,9 +128,60 @@ namespace goFriend.Views
                     TextColor = lblCat.TextColor
                 };
                 Grid.SetColumn(lblCatVal, 1);
-                Grid.SetRow(lblCatVal, i - startCatIdx);
+                Grid.SetRow(lblCatVal, i - _viewModel.FixedCatsCount);
                 gr.Children.Add(lblCatVal);
             }
+
+            //set up Pins
+            var position = await _viewModel.Friend.Location.GetPosition(false);
+            _pin = new DphPin
+            {
+                Position = position,
+                Title = _viewModel.Name,
+                SubTitle1 = $"{res.Groups} {_viewModel.Group.Name}",
+                SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
+                IconUrl = _viewModel.ImageUrl,
+                Draggable = _viewModel.PositionDraggable,
+                Type = PinType.Place
+            };
+            //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
+            Map.Pins.Clear();
+            Map.Pins.Add(_pin);
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+        }
+
+        private async void CmdSetGps_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                var request = new GeolocationRequest(GeolocationAccuracy.High);
+                var location = await Geolocation.GetLocationAsync(request);
+
+                if (location == null) return;
+                _pin.Position = new Position(location.Latitude, location.Longitude);
+                Map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                    new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+                CmdReset.IsEnabled = CmdSave.IsEnabled = true;
+            }
+            catch (Exception)
+            {
+                App.DisplayMsgError(res.MsgGpsDisabledWarning);
+            }
+            finally
+            {
+                UserDialogs.Instance.HideLoading();
+            }
+        }
+
+        private async void CmdReset_Click(object sender, EventArgs e)
+        {
+            _pin.Position = await _viewModel.Friend.Location.GetPosition();
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+            CmdReset.IsEnabled = false;
+            CmdSave.IsEnabled = _viewModel.Friend.Location == null;
         }
 
         private async void CmdSave_Click(object sender, EventArgs e)
@@ -132,15 +189,29 @@ namespace goFriend.Views
             if (!await App.DisplayMsgQuestion(res.MsgSaveConfirm)) return;
             try
             {
+                UserDialogs.Instance.ShowLoading(res.Processing);
                 Logger.Debug("CmdSave_Click.BEGIN");
                 var oldLocation = App.User.Location;
-                var position = Map.AllPins.Single().Position;
+                var oldAddress = App.User.Address;
+                var oldCountryName = App.User.CountryName;
+                var pin = (DphPin)Map.Pins.Single();
+                var position = pin.Position;
+                var geoCoder = new Geocoder();
+                var approximateLocations = await geoCoder.GetAddressesForPositionAsync(position);
+                var placeMarks = await Geocoding.GetPlacemarksAsync(position.Latitude, position.Longitude);
+                var placeMark = placeMarks?.FirstOrDefault();
                 App.User.Location = new Point(position.Longitude, position.Latitude);
-                Logger.Debug($"Latitude={App.User.Location.Y}, Longitude={App.User.Location.X}");
+                App.User.Address = approximateLocations.FirstOrDefault();
+                App.User.CountryName = placeMark?.CountryName;
+                Logger.Debug($"Latitude={App.User.Location.Y}, Longitude={App.User.Location.X}, Address={App.User.Address}");
+
                 var result = await App.FriendStore.SaveBasicInfo(App.User);
                 if (result)
                 {
+                    CmdSave.IsEnabled = CmdReset.IsEnabled = false;
                     Settings.LastUser = App.User;
+                    pin.SubTitle1 = App.User.Address;
+                    pin.SubTitle2 = App.User.CountryName;
                     _accountPage?.RefreshMenu();
                     App.DisplayMsgInfo(res.SaveSuccess);
                 }
@@ -148,6 +219,8 @@ namespace goFriend.Views
                 {
                     Logger.Error("Saving failed.");
                     App.User.Location = oldLocation;
+                    App.User.Address = oldAddress;
+                    App.User.CountryName = oldCountryName;
                 }
             }
             catch (Exception ex)
@@ -156,6 +229,7 @@ namespace goFriend.Views
             }
             finally
             {
+                UserDialogs.Instance.HideLoading();
                 Logger.Debug("CmdSave_Click.END");
             }
         }

@@ -130,10 +130,10 @@
     <value>GoFriend Hanoi9194</value>
   </data>
   <data name="BasicInfos" xml:space="preserve">
-    <value>Thông tin cơ bản</value>
+    <value>Hồ sơ cá nhân</value>
   </data>
   <data name="BasicInfosDesc" xml:space="preserve">
-    <value>Tên, ngày sinh, giới tính, địa chỉ email</value>
+    <value>Tên, ngày sinh, giới tính, địa chỉ email, nơi ở</value>
   </data>
   <data name="BirthDay" xml:space="preserve">
     <value>Ngày sinh:</value>
@@ -219,7 +219,7 @@
   <data name="Register" xml:space="preserve">
     <value>Đăng ký</value>
   </data>
-  <data name="Save" xml:space="preserve">
+  <data name="CmdSave" xml:space="preserve">
     <value>Cập nhật</value>
   </data>
   <data name="SaveSuccess" xml:space="preserve">
@@ -335,5 +335,17 @@
   </data>
   <data name="MsgSaveConfirm" xml:space="preserve">
     <value>Bạn muốn cập nhật vị trí?</value>
+  </data>
+  <data name="CmdReset" xml:space="preserve">
+    <value>Hủy thay đổi</value>
+  </data>
+  <data name="CmdSetGPSPos" xml:space="preserve">
+    <value>Đặt vị trí định vị</value>
+  </data>
+  <data name="MsgGpsDisabledWarning" xml:space="preserve">
+    <value>Bạn phải bật chế độ định vị trước tiên!</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Trò chuyện</value>
   </data>
 </root>

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using NetTopologySuite.Geometries;
+using Newtonsoft.Json.Linq;
 
 namespace goFriend.DataModel
 {
@@ -41,42 +42,15 @@ namespace goFriend.DataModel
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
 
-        private Point _location;
+        //private Point _location;
         [Column(TypeName = "GEOMETRY")]
-        [JsonIgnore]
-        public Point Location {
-            get => _location;
-            set
-            {
-                _location = value;
-                _latitude = _location?.Y;
-                _longitude = _location?.X;
-            }
+        [JsonConverter(typeof(GeoPointConverter))]
+        public Point Location { get; set; }
 
-        }
-
-        private double? _latitude;
-        private double? _longitude;
-        [NotMapped]
-        public double? Latitude
-        {
-            get => _latitude;
-            set
-            {
-                _latitude = value;
-                _location = new Point(_longitude ?? 0, _latitude ?? 0);
-            }
-        }
-        [NotMapped]
-        public double? Longitude
-        {
-            get => _longitude;
-            set
-            {
-                _longitude = value;
-                _location = new Point(_longitude ?? 0, _latitude ?? 0);
-            }
-        }
+        [Column(TypeName = "NVARCHAR(100)")]
+        public string Address { get; set; }
+        [Column(TypeName = "VARCHAR(30)")]
+        public string CountryName { get; set; }
 
         [JsonIgnore]
         [Column(TypeName = "VARCHAR(170)")]
@@ -171,6 +145,33 @@ namespace goFriend.DataModel
             if (isChanged)
             {
                 friend.ModifiedDate = DateTime.Now;
+            }
+        }
+    }
+
+    public class GeoPointConverter : JsonConverter<Point>
+    {
+        public override void WriteJson(JsonWriter writer, Point value, JsonSerializer serializer)
+        {
+            writer.WriteStartObject();
+            writer.WritePropertyName("X");
+            serializer.Serialize(writer, value.X);
+            writer.WritePropertyName("Y");
+            serializer.Serialize(writer, value.Y);
+            writer.WriteEndObject();
+        }
+
+        public override Point ReadJson(JsonReader reader, Type objectType, Point existingValue, bool hasExistingValue,
+            JsonSerializer serializer)
+        {
+            try
+            {
+                var jsonObject = JObject.Load(reader);
+                return new Point((double) jsonObject["X"], (double) jsonObject["Y"]);
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

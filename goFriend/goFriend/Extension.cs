@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using goFriend.DataModel;
 using goFriend.Services;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 
 namespace goFriend
 {
@@ -16,6 +20,9 @@ namespace goFriend
 
     public static class Extension
     {
+        public const string HomeAddress = "Hanoi, Vietnam";
+        public static Position? HomePosition;
+
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public static string GetImageUrl(this Friend friend, FacebookImageType imageType = FacebookImageType.normal)
@@ -110,6 +117,42 @@ namespace goFriend
                     throw new ArgumentException();
             }
             return result;
+        }
+
+        public static async Task<Position> GetPosition(this NetTopologySuite.Geometries.Point point, bool useGpsAsDefault = true)
+        {
+            if (point != null)
+            {
+                return new Position(point.Y, point.X);
+            }
+            else
+            {
+                if (useGpsAsDefault)
+                {
+                    try
+                    {
+                        var request = new GeolocationRequest(GeolocationAccuracy.High);
+                        var location = await Geolocation.GetLocationAsync(request);
+
+                        if (location != null)
+                        {
+                            return new Position(location.Latitude, location.Longitude);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // GPS disabled
+                    }
+                }
+
+                if (!HomePosition.HasValue)
+                {
+                    var geoCoder = new Geocoder();
+                    var approximateLocations = await geoCoder.GetPositionsForAddressAsync(HomeAddress);
+                    HomePosition = approximateLocations.FirstOrDefault();
+                }
+                return new Position(HomePosition.Value.Latitude, HomePosition.Value.Longitude);
+            }
         }
 
         /*

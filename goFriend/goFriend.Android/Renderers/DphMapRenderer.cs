@@ -1,10 +1,10 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Transformations;
-using FFImageLoading.Work;
 using goFriend.Controls;
 using goFriend.Droid.Renderers;
 using Xamarin.Forms;
@@ -44,6 +44,7 @@ namespace goFriend.Droid.Renderers
         {
             var pin = GetPinForMarker(e.Marker);
             pin.Position = new Position(e.Marker.Position.Latitude, e.Marker.Position.Longitude);
+            MessagingCenter.Send(Application.Current, Constants.MsgLocationChanged, pin);
         }
 
         //private void MapOnMarkerDragStart(object sender, GoogleMap.MarkerDragStartEventArgs e)
@@ -52,7 +53,14 @@ namespace goFriend.Droid.Renderers
 
         protected override void OnMapReady(GoogleMap map)
         {
-            base.OnMapReady(map);
+            try
+            {
+                base.OnMapReady(map);
+            }
+            catch (Exception)
+            {
+                //Ignored
+            }
 
             NativeMap.InfoWindowClick += OnInfoWindowClick;
             //NativeMap.MarkerDragStart += MapOnMarkerDragStart;
@@ -98,21 +106,15 @@ namespace goFriend.Droid.Renderers
                 var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
                 var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
 
-                if (infoTitle != null)
-                {
-                    infoTitle.Text = marker.Title;
-                }
-                if (infoSubtitle != null)
-                {
-                    infoSubtitle.Text = marker.Snippet;
-                }
+                infoTitle.Text = pin.Title; //marker.Title
+                infoSubtitle.Text = $"{pin.SubTitle1}{Environment.NewLine}{pin.SubTitle2}"; //marker.Snippet
 
                 //ImageService.Instance.LoadUrl(pin.IconUrl).DownloadOnly();
                 //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
                 ImageService.Instance.LoadUrl(pin.IconUrl)
                     .Transform(new CircleTransformation())
-                    .WithPriority(LoadingPriority.High)
-                    .WithCache(FFImageLoading.Cache.CacheType.All)
+                    //.WithPriority(LoadingPriority.High)
+                    //.WithCache(FFImageLoading.Cache.CacheType.All)
                     .Into(infoIcon);
                 //ImageService.Instance.LoadUrl(pin.IconUrl)
                 //    .Transform(new CircleTransformation())
@@ -133,11 +135,5 @@ namespace goFriend.Droid.Renderers
         {
             return null;
         }
-
-        //DphPin GetPinByPosition(Marker annotation)
-        //{
-        //    var position = new Position(annotation.Position.Latitude, annotation.Position.Longitude);
-        //    return _map.AllPins?.FirstOrDefault(x => x.Position == position);
-        //}
     }
 }

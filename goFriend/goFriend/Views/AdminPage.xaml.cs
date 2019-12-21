@@ -56,8 +56,8 @@ namespace goFriend.Views
                 DphListView.Initialize(selectedItem =>
                     {
                         var selectedGroupFriend = (GroupFriend) selectedItem.SelectedObject;
-                        var accountBasicInfoPage = new AccountBasicInfosPage(selectedGroup.Group.Id, selectedGroupFriend.FriendId);
-                        accountBasicInfoPage.LoadGroupConnectionInfo(selectedGroup.Group.Name, selectedGroupFriend, arrFixedCats.Count);
+                        var accountBasicInfoPage = new AccountBasicInfosPage();
+                        accountBasicInfoPage.Initialize(selectedGroup.Group, selectedGroupFriend, arrFixedCats.Count);
                         Navigation.PushAsync(accountBasicInfoPage);
                     },
                     async selectedItem =>

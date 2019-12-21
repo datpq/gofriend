@@ -21,54 +21,69 @@
         </OnPlatform>
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
-        <StackLayout Margin="10">
-            <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <ff:CachedImage Source="{Binding ImageUrl}"  WidthRequest="100" HeightRequest="100" HorizontalOptions="CenterAndExpand"
+        <StackLayout>
+            <StackLayout Margin="10,10,10,5">
+                <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ff:CachedImage Source="{Binding ImageUrl}"  WidthRequest="100" HeightRequest="100" HorizontalOptions="CenterAndExpand"
                                 Grid.Row="0" Grid.Column="0" Grid.RowSpan="4">
-                    <ff:CachedImage.Transformations>
-                        <ffTransformations:CircleTransformation/>
-                    </ff:CachedImage.Transformations>
-                </ff:CachedImage>
-                <Label Text="{Binding Name}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                        <ff:CachedImage.Transformations>
+                            <ffTransformations:CircleTransformation/>
+                        </ff:CachedImage.Transformations>
+                    </ff:CachedImage>
+                    <Label Text="{Binding Name}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
                        TextColor="{StaticResource ColorLabel}" FontAttributes="Bold" FontSize="{StaticResource LblFontSize}"/>
-                <Label Text="{Static local:res.Email}" Grid.Row="1" Grid.Column="1"
+                    <Label Text="{Static local:res.Email}" Grid.Row="1" Grid.Column="1"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                <Label Text="{Binding Email}" Grid.Row="1" Grid.Column="2"
+                    <Label Text="{Binding Email}" Grid.Row="1" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                <Label Text="{Static local:res.Gender}" Grid.Row="2" Grid.Column="1"
+                    <Label Text="{Static local:res.Gender}" Grid.Row="2" Grid.Column="1"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2"
+                    <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1"
+                    <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="3" Grid.Column="2"
+                    <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="3" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-            </Grid>
-            <StackLayout x:Name="GroupConnectionSection" />
+                </Grid>
+            </StackLayout>
+            <StackLayout x:Name="GroupConnectionSection" IsVisible="False" />
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <controls:DphMap x:Name="Map" IsShowingUser="True" MoveToLastRegionOnLayoutChange="False" />
-            <Button HorizontalOptions="FillAndExpand"
-                    CornerRadius="{StaticResource BtnCornerRadius}"
-                    BackgroundColor="{StaticResource ColorPrimary}"
-                    TextColor="{StaticResource ColorTitle}"
-                    IsVisible="{Binding PositionDraggable}"
-                    Text="{x:Static local:res.Save}"
-                    Clicked="CmdSave_Click" />
+            <controls:DphMap x:Name="Map" IsShowingUser="False" MoveToLastRegionOnLayoutChange="False" />
+            <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" IsVisible="{Binding PositionDraggable}">
+                <Button HorizontalOptions="Start" x:Name="CmdSetGps"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimary}"
+                        TextColor="{StaticResource ColorTitle}" FontSize="Micro" HeightRequest="40"
+                        Text="{x:Static local:res.CmdSetGPSPos}"
+                        Clicked="CmdSetGps_Click"/>
+                <Button HorizontalOptions="Start" x:Name="CmdReset"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimary}"
+                        TextColor="{StaticResource ColorTitle}" FontSize="Micro" HeightRequest="40"
+                        Text="{x:Static local:res.CmdReset}"
+                        Clicked="CmdReset_Click"/>
+                <Button HorizontalOptions="FillAndExpand" x:Name="CmdSave"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimary}"
+                        TextColor="{StaticResource ColorTitle}" FontSize="Micro" HeightRequest="40"
+                        Text="{x:Static local:res.CmdSave}"
+                        Clicked="CmdSave_Click" />
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

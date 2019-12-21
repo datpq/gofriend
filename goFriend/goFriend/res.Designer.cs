@@ -124,7 +124,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Basic Informations.
+        ///   Looks up a localized string similar to Profile.
         /// </summary>
         public static string BasicInfos {
             get {
@@ -133,7 +133,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name, date of birth, gender, email address.
+        ///   Looks up a localized string similar to Name, date of birth, gender, email address, location.
         /// </summary>
         public static string BasicInfosDesc {
             get {
@@ -169,11 +169,47 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Chat.
+        /// </summary>
+        public static string Chat {
+            get {
+                return ResourceManager.GetString("Chat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [Clear selection].
         /// </summary>
         public static string ClearSelection {
             get {
                 return ResourceManager.GetString("ClearSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string CmdReset {
+            get {
+                return ResourceManager.GetString("CmdReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string CmdSave {
+            get {
+                return ResourceManager.GetString("CmdSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set GPS position.
+        /// </summary>
+        public static string CmdSetGPSPos {
+            get {
+                return ResourceManager.GetString("CmdSetGPSPos", resourceCulture);
             }
         }
         
@@ -385,6 +421,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to activate the Gps first..
+        /// </summary>
+        public static string MsgGpsDisabledWarning {
+            get {
+                return ResourceManager.GetString("MsgGpsDisabledWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are Admin of the group..
         /// </summary>
         public static string MsgGroupSubscriptionAdmin {
@@ -579,15 +624,6 @@ namespace goFriend {
         public static string Register {
             get {
                 return ResourceManager.GetString("Register", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save.
-        /// </summary>
-        public static string Save {
-            get {
-                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         

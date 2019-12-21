@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Facebook;
@@ -195,7 +194,7 @@ namespace goFriend.MobileAppService.Controllers
         public IActionResult SaveBasicInfo([FromBody]Friend friend)
         {
             var stopWatch = Stopwatch.StartNew();
-            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.Y})");
+            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.X})");
             try
             {
                 if (friend == null || !ModelState.IsValid)
@@ -203,10 +202,10 @@ namespace goFriend.MobileAppService.Controllers
                     Logger.Warn(Message.MsgInvalidState.Msg);
                     return BadRequest(Message.MsgInvalidState);
                 }
-                else if (friend.Id == 0 || string.IsNullOrEmpty(friend.Email))
+                else if (friend.Id == 0 && string.IsNullOrEmpty(friend.Email))
                 {
-                    Logger.Warn(Message.MsgIdOrEmailNull.Msg);
-                    return BadRequest(Message.MsgIdOrEmailNull);
+                    Logger.Warn(Message.MsgIdAndEmailNull.Msg);
+                    return BadRequest(Message.MsgIdAndEmailNull);
                 }
                 var result = _dataRepo.Get<Friend>(x => x.Id == friend.Id);
                 if (result == null)
@@ -223,9 +222,17 @@ namespace goFriend.MobileAppService.Controllers
                 //result.Birthday = friend.Birthday;
                 //result.Gender = friend.Gender;
                 result.Location = friend.Location;
+                result.Address = friend.Address;
+                result.CountryName = friend.CountryName;
                 result.ModifiedDate = DateTime.Now;
                 Logger.Debug($"SaveBasicInfo ok: {result}");
                 _dataRepo.Commit();
+
+                //remove Cache
+                _cacheService.Remove($".GetProfile.{friend.Id}.");
+                _cacheService.Remove($".GetFriend.{friend.Id}.");
+                //_cacheService.Remove($".GetGroupFriends.");
+
                 return Ok();
             }
             catch (Exception e)
@@ -533,6 +540,63 @@ namespace goFriend.MobileAppService.Controllers
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetProfile/{friendId}")]
+        public ActionResult<Friend> GetProfile([FromHeader] string token, [FromRoute] int friendId)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<Friend> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                result = friend;
+
+                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+
                 return result;
             }
             catch (FormatException e)

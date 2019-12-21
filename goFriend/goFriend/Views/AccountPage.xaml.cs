@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
@@ -28,7 +29,12 @@ namespace goFriend.Views
 
             BindingContext = _viewModel = new AccountViewModel();
 
-            CellBasicInfo.Tapped += (s, e) => { Navigation.PushAsync(new AccountBasicInfosPage(this, App.User)); };
+            CellBasicInfo.Tapped += (s, e) =>
+            {
+                var page = new AccountBasicInfosPage();
+                page.Initialize(this, App.User);
+                Navigation.PushAsync(page);
+            };
             CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
             CellAdmin.Tapped += (s, e) => { Navigation.PushAsync(new AdminPage()); };
             CellLogin.Tapped += (s, e) =>
@@ -43,7 +49,7 @@ namespace goFriend.Views
                 Logout();
             };
             CellAbout.Tapped += (s, e) => { Navigation.PushAsync(new AboutPage()); };
-            MessagingCenter.Subscribe<Application>(this, "Logout", obj => Logout());
+            MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
         }
 
         private void Logout()
@@ -58,51 +64,73 @@ namespace goFriend.Views
 
         public async void RefreshMenu()
         {
-            (App.Current.MainPage as AppShell).RefreshTabs();
-            TsShells.Clear();
-            if (App.IsUserLoggedIn && App.User != null)
+            try
             {
-                TsShells.Add(CellAvatar);
-                if (App.User.Active)
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                TsShells.Clear();
+                if (App.IsUserLoggedIn && App.User != null)
                 {
-                    TsShells.Add(CellBasicInfo);
-                }
-
-                if (App.User.Active && App.User.Location != null)
-                {
-                    TsShells.Add(CellGroups);
-                }
-                TsShells.Add(CellLogout);
-                TsShells.Add(CellAbout);
-                ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
-                //ImgAvatar.Source = Extension.GetImageSourceFromFile("admin.png"); // normal 100 x 100
-                LblFullName.Text = App.User.Name;
-                LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
-                if (App.User.Active)
-                {
-                    if (App.User.Location != null)
+                    TsShells.Add(CellAvatar);
+                    if (App.User.Active)
                     {
-                        await App.TaskGetMyGroups;
-                        if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                        TsShells.Add(CellBasicInfo);
+                    }
+
+                    if (App.User.Active && App.User.Location == null
+                    ) // Location may be lost when stored in local setting. Try to get from server
+                    {
+                        var myProfile = await App.FriendStore.GetProfile();
+                        App.User.Location = myProfile.Location;
+                        Settings.LastUser = App.User;
+                    }
+
+                    if (App.User.Active && App.User.Location != null)
+                    {
+                        TsShells.Add(CellGroups);
+                    }
+
+                    TsShells.Add(CellLogout);
+                    TsShells.Add(CellAbout);
+                    ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
+                    //ImgAvatar.Source = Extension.GetImageSourceFromFile("admin.png"); // normal 100 x 100
+                    LblFullName.Text = App.User.Name;
+                    LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
+                    if (App.User.Active)
+                    {
+                        if (App.User.Location != null)
                         {
-                            TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
+                            await App.TaskGetMyGroups;
+                            if (App.MyGroups != null &&
+                                App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                            {
+                                TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
+                            }
+                        }
+                        else
+                        {
+                            App.DisplayMsgInfo(res.MsgNoLocationWarning);
+                            var page = new AccountBasicInfosPage();
+                            page.Initialize(this, App.User);
+                            await Navigation.PushAsync(page);
                         }
                     }
                     else
                     {
-                        App.DisplayMsgInfo(res.MsgNoLocationWarning);
-                        await Navigation.PushAsync(new AccountBasicInfosPage(this, App.User));
+                        App.DisplayMsgInfo(res.MsgInactiveUserWarning);
                     }
                 }
                 else
                 {
-                    App.DisplayMsgInfo(res.MsgInactiveUserWarning);
+                    TsShells.Add(CellLogin);
+                    TsShells.Add(CellAbout);
                 }
+
+                Logger.Debug($"Location={App.User?.Location}");
+                (App.Current.MainPage as AppShell).RefreshTabs();
             }
-            else
+            finally
             {
-                TsShells.Add(CellLogin);
-                TsShells.Add(CellAbout);
+                UserDialogs.Instance.HideLoading();
             }
         }
     }

@@ -130,10 +130,10 @@
     <value>GoFriend Hanoi9194</value>
   </data>
   <data name="BasicInfos" xml:space="preserve">
-    <value>Basic Informations</value>
+    <value>Profile</value>
   </data>
   <data name="BasicInfosDesc" xml:space="preserve">
-    <value>Name, date of birth, gender, email address</value>
+    <value>Name, date of birth, gender, email address, location</value>
   </data>
   <data name="BirthDay" xml:space="preserve">
     <value>Birthday:</value>
@@ -219,7 +219,7 @@
   <data name="Register" xml:space="preserve">
     <value>Register</value>
   </data>
-  <data name="Save" xml:space="preserve">
+  <data name="CmdSave" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="SaveSuccess" xml:space="preserve">
@@ -335,5 +335,17 @@
   </data>
   <data name="MsgSaveConfirm" xml:space="preserve">
     <value>Do you really want to save?</value>
+  </data>
+  <data name="CmdReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="CmdSetGPSPos" xml:space="preserve">
+    <value>Set GPS position</value>
+  </data>
+  <data name="MsgGpsDisabledWarning" xml:space="preserve">
+    <value>You need to activate the Gps first.</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Chat</value>
   </data>
 </root>

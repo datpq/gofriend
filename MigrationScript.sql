@@ -18,6 +18,7 @@ drop table Notification;
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
 
 ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null;
+ALTER TABLE Friends ADD Address NVARCHAR(100) NULL, CountryName VARCHAR(30) NULL;
 
 --Approve subscription
 UPDATE GroupFriends SET Active = 1, UserRight = 3 WHERE Id = 19;

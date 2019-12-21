@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Threading.Tasks;
+using goFriend.Controls;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
 namespace goFriend.Views
@@ -15,6 +12,31 @@ namespace goFriend.Views
         public MapPage()
         {
             InitializeComponent();
+
+            DphFriendSelection.Initialize((selectedGroup, arrFixedCats, arrCatValues) =>
+            {
+                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, true, arrCatValues).ContinueWith(task =>
+                {
+                    var catGroupFriends = task.Result;
+                    Map.Pins.Clear();
+                    foreach (var groupFriend in catGroupFriends)
+                    {
+                        Map.Pins.Add(new DphPin
+                        {
+                            Position = new Position(
+                                groupFriend.Friend.Location == null ? 0 : groupFriend.Friend.Location.Y,
+                                groupFriend.Friend.Location == null ? 0 : groupFriend.Friend.Location.X),
+                            Title = groupFriend.Friend.Name,
+                            SubTitle1 = $"{res.Groups} {selectedGroup.Group.Name}",
+                            SubTitle2 = groupFriend.GetCatValueDisplay(arrFixedCats.Count),
+                            IconUrl = groupFriend.Friend.GetImageUrl(),
+                            Draggable = false,
+                            Type = PinType.Place
+                        });
+                    }
+                    Map.MoveToRegionToCoverAllPins();
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            });
         }
     }
 }

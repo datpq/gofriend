@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
-             xmlns:controls="clr-namespace:goFriend.Controls"
-             Title="{Static local:res.Browse}"
-             x:Class="goFriend.Views.BrowsePage">
+             Title="{Static local:res.Chat}"
+             x:Class="goFriend.Views.ChatPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">
@@ -19,14 +19,11 @@
         </OnPlatform>
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout Margin="10,0,10,0">
-                <controls:DphFriendSelection x:Name="DphFriendSelection"></controls:DphFriendSelection>
-            </StackLayout>
-            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <StackLayout VerticalOptions="FillAndExpand">
-                <controls:DphListView x:Name="DphListView" Timeout="15" />
-            </StackLayout>
+        <StackLayout Margin="10,0,10,0">
+            <controls:DphFriendSelection IsShowingCategories="False" />
+            <Label Text="Chức năng đang trong quá trình thử nghiệm. Xin vui lòng chờ phiên bản sau."
+                       VerticalOptions="CenterAndExpand" 
+                       HorizontalOptions="CenterAndExpand" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

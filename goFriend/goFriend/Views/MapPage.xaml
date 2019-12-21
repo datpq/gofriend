@@ -6,9 +6,16 @@
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.Map}"
              x:Class="goFriend.Views.MapPage">
     <ContentPage.Content>
-        <maps:Map x:Name="Map" IsShowingUser="True" MoveToLastRegionOnLayoutChange="False" />
+        <StackLayout>
+            <StackLayout Margin="10,0,10,0">
+                <controls:DphFriendSelection x:Name="DphFriendSelection"></controls:DphFriendSelection>
+            </StackLayout>
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <controls:DphMap x:Name="Map" IsShowingUser="True" MoveToLastRegionOnLayoutChange="False" />
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

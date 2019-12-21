@@ -15,7 +15,8 @@ namespace goFriend.Controls
         //private Func<Task<IEnumerable<DphListViewItemModel>>> _getListViewItemsFunc;
         private DateTime _lastRefreshDateTime = DateTime.Today.AddYears(-1); //default value is a very small value
 
-        public static readonly BindableProperty TimeoutProperty = BindableProperty.CreateAttached(nameof(Timeout), typeof(int), typeof(DphListView), 0);
+        public static readonly BindableProperty TimeoutProperty =
+            BindableProperty.CreateAttached(nameof(Timeout), typeof(int), typeof(DphListView), 0);
         public int Timeout
         {
             get => (int)GetValue(TimeoutProperty);

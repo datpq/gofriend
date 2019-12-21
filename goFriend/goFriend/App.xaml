@@ -5,7 +5,7 @@
     <Application.Resources>
         <Color x:Key="ColorPageBackground">White</Color>
         <Color x:Key="ColorTabPageBackgroundAndroid">#F3F3F3</Color>
-        <Color x:Key="ColorTabPageBackgroundIOS">#F3F3F3</Color>
+        <Color x:Key="ColorTabPageBackgroundIOS">White</Color>
         <Color x:Key="ColorPrimary">#61A830</Color>
         <Color x:Key="ColorPrimaryLight">#8bf244</Color>
         <Color x:Key="ColorTitle">White</Color>

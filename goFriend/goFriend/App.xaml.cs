@@ -56,9 +56,7 @@ namespace goFriend
 
             Initialize();
 
-            var appShell = new AppShell();
-            appShell.RefreshTabs();
-            MainPage = appShell;
+            MainPage = new AppShell();
         }
 
         protected override void OnStart()
@@ -123,7 +121,7 @@ namespace goFriend
                             {
                                 case MessageCode.UserTokenError:
                                     Logger.Debug("Wrong token. Logout");
-                                    MessagingCenter.Send(App.Current, "Logout");
+                                    MessagingCenter.Send(App.Current, Constants.MsgLogout);
                                     DisplayMsgError(res.MsgErrWrongToken);
                                     break;
                                 default:

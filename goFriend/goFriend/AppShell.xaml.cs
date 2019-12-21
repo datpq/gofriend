@@ -1,6 +1,8 @@
-﻿namespace goFriend
+﻿using Xamarin.Forms;
+
+namespace goFriend
 {
-    public partial class AppShell : Xamarin.Forms.Shell
+    public partial class AppShell : Shell
     {
         public AppShell()
         {
@@ -13,7 +15,7 @@
 
         public void RefreshTabs()
         {
-            TabBrowse.IsEnabled = TabMap.IsEnabled = TabNotification.IsEnabled =
+            TabBrowse.IsEnabled = TabMap.IsEnabled = TabChat.IsEnabled = TabNotification.IsEnabled =
                 App.IsUserLoggedIn && App.User != null && App.User.Active && App.User.Location != null;
         }
     }
