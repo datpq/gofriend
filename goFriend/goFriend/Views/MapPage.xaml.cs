@@ -23,9 +23,8 @@ namespace goFriend.Views
                     {
                         Map.Pins.Add(new DphPin
                         {
-                            Position = new Position(
-                                groupFriend.Friend.Location == null ? 0 : groupFriend.Friend.Location.Y,
-                                groupFriend.Friend.Location == null ? 0 : groupFriend.Friend.Location.X),
+                            Position = groupFriend.Friend.Location == null ? DphMap.DefaultPosition :
+                                new Position(groupFriend.Friend.Location.Y, groupFriend.Friend.Location.X),
                             Title = groupFriend.Friend.Name,
                             SubTitle1 = $"{res.Groups} {selectedGroup.Group.Name}",
                             SubTitle2 = groupFriend.GetCatValueDisplay(arrFixedCats.Count),

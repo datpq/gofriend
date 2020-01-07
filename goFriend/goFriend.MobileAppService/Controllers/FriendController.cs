@@ -87,6 +87,7 @@ namespace goFriend.MobileAppService.Controllers
                                 FacebookId = facebookId,
                                 CreatedDate = DateTime.Now,
                                 ModifiedDate = DateTime.Now,
+                                Token = Guid.NewGuid(),
                                 Active = true // new user is Active for now
                             };
                             _dataRepo.Add(result);
@@ -327,7 +328,7 @@ namespace goFriend.MobileAppService.Controllers
 
                         currentPredefinedCategory = _dataRepo.Get<GroupPredefinedCategory>(
                             x => x.GroupId == groupId && x.Category == catVal && x.ParentId == parentCategoryId, true);
-                        Logger.Debug($"currentPredefinedCategory.Id={currentPredefinedCategory.Id}");
+                        Logger.Debug($"currentPredefinedCategory.Id={currentPredefinedCategory?.Id}");
                         groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]);
                         idx++;
                     }
@@ -938,9 +939,12 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
+                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId && x.Active).Select(x => x.GroupId).ToList();
+
                 //Where clause is done in 2 times to avoid the error LINQ could not be translated. Either rewrite the query in a form that can be translated
                 result = _dataRepo.GetMany<Notification>(x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now).Where(
-                    x => $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0
+                    x => ($"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0 ||
+                          myGroups.Any(y => $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}g{y}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0))
                     && $"{Notification.NotifIdSep}{x.Deletions}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) < 0)
                     .Select(x =>
                     {
@@ -1146,7 +1150,8 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     CreatedDate = DateTime.Now,
                     OwnerId = friendId,
-                    Destination = $"u{groupFriend.FriendId},{jointGroupAdmins}",
+                    Destination = groupFriend.UserRight >= UserType.Normal ? // if approve -> notify all members of group
+                        $"g{groupFriend.GroupId}" : $"u{groupFriend.FriendId},{jointGroupAdmins}", // if rejected --> notify only this user and admins
                     NotificationObject = groupFriend.UserRight >= UserType.Normal ?
                         (GroupSubscriptionNotifBase)new NotifSubscriptionApproved
                         {
@@ -1167,10 +1172,10 @@ namespace goFriend.MobileAppService.Controllers
                 _dataRepo.Commit();
 
                 //remove Cache
+                _cacheService.Remove($".GetGroupFriends.{groupFriend.GroupId}."); //refresh group members, pending members and also active members
                 _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}."); // refresh my groups of the approved/rejected user
                 groupAdmins.ForEach(x =>
                 {
-                    _cacheService.Remove($".GetGroupFriends.{x}."); // refresh subscription of all Admin
                     _cacheService.Remove($".GetNotifications.{x}."); // refresh notification of all Admin
                 }); 
 

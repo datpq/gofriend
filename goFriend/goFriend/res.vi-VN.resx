@@ -295,7 +295,7 @@
     <value>Nhà</value>
   </data>
   <data name="AskedToJoinGroup" xml:space="preserve">
-    <value>xin gia nhập nhóm</value>
+    <value> xin gia nhập nhóm</value>
   </data>
   <data name="SpentTimeInDays" xml:space="preserve">
     <value> ngày trước.</value>

@@ -76,12 +76,19 @@ namespace goFriend.Views
                         TsShells.Add(CellBasicInfo);
                     }
 
-                    if (App.User.Active && App.User.Location == null
-                    ) // Location may be lost when stored in local setting. Try to get from server
+                    try
                     {
-                        var myProfile = await App.FriendStore.GetProfile();
-                        App.User.Location = myProfile.Location;
-                        Settings.LastUser = App.User;
+                        // Location may be lost when stored in local setting. Try to get from server
+                        if (App.User.Active && App.User.Location == null)
+                        {
+                            var myProfile = await App.FriendStore.GetProfile();
+                            App.User.Location = myProfile.Location;
+                            Settings.LastUser = App.User;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
 
                     if (App.User.Active && App.User.Location != null)
@@ -127,6 +134,10 @@ namespace goFriend.Views
 
                 Logger.Debug($"Location={App.User?.Location}");
                 (App.Current.MainPage as AppShell).RefreshTabs();
+            }
+            catch (Exception)
+            {
+                // ignored
             }
             finally
             {

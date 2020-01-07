@@ -48,7 +48,13 @@ namespace goFriend.Controls
 
     public class DphMap : Map
     {
+        public const double DefaultDistance = 5;
+        public static readonly Position DefaultPosition = new Position(21.022642, 105.814416); // B7 thanh cong, Hanoi
+
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+
+        public DphMap() : base(MapSpan.FromCenterAndRadius(
+            DefaultPosition, Distance.FromKilometers(DefaultDistance))) {}
 
         public void MoveToRegionToCoverAllPins()
         {
@@ -56,7 +62,7 @@ namespace goFriend.Controls
             if (Pins.Count == 1)
             {
                 MoveToRegion(MapSpan.FromCenterAndRadius(
-                    new Position(Pins.Single().Position.Latitude, Pins.Single().Position.Longitude), Distance.FromKilometers(5)));
+                    new Position(Pins.Single().Position.Latitude, Pins.Single().Position.Longitude), Distance.FromKilometers(DefaultDistance)));
                 return;
             }
             var latitudes = new List<double>();

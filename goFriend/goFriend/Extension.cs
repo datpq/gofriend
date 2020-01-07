@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
+using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
 using Xamarin.Essentials;
@@ -20,9 +20,6 @@ namespace goFriend
 
     public static class Extension
     {
-        public const string HomeAddress = "Hanoi, Vietnam";
-        public static Position? HomePosition;
-
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public static string GetImageUrl(this Friend friend, FacebookImageType imageType = FacebookImageType.normal)
@@ -65,7 +62,7 @@ namespace goFriend
         public static string GetSpentTime(this DateTime dateTime)
         {
             string result;
-            var spentTime = DateTime.Now - dateTime;
+            var spentTime = DateTime.Now - dateTime.ToLocalTime();
             if (spentTime > TimeSpan.FromDays(3))
             {
                 result = $"{spentTime.Days}{res.SpentTimeInDays}";
@@ -125,34 +122,26 @@ namespace goFriend
             {
                 return new Position(point.Y, point.X);
             }
-            else
+
+            if (useGpsAsDefault)
             {
-                if (useGpsAsDefault)
+                try
                 {
-                    try
-                    {
-                        var request = new GeolocationRequest(GeolocationAccuracy.High);
-                        var location = await Geolocation.GetLocationAsync(request);
+                    var request = new GeolocationRequest(GeolocationAccuracy.High);
+                    var location = await Geolocation.GetLocationAsync(request);
 
-                        if (location != null)
-                        {
-                            return new Position(location.Latitude, location.Longitude);
-                        }
-                    }
-                    catch (Exception)
+                    if (location != null)
                     {
-                        // GPS disabled
+                        return new Position(location.Latitude, location.Longitude);
                     }
                 }
-
-                if (!HomePosition.HasValue)
+                catch (Exception)
                 {
-                    var geoCoder = new Geocoder();
-                    var approximateLocations = await geoCoder.GetPositionsForAddressAsync(HomeAddress);
-                    HomePosition = approximateLocations.FirstOrDefault();
+                    // GPS disabled
                 }
-                return new Position(HomePosition.Value.Latitude, HomePosition.Value.Longitude);
             }
+
+            return DphMap.DefaultPosition;
         }
 
         /*

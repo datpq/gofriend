@@ -115,7 +115,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to asked to join the group.
+        ///   Looks up a localized string similar to  asked to join the group.
         /// </summary>
         public static string AskedToJoinGroup {
             get {

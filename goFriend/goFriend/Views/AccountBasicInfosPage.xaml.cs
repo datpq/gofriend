@@ -57,8 +57,7 @@ namespace goFriend.Views
             Map.Pins.Clear();
             Map.Pins.Add(_pin);
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
-
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
         }
 
         public async void Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
@@ -148,7 +147,7 @@ namespace goFriend.Views
             Map.Pins.Clear();
             Map.Pins.Add(_pin);
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
         }
 
         private async void CmdSetGps_Click(object sender, EventArgs e)
@@ -162,7 +161,7 @@ namespace goFriend.Views
                 if (location == null) return;
                 _pin.Position = new Position(location.Latitude, location.Longitude);
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                    new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+                    new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
                 CmdReset.IsEnabled = CmdSave.IsEnabled = true;
             }
             catch (Exception)
@@ -179,7 +178,7 @@ namespace goFriend.Views
         {
             _pin.Position = await _viewModel.Friend.Location.GetPosition();
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(5)));
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
             CmdReset.IsEnabled = false;
             CmdSave.IsEnabled = _viewModel.Friend.Location == null;
         }
