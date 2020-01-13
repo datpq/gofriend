@@ -237,4 +237,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\pin.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\refresh.png" />
+  </ItemGroup>
 </Project>

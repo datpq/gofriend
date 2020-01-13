@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Web;
 using Acr.UserDialogs;
@@ -341,7 +342,8 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetMyGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //Logger.Debug($"GetMyGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetMyGroups.END(Count={result.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

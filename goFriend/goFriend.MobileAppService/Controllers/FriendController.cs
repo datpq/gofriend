@@ -1109,7 +1109,8 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                if (userRight >= UserType.Normal) //Approve a subscription
+                var isApproving = userRight >= UserType.Normal;
+                if (isApproving) //Approve a subscription
                 {
                     if (groupFriend.Active || groupFriend.UserRight >= UserType.Normal)
                     {
@@ -1132,7 +1133,7 @@ namespace goFriend.MobileAppService.Controllers
                     return BadRequest(Message.MsgUserNoPermission);
                 }
 
-                if (userRight >= UserType.Normal) //approve
+                if (isApproving) //approve
                 {
                     Logger.Debug("Subscription approved");
                     groupFriend.UserRight = userRight;
@@ -1150,7 +1151,7 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     CreatedDate = DateTime.Now,
                     OwnerId = friendId,
-                    Destination = groupFriend.UserRight >= UserType.Normal ? // if approve -> notify all members of group
+                    Destination = isApproving ? // if approve -> notify all members of group
                         $"g{groupFriend.GroupId}" : $"u{groupFriend.FriendId},{jointGroupAdmins}", // if rejected --> notify only this user and admins
                     NotificationObject = groupFriend.UserRight >= UserType.Normal ?
                         (GroupSubscriptionNotifBase)new NotifSubscriptionApproved
@@ -1176,8 +1177,12 @@ namespace goFriend.MobileAppService.Controllers
                 _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}."); // refresh my groups of the approved/rejected user
                 groupAdmins.ForEach(x =>
                 {
+                    if (isApproving)
+                    {
+                        _cacheService.Remove($".GetMyGroups.{x}."); // refresh my groups of the admin users
+                    }
                     _cacheService.Remove($".GetNotifications.{x}."); // refresh notification of all Admin
-                }); 
+                });
 
                 return Ok();
             }

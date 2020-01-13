@@ -7618,46 +7618,49 @@ namespace goFriend.Droid
 			public const int pin = 2131165562;
 			
 			// aapt resource value: 0x7F07017B
-			public const int roundedbg = 2131165563;
+			public const int refresh = 2131165563;
 			
 			// aapt resource value: 0x7F07017C
-			public const int roundedbgdark = 2131165564;
+			public const int roundedbg = 2131165564;
 			
 			// aapt resource value: 0x7F07017D
-			public const int splash_screen = 2131165565;
+			public const int roundedbgdark = 2131165565;
 			
 			// aapt resource value: 0x7F07017E
-			public const int tab_about = 2131165566;
+			public const int splash_screen = 2131165566;
 			
 			// aapt resource value: 0x7F07017F
-			public const int tab_admin = 2131165567;
+			public const int tab_about = 2131165567;
 			
 			// aapt resource value: 0x7F070180
-			public const int tab_browse = 2131165568;
+			public const int tab_admin = 2131165568;
 			
 			// aapt resource value: 0x7F070181
-			public const int tab_chat = 2131165569;
+			public const int tab_browse = 2131165569;
 			
 			// aapt resource value: 0x7F070182
-			public const int tab_home = 2131165570;
+			public const int tab_chat = 2131165570;
 			
 			// aapt resource value: 0x7F070183
-			public const int tab_map = 2131165571;
+			public const int tab_home = 2131165571;
 			
 			// aapt resource value: 0x7F070184
-			public const int tab_notification = 2131165572;
+			public const int tab_map = 2131165572;
 			
 			// aapt resource value: 0x7F070185
-			public const int tab_notification_selected = 2131165573;
+			public const int tab_notification = 2131165573;
 			
 			// aapt resource value: 0x7F070186
-			public const int tooltip_frame_dark = 2131165574;
+			public const int tab_notification_selected = 2131165574;
 			
 			// aapt resource value: 0x7F070187
-			public const int tooltip_frame_light = 2131165575;
+			public const int tooltip_frame_dark = 2131165575;
 			
 			// aapt resource value: 0x7F070188
-			public const int xamarin_logo = 2131165576;
+			public const int tooltip_frame_light = 2131165576;
+			
+			// aapt resource value: 0x7F070189
+			public const int xamarin_logo = 2131165577;
 			
 			static Drawable()
 			{

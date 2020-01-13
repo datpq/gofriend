@@ -17,9 +17,13 @@
               </Grid.ColumnDefinitions>
               <Label x:Name="LblGroup" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center"
                      Grid.Row="0" Grid.Column="0"/>
-              <Picker x:Name="PickerGroups" FontSize="{StaticResource LblDetailFontSize}"
-                      Grid.Row="0" Grid.Column="1" SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
-                      ItemDisplayBinding="{Binding Display}" HeightRequest="40" />
+              <StackLayout Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                  <Picker x:Name="PickerGroups" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand"
+                          SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
+                          ItemDisplayBinding="{Binding Display}" HeightRequest="40" />
+                    <Button  BackgroundColor="Transparent" x:Name="CmdRefresh" Clicked="CmdRefresh_OnClicked"
+                          ImageSource="refresh.png" HorizontalOptions="End" WidthRequest="20"/>
+              </StackLayout>
           </Grid>
       </StackLayout>
   </ContentView.Content>

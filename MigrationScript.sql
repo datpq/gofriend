@@ -119,7 +119,7 @@ IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.Mobi
 	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupCatValues', NULL, 5, 1);
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetMyGroups')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
-	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetMyGroups', NULL, 15, 1);
+	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetMyGroups', NULL, 5, 1);
 IF NOT EXISTS (SELECT * FROM CacheConfiguration WHERE KeyPrefix = 'goFriend.MobileAppService.Controllers.FriendController.GetGroupFriends')
 	INSERT INTO CacheConfiguration(KeyPrefix, KeySuffixReg, Timeout, Enabled)
 	VALUES('goFriend.MobileAppService.Controllers.FriendController.GetGroupFriends', NULL, 15, 1);

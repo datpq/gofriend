@@ -109,6 +109,7 @@ at least in my case this was the issue
 - ViewCell height work when HasUnevenRows="True"
 - ImageButton.Source = Extension.GetImageSourceFromFile("accept.png"); --> OK
 - Button.ImageSource = Extension.GetImageSourceFromFile("accept.png"); --> KO
+- Can not change image size in a button ==> reduce the image size first in an Image Editor
 - TableSection without header: Intent="Data" Title=""
 - NavigationBar overlap content issue:	
             <StackLayout.Padding>

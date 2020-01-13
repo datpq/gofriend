@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
@@ -31,6 +32,18 @@ namespace goFriend.Controls
             PickerGroups.Title = $"{res.Select} {res.Groups}";
             LblGroup.Text = $"{res.Groups}:";
 
+            Refresh();
+        }
+
+        private Action<ApiGetGroupsModel, List<string>, string[]> _onSelectionAction;
+        public void Initialize(Action<ApiGetGroupsModel, List<string>, string[]> onSelectionAction)
+        {
+            _onSelectionAction = onSelectionAction;
+        }
+
+        public void Refresh()
+        {
+            Logger.Debug("Refresh.BEGIN");
             UserDialogs.Instance.ShowLoading(res.Processing);
             //can not await TaskGetMyGroups because we are in a constructor, and not in an async method.
             Task.Run(() =>
@@ -39,20 +52,19 @@ namespace goFriend.Controls
                 //Task.Delay(5000).Wait();
             }).ContinueWith(task =>
             {
-                PickerGroups.ItemsSource = App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
+                var selectedIndex = PickerGroups.SelectedIndex;
+                var myGroups = App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
+                PickerGroups.ItemsSource = new ObservableCollection<ApiGetGroupsModel>(myGroups);
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
-                if (PickerGroups.Items.Count > 0)
+                if (selectedIndex < 0 && PickerGroups.Items.Count > 0)
                 {
                     PickerGroups.SelectedIndex = 0;
+                } else if (selectedIndex >= 0 && selectedIndex < PickerGroups.Items.Count)
+                {
+                    PickerGroups.SelectedIndex = selectedIndex;
                 }
-                //Appearing += (sender, args) => DphListView.Refresh();
+                Logger.Debug("Refresh.END");
             }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private Action<ApiGetGroupsModel, List<string>, string[]> _onSelectionAction;
-        public void Initialize(Action<ApiGetGroupsModel, List<string>, string[]> onSelectionAction)
-        {
-            _onSelectionAction = onSelectionAction;
         }
 
         private async void PickerGroups_OnSelectedIndexChanged(object sender, EventArgs e)
@@ -156,6 +168,13 @@ namespace goFriend.Controls
             {
                 Logger.Debug("PickerGroups_OnSelectedIndexChanged.END");
             }
+        }
+
+        private void CmdRefresh_OnClicked(object sender, EventArgs e)
+        {
+            App.Initialize();
+
+            Refresh();
         }
     }
 }

@@ -33,7 +33,7 @@
     </PackageReference>
     <PackageReference Include="Xam.Plugin.Connectivity" Version="4.0.0.190-beta" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
-    <PackageReference Include="Xamarin.Build.Download" Version="0.7.1" />
+    <PackageReference Include="Xamarin.Build.Download" Version="0.8.0" />
     <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
