@@ -48,7 +48,8 @@ namespace goFriend.Services
             Friend result = null;
             try
             {
-                Logger.Debug($"LoginWithFacebook.BEGIN(authToken={authToken}, deviceInfo={deviceInfo})");
+                var info = Extension.GetVersionTrackingInfo();
+                Logger.Debug($"LoginWithFacebook.BEGIN(authToken={authToken}, deviceInfo={deviceInfo}, info={info})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
@@ -58,6 +59,7 @@ namespace goFriend.Services
                 var client = GetHttpClient();
                 client.DefaultRequestHeaders.Add("authToken", authToken);
                 client.DefaultRequestHeaders.Add("deviceInfo", deviceInfo);
+                client.DefaultRequestHeaders.Add("info", info);
 
                 var response = await client.GetAsync($"api/Friend/LoginWithFacebook");
                 if (response.IsSuccessStatusCode)
@@ -343,7 +345,7 @@ namespace goFriend.Services
             finally
             {
                 //Logger.Debug($"GetMyGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
-                Logger.Debug($"GetMyGroups.END(Count={result.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetMyGroups.END(Count={result?.Count() ?? 0}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

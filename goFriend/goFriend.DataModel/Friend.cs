@@ -25,7 +25,7 @@ namespace goFriend.DataModel
         [Column(TypeName = "NVARCHAR(50)")]
         public string MiddleName { get; set; }
 
-        [Required]
+        //[Required]
         [Column(TypeName = "VARCHAR(20)")]
         public string FacebookId { get; set; }
 
@@ -55,6 +55,9 @@ namespace goFriend.DataModel
         [JsonIgnore]
         [Column(TypeName = "VARCHAR(170)")]
         public string DeviceInfo { get; set; }
+
+        [Column(TypeName = "VARCHAR(255)")]
+        public string Info { get; set; }
 
         [JsonIgnore]
         public byte[] Image { get; set; }

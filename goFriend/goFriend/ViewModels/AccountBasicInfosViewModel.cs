@@ -20,6 +20,6 @@ namespace goFriend.ViewModels
         public string CountryName => Friend?.CountryName;
         public DateTime? Birthday => Friend?.Birthday;
         public string ImageUrl => Friend?.GetImageUrl();
-        public string GenderByLanguage => Friend?.Gender == "male" ? res.Male : res.Female;
+        public string GenderByLanguage => Friend?.Gender == "male" ? res.Male : Friend?.Gender == "female" ? res.Female : string.Empty;
     }
 }

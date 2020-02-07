@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace goFriend.ViewModels
@@ -9,7 +9,7 @@ namespace goFriend.ViewModels
     {
         public AboutViewModel()
         {
-            Title = res.AppTitle;
+            Title = AppInfo.Name;
 
             OpenWebCommand = new Command(() => Device.OpenUri(new Uri("https://xamarin.com/platform")));
         }

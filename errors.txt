@@ -32,6 +32,10 @@
 - Samsung does not show up in Visual Studio
 	- Find and Usb cable that make telephone show up in Device Manager/Portable devices
 	- Enable USB debugging option in Settings > Developer options 
+- Android ABI mismatch. You are deploying an app supporting 'armeabi-v7a;arm64-v8a' ABIs to an incompatible device of ABI 'x86'. You should either create an emulator matching one of your app's ABIs or add 'x86' to the list of ABIs your app builds for.		 	0	
+	- https://georgik.rocks/xamarin-visual-studio-error-adb0020-android-abi-mismatch/
+- More than one device connected, please provide
+	- unplug USB to Samsung
 - Nlog
 	- https://martynnw.wordpress.com/2016/10/16/logging-with-nlog-in-xamarin-forms/
 - Test on iOS
@@ -54,12 +58,22 @@
 	- An error occurred on the receiver while executing a post for topic
 	- Error: error MT1001: Could not find an application at the specified directory
 		Build the project first
+	- Unable to remove directory "obj\iPhone\Release\". Could not find a part of the path 'FacebookSDK.strings'.	goFriend.iOS
+		remove the directory "obj\iPhone\Release\"
 	- iOS code signing key 'iPhone Developer: Quoc Dat PHAM (U394Q43T36)' not found in keychain.
 		Provisioning your device (Tools\Options\Xamarin\Apple Accounts... Create certificate for new machine
+		- if can not login in Tools\Options\Xamarin\Apple Accounts --> MacOS Keychain Access --> lock login (right click on Login)
+		- Import certificate in Keychain Access (macOS)
+	- "altool" exited with code 252. We are unable to create an authentication session.
+		Apple Id: datpquk@gmail.com
+		app-specific password: hzen-hooc-wvtg-gjxz
+		https://appleid.apple.com/account/manage
 	- No iOS signing identities match the specified provisioning profile 'VS: WildCard Development'.
 		Download your certificate to your Mac, then double click the .cer file to install in Keychain Access. Make sure to save a backup copy of your private and public keys somewhere secure.
 		Edit the profile in Apple account, and include the certificate in this profile
 			developer.apple.com/account/resources/profiles/edit/4Z89GS337Q
+	- The user name or passphrase you entered is not correct
+		Try opening Keychain Access.app. Right-click on the login keychain and try locking it and then unlocking it again.
 	- when successful
 		3>  Detected signing identity:
 		3>    Code Signing Key: "iPhone Developer: Quoc Dat PHAM (U394Q43T36)" (CB58F93E3DEF9E0EEC25434A922A91E8C0E6C2B5)
@@ -73,17 +87,43 @@
 		- Update Xamarin.Forms to pre2 release
 	- Updating Nuget caused Exception Unhandled: System.TypeLoadException
 		Downgrade xamarin.forms and xamarin.forms.maps to v4.1.0.778454
+- deployment Android:
+	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
+	Client Secret: 4EuVjRHN_15K1DxydclcGcBo
+	
+	keytool -list -v -keystore "C:\Users\dat\AppData\Local\Xamarin\Mono for Android\Keystore\GoFriend9194\GoFriend9194.keystore" -alias gofriend9194
+	password for certificate: goFriend9194
+	
+	aab -> apks
+	java -jar bundletool-all-0.12.0.jar build-apks
+		--bundle="C:\Users\dat\AppData\Local\Xamarin\Mono for Android\Archives\release\com.dph.GoFriend.aab"
+		--output="C:\Users\dat\AppData\Local\Xamarin\Mono for Android\Archives\release\com.dph.GoFriend.apks"
+		--ks="C:\Users\dat\source\repos\goFriend\GoFriend9194.keystore" --ks-pass=pass:goFriend9194 --ks-key-alias=gofriend9194 --key-pass=pass:goFriend9194
+	
+	com.dph.GoFriend
+	debug: E7:E8:66:E0:85:9F:29:7C:3C:1E:C5:89:D3:16:2B:ED:57:56:1D:E9
+	release: 45:01:82:C7:DA:98:A4:77:B9:65:31:53:D7:D6:94:27:79:39:1D:03
+- Can't login Facebook with Android 9
+	- replace deprecated functions like (
+- Binary XML file line #1: Error inflating class
+	- Problem with Android 7. Reduce target Framework to 9
 
 - ApplicationVerificationFailed: Failed to verify code signature of .. (A valid provisioning profile for this executable was not found.)
 	- create device manually in https://developer.apple.com/account/resources/profiles/list (get UDID from iTunes https://bjango.com/help/iphoneudid/)
 	- create profile for this device
 - ApplicationVerificationFailed: Failed to verify code signature of .. (An unknown error has occurred.)
+- ApplicationVerificationFailed: Failed to verify code signature of ... : 0xe8008016 (The executable was signed with invalid entitlements.)
+	- https://developer.apple.com/account/resources/identifiers/list, select the required Capabilities for the Identifier
+	- Recreate profile for the last Identifier
+	- bundle must match with the value defined in info.plist
 
 - IncorrectArchitecture: Failed to find matching arch for 64-bit Mach-O input file 
 	Open the iOS Build menu from your Project > Properties (Options in Visual Studio for Mac)
 	Find the Supported Architectures drop-down menu
 	Choose the option for Armv7+Arm64
 	Rebuild and deploy your app
+- Unable to remove directory
+	go to C:\Users\dat\source\repos\goFriend\goFriend\goFriend.iOS\obj\iPhone\Release and remove files
 - Unable to connect to Mac Server with Address='192.168.42.129' and User='datios'. The build can't continue without a connection
 	- https://docs.microsoft.com/en-us/xamarin/ios/get-started/installation/windows/connecting-to-mac/troubleshooting
 	Make sure that Remote Login is enabled on the Mac. Set access for Only these users, and make sure your Mac user is included in the list or group:
@@ -153,7 +193,9 @@ at least in my case this was the issue
 	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)
 	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
 	
-	
+
+Google Map Key:
+AIzaSyCDslbf6JY0MUU5KafJW_F67Eso476Tl80
 	
 	
 	

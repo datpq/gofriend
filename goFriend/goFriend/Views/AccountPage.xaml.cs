@@ -54,12 +54,13 @@ namespace goFriend.Views
 
         private void Logout()
         {
-            Logger.Debug("BEGIN");
+            Logger.Debug("Logout.BEGIN");
             App.FaceBookManager.Logout();
             App.IsUserLoggedIn = false;
+            App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
             RefreshMenu();
-            Logger.Debug("END");
+            Logger.Debug("Logout.END");
         }
 
         public async void RefreshMenu()

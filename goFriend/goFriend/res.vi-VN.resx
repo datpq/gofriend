@@ -126,9 +126,6 @@
   <data name="Account" xml:space="preserve">
     <value>Tài khoản</value>
   </data>
-  <data name="AppTitle" xml:space="preserve">
-    <value>GoFriend Hanoi9194</value>
-  </data>
   <data name="BasicInfos" xml:space="preserve">
     <value>Hồ sơ cá nhân</value>
   </data>
@@ -295,7 +292,7 @@
     <value>Nhà</value>
   </data>
   <data name="AskedToJoinGroup" xml:space="preserve">
-    <value> xin gia nhập nhóm</value>
+    <value>xin gia nhập nhóm</value>
   </data>
   <data name="SpentTimeInDays" xml:space="preserve">
     <value> ngày trước.</value>

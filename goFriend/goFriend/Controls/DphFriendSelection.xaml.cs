@@ -53,7 +53,7 @@ namespace goFriend.Controls
             }).ContinueWith(task =>
             {
                 var selectedIndex = PickerGroups.SelectedIndex;
-                var myGroups = App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
+                var myGroups = App.MyGroups == null ? new List<ApiGetGroupsModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
                 PickerGroups.ItemsSource = new ObservableCollection<ApiGetGroupsModel>(myGroups);
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
                 if (selectedIndex < 0 && PickerGroups.Items.Count > 0)

@@ -43,9 +43,9 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="GoFriend Hanoi9194" FontAttributes="Bold" FontSize="22" />
+                                <Span x:Name="SpanTitle" FontAttributes="Bold" FontSize="22" />
                                 <Span Text=" " />
-                                <Span Text="1.0" ForegroundColor="{StaticResource LightTextColor}" FontSize="13" />
+                                <Span x:Name="SpanVersion" ForegroundColor="{StaticResource LightTextColor}" FontSize="13" />
                             </FormattedString.Spans>
                         </FormattedString>
                     </Label.FormattedText>

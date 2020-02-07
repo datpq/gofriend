@@ -106,16 +106,7 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GoFriend Hanoi9194.
-        /// </summary>
-        public static string AppTitle {
-            get {
-                return ResourceManager.GetString("AppTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to  asked to join the group.
+        ///   Looks up a localized string similar to asked to join the group.
         /// </summary>
         public static string AskedToJoinGroup {
             get {

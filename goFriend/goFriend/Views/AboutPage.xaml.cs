@@ -1,7 +1,5 @@
-﻿using System;
-
+﻿using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace goFriend.Views
 {
@@ -10,6 +8,9 @@ namespace goFriend.Views
         public AboutPage()
         {
             InitializeComponent();
+
+            SpanTitle.Text = AppInfo.Name;
+            SpanVersion.Text = AppInfo.VersionString;
         }
     }
 }

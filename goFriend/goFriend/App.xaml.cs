@@ -11,7 +11,7 @@ namespace goFriend
 {
     public partial class App : Application
     {
-        public static string AzureBackendUrl = "http://gofriend.azurewebsites.net";
+        public static string AzureBackendUrl = "https://gofriend.azurewebsites.net";
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
         public static Friend User { get; set; }
@@ -25,7 +25,9 @@ namespace goFriend
 
         public App()
         {
-            Logger.Info("GoFriend starting new instance...");
+            VersionTracking.Track();
+            Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
+            Logger.Info($"AzureBackendUrl = {AzureBackendUrl}");
             var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
             Logger.Debug(deviceInfo);
             res.Culture = new CultureInfo("vi-VN");
@@ -108,7 +110,19 @@ namespace goFriend
                 try
                 {
                     Logger.Debug("TaskGetMyGroups.BEGIN");
-                    MyGroups = FriendStore.GetMyGroups().Result;
+                    if (IsUserLoggedIn && User != null)
+                    {
+                        MyGroups = FriendStore.GetMyGroups().Result;
+                        if (VersionTracking.IsFirstLaunchForCurrentBuild)
+                        {
+                            Logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
+                            FriendStore.SaveBasicInfo(new Friend {Id = App.User.Id, Info = Extension.GetVersionTrackingInfo()});
+                        }
+                    }
+                    else
+                    {
+                        Logger.Debug("User is null or not logged in");
+                    }
                 }
                 catch (AggregateException e)
                 {
@@ -120,8 +134,9 @@ namespace goFriend
                             switch (goe.Msg.Code)
                             {
                                 case MessageCode.UserTokenError:
-                                    Logger.Debug("Wrong token. Logout");
-                                    MessagingCenter.Send(App.Current, Constants.MsgLogout);
+                                    //TODO: Logout by code
+                                    //Logger.Debug("Wrong token. Logout");
+                                    //MessagingCenter.Send(App.Current, Constants.MsgLogout);
                                     DisplayMsgError(res.MsgErrWrongToken);
                                     break;
                                 default:

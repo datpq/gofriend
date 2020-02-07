@@ -144,6 +144,11 @@ namespace goFriend
             return DphMap.DefaultPosition;
         }
 
+        public static string GetVersionTrackingInfo()
+        {
+            return $"CurrentVersion={VersionTracking.CurrentVersion}.{VersionTracking.CurrentBuild}|PreviousVersion={VersionTracking.PreviousVersion}.{VersionTracking.PreviousBuild}";
+        }
+
         /*
         public static ImageSource GetImageSource(this Friend friend, FacebookImageType imageType = FacebookImageType.normal)
         {

@@ -23,11 +23,11 @@
 	<key>MinimumOSVersion</key>
 	<string>8.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>GoFriend</string>
+	<string>GoFriend Hanoi9194</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.dph.GoFriend</string>
+	<string>com.dph.GoFriend9194</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>6</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
@@ -71,11 +71,13 @@
 			</dict>
 		</dict>
 	</dict>
-  <key>NSLocationAlwaysUsageDescription</key>
-  <string>Can we use your location at all times?</string>
-  <key>NSLocationWhenInUseUsageDescription</key>
-  <string>Can we use your location when your application is being used?</string>
-  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-  <string>Can we use your location at all times?</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Vị trí của bạn được dùng để phát hiện sự dịch chuyển gần nhau giữa cách thành viên trong nhóm</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Vị trí của bạn được dùng để tham khảo khi bạn thiết lập vị trí khi gia nhập nhóm</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Vị trí của bạn được dùng để tham khảo khi bạn thiết lập vị trí khi gia nhập nhóm</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.6</string>
 </dict>
 </plist>

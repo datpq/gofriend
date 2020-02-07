@@ -33,7 +33,7 @@ namespace goFriend.Droid
                     LoginBehavior = LoginBehavior.NativeWithFallback
                 };
 
-                fbLoginBtnCtrl.SetReadPermissions(fbLoginBtnView?.Permissions);
+                fbLoginBtnCtrl.SetPermissions(fbLoginBtnView?.Permissions);
                 fbLoginBtnCtrl.RegisterCallback(MainActivity.CallbackManager, new MyFacebookCallback(Element as FacebookLoginButton));
 
                 SetNativeControl(fbLoginBtnCtrl);

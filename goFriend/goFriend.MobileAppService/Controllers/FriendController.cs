@@ -51,10 +51,10 @@ namespace goFriend.MobileAppService.Controllers
 
         [HttpGet]
         [Route("LoginWithFacebook")]
-        public ActionResult<Friend> LoginWithFacebook([FromHeader] string authToken, [FromHeader] string deviceInfo)
+        public ActionResult<Friend> LoginWithFacebook([FromHeader] string authToken, [FromHeader] string deviceInfo, [FromHeader] string info)
         {
             var stopWatch = Stopwatch.StartNew();
-            Logger.Debug($"BEGIN(authToken={authToken}, deviceInfo={deviceInfo})");
+            Logger.Debug($"BEGIN(authToken={authToken}, deviceInfo={deviceInfo}, info={info})");
             try
             {
                 if (string.IsNullOrEmpty(authToken))
@@ -66,7 +66,8 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     AccessToken = authToken
                 };
-                dynamic fbUser = fb.Get("me?fields=name,first_name,middle_name,last_name,id,email,gender,birthday");
+                //dynamic fbUser = fb.Get("me?fields=name,first_name,middle_name,last_name,id,email,gender,birthday");
+                dynamic fbUser = fb.Get("me?fields=name,first_name,middle_name,last_name,id,email");
                 Logger.Debug($"facebookUser={fbUser}");
                 if (!(fbUser.id is string facebookId))
                 {
@@ -147,6 +148,12 @@ namespace goFriend.MobileAppService.Controllers
                     Logger.Debug($"DeviceInfo updated: {result.DeviceInfo}");
                     isUpdated = true;
                 }
+                if (!string.IsNullOrEmpty(info) && result.Info != info)
+                {
+                    result.Info = info;
+                    Logger.Debug($"Info updated: {result.Info}");
+                    isUpdated = true;
+                }
 
                 if (result.ModifiedDate != null && result.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
                 {
@@ -177,6 +184,9 @@ namespace goFriend.MobileAppService.Controllers
                 }
 
                 _dataRepo.Commit();
+
+                _cacheService.Remove($".GetMyGroups.{result.Id}."); // refresh my groups
+
                 return result;
             }
             catch (Exception e)
@@ -195,10 +205,10 @@ namespace goFriend.MobileAppService.Controllers
         public IActionResult SaveBasicInfo([FromBody]Friend friend)
         {
             var stopWatch = Stopwatch.StartNew();
-            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.X})");
+            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.X}, Info={friend.Info})");
             try
             {
-                if (friend == null || !ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     Logger.Warn(Message.MsgInvalidState.Msg);
                     return BadRequest(Message.MsgInvalidState);
@@ -222,17 +232,36 @@ namespace goFriend.MobileAppService.Controllers
                 //result.Email = friend.Email;
                 //result.Birthday = friend.Birthday;
                 //result.Gender = friend.Gender;
-                result.Location = friend.Location;
-                result.Address = friend.Address;
-                result.CountryName = friend.CountryName;
-                result.ModifiedDate = DateTime.Now;
-                Logger.Debug($"SaveBasicInfo ok: {result}");
-                _dataRepo.Commit();
+                var isUpdated = false;
+                if (friend.Location != null)
+                {
+                    result.Location = friend.Location;
+                    result.Address = friend.Address;
+                    result.CountryName = friend.CountryName;
+                    isUpdated = true;
+                }
 
-                //remove Cache
-                _cacheService.Remove($".GetProfile.{friend.Id}.");
-                _cacheService.Remove($".GetFriend.{friend.Id}.");
-                //_cacheService.Remove($".GetGroupFriends.");
+                if (friend.Info != null && friend.Info != result.Info)
+                {
+                    result.Info = friend.Info;
+                    isUpdated = true;
+                }
+
+                if (isUpdated)
+                {
+                    result.ModifiedDate = DateTime.Now;
+                    Logger.Debug($"SaveBasicInfo ok: {result}");
+                    _dataRepo.Commit();
+
+                    //remove Cache
+                    _cacheService.Remove($".GetProfile.{friend.Id}.");
+                    _cacheService.Remove($".GetFriend.{friend.Id}.");
+                    //_cacheService.Remove($".GetGroupFriends.");
+                }
+                else
+                {
+                    Logger.Debug("Nothing changed.");
+                }
 
                 return Ok();
             }

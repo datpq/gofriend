@@ -15,8 +15,18 @@ namespace goFriend
 
         public void RefreshTabs()
         {
-            TabBrowse.IsEnabled = TabMap.IsEnabled = TabChat.IsEnabled = TabNotification.IsEnabled =
-                App.IsUserLoggedIn && App.User != null && App.User.Active && App.User.Location != null;
+            while (Tabs.Items.Count > 1)
+            {
+                Tabs.Items.RemoveAt(1);
+            }
+
+            if (App.IsUserLoggedIn && App.User != null && App.User.Active && App.User.Location != null)
+            {
+                Tabs.Items.Add(TabBrowse);
+                Tabs.Items.Add(TabMap);
+                //Tabs.Items.Add(TabChat);
+                Tabs.Items.Add(TabNotification);
+            }
         }
     }
 }
