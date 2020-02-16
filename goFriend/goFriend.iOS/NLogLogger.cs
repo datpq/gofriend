@@ -5,7 +5,7 @@ using Xamarin.Forms;
 [assembly: Dependency(typeof(NLogLogger))]
 namespace goFriend.iOS
 {
-    public class NLogLogger : Services.ILogger
+    public class NLogLogger : goFriend.Services.ILogger
     {
         private readonly Logger _log;
 

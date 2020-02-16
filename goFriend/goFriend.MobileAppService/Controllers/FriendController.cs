@@ -86,6 +86,8 @@ namespace goFriend.MobileAppService.Controllers
                             result = new Friend
                             {
                                 FacebookId = facebookId,
+                                ThirdPartyLogin = ThirdPartyLogin.Facebook,
+                                ThirdPartyUserId = facebookId,
                                 CreatedDate = DateTime.Now,
                                 ModifiedDate = DateTime.Now,
                                 Token = Guid.NewGuid(),
@@ -142,6 +144,7 @@ namespace goFriend.MobileAppService.Controllers
                     isUpdated = true;
                 }
                 result.FacebookToken = authToken;
+                result.ThirdPartyToken = authToken;
                 if (!string.IsNullOrEmpty(deviceInfo) && result.DeviceInfo != deviceInfo)
                 {
                     result.DeviceInfo = deviceInfo;
@@ -178,6 +181,140 @@ namespace goFriend.MobileAppService.Controllers
                         // ignored
                     }
                 }
+                if (isUpdated)
+                {
+                    result.ModifiedDate = DateTime.Now;
+                }
+
+                _dataRepo.Commit();
+
+                _cacheService.Remove($".GetMyGroups.{result.Id}."); // refresh my groups
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpPut]
+        [Route("LoginWithThirdParty")]
+        public ActionResult<Friend> LoginWithThirdParty([FromBody] Friend friend, [FromHeader] string deviceInfo)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Logger.Debug($"BEGIN({friend}, ThirdPartyLogin={friend.ThirdPartyLogin}, ThirdPartyUserId={friend.ThirdPartyUserId}, Info={friend.Info})");
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    Logger.Warn(Message.MsgInvalidState.Msg);
+                    return BadRequest(Message.MsgInvalidState);
+                }
+                if (friend.ThirdPartyUserId == null)
+                {
+                    Logger.Warn(Message.MsgThirdPartyIdNull.Msg);
+                    return BadRequest(Message.MsgThirdPartyIdNull);
+                }
+                var result = _dataRepo.Get<Friend>(x => x.ThirdPartyLogin == friend.ThirdPartyLogin && x.ThirdPartyUserId == friend.ThirdPartyUserId);
+                if (result == null) //register with ThirdParty
+                {
+                    lock (_dataRepo)
+                    {
+                        result = _dataRepo.Get<Friend>(x => x.ThirdPartyLogin == friend.ThirdPartyLogin && x.ThirdPartyUserId == friend.ThirdPartyUserId);
+                        if (result == null)
+                        {
+                            if (string.IsNullOrEmpty(friend.Name) || string.IsNullOrEmpty(friend.Email))
+                            {
+                                Logger.Warn(Message.MsgThirdPartyIdNull.Msg);
+                                return BadRequest(Message.MsgThirdPartyIdNull);
+                            }
+                            Logger.Debug("New thirdparty user registered.");
+                            result = new Friend
+                            {
+                                ThirdPartyLogin = friend.ThirdPartyLogin,
+                                ThirdPartyUserId = friend.ThirdPartyUserId,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                Token = Guid.NewGuid(),
+                                Active = true // new user is Active for now
+                            };
+                            _dataRepo.Add(result);
+                        }
+                        else
+                        {
+                            Logger.Warn("Duplicate request happened.");
+                        }
+                    }
+                }
+                else//already registered. Logged-in again
+                {
+                    Logger.Debug($"Already registered. Logged-in again.  {result.ToFullString()}");
+                }
+
+                var isUpdated = false;
+                if (!string.IsNullOrEmpty(friend.Name) && result.Name != friend.Name)
+                {
+                    result.Name = friend.Name;
+                    Logger.Debug($"Name updated: {result.Name}");
+                    isUpdated = true;
+                }
+                if (!string.IsNullOrEmpty(friend.FirstName) && result.FirstName != friend.FirstName)
+                {
+                    result.FirstName = friend.FirstName;
+                    Logger.Debug($"FirstName updated: {result.FirstName}");
+                    isUpdated = true;
+                }
+                if (!string.IsNullOrEmpty(friend.LastName) && result.LastName != friend.LastName)
+                {
+                    result.LastName = friend.LastName;
+                    Logger.Debug($"LastName updated: {result.LastName}");
+                    isUpdated = true;
+                }
+                if (!string.IsNullOrEmpty(friend.MiddleName) && result.MiddleName != friend.MiddleName)
+                {
+                    result.MiddleName = friend.MiddleName;
+                    Logger.Debug($"MiddleName updated: {result.MiddleName}");
+                    isUpdated = true;
+                }
+                if (!string.IsNullOrEmpty(friend.Email) && result.Email != friend.Email)
+                {
+                    result.Email = friend.Email;
+                    Logger.Debug($"Email updated: {result.Email}");
+                    isUpdated = true;
+                }
+                if (!string.IsNullOrEmpty(friend.Gender) && result.Gender != friend.Gender)
+                {
+                    result.Gender = friend.Gender;
+                    Logger.Debug($"Gender updated: {result.Gender}");
+                    isUpdated = true;
+                }
+                //result.ThirdPartyToken = thirdPartyToken;
+                if (!string.IsNullOrEmpty(deviceInfo) && result.DeviceInfo != deviceInfo)
+                {
+                    result.DeviceInfo = deviceInfo;
+                    Logger.Debug($"DeviceInfo updated: {result.DeviceInfo}");
+                    isUpdated = true;
+                }
+                if (!string.IsNullOrEmpty(friend.Info) && result.Info != friend.Info)
+                {
+                    result.Info = friend.Info;
+                    Logger.Debug($"Info updated: {result.Info}");
+                    isUpdated = true;
+                }
+
+                if (result.ModifiedDate != null && result.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
+                {
+                    result.Token = Guid.NewGuid();
+                    Logger.Debug($"Token expired. new Token = {result.Token}");
+                    isUpdated = true;
+                }
+
                 if (isUpdated)
                 {
                     result.ModifiedDate = DateTime.Now;

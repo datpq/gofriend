@@ -345,4 +345,10 @@
   <data name="Chat" xml:space="preserve">
     <value>Chat</value>
   </data>
+  <data name="MsgAppleSignInNoName" xml:space="preserve">
+    <value>Can not retrieve Name when sign in with Apple.</value>
+  </data>
+  <data name="MsgAppleSignInServer" xml:space="preserve">
+    <value>Something went wrong in server side when registering user with Apple Sign In.</value>
+  </data>
 </root>

@@ -6,6 +6,7 @@
         MissingToken,
         InvalidState,
         FacebookIdNull,
+        ThirdPartyIdNull,
         IdAndEmailNull,
         UserNotFound,
         GroupNotFound,
@@ -20,6 +21,7 @@
         public static readonly Message MsgMissingToken = new Message { Code = MessageCode.MissingToken, Msg = "Missing Token" };
         public static readonly Message MsgInvalidState = new Message { Code = MessageCode.InvalidState, Msg = "Invalid State" };
         public static readonly Message MsgFacebookIdNull = new Message { Code = MessageCode.FacebookIdNull, Msg = "FacebookId is null" };
+        public static readonly Message MsgThirdPartyIdNull = new Message { Code = MessageCode.ThirdPartyIdNull, Msg = "ThirdPartyId is null" };
         public static readonly Message MsgIdAndEmailNull = new Message { Code = MessageCode.IdAndEmailNull, Msg = "Id and Email are null" };
         public static readonly Message MsgUnknown = new Message { Code = MessageCode.Unknown, Msg = "Unknown error" };
         public static readonly Message MsgUserNotFound = new Message { Code = MessageCode.UserNotFound, Msg = "User not found." };

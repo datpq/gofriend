@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
-using Acr.UserDialogs;
 using goFriend.DataModel;
 using Plugin.Connectivity;
 using Xamarin.Forms;
@@ -42,6 +41,47 @@ namespace goFriend.Services
 
         //private static bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
 
+        public async Task<Friend> LoginWithThirdParty(Friend friend, string deviceInfo) //string thirdPartyToken, 
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Friend result = null;
+            try
+            {
+                Logger.Debug($"LoginWithThirdParty.BEGIN(friend={friend}, deviceInfo={deviceInfo})");//thirdPartyToken={thirdPartyToken}, 
+
+                Validate();
+
+                //if (thirdPartyToken == null) return null;
+
+                var client = GetHttpClient();
+                //client.DefaultRequestHeaders.Add("thirdPartyToken", thirdPartyToken);
+                client.DefaultRequestHeaders.Add("deviceInfo", deviceInfo);
+
+                var serializedObject = JsonConvert.SerializeObject(friend);
+                var response = await client.PutAsync($"api/Friend/LoginWithThirdParty", new StringContent(serializedObject, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadAsAsync<Friend>();
+                }
+                else
+                {
+                    var msg = await response.Content.ReadAsAsync<Message>();
+                    Logger.Error($"Error: {msg}");
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"LoginWithThirdParty.END({result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         public async Task<Friend> LoginWithFacebook(string authToken, string deviceInfo)
         {
             var stopWatch = Stopwatch.StartNew();
@@ -50,7 +90,6 @@ namespace goFriend.Services
             {
                 var info = Extension.GetVersionTrackingInfo();
                 Logger.Debug($"LoginWithFacebook.BEGIN(authToken={authToken}, deviceInfo={deviceInfo}, info={info})");
-                UserDialogs.Instance.ShowLoading(res.Processing);
 
                 Validate();
 
@@ -81,7 +120,6 @@ namespace goFriend.Services
             }
             finally
             {
-                UserDialogs.Instance.HideLoading();
                 Logger.Debug($"LoginWithFacebook.END({result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }

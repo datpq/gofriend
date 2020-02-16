@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="goFriend.Views.AboutPage"
              xmlns:vm="clr-namespace:goFriend.ViewModels"
-             Title="{Binding Title}">
+             xmlns:local="clr-namespace:goFriend"
+             Title="{Static local:res.About}">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">

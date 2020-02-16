@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
@@ -26,7 +27,7 @@ namespace goFriend.Views
             InitializeComponent();
         }
 
-        public async void Initialize(AccountPage accountPage, Friend friend)
+        public async Task Initialize(AccountPage accountPage, Friend friend)
         {
             _accountPage = accountPage;
             BindingContext = _viewModel = new AccountBasicInfosViewModel
@@ -60,7 +61,7 @@ namespace goFriend.Views
                 new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
         }
 
-        public async void Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
+        public async Task Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
         {
             UserDialogs.Instance.ShowLoading(res.Processing);
             var otherFriend = await App.FriendStore.GetFriend(group.Id, groupFriend.FriendId);
@@ -76,6 +77,7 @@ namespace goFriend.Views
             };
 
             //Load connection info section
+            GroupConnectionSection.Children.Clear();
             GroupConnectionSection.Children.Add(new BoxView
             {
                 HorizontalOptions = LayoutOptions.Fill,

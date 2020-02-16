@@ -345,4 +345,10 @@
   <data name="Chat" xml:space="preserve">
     <value>Trò chuyện</value>
   </data>
+  <data name="MsgAppleSignInNoName" xml:space="preserve">
+    <value>Không lấy được dữ liệu cá nhận khi đăng nhập với tài khoản Apple</value>
+  </data>
+  <data name="MsgAppleSignInServer" xml:space="preserve">
+    <value>Lỗi đăng ký khi dùng tài khoản Apple</value>
+  </data>
 </root>

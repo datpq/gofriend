@@ -20,6 +20,11 @@ drop table Notification;
 ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null;
 ALTER TABLE Friends ADD Address NVARCHAR(100) NULL, CountryName VARCHAR(30) NULL;
 ALTER TABLE Friends ADD Info VARCHAR(255) NULL;
+ALTER TABLE Friends ADD ThirdPartyLogin VARCHAR(10) NULL, ThirdPartyToken VARCHAR(255) NULL, ThirdPartyUserId VARCHAR(50) NULL;
+UPDATE Friends SET ThirdPartyLogin = 'Facebook' WHERE FacebookToken IS NOT NULL;
+ALTER TABLE Friends ALTER COLUMN FacebookId VARCHAR(20) NULL
+Delete Friends where Name = 'Clemence Pham';
+Delete Friends where Name = 'Quoc Dat PHAM';
 
 --Approve subscription
 UPDATE GroupFriends SET Active = 1, UserRight = 3 WHERE Id = 19;

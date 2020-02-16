@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -11,7 +10,7 @@ namespace goFriend.ViewModels
         {
             Title = AppInfo.Name;
 
-            OpenWebCommand = new Command(() => Device.OpenUri(new Uri("https://xamarin.com/platform")));
+            OpenWebCommand = new Command(() => Launcher.OpenAsync("https://xamarin.com/platform"));
         }
 
         public ICommand OpenWebCommand { get; }

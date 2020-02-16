@@ -6,6 +6,7 @@ namespace goFriend.Services
 {
     public interface IFriendStore
     {
+        Task<Friend> LoginWithThirdParty(Friend friend, string deviceInfo);
         Task<Friend> LoginWithFacebook(string authToken, string deviceInfo);
         Task<bool> SaveBasicInfo(Friend friend);
         Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useCache = true);

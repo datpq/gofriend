@@ -33,7 +33,7 @@ namespace goFriend.iOS
             LogManager.Configuration = config;
         }
 
-        public Services.ILogger GetLog([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "")
+        public goFriend.Services.ILogger GetLog([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "")
         {
             string fileName = callerFilePath;
 

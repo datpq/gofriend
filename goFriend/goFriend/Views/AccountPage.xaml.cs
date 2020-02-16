@@ -29,19 +29,17 @@ namespace goFriend.Views
 
             BindingContext = _viewModel = new AccountViewModel();
 
-            CellBasicInfo.Tapped += (s, e) =>
+            CellBasicInfo.Tapped += async (s, e) =>
             {
                 var page = new AccountBasicInfosPage();
-                page.Initialize(this, App.User);
-                Navigation.PushAsync(page);
+                await page.Initialize(this, App.User);
+                await Navigation.PushAsync(page);
             };
             CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
             CellAdmin.Tapped += (s, e) => { Navigation.PushAsync(new AdminPage()); };
             CellLogin.Tapped += (s, e) =>
             {
-                Navigation.PushAsync(LoginPage.GetInstance(this));
-                //await LoginPage.GetInstance().Wait();
-                //RefreshMenu();
+                Navigation.PushAsync(new LoginPage());
             };
             CellLogout.Tapped += async (s, e) =>
             {
@@ -49,7 +47,7 @@ namespace goFriend.Views
                 Logout();
             };
             CellAbout.Tapped += (s, e) => { Navigation.PushAsync(new AboutPage()); };
-            MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
+            //MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
         }
 
         private void Logout()
@@ -59,18 +57,19 @@ namespace goFriend.Views
             App.IsUserLoggedIn = false;
             App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
-            RefreshMenu();
+            App.Current.MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name})
+                { BarBackgroundColor = (Color)Resources["ColorPrimary"], BarTextColor = (Color)Resources["ColorTitle"] };
             Logger.Debug("Logout.END");
         }
 
         public async void RefreshMenu()
         {
-            try
+            TsShells.Clear();
+            if (App.IsUserLoggedIn && App.User != null)
             {
-                UserDialogs.Instance.ShowLoading(res.Processing);
-                TsShells.Clear();
-                if (App.IsUserLoggedIn && App.User != null)
+                try
                 {
+                    UserDialogs.Instance.ShowLoading(res.Processing);
                     TsShells.Add(CellAvatar);
                     if (App.User.Active)
                     {
@@ -118,7 +117,7 @@ namespace goFriend.Views
                         {
                             App.DisplayMsgInfo(res.MsgNoLocationWarning);
                             var page = new AccountBasicInfosPage();
-                            page.Initialize(this, App.User);
+                            await page.Initialize(this, App.User);
                             await Navigation.PushAsync(page);
                         }
                     }
@@ -126,23 +125,22 @@ namespace goFriend.Views
                     {
                         App.DisplayMsgInfo(res.MsgInactiveUserWarning);
                     }
+                    //Logger.Debug($"Location={App.User?.Location}");
+                    //(Shell.Current as AppShell)?.RefreshTabs();
                 }
-                else
+                catch (Exception)
                 {
-                    TsShells.Add(CellLogin);
-                    TsShells.Add(CellAbout);
+                    // ignored
                 }
-
-                Logger.Debug($"Location={App.User?.Location}");
-                (App.Current.MainPage as AppShell).RefreshTabs();
+                finally
+                {
+                    UserDialogs.Instance.HideLoading();
+                }
             }
-            catch (Exception)
+            else
             {
-                // ignored
-            }
-            finally
-            {
-                UserDialogs.Instance.HideLoading();
+                TsShells.Add(CellLogin);
+                TsShells.Add(CellAbout);
             }
         }
     }

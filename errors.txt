@@ -87,6 +87,16 @@
 		- Update Xamarin.Forms to pre2 release
 	- Updating Nuget caused Exception Unhandled: System.TypeLoadException
 		Downgrade xamarin.forms and xamarin.forms.maps to v4.1.0.778454
+	- Splash screen take ever (LoadingApplication take ever)
+		- Remove all breakpoints in App.xaml.cs
+	- Resolved pending breakpoint at (Breakpoints not being hit Xamarin PCL project, only in iOS specific code)
+		- setting the iOS Build Property "Linker Behavior" to "Don't Link".
+	- Sign In With Apple crash when click button
+		- select Entitlements.plist in project file. and make sure SignInWithApple is selected in Entitlements.plist
+			<CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+	- Sign In With Apple --> Get Email, Name work only for the first time. If you want to get them again
+		- go to https://appleid.apple.com/account/manage -> Security --> Apps & Websites using Apple ID --> Manage
+	- Navigation.PushAsync is not working --> ShellContent must be static
 - deployment Android:
 	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
 	Client Secret: 4EuVjRHN_15K1DxydclcGcBo

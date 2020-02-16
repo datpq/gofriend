@@ -53,12 +53,12 @@ namespace goFriend.Views
                 var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
 
                 UserDialogs.Instance.HideLoading();
-                DphListView.Initialize(selectedItem =>
+                DphListView.Initialize(async(selectedItem) =>
                     {
                         var selectedGroupFriend = (GroupFriend) selectedItem.SelectedObject;
                         var accountBasicInfoPage = new AccountBasicInfosPage();
-                        accountBasicInfoPage.Initialize(selectedGroup.Group, selectedGroupFriend, arrFixedCats.Count);
-                        Navigation.PushAsync(accountBasicInfoPage);
+                        await accountBasicInfoPage.Initialize(selectedGroup.Group, selectedGroupFriend, arrFixedCats.Count);
+                        await Navigation.PushAsync(accountBasicInfoPage);
                     },
                     async selectedItem =>
                     {

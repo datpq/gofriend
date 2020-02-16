@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:goFriend"
              xmlns:vm="clr-namespace:goFriend.ViewModels"
              xmlns:ctl="clr-namespace:goFriend.Controls"
-             NavigationPage.HasNavigationBar="false"
+             Title="{Static local:res.Login}"
              x:Class="goFriend.Views.LoginPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -36,6 +36,14 @@
         </StackLayout>
         <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
             <ctl:FacebookLoginButton x:Name="BtnFacebook" Margin="0,0,0,10"/>
+            <ctl:AppleSignInButton SignIn="AppleSignInButton_OnSignIn"  ButtonStyle="Black" x:Name="BtnSignInApple">
+                <ctl:AppleSignInButton.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean">
+                        <On Platform="Android, WinPhone">false</On>
+                        <On Platform="iOS">true</On>
+                    </OnPlatform>
+                </ctl:AppleSignInButton.IsVisible>
+            </ctl:AppleSignInButton>
             <!--<StackLayout Orientation="Horizontal" Margin="0,10,0,5">
                 <Button CornerRadius="{StaticResource BtnCornerRadius}"
                     HeightRequest="50" HorizontalOptions="StartAndExpand" WidthRequest="140"

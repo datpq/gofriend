@@ -394,6 +394,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can not retrieve Name when sign in with Apple..
+        /// </summary>
+        public static string MsgAppleSignInNoName {
+            get {
+                return ResourceManager.GetString("MsgAppleSignInNoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong in server side when registering user with Apple Sign In..
+        /// </summary>
+        public static string MsgAppleSignInServer {
+            get {
+                return ResourceManager.GetString("MsgAppleSignInServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to cancel the current changes and return to the initial state?.
         /// </summary>
         public static string MsgCancelConfirmation {

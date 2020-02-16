@@ -5,6 +5,7 @@ using goFriend.Services;
 using System.Globalization;
 using System.Threading.Tasks;
 using goFriend.DataModel;
+using goFriend.Views;
 using Xamarin.Essentials;
 
 namespace goFriend
@@ -58,7 +59,15 @@ namespace goFriend
 
             Initialize();
 
-            MainPage = new AppShell();
+            if (IsUserLoggedIn && User != null)
+            {
+                MainPage = new AppShell();
+            }
+            else
+            {
+                MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name })
+                    { BarBackgroundColor = (Color)Resources["ColorPrimary"], BarTextColor = (Color)Resources["ColorTitle"] };
+            }
         }
 
         protected override void OnStart()

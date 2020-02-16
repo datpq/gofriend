@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace goFriend.Controls
@@ -20,7 +20,7 @@ namespace goFriend.Controls
             TextColor = Color.Blue;
             GestureRecognizers.Add(new TapGestureRecognizer
             {
-                Command = new Command(() => Device.OpenUri(new Uri(Url)))
+                Command = new Command(() => Launcher.OpenAsync(Url))
             });
         }
     }

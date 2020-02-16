@@ -1,4 +1,10 @@
-﻿using goFriend.Services;
+﻿using System;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
+using goFriend.Services;
+using Plugin.DeviceInfo;
+using goFriend.AppleSignIn;
+using goFriend.DataModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
@@ -8,20 +14,9 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginPage : ContentPage
     {
-        private static LoginPage _instance;
-
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        public static LoginPage GetInstance(AccountPage accountPage)
-        {
-            if (_instance == null)
-            {
-                _instance = new LoginPage(accountPage);
-            }
-            return _instance;
-        }
-
-        private LoginPage(AccountPage accountPage)
+        public LoginPage()
         {
             Title = res.Login;
             InitializeComponent();
@@ -34,24 +29,78 @@ namespace goFriend.Views
                 Settings.IsUserLoggedIn = App.IsUserLoggedIn;
                 await Navigation.PopAsync();
                 var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
+                UserDialogs.Instance.ShowLoading(res.Processing);
                 App.User = await App.FriendStore.LoginWithFacebook(authToken, deviceInfo);
+                UserDialogs.Instance.HideLoading();
                 Settings.LastUser = App.User;
-
                 App.Initialize(); //redo the initialization background task
-
-                accountPage.RefreshMenu();
+                App.Current.MainPage = new AppShell();
             });
             BtnFacebook.OnError = new Command<string>(err => App.DisplayMsgError($"Authentication failed: { err }"));
             BtnFacebook.OnCancel = new Command(() =>
             {
                 Logger.Debug("Authentication cancelled by the user");
             });
-
+            if (Device.RuntimePlatform == Device.iOS)
+            {
+                BtnSignInApple.IsVisible = CrossDeviceInfo.Current.VersionNumber.Major >= 13;
+            }
         }
 
-        //private void CmdLogin_Click(object sender, EventArgs e)
-        //{
-        //    PopupNavigation.Instance.PushAsync(new LoginManual());
-        //}
+        private async void AppleSignInButton_OnSignIn(object sender, EventArgs e)
+        {
+            var appleSignIn = DependencyService.Get<IAppleSignInService>();
+            Task<AppleAccount> theTask = appleSignIn.SignInAsync();
+            try
+            {
+                var account = await theTask;
+                var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
+                var friend = new Friend
+                {
+                    Name = account.Name,
+                    FirstName = account.FirstName,
+                    MiddleName = account.MiddleName,
+                    LastName = account.LastName,
+                    Email = account.Email,
+                    ThirdPartyUserId = account.UserId,
+                    ThirdPartyToken = account.AccessToken,
+                    ThirdPartyLogin = ThirdPartyLogin.Apple,
+                    Info = Extension.GetVersionTrackingInfo()
+                };
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                App.User = await App.FriendStore.LoginWithThirdParty(friend, deviceInfo);
+                UserDialogs.Instance.HideLoading();
+                if (App.User != null)
+                {
+                    Logger.Debug("Apple logged-in with success");
+                    App.IsUserLoggedIn = true;
+                    Settings.IsUserLoggedIn = App.IsUserLoggedIn;
+                    await Navigation.PopAsync();
+                    Settings.LastUser = App.User;
+                    App.Initialize(); //redo the initialization background task
+                    App.Current.MainPage = new AppShell();
+                }
+                else
+                {
+                    if (account.Name == string.Empty)
+                    {
+                        App.DisplayMsgError(res.MsgAppleSignInNoName);
+                    }
+                    else
+                    {
+                        App.DisplayMsgError(res.MsgAppleSignInServer);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex.ToString());
+            }
+            Logger.Debug($"Task IsCanceled: {theTask.IsCanceled}, Task IsFaulted: {theTask.IsFaulted}");
+            if (theTask.Exception != null)
+            {
+                Logger.Warn($"Exception Message: {theTask.Exception.Message}, Inner Exception Message: {theTask.Exception.InnerException?.Message}");
+            }
+        }
     }
 }

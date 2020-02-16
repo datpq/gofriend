@@ -63,8 +63,18 @@ namespace goFriend.DataModel
         public byte[] Image { get; set; }
 
         [JsonIgnore]
-        [Column(TypeName = "VARCHAR(255)")]
+        [Column(TypeName = "VARCHAR(400)")]
         public string FacebookToken { get; set; }
+
+        [Column(TypeName = "VARCHAR(10)")]
+        public ThirdPartyLogin ThirdPartyLogin { get; set; }
+
+        [Column(TypeName = "VARCHAR(400)")]
+        [JsonIgnore]
+        public string ThirdPartyToken { get; set; }
+
+        [Column(TypeName = "VARCHAR(50)")]
+        public string ThirdPartyUserId { get; set; }
 
         public Guid Token { get; set; }
 
@@ -150,6 +160,12 @@ namespace goFriend.DataModel
                 friend.ModifiedDate = DateTime.Now;
             }
         }
+    }
+
+    public enum ThirdPartyLogin
+    {
+        Facebook,
+        Apple
     }
 
     public class GeoPointConverter : JsonConverter<Point>

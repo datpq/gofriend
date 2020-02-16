@@ -30,6 +30,10 @@ namespace goFriend
                 result = $"https://graph.facebook.com/{friend.FacebookId}/picture?type={imageType}";
                 Logger.Debug($"URL = {result}");
             }
+            else if (friend.ThirdPartyLogin == ThirdPartyLogin.Apple)
+            {
+                result = GetImageUrl("apple.jpg");
+            }
             else
             {
                 result = friend.Gender == "female" ? "default_female.jpg" : "default_male.jpg";

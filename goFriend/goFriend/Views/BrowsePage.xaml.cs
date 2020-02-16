@@ -16,12 +16,12 @@ namespace goFriend.Views
 
             DphFriendSelection.Initialize((selectedGroup, arrFixedCats, arrCatValues) =>
             {
-                DphListView.Initialize(selectedItem =>
+                DphListView.Initialize(async(selectedItem) =>
                 {
                     var selectedGroupFriend = (GroupFriend)selectedItem.SelectedObject;
                     var accountBasicInfoPage = new AccountBasicInfosPage();
-                    accountBasicInfoPage.Initialize(selectedGroup.Group, selectedGroupFriend, arrFixedCats.Count);
-                    Navigation.PushAsync(accountBasicInfoPage);
+                    await accountBasicInfoPage.Initialize(selectedGroup.Group, selectedGroupFriend, arrFixedCats.Count);
+                    await Navigation.PushAsync(accountBasicInfoPage);
                 });
                 DphListView.LoadItems(async () =>
                 {

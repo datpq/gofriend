@@ -11,6 +11,7 @@
     <Compile Remove="Models\User.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Images\apple.jpg" />
     <None Remove="Images\default_female.jpg" />
     <None Remove="Images\default_male.jpg" />
     <None Remove="Images\notif_NewSubscriptionRequest.png" />
@@ -19,6 +20,7 @@
     <None Remove="Images\notif_UpdateSubscriptionRequest.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Images\apple.jpg" />
     <EmbeddedResource Include="Images\default_female.jpg" />
     <EmbeddedResource Include="Images\default_male.jpg" />
     <EmbeddedResource Include="Images\notif_NewSubscriptionRequest.png" />
@@ -32,17 +34,19 @@
     <PackageReference Include="Rg.Plugins.Popup" Version="1.2.0.223">
     </PackageReference>
     <PackageReference Include="Xam.Plugin.Connectivity" Version="4.0.0.190-beta" />
+    <PackageReference Include="Xam.Plugin.DeviceInfo" Version="4.1.1" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.8.0" />
     <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
-    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991537" />  
+    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991640" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Xamarin.Forms.Maps" Version="4.4.0.991537" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="4.4.0.991640" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\goFriend.AppleSignIn\goFriend.AppleSignIn.csproj" />
     <ProjectReference Include="..\goFriend.DataModel\goFriend.DataModel.csproj" />
   </ItemGroup>
   <ItemGroup>

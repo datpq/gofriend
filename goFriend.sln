@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend", "goFriend\goFrie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend.DataModel", "goFriend\goFriend.DataModel\goFriend.DataModel.csproj", "{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend.AppleSignIn", "goFriend\goFriend.AppleSignIn\goFriend.AppleSignIn.csproj", "{E9F8142C-E26F-4EA6-842D-580E2D15E656}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,18 @@ Global
 		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhone.Build.0 = Release|Any CPU
 		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{FE5AD4E4-0AB3-4F1E-871F-5263F46C1612}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Release|iPhone.Build.0 = Release|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{E9F8142C-E26F-4EA6-842D-580E2D15E656}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

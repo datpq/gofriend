@@ -1,5 +1,6 @@
 ﻿using Rg.Plugins.Popup.Services;
 using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -20,9 +21,7 @@ namespace goFriend.Views
             var lblForgottenPasswordTap = new TapGestureRecognizer();
             lblForgottenPasswordTap.Tapped += (s, e) =>
             {
-                var uri = new Uri("http://google.com");
-                //Browser.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
-                Device.OpenUri(uri);
+                Launcher.OpenAsync("http://google.com");
             };
             LblForgottenPassword.GestureRecognizers.Add(lblForgottenPasswordTap);
         }
