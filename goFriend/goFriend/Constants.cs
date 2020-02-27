@@ -6,6 +6,7 @@
         public const string MsgProfileExt = "MsgProfileExt";
         public const string MsgLocationChanged = "MsgLocationChanged";
         public const string MsgLogout = "MsgLogout";
-        public const int SearchCommandDelayTime = 1000; // in millisecond
+        public const int SearchCommandDelayTime = 1000; // in milliseconds
+        public const int GeolocationRequestTimeout = 5; // in seconds
     }
 }

@@ -8,6 +8,7 @@ namespace goFriend.MobileAppService.Data
     {
         IEnumerable<T> GetAll<T>(bool useCache = false) where T : class;
         T Get<T>(Expression<Func<T, bool>> where, bool useCache = false) where T : class;
+        T Get<T, TKey>(Expression<Func<T, bool>> where, Expression<Func<T, TKey>> orderBy, bool useCache = false) where T : class where TKey: IComparable;
         IEnumerable<T> GetMany<T>(Expression<Func<T, bool>> where, bool useCache = false) where T : class;
         void Add<T>(T entity) where T : class;
         void Delete<T>(T entity) where T : class;

@@ -39,6 +39,7 @@ namespace goFriend.MobileAppService.Data
             modelBuilder.Entity<Notification>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Notification>().Property(x => x.Type)
                 .HasConversion(new EnumToNumberConverter<NotificationType, int>());
+            modelBuilder.Entity<Setting>().ToTable("Settings");
         }
 
         public DbSet<Friend> Friends { get; set; }
@@ -47,6 +48,7 @@ namespace goFriend.MobileAppService.Data
         public DbSet<GroupFixedCatValues> GroupFixedCatValues { get; set; }
         public DbSet<CacheConfiguration> CacheConfigurations { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Setting> Settings { get; set; }
         //public DbSet<NotifNewSubscriptionRequest> NotifNewSubscriptionRequests { get; set; }
         //public DbSet<NotifSubscriptionApproved> NotifSubscriptionApproveds { get; set; }
     }

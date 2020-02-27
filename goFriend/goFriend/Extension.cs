@@ -120,6 +120,13 @@ namespace goFriend
             return result;
         }
 
+        public static async Task<bool> CheckIfLocationIsGranted()
+        {
+            var request = new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(Constants.GeolocationRequestTimeout));
+            var location = await Geolocation.GetLocationAsync(request);
+            return location != null;
+        }
+
         public static async Task<Position> GetPosition(this NetTopologySuite.Geometries.Point point, bool useGpsAsDefault = true)
         {
             if (point != null)
@@ -131,7 +138,7 @@ namespace goFriend
             {
                 try
                 {
-                    var request = new GeolocationRequest(GeolocationAccuracy.High);
+                    var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(Constants.GeolocationRequestTimeout));
                     var location = await Geolocation.GetLocationAsync(request);
 
                     if (location != null)

@@ -78,6 +78,8 @@ namespace goFriend.DataModel
 
         public Guid Token { get; set; }
 
+        public bool? ShowLocation { get; set; }
+
         [JsonIgnore]
         public ICollection<GroupFriend> GroupFriends { get; set; }
 

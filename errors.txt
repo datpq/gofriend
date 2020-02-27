@@ -34,6 +34,7 @@
 	- Enable USB debugging option in Settings > Developer options 
 - Android ABI mismatch. You are deploying an app supporting 'armeabi-v7a;arm64-v8a' ABIs to an incompatible device of ABI 'x86'. You should either create an emulator matching one of your app's ABIs or add 'x86' to the list of ABIs your app builds for.		 	0	
 	- https://georgik.rocks/xamarin-visual-studio-error-adb0020-android-abi-mismatch/
+		Select Android Options, scroll down. In right bottom corner click Advanced button. --> select desired architecture, e.g. x86, x86_x64.
 - More than one device connected, please provide
 	- unplug USB to Samsung
 - Nlog
@@ -97,12 +98,24 @@
 	- Sign In With Apple --> Get Email, Name work only for the first time. If you want to get them again
 		- go to https://appleid.apple.com/account/manage -> Security --> Apps & Websites using Apple ID --> Manage
 	- Navigation.PushAsync is not working --> ShellContent must be static
+	- The assembly 'Xamarin.iOS.dll' can't be AOT-compiled for 32-bit architectures because the native code is too big for the 32-bit ARM architecture.	goFriend.iOS			
+		- Supported Architectures --> ARM64
+
 - deployment Android:
 	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
 	Client Secret: 4EuVjRHN_15K1DxydclcGcBo
 	
+	Signing Process :
+	keytool -list -v -keystore "C:\Users\dat\AppData\Local\Xamarin\Mono for Android\Keystore\goFriend9194\goFriend9194.keystore" -alias gofriend9194 -storepass goFriend9194 -keypass goFriend9194	
+	SHA1: 45:01:82:C7:DA:98:A4:77:B9:65:31:53:D7:D6:94:27:79:39:1D:03 --> to be uploaded on Google --> called Upload certificate
+	SHA1: 51:FD:C0:E8:51:0E:4D:AC:31:0F:A9:D4:DE:A5:E0:7B:50:50:F1:2C --> Google use this key called App signing certificate to sign app.
+	So for the Google Map key we need upload the SHA1 of "App signing certificate" (2nd one) to restrict Android apps that use Google Map Key
+	
 	keytool -list -v -keystore "C:\Users\dat\AppData\Local\Xamarin\Mono for Android\Keystore\GoFriend9194\GoFriend9194.keystore" -alias gofriend9194
 	password for certificate: goFriend9194
+	
+	Debug: SHA-1 Certificate fingerprint
+	"C:\Program Files\Android\jdk\microsoft_dist_openjdk_1.8.0.25\bin\keytool.exe" -v -list -alias androiddebugkey -storepass android -keypass android -keystore "C:\Users\dat\AppData\Local\Xamarin\Mono for Android\debug.keystore"
 	
 	aab -> apks
 	java -jar bundletool-all-0.12.0.jar build-apks
@@ -115,6 +128,8 @@
 	release: 45:01:82:C7:DA:98:A4:77:B9:65:31:53:D7:D6:94:27:79:39:1D:03
 - Can't login Facebook with Android 9
 	- replace deprecated functions like (
+- Mono.AndroidTools.RequiresUninstallException: The installed package is incompatible. Please manually uninstall and try again.
+	- Install from Store and Uninstall it
 - Binary XML file line #1: Error inflating class
 	- Problem with Android 7. Reduce target Framework to 9
 

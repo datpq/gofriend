@@ -85,11 +85,31 @@ namespace goFriend.iOS.Renderers
                     //.WithPriority(LoadingPriority.High)
                     //.WithCache(FFImageLoading.Cache.CacheType.All)
                     .Into(leftOutView);
+                var detailCallOutView = new UIStackView
+                {
+                    Axis = UILayoutConstraintAxis.Vertical,
+                    Distribution = UIStackViewDistribution.FillEqually,
+                    Alignment = UIStackViewAlignment.Fill
+                };
+                var lblSubTitle1 = new UILabel {
+                    Text = pin.SubTitle1,
+                    Font = UIFont.PreferredCaption1,
+                    TextColor = UIColor.Gray
+                };
+                var lblSubTitle2 = new UILabel
+                {
+                    Text = pin.SubTitle2,
+                    Font = UIFont.PreferredCaption1,
+                    TextColor = UIColor.Gray
+                };
+                detailCallOutView.AddArrangedSubview(lblSubTitle1);
+                detailCallOutView.AddArrangedSubview(lblSubTitle2);
                 annotationView = new CustomAnnotationView(annotation, pin.Label)
                 {
                     Image = UIImage.FromFile("pin.png"),
                     Draggable = pin.Draggable,
                     CalloutOffset = new CGPoint(0, 0),
+                    DetailCalloutAccessoryView = detailCallOutView,
                     LeftCalloutAccessoryView = leftOutView //new UIImageView(FromUrl(pin.IconUrl))
                 };
                 //annotationView.RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);

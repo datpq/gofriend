@@ -54,30 +54,46 @@
                     <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                    <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1"
+                    <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1" IsVisible="False"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                    <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="3" Grid.Column="2"
+                    <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="3" Grid.Column="2" IsVisible="False"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    <Label x:Name="LabelShowLocation" Text="{Static local:res.ShowYourLocation}" Grid.Row="3" Grid.Column="1"
+                           TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    <Switch x:Name="SwitchShowLocation"  Grid.Row="3" Grid.Column="2" IsToggled="{Binding ShowLocation}" IsEnabled="{Binding Editable}"
+                            ThumbColor="{StaticResource ColorPrimary}" Toggled="SwitchShowLocation_OnToggled" />
                 </Grid>
             </StackLayout>
             <StackLayout x:Name="GroupConnectionSection" IsVisible="False" />
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20"
+                   VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
+                   TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
             <controls:DphMap x:Name="Map" IsShowingUser="False" MoveToLastRegionOnLayoutChange="False" />
-            <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" IsVisible="{Binding PositionDraggable}" HorizontalOptions="Center">
+            <!--IsVisible="{Binding Source={x:Reference SwitchShowLocation}, Path=IsToggled}"-->
+            <!--<controls:DphMap.Triggers>
+                <DataTrigger TargetType="controls:DphMap" Binding="{Binding Source={x:Reference SwitchShowLocation}, Path=IsToggled}" Value="true">
+                    <Setter Property="IsVisible" Value="true" />
+                </DataTrigger>
+                <DataTrigger TargetType="controls:DphMap" Binding="{Binding Source={x:Reference SwitchShowLocation}, Path=IsToggled}" Value="false">
+                    <Setter Property="IsVisible" Value="false" />
+                </DataTrigger>
+            </controls:DphMap.Triggers>-->
+            <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
                 <Button x:Name="CmdSetGps"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" HeightRequest="35"
+                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdSetGPSPos}"
                         Clicked="CmdSetGps_Click"/>
                 <Button x:Name="CmdReset"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" HeightRequest="35"
+                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdReset}"
                         Clicked="CmdReset_Click"/>
                 <Button x:Name="CmdSave"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" HeightRequest="35"
+                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdSave}"
                         Clicked="CmdSave_Click" />
             </StackLayout>

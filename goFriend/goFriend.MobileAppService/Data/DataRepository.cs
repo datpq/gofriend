@@ -67,6 +67,14 @@ namespace goFriend.MobileAppService.Data
             return useCache ? GetAll<T>(true).AsQueryable().Where(@where).FirstOrDefault() : _dbContext.Set<T>().Where(@where).FirstOrDefault();
         }
 
+        public T Get<T, TKey>(Expression<Func<T, bool>> where, Expression<Func<T, TKey>> orderBy, bool useCache = false)
+            where T : class where TKey : IComparable
+        {
+            return useCache
+                ? GetAll<T>(true).AsQueryable().Where(@where).OrderBy(orderBy).FirstOrDefault()
+                : _dbContext.Set<T>().Where(@where).OrderBy(orderBy).FirstOrDefault();
+        }
+
         public void Add<T>(T entity) where T : class
         {
             _dbContext.Set<T>().Add(entity);

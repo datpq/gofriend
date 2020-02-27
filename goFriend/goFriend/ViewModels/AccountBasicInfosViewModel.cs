@@ -11,7 +11,7 @@ namespace goFriend.ViewModels
         public int FixedCatsCount { get; set; }
 
         public Friend Friend { get; set; }
-        public bool PositionDraggable { get; set; }
+        public bool Editable { get; set; }
 
         public string Name => Friend?.Name;
         public string Email => Friend?.Email;
@@ -21,5 +21,7 @@ namespace goFriend.ViewModels
         public DateTime? Birthday => Friend?.Birthday;
         public string ImageUrl => Friend?.GetImageUrl();
         public string GenderByLanguage => Friend?.Gender == "male" ? res.Male : Friend?.Gender == "female" ? res.Female : string.Empty;
+        public bool ShowLocation => App.User.Id == Friend.Id ? Friend.ShowLocation == true :
+            App.User.Location != null && App.User.ShowLocation == true && Friend.Location != null && Friend.ShowLocation == true;
     }
 }

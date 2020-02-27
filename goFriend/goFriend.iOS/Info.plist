@@ -26,8 +26,6 @@
 	<string>GoFriend Hanoi9194</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.dph.GoFriend9194</string>
-	<key>CFBundleVersion</key>
-	<string>6</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
@@ -78,6 +76,8 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Vị trí của bạn được dùng để tham khảo khi bạn thiết lập vị trí khi gia nhập nhóm</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.6</string>
+	<string>1.0.9</string>
+	<key>CFBundleVersion</key>
+	<string>9</string>
 </dict>
 </plist>

@@ -14,7 +14,6 @@ namespace goFriend.Views
     public partial class AccountPage : ContentPage
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
-        private AccountViewModel _viewModel;
 
         public AccountPage()
         {
@@ -27,14 +26,9 @@ namespace goFriend.Views
 
             RefreshMenu();
 
-            BindingContext = _viewModel = new AccountViewModel();
+            BindingContext = new AccountViewModel();
 
-            CellBasicInfo.Tapped += async (s, e) =>
-            {
-                var page = new AccountBasicInfosPage();
-                await page.Initialize(this, App.User);
-                await Navigation.PushAsync(page);
-            };
+            CellBasicInfo.Tapped += CellBasicInfo_Tapped;
             CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
             CellAdmin.Tapped += (s, e) => { Navigation.PushAsync(new AdminPage()); };
             CellLogin.Tapped += (s, e) =>
@@ -50,6 +44,13 @@ namespace goFriend.Views
             //MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
         }
 
+        private async void CellBasicInfo_Tapped(object sender, EventArgs e)
+        {
+            var page = new AccountBasicInfosPage();
+            await page.Initialize(this, App.User);
+            await Navigation.PushAsync(page);
+        }
+
         private void Logout()
         {
             Logger.Debug("Logout.BEGIN");
@@ -57,8 +58,8 @@ namespace goFriend.Views
             App.IsUserLoggedIn = false;
             App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
-            App.Current.MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name})
-                { BarBackgroundColor = (Color)Resources["ColorPrimary"], BarTextColor = (Color)Resources["ColorTitle"] };
+            Application.Current.MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name})
+                { BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"], BarTextColor = (Color)Application.Current.Resources["ColorTitle"] };
             Logger.Debug("Logout.END");
         }
 
@@ -82,7 +83,8 @@ namespace goFriend.Views
                         if (App.User.Active && App.User.Location == null)
                         {
                             var myProfile = await App.FriendStore.GetProfile();
-                            App.User.Location = myProfile.Location;
+                            //App.User.Location = myProfile.Location;
+                            App.User = myProfile;
                             Settings.LastUser = App.User;
                         }
                     }
@@ -91,10 +93,10 @@ namespace goFriend.Views
                         // ignored
                     }
 
-                    if (App.User.Active && App.User.Location != null)
-                    {
+                    //if (App.User.Active && App.User.Location != null)
+                    //{
                         TsShells.Add(CellGroups);
-                    }
+                    //}
 
                     TsShells.Add(CellLogout);
                     TsShells.Add(CellAbout);
@@ -104,29 +106,27 @@ namespace goFriend.Views
                     LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
                     if (App.User.Active)
                     {
-                        if (App.User.Location != null)
-                        {
+                        //if (App.User.Location != null)
+                        //{
                             await App.TaskGetMyGroups;
                             if (App.MyGroups != null &&
                                 App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
                             {
                                 TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
                             }
-                        }
-                        else
+                        //}
+                        //else
+                        //{
+                        if (App.User.Location == null && App.User.ShowLocation == true)
                         {
-                            App.DisplayMsgInfo(res.MsgNoLocationWarning);
-                            var page = new AccountBasicInfosPage();
-                            await page.Initialize(this, App.User);
-                            await Navigation.PushAsync(page);
+                            //App.DisplayMsgInfo(res.MsgNoLocationSuggestion);
+                            CellBasicInfo_Tapped(null, null);
                         }
                     }
                     else
                     {
                         App.DisplayMsgInfo(res.MsgInactiveUserWarning);
                     }
-                    //Logger.Debug($"Location={App.User?.Location}");
-                    //(Shell.Current as AppShell)?.RefreshTabs();
                 }
                 catch (Exception)
                 {

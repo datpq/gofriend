@@ -502,7 +502,16 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to set your location before joining groups. You can do by drag and drop marker point and then click Save..
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgNoLocationSuggestion {
+            get {
+                return ResourceManager.GetString("MsgNoLocationSuggestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
         /// </summary>
         public static string MsgNoLocationWarning {
             get {
@@ -678,6 +687,15 @@ namespace goFriend {
         public static string SelectGender {
             get {
                 return ResourceManager.GetString("SelectGender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show your location:.
+        /// </summary>
+        public static string ShowYourLocation {
+            get {
+                return ResourceManager.GetString("ShowYourLocation", resourceCulture);
             }
         }
         

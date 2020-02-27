@@ -328,7 +328,7 @@
     <value>sửa thông tin kết nối trong yêu cầu tham gia nhóm</value>
   </data>
   <data name="MsgNoLocationWarning" xml:space="preserve">
-    <value>Bạn cần gửi thông tin vị trí để có được đầy đủ chức năng. Thay đổi vị trí bằng cách dịch chuyển con trỏ đến vị trí mong muốn rồi ấn Cập Nhật</value>
+    <value>Bạn chọn không hiển thị hoặc chưa cập nhật vị trí của bạn, không ai có thể nhìn thấy bạn trên bản đồ và ở chiều ngược lại bạn cũng không nhìn thấy ai trên bản đồ.</value>
   </data>
   <data name="MsgSaveConfirm" xml:space="preserve">
     <value>Bạn muốn cập nhật vị trí?</value>
@@ -350,5 +350,11 @@
   </data>
   <data name="MsgAppleSignInServer" xml:space="preserve">
     <value>Lỗi đăng ký khi dùng tài khoản Apple</value>
+  </data>
+  <data name="ShowYourLocation" xml:space="preserve">
+    <value>Hiện vị trí của bạn:</value>
+  </data>
+  <data name="MsgNoLocationSuggestion" xml:space="preserve">
+    <value>Bạn không thể nhìn thấy mọi người trên bản đồ nếu bạn không cập nhật vị trí của bạn. Hãy thay đổi vị trí của bạn bằng cách dịch chuyển con trỏ đến vị trí mong muốn rồi ấn Cập Nhật.</value>
   </data>
 </root>

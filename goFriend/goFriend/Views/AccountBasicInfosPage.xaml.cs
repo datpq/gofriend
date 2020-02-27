@@ -21,10 +21,45 @@ namespace goFriend.Views
         private DphPin _pin;
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private AccountBasicInfosViewModel _viewModel;
+        private bool _isMoveToRegionDone;
 
         public AccountBasicInfosPage()
         {
             InitializeComponent();
+        }
+
+        protected override async void OnAppearing()
+        {
+            if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
+            {
+                var setting = await App.FriendStore.GetSetting();
+                if (!setting.DefaultShowLocation)
+                {
+                    Logger.Debug("iOS Location Check Compliance");
+                    try
+                    {
+                        UserDialogs.Instance.ShowLoading(res.Processing);
+                        if (!await Extension.CheckIfLocationIsGranted())
+                        {
+                            Logger.Debug("LocationAccess is not Granted. Update ShowLocation");
+                            var result = await App.FriendStore.SaveBasicInfo(new Friend { Id = App.User.Id, ShowLocation = false });
+                            if (!result) return;
+                            App.User.ShowLocation = false;
+                            Settings.LastUser = App.User;
+                            SwitchShowLocation.IsToggled = false;
+                            SwitchShowLocation_OnToggled(null, null);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    finally
+                    {
+                        UserDialogs.Instance.HideLoading();
+                    }
+                }
+            }
         }
 
         public async Task Initialize(AccountPage accountPage, Friend friend)
@@ -33,8 +68,12 @@ namespace goFriend.Views
             BindingContext = _viewModel = new AccountBasicInfosViewModel
             {
                 Friend = friend,
-                PositionDraggable = true
+                Editable = true
             };
+            var setting = await App.FriendStore.GetSetting();
+            if (setting == null) return;
+            LabelShowLocation.IsVisible = SwitchShowLocation.IsVisible = setting.LocationSwitch;
+
             CmdSave.IsEnabled = _viewModel.Friend.Location == null;
             CmdReset.IsEnabled = false;
             CmdSetGps.IsEnabled = true;
@@ -51,14 +90,13 @@ namespace goFriend.Views
                 SubTitle1 = _viewModel.Address,
                 SubTitle2 = _viewModel.CountryName,
                 IconUrl = _viewModel.ImageUrl,
-                Draggable = _viewModel.PositionDraggable,
+                Draggable = _viewModel.Editable,
                 Type = PinType.Place
             };
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
             Map.Pins.Clear();
             Map.Pins.Add(_pin);
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
+            SwitchShowLocation_OnToggled(null, null);
         }
 
         public async Task Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
@@ -73,8 +111,9 @@ namespace goFriend.Views
                 GroupFriend = groupFriend,
                 FixedCatsCount = fixedCatsCount,
                 Friend = otherFriend,
-                PositionDraggable = false
+                Editable = false
             };
+            LabelShowLocation.IsVisible = SwitchShowLocation.IsVisible = false;
 
             //Load connection info section
             GroupConnectionSection.Children.Clear();
@@ -142,14 +181,13 @@ namespace goFriend.Views
                 SubTitle1 = $"{res.Groups} {_viewModel.Group.Name}",
                 SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
                 IconUrl = _viewModel.ImageUrl,
-                Draggable = _viewModel.PositionDraggable,
+                Draggable = _viewModel.Editable,
                 Type = PinType.Place
             };
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
             Map.Pins.Clear();
             Map.Pins.Add(_pin);
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
+            SwitchShowLocation_OnToggled(null, null);
         }
 
         private async void CmdSetGps_Click(object sender, EventArgs e)
@@ -157,7 +195,7 @@ namespace goFriend.Views
             try
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                var request = new GeolocationRequest(GeolocationAccuracy.High);
+                var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(Constants.GeolocationRequestTimeout));
                 var location = await Geolocation.GetLocationAsync(request);
 
                 if (location == null) return;
@@ -232,6 +270,55 @@ namespace goFriend.Views
             {
                 UserDialogs.Instance.HideLoading();
                 Logger.Debug("CmdSave_Click.END");
+            }
+        }
+
+        private async void SwitchShowLocation_OnToggled(object sender, ToggledEventArgs e)
+        {
+            if (e != null && SwitchShowLocation.IsToggled != App.User.ShowLocation)
+            {
+                if (SwitchShowLocation.IsToggled) //Check if Location is accessible
+                {
+                    try
+                    {
+                        UserDialogs.Instance.ShowLoading(res.Processing);
+                        if (!await Extension.CheckIfLocationIsGranted())
+                        {
+                            SwitchShowLocation.IsToggled = false;
+                            App.DisplayMsgInfo(res.MsgGpsDisabledWarning);
+                            return;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    finally
+                    {
+                        UserDialogs.Instance.HideLoading();
+                    }
+                }
+                Logger.Debug($"Update ShowLocation({SwitchShowLocation.IsToggled})");
+                var result = await App.FriendStore.SaveBasicInfo(new Friend { Id = App.User.Id, ShowLocation = SwitchShowLocation.IsToggled });
+                if (!result) return;
+                App.User.ShowLocation = SwitchShowLocation.IsToggled;
+                Settings.LastUser = App.User;
+            }
+            Map.IsVisible = CmdSetGps.IsVisible = CmdReset.IsVisible = CmdSave.IsVisible = SwitchShowLocation.IsToggled;
+            LabelNoLocation.IsVisible = !Map.IsVisible && (App.User.Location == null || App.User.ShowLocation != true);
+            if (e != null && SwitchShowLocation.IsToggled && App.User.Location == null && Map.IsVisible)
+            {
+                App.DisplayMsgInfo(res.MsgNoLocationSuggestion);
+            }
+            if (Map.IsVisible && !_isMoveToRegionDone && _pin != null)
+            {
+                _isMoveToRegionDone = true;
+                Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
+                {
+                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                        new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
+                    return false;
+                });
             }
         }
     }

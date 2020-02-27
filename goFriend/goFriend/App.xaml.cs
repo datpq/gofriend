@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using Xamarin.Forms;
 using goFriend.Services;
 using System.Globalization;
+using System.Reflection;
 using System.Threading.Tasks;
 using goFriend.DataModel;
 using goFriend.Views;
+using PCLAppConfig;
 using Xamarin.Essentials;
 
 namespace goFriend
 {
     public partial class App : Application
     {
-        public static string AzureBackendUrl = "https://gofriend.azurewebsites.net";
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
         public static Friend User { get; set; }
@@ -26,9 +27,20 @@ namespace goFriend
 
         public App()
         {
+            try
+            {
+                //ConfigurationManager initialization
+                var assembly = typeof(App).GetTypeInfo().Assembly;
+                ConfigurationManager.Initialise(assembly.GetManifestResourceStream("goFriend.App.config"));
+            }
+            catch
+            {
+                // ignored
+            }
+
             VersionTracking.Track();
             Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
-            Logger.Info($"AzureBackendUrl = {AzureBackendUrl}");
+            Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl"]}");
             var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
             Logger.Debug(deviceInfo);
             res.Culture = new CultureInfo("vi-VN");
@@ -125,7 +137,7 @@ namespace goFriend
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
                             Logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
-                            FriendStore.SaveBasicInfo(new Friend {Id = App.User.Id, Info = Extension.GetVersionTrackingInfo()});
+                            FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
                         }
                     }
                     else

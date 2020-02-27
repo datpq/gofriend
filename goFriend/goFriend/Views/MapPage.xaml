@@ -15,7 +15,10 @@
                 <controls:DphFriendSelection x:Name="DphFriendSelection"></controls:DphFriendSelection>
             </StackLayout>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <controls:DphMap x:Name="Map" IsShowingUser="True" MoveToLastRegionOnLayoutChange="False" />
+            <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20" IsVisible="False"
+                   VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
+                   TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
+            <controls:DphMap x:Name="Map" IsShowingUser="True" MoveToLastRegionOnLayoutChange="False" IsVisible="False" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

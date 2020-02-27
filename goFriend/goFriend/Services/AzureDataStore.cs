@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
 using goFriend.Models;
+using PCLAppConfig;
 
 namespace goFriend.Services
 {
@@ -17,7 +18,7 @@ namespace goFriend.Services
         public AzureDataStore()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri($"{App.AzureBackendUrl}/");
+            client.BaseAddress = new Uri($"{ConfigurationManager.AppSettings["AzureBackendUrl"]}/");
 
             items = new List<Item>();
         }

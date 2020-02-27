@@ -7,8 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Web;
 using goFriend.DataModel;
+using Microsoft.Extensions.Caching.Memory;
+using PCLAppConfig;
 using Plugin.Connectivity;
 using Xamarin.Forms;
 
@@ -17,10 +20,17 @@ namespace goFriend.Services
     public class FriendStore : IFriendStore
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private const string CacheTimeoutPrefix = "CacheTimeout.";
+        private readonly IMemoryCache _memoryCache;
+
+        public FriendStore()
+        {
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+        }
 
         private static HttpClient GetHttpClient()
         {
-            return new HttpClient { BaseAddress = new Uri($"{App.AzureBackendUrl}/") };
+            return new HttpClient { BaseAddress = new Uri($"{ConfigurationManager.AppSettings["AzureBackendUrl"]}/") };
         }
 
         private static HttpClient GetSecuredHttpClient()
@@ -39,6 +49,11 @@ namespace goFriend.Services
             }
         }
 
+        #region Cache Functions
+
+        static string GetActualAsyncMethodName([CallerMemberName]string name = null) => name;
+
+        #endregion
         //private static bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
 
         public async Task<Friend> LoginWithThirdParty(Friend friend, string deviceInfo) //string thirdPartyToken, 
@@ -442,18 +457,18 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<Friend> GetProfile()
+        public async Task<Friend> GetProfile(bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             Friend result = null;
             try
             {
-                Logger.Debug($"GetProfile.BEGIN()");
+                Logger.Debug($"GetProfile.BEGIN(useCache={useCache})");
 
                 Validate();
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetProfile/{App.User.Id}";
+                var requestUrl = $"api/Friend/GetProfile/{App.User.Id}/{useCache}";
                 Logger.Debug($"requestUrl: {requestUrl}");
                 var response = await client.GetAsync(requestUrl);
                 Logger.Debug($"StatusCode: {response.StatusCode}");
@@ -491,7 +506,7 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetFriend.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetProfile.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -739,6 +754,75 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"SubscribeGroup.END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<Setting> GetSetting(bool useClientCache = true, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Setting result = null;
+            try
+            {
+                Logger.Debug($"GetSetting.BEGIN(useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
+                var cacheKey = $"{cachePrefix}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as Setting;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetSetting/{App.User.Id}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<Setting>(jsonString.Result);
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    throw new GoException(msg);
+                }
+
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetSetting.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
     }

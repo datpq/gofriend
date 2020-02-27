@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Facebook;
 using goFriend.DataModel;
 using goFriend.MobileAppService.Data;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
+using Group = goFriend.DataModel.Group;
 
 namespace goFriend.MobileAppService.Controllers
 {
@@ -32,22 +34,6 @@ namespace goFriend.MobileAppService.Controllers
             _cacheService = cacheService;
             CacheNameSpace = GetType().FullName;
         }
-
-        #region Cache Functions
-
-        protected string CurrentMethodName
-        {
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            get
-            {
-                var st = new StackTrace();
-                var sf = st.GetFrame(1);
-
-                return sf.GetMethod().Name;
-            }
-        }
-
-        #endregion
 
         [HttpGet]
         [Route("LoginWithFacebook")]
@@ -83,6 +69,9 @@ namespace goFriend.MobileAppService.Controllers
                         if (result == null)
                         {
                             Logger.Debug("New user registered");
+                            var setting = _dataRepo.Get<Setting, int>(
+                                x => Regex.Match(deviceInfo, x.Rule, RegexOptions.IgnoreCase).Success, x => x.Order, true);
+                            Logger.Debug($"setting={JsonConvert.SerializeObject(setting)}");
                             result = new Friend
                             {
                                 FacebookId = facebookId,
@@ -91,6 +80,7 @@ namespace goFriend.MobileAppService.Controllers
                                 CreatedDate = DateTime.Now,
                                 ModifiedDate = DateTime.Now,
                                 Token = Guid.NewGuid(),
+                                ShowLocation = setting.DefaultShowLocation,
                                 Active = true // new user is Active for now
                             };
                             _dataRepo.Add(result);
@@ -188,6 +178,8 @@ namespace goFriend.MobileAppService.Controllers
 
                 _dataRepo.Commit();
 
+                _cacheService.Remove($".GetProfile.{result.Id}."); // refresh profile
+                _cacheService.Remove($".GetSetting.{result.Id}."); // refresh setting
                 _cacheService.Remove($".GetMyGroups.{result.Id}."); // refresh my groups
 
                 return result;
@@ -235,6 +227,9 @@ namespace goFriend.MobileAppService.Controllers
                                 return BadRequest(Message.MsgThirdPartyIdNull);
                             }
                             Logger.Debug("New thirdparty user registered.");
+                            var setting = _dataRepo.Get<Setting, int>(
+                                x => Regex.Match(deviceInfo, x.Rule, RegexOptions.IgnoreCase).Success, x => x.Order, true);
+                            Logger.Debug($"setting={JsonConvert.SerializeObject(setting)}");
                             result = new Friend
                             {
                                 ThirdPartyLogin = friend.ThirdPartyLogin,
@@ -242,6 +237,7 @@ namespace goFriend.MobileAppService.Controllers
                                 CreatedDate = DateTime.Now,
                                 ModifiedDate = DateTime.Now,
                                 Token = Guid.NewGuid(),
+                                ShowLocation = setting.DefaultShowLocation,
                                 Active = true // new user is Active for now
                             };
                             _dataRepo.Add(result);
@@ -322,6 +318,8 @@ namespace goFriend.MobileAppService.Controllers
 
                 _dataRepo.Commit();
 
+                _cacheService.Remove($".GetProfile.{result.Id}."); // refresh profile
+                _cacheService.Remove($".GetSetting.{result.Id}."); // refresh setting
                 _cacheService.Remove($".GetMyGroups.{result.Id}."); // refresh my groups
 
                 return result;
@@ -342,7 +340,7 @@ namespace goFriend.MobileAppService.Controllers
         public IActionResult SaveBasicInfo([FromBody]Friend friend)
         {
             var stopWatch = Stopwatch.StartNew();
-            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.X}, Info={friend.Info})");
+            Logger.Debug($"BEGIN({friend}, Latitude={friend.Location?.Y}, Longitude={friend.Location?.X}, Info={friend.Info}, ShowLocation={friend.ShowLocation})");
             try
             {
                 if (!ModelState.IsValid)
@@ -381,6 +379,12 @@ namespace goFriend.MobileAppService.Controllers
                 if (friend.Info != null && friend.Info != result.Info)
                 {
                     result.Info = friend.Info;
+                    isUpdated = true;
+                }
+
+                if (friend.ShowLocation.HasValue && friend.ShowLocation != result.ShowLocation)
+                {
+                    result.ShowLocation = friend.ShowLocation;
                     isUpdated = true;
                 }
 
@@ -455,7 +459,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{groupId}.{Request.QueryString}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
@@ -579,7 +583,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{groupId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
@@ -671,7 +675,7 @@ namespace goFriend.MobileAppService.Controllers
                     return BadRequest(Message.MsgUserNoPermission);
                 }
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{Request.QueryString}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
@@ -727,14 +731,14 @@ namespace goFriend.MobileAppService.Controllers
         }
 
         [HttpGet]
-        [Route("GetProfile/{friendId}")]
-        public ActionResult<Friend> GetProfile([FromHeader] string token, [FromRoute] int friendId)
+        [Route("GetProfile/{friendId}/{useCache}")]
+        public ActionResult<Friend> GetProfile([FromHeader] string token, [FromRoute] int friendId, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             ActionResult<Friend> result = null;
             try
             {
-                Logger.Debug($"BEGIN(token={token}, friendId={friendId})");
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache})");
 
                 #region Data Validation
 
@@ -742,6 +746,21 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     Logger.Warn(Message.MsgMissingToken.Msg);
                     return BadRequest(Message.MsgMissingToken);
+                }
+
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{friendId}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _cacheService.Get(cacheKey) as ActionResult<Friend>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
                 }
 
                 var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
@@ -764,6 +783,82 @@ namespace goFriend.MobileAppService.Controllers
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetSetting/{friendId}/{useCache}")]
+        public ActionResult<Setting> GetSetting([FromHeader] string token, [FromRoute] int friendId, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<Setting> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{friendId}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _cacheService.Get(cacheKey) as ActionResult<Setting>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                result = _dataRepo.Get<Setting, int>(
+                    x => Regex.Match($"{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}",
+                        x.Rule, RegexOptions.IgnoreCase).Success, x => x.Order, true);
+
+                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (FormatException e)
@@ -843,7 +938,7 @@ namespace goFriend.MobileAppService.Controllers
                     return BadRequest(Message.MsgUserNoPermission);
                 }
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{otherFriendId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
@@ -917,7 +1012,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{friendId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
@@ -1006,7 +1101,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 string searchText = Request.Query["searchText"];
                 var cacheKey = $"{cachePrefix}.{searchText}.";
@@ -1090,7 +1185,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                var cachePrefix = $"{CacheNameSpace}.{CurrentMethodName}";
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
                 var cacheKey = $"{cachePrefix}.{friendId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");

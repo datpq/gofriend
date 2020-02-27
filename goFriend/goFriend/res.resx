@@ -328,7 +328,7 @@
     <value>has modified the connection information while subscribing to the group</value>
   </data>
   <data name="MsgNoLocationWarning" xml:space="preserve">
-    <value>You need to set your location before joining groups. You can do by drag and drop marker point and then click Save.</value>
+    <value />
   </data>
   <data name="MsgSaveConfirm" xml:space="preserve">
     <value>Do you really want to save?</value>
@@ -350,5 +350,11 @@
   </data>
   <data name="MsgAppleSignInServer" xml:space="preserve">
     <value>Something went wrong in server side when registering user with Apple Sign In.</value>
+  </data>
+  <data name="ShowYourLocation" xml:space="preserve">
+    <value>Show your location:</value>
+  </data>
+  <data name="MsgNoLocationSuggestion" xml:space="preserve">
+    <value />
   </data>
 </root>

@@ -5,6 +5,7 @@ select * from Friends;
 select * from GroupPredefinedCategory;
 select * from CacheConfiguration;
 select * from Notification;
+select * from settings order by [order];
 
 drop table GroupFixedCatValues;
 drop table GroupFriends;
@@ -13,6 +14,7 @@ drop table GroupPredefinedCategory;
 drop table Groups;
 drop table CacheConfiguration;
 drop table Notification;
+drop table Settings;
 
 --ALTER TABLE GroupFriends ADD [Id] [int] IDENTITY(1,1) NOT NULL
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
