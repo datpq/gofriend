@@ -7,9 +7,11 @@ using FFImageLoading;
 using FFImageLoading.Transformations;
 using goFriend.Controls;
 using goFriend.Droid.Renderers;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
+using Map = Xamarin.Forms.Maps.Map;
 
 [assembly: ExportRenderer(typeof(DphMap), typeof(DphMapRenderer))]
 
@@ -82,15 +84,20 @@ namespace goFriend.Droid.Renderers
 
         void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
-            //var pin = GetPinForMarker(e.Marker) as DphPin;
-
-            //if (!string.IsNullOrWhiteSpace(pin.Url))
+            var pin = GetPinForMarker(e.Marker) as DphPin;
+            if (string.IsNullOrWhiteSpace(pin?.Url)) return;
+            //try
             //{
-            //    var url = Android.Net.Uri.Parse(pin.Url);
-            //    var intent = new Intent(Intent.ActionView, url);
+            //    //Android.App.Application.Context.PackageManager.GetPackageInfo("com.facebook.katana", 0);
+            //    var intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(pin.Url));
             //    intent.AddFlags(ActivityFlags.NewTask);
             //    Android.App.Application.Context.StartActivity(intent);
             //}
+            //catch (Exception)
+            //{
+            //    // ignored
+            //}
+            Launcher.OpenAsync(new Uri(pin.Url));
         }
 
         public Android.Views.View GetInfoContents(Marker marker)

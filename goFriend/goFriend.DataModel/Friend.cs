@@ -49,7 +49,7 @@ namespace goFriend.DataModel
 
         [Column(TypeName = "NVARCHAR(100)")]
         public string Address { get; set; }
-        [Column(TypeName = "VARCHAR(30)")]
+        [Column(TypeName = "NVARCHAR(30)")]
         public string CountryName { get; set; }
 
         [JsonIgnore]

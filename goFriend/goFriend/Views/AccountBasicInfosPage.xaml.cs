@@ -90,6 +90,7 @@ namespace goFriend.Views
                 SubTitle1 = _viewModel.Address,
                 SubTitle2 = _viewModel.CountryName,
                 IconUrl = _viewModel.ImageUrl,
+                //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 Draggable = _viewModel.Editable,
                 Type = PinType.Place
             };
@@ -181,6 +182,7 @@ namespace goFriend.Views
                 SubTitle1 = $"{res.Groups} {_viewModel.Group.Name}",
                 SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
                 IconUrl = _viewModel.ImageUrl,
+                //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 Draggable = _viewModel.Editable,
                 Type = PinType.Place
             };

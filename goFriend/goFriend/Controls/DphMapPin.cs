@@ -10,6 +10,7 @@ namespace goFriend.Controls
     public class DphPin : Pin
     {
         public string IconUrl { get; set; }
+        public string Url { get; set; }
         public bool Draggable { get; set; }
 
         private string _title;

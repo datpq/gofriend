@@ -18,11 +18,19 @@ namespace goFriend.Controls
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
         public static readonly BindableProperty IsShowingCategoriesProperty =
-            BindableProperty.CreateAttached(nameof(IsShowingCategories), typeof(bool), typeof(DphFriendSelection), true);
+            BindableProperty.CreateAttached(nameof(IsShowingCategories), typeof(bool), typeof(DphFriendSelection), false);
         public bool IsShowingCategories
         {
             get => (bool)GetValue(IsShowingCategoriesProperty);
             set => SetValue(IsShowingCategoriesProperty, value);
+        }
+
+        public static readonly BindableProperty IsExpandableCategoriesProperty =
+            BindableProperty.CreateAttached(nameof(IsExpandableCategories), typeof(bool), typeof(DphFriendSelection), true);
+        public bool IsExpandableCategories
+        {
+            get => (bool)GetValue(IsExpandableCategoriesProperty);
+            set => SetValue(IsExpandableCategoriesProperty, value);
         }
 
         public DphFriendSelection()
@@ -31,6 +39,10 @@ namespace goFriend.Controls
 
             PickerGroups.Title = $"{res.Select} {res.Groups}";
             LblGroup.Text = $"{res.Groups}:";
+            LblGroup.GestureRecognizers.Add(new TapGestureRecognizer
+            {
+                Command = new Command(() => CmdExpandCategories_OnClicked(null, null))
+            });
 
             Refresh();
         }
@@ -87,73 +99,74 @@ namespace goFriend.Controls
                 var arrCats = selectedGroup.Group.GetCatDescList().ToList();
                 var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
 
-                if (IsShowingCategories)
+                if (!IsExpandableCategories && !IsShowingCategories) return;
+
+                var arrPickers = new Picker[arrCats.Count - arrFixedCats.Count];
+                for (var i = 0; i < arrCats.Count - arrFixedCats.Count; i++)
                 {
-                    var arrPickers = new Picker[arrCats.Count - arrFixedCats.Count];
-                    for (var i = 0; i < arrCats.Count - arrFixedCats.Count; i++)
+                    //Logger.Debug($"i={i}");
+                    var lbl = new Label
                     {
-                        //Logger.Debug($"i={i}");
-                        var lbl = new Label
-                        {
-                            FontSize = LblGroup.FontSize,
-                            VerticalOptions = LblGroup.VerticalOptions,
-                            TextColor = LblGroup.TextColor,
-                            Text = $"{arrCats[i + arrFixedCats.Count]}:"
-                        };
-                        Grid.SetColumn(lbl, 0);
-                        Grid.SetRow(lbl, i + 1);
-                        Grid.Children.Add(lbl);
-                        var picker = new Picker
-                        {
-                            FontSize = PickerGroups.FontSize,
-                            HeightRequest = PickerGroups.HeightRequest,
-                            //ItemDisplayBinding = new Binding("Display"),
-                            ItemDisplayBinding = PickerGroups.ItemDisplayBinding,
-                            Title = $"{res.Select} {arrCats[i + arrFixedCats.Count]}"
-                        };
-                        arrPickers[i] = picker;
-                        if (i == 0)
-                        {
-                            var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id);
-                            var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
-                                .Concat(groupCatValues.ToList());
-                            picker.ItemsSource = itemSourceList.ToList();
-                        }
-                        var localI = i;
-                        picker.SelectedIndexChanged += async (o, args) =>
-                        {
-                            UserDialogs.Instance.ShowLoading(res.Processing);
-                            //Logger.Debug($"localI={localI}");
-                            var arrCatValuesLen = localI + 1;
-                            if (picker.SelectedIndex <= 0) arrCatValuesLen = localI; //nothing or first element selected
-                            var arrCatValues = new string[arrCatValuesLen];
-                            for (var k = 0; k < arrCatValues.Length; k++)
-                            {
-                                //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
-                                arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
-                            }
-                            Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(arrCatValues)}");
-                            for (var j = localI + 1; j < arrPickers.Length; j++)
-                            {
-                                arrPickers[j].ItemsSource = null;
-                                //Logger.Debug($"j={j}");
-                                if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
-                                {
-                                    var localJ = j;
-                                    var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues);
-                                    var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
-                                        .Concat(groupCatValues.ToList());
-                                    arrPickers[localJ].ItemsSource = itemSourceList.ToList();
-                                }
-                            }
-                            UserDialogs.Instance.HideLoading();
-                            _onSelectionAction?.Invoke(selectedGroup, arrFixedCats, arrCatValues);
-                        };
-                        Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                        Grid.SetColumn(picker, 1);
-                        Grid.SetRow(picker, i + 1);
-                        Grid.Children.Add(picker);
+                        FontSize = LblGroup.FontSize,
+                        VerticalOptions = LblGroup.VerticalOptions,
+                        TextColor = LblGroup.TextColor,
+                        IsVisible = IsShowingCategories,
+                        Text = $"{arrCats[i + arrFixedCats.Count]}:"
+                    };
+                    Grid.SetColumn(lbl, 0);
+                    Grid.SetRow(lbl, i + 1);
+                    Grid.Children.Add(lbl);
+                    var picker = new Picker
+                    {
+                        FontSize = PickerGroups.FontSize,
+                        HeightRequest = PickerGroups.HeightRequest,
+                        //ItemDisplayBinding = new Binding("Display"),
+                        ItemDisplayBinding = PickerGroups.ItemDisplayBinding,
+                        IsVisible = IsShowingCategories,
+                        Title = $"{res.Select} {arrCats[i + arrFixedCats.Count]}"
+                    };
+                    arrPickers[i] = picker;
+                    if (i == 0)
+                    {
+                        var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id);
+                        var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
+                            .Concat(groupCatValues.ToList());
+                        picker.ItemsSource = itemSourceList.ToList();
                     }
+                    var localI = i;
+                    picker.SelectedIndexChanged += async (o, args) =>
+                    {
+                        UserDialogs.Instance.ShowLoading(res.Processing);
+                        //Logger.Debug($"localI={localI}");
+                        var arrCatValuesLen = localI + 1;
+                        if (picker.SelectedIndex <= 0) arrCatValuesLen = localI; //nothing or first element selected
+                        var arrCatValues = new string[arrCatValuesLen];
+                        for (var k = 0; k < arrCatValues.Length; k++)
+                        {
+                            //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
+                            arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
+                        }
+                        Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(arrCatValues)}");
+                        for (var j = localI + 1; j < arrPickers.Length; j++)
+                        {
+                            arrPickers[j].ItemsSource = null;
+                            //Logger.Debug($"j={j}");
+                            if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
+                            {
+                                var localJ = j;
+                                var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues);
+                                var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
+                                    .Concat(groupCatValues.ToList());
+                                arrPickers[localJ].ItemsSource = itemSourceList.ToList();
+                            }
+                        }
+                        UserDialogs.Instance.HideLoading();
+                        _onSelectionAction?.Invoke(selectedGroup, arrFixedCats, arrCatValues);
+                    };
+                    Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                    Grid.SetColumn(picker, 1);
+                    Grid.SetRow(picker, i + 1);
+                    Grid.Children.Add(picker);
                 }
 
                 UserDialogs.Instance.HideLoading();
@@ -175,6 +188,16 @@ namespace goFriend.Controls
             App.Initialize();
 
             Refresh();
+        }
+
+        private void CmdExpandCategories_OnClicked(object sender, EventArgs e)
+        {
+            IsShowingCategories = !IsShowingCategories;
+            CmdExpandCategories.ImageSource = IsShowingCategories ? "folder_open.png" : "folder_close.png";
+            foreach (var child in Grid.Children.Where(x => Grid.GetRow(x) > 0))
+            {
+                child.IsVisible = IsShowingCategories;
+            }
         }
     }
 }

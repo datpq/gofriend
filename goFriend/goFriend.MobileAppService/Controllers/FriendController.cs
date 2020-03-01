@@ -518,9 +518,9 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     CatValue = x,
                     MemberCount = groupFiendList.Count(y => y.GetCatByIdx(idx + startCatIdx) == x)
-                }).ToList();
+                }).OrderBy(x => x.CatValue).ToList();
 
-                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
@@ -706,10 +706,9 @@ namespace goFriend.MobileAppService.Controllers
                 }
 
                 //result = groupFriends.AsQueryable().Include(x => x.Friend).ToList();
-                result = groupFriends;
+                result = groupFriends.OrderBy(x => x.Friend.Name).ToList();
 
-                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
-
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
@@ -726,7 +725,7 @@ namespace goFriend.MobileAppService.Controllers
             }
             finally
             {
-                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"END(Count={result?.Value.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -1217,8 +1216,7 @@ namespace goFriend.MobileAppService.Controllers
                         return x;
                     }).ToList();
 
-                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
-
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
