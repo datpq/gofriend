@@ -37,6 +37,20 @@ namespace goFriend.ViewModels
             }
         }
 
+        private int _pageSize;
+        public int PageSize
+        {
+            get => _pageSize;
+            set
+            {
+                _pageSize = value;
+                OnPropertyChanged(nameof(PageSize));
+            }
+        }
+
+        public int CurrentPage { get; set; }
+        private bool _allItemsFetched;
+
         public Func<Task<IEnumerable<DphListViewItemModel>>> GetListViewItemsFunc { get; set; }
         public ICommand RefreshCommand
         {
@@ -45,20 +59,41 @@ namespace goFriend.ViewModels
                 return new Command(async () =>
                 {
                     Logger.Debug("RefreshCommand.BEGIN");
-                    IsRefreshing = true;
+                    _allItemsFetched = false;
+                    CurrentPage = 0; //reset to page 0
                     Items.Clear();
-                    var result = await GetListViewItemsFunc();
-                    if (result != null)
-                    {
-                        foreach (var x in result.ToList())
-                        {
-                            Items.Add(x);
-                        };
-                    }
-                    IsRefreshing = false;
+                    await FetchItems();
                     Logger.Debug("RefreshCommand.END");
                 });
             }
+        }
+
+        public async void FetchMoreItems()
+        {
+            if (_allItemsFetched) return;
+            Logger.Debug("FetchMoreItems.BEGIN");
+            CurrentPage++;
+            await FetchItems();
+            Logger.Debug("FetchMoreItems.END");
+        }
+
+        private async Task FetchItems()
+        {
+            IsRefreshing = true;
+            var result = await GetListViewItemsFunc();
+            if (result == null || PageSize == 0 || result.Count() < PageSize)
+            {
+                _allItemsFetched = true;
+            }
+            if (result != null)
+            {
+                foreach (var item in result.Where(x => Items.All(y => y.Id != x.Id)))
+                {
+                    Items.Add(item);
+                }
+                Logger.Debug($"{result.Count()} item(s) fetched.");
+            }
+            IsRefreshing = false;
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,

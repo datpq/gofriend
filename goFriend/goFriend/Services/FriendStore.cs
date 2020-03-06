@@ -30,7 +30,7 @@ namespace goFriend.Services
 
         private static HttpClient GetHttpClient()
         {
-            return new HttpClient { BaseAddress = new Uri($"{ConfigurationManager.AppSettings["AzureBackendUrl"]}/") };
+            return new HttpClient { BaseAddress = new Uri($"{ConfigurationManager.AppSettings["AzureBackendUrl1010"]}/") };
         }
 
         private static HttpClient GetSecuredHttpClient()
@@ -283,18 +283,18 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive, bool useCache = true, params string[] arrCatValues)
+        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive, int top = 0, int skip = 0, bool useCache = true, params string[] arrCatValues)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<GroupFriend> result = null;
             try
             {
-                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, top = {top}, skip = {skip}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
 
                 Validate();
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/{isActive}/{useCache}";
+                var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/{isActive}/{top}/{skip}/{useCache}";
                 if (arrCatValues.Length > 0)
                 {
                     for (var i = 0; i < arrCatValues.Length; i++)
@@ -342,7 +342,7 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetGroupFriends.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetGroupFriends.END(Count={result?.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -563,18 +563,18 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<Notification>> GetNotifications(bool useCache = true)
+        public async Task<IEnumerable<Notification>> GetNotifications(int top = 0, int skip = 0, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<Notification> result = null;
             try
             {
-                Logger.Debug($"GetNotifications.BEGIN(useCache={useCache})");
+                Logger.Debug($"GetNotifications.BEGIN(top={top}, skip={skip}, useCache={useCache})");
 
                 Validate();
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetNotifications/{App.User.Id}/{useCache}";
+                var requestUrl = $"api/Friend/GetNotifications/{App.User.Id}/{top}/{skip}/{useCache}";
                 Logger.Debug($"requestUrl: {requestUrl}");
                 var response = await client.GetAsync(requestUrl);
                 Logger.Debug($"StatusCode: {response.StatusCode}");
@@ -613,7 +613,7 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetNotifications.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetNotifications.END(Count={result?.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

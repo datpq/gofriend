@@ -28,7 +28,7 @@ namespace goFriend
             if (!string.IsNullOrEmpty(friend.FacebookId))
             {
                 result = $"https://graph.facebook.com/{friend.FacebookId}/picture?type={imageType}";
-                Logger.Debug($"URL = {result}");
+                //Logger.Debug($"URL = {result}");
             }
             else if (friend.ThirdPartyLogin == ThirdPartyLogin.Apple)
             {
@@ -54,7 +54,7 @@ namespace goFriend
             if (!string.IsNullOrEmpty(facebookId))
             {
                 result = $"https://graph.facebook.com/{facebookId}/picture?type={imageType}";
-                Logger.Debug($"URL = {result}");
+                //Logger.Debug($"URL = {result}");
             }
             else
             {

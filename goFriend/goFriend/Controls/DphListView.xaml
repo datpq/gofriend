@@ -11,7 +11,7 @@
   <ContentView.Content>
       <StackLayout Orientation="Vertical">
             <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
-                      IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+                      IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" ItemAppearing="Lv_OnItemAppearing" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <controls:DphViewCell Tapped="Cell_OnTapped">

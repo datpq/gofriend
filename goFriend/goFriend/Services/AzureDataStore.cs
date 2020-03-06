@@ -18,7 +18,6 @@ namespace goFriend.Services
         public AzureDataStore()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri($"{ConfigurationManager.AppSettings["AzureBackendUrl"]}/");
 
             items = new List<Item>();
         }

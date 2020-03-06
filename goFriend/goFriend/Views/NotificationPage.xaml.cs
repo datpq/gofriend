@@ -20,12 +20,14 @@ namespace goFriend.Views
 
             DphListView.Initialize(selectedItem =>
             {
-                Logger.Debug("Hello World");
+                //Nothing happens on selection
             });
             DphListView.LoadItems(async () =>
             {
-                var arrNotifications = await App.FriendStore.GetNotifications();
-                var result = arrNotifications?.OrderByDescending(x => x.CreatedDate).Select(x => new DphListViewItemModel
+                var listViewModel = (DphListViewModel)DphListView.BindingContext;
+                var arrNotifications = await App.FriendStore.GetNotifications(
+                    listViewModel.PageSize, listViewModel.PageSize * listViewModel.CurrentPage);
+                var result = arrNotifications?.Select(x => new DphListViewItemModel
                 {
                     Id = x.Id,
                     ImageUrl = Extension.GetImageUrlByFacebookId(

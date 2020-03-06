@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using goFriend.ViewModels;
+using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -26,7 +27,10 @@ namespace goFriend.Controls
         public DphListView()
         {
             InitializeComponent();
-            BindingContext = _dphListViewModel = new DphListViewModel();
+            BindingContext = _dphListViewModel = new DphListViewModel
+            {
+                PageSize = int.Parse(ConfigurationManager.AppSettings["ListViewPageSize"])
+            };
         }
 
         public void Initialize(Action<DphListViewItemModel> cellOnTapped = null,
@@ -77,6 +81,15 @@ namespace goFriend.Controls
         {
             var selectedItem = (DphListViewItemModel)Lv.SelectedItem;
             _cellOnTapped?.Invoke(selectedItem);
+        }
+
+        private void Lv_OnItemAppearing(object sender, ItemVisibilityEventArgs e)
+        {
+            if (_dphListViewModel.IsRefreshing || _dphListViewModel.Items.Count == 0) return;
+            if (((DphListViewItemModel) e.Item).Id == _dphListViewModel.Items[_dphListViewModel.Items.Count - 1].Id)
+            {
+                _dphListViewModel.FetchMoreItems();
+            }
         }
     }
 }

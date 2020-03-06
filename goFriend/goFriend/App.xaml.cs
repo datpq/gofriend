@@ -40,7 +40,7 @@ namespace goFriend
 
             VersionTracking.Track();
             Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
-            Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl"]}");
+            Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl1010"]}");
             var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
             Logger.Debug(deviceInfo);
             res.Culture = new CultureInfo("vi-VN");

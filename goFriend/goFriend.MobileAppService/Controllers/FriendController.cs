@@ -622,15 +622,15 @@ namespace goFriend.MobileAppService.Controllers
         }
 
         [HttpGet]
-        [Route("GetGroupFriends/{friendId}/{groupId}/{isActive}/{useCache}")]
+        [Route("GetGroupFriends/{friendId}/{groupId}/{isActive}/{top}/{skip}/{useCache}")]
         public ActionResult<IEnumerable<GroupFriend>> GetGroupFriends([FromHeader] string token, [FromRoute] int friendId,
-            [FromRoute] int groupId, bool isActive = true, bool useCache = true)
+            [FromRoute] int groupId, bool isActive = true, int top = 0, int skip = 0, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             ActionResult<IEnumerable<GroupFriend>> result = null;
             try
             {
-                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, isActive={isActive}, useCache={useCache}, QueryString={Request.QueryString})");
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, isActive={isActive}, top={top}, skip={skip}, useCache={useCache}, QueryString={Request.QueryString})");
 
                 #region Data Validation
 
@@ -677,7 +677,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
-                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{Request.QueryString}.";
+                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{top}.{skip}.{Request.QueryString}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
@@ -690,8 +690,8 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                var groupFriends = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active == isActive)
-                    .AsQueryable().Include(x => x.Friend).ToList();
+                IEnumerable<GroupFriend> queryableResult = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active == isActive)
+                    .AsQueryable().Include(x => x.Friend);
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
@@ -701,12 +701,21 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     var localIdx = idx;
                     //Logger.Debug($"Cat{localIdx + startCatIdx}={Request.Query[$"Cat{localIdx}"]}");
-                    groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]).ToList();
+                    queryableResult = queryableResult.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]).ToList();
                     idx++;
                 }
 
                 //result = groupFriends.AsQueryable().Include(x => x.Friend).ToList();
-                result = groupFriends.OrderBy(x => x.Friend.Name).ToList();
+                queryableResult = queryableResult.OrderBy(x => x.Friend.Name);
+                if (skip > 0)
+                {
+                    queryableResult = queryableResult.Skip(skip);
+                }
+                if (top > 0)
+                {
+                    queryableResult = queryableResult.Take(top);
+                }
+                result = queryableResult.ToList();
 
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
@@ -1150,15 +1159,15 @@ namespace goFriend.MobileAppService.Controllers
         }
 
         [HttpGet]
-        [Route("GetNotifications/{friendId}/{useCache}")]
+        [Route("GetNotifications/{friendId}/{top}/{skip}/{useCache}")]
         public ActionResult<IEnumerable<Notification>> GetNotifications([FromHeader] string token, [FromRoute] int friendId,
-            bool useCache = true)
+            int top = 0, int skip = 0, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             ActionResult<IEnumerable<Notification>> result = null;
             try
             {
-                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, useCache={useCache})");
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, top={top}, skip={skip}, useCache={useCache})");
 
                 #region Data Validation
 
@@ -1186,7 +1195,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
-                var cacheKey = $"{cachePrefix}.{friendId}.";
+                var cacheKey = $"{cachePrefix}.{friendId}.{top}.{skip}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
@@ -1202,7 +1211,8 @@ namespace goFriend.MobileAppService.Controllers
                 var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId && x.Active).Select(x => x.GroupId).ToList();
 
                 //Where clause is done in 2 times to avoid the error LINQ could not be translated. Either rewrite the query in a form that can be translated
-                result = _dataRepo.GetMany<Notification>(x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now).Where(
+                //var queryableResult = _dataRepo.GetMany<Notification>(x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now).Where(
+                var queryableResult = _dataRepo.GetMany<Notification>(x => true).Where(
                     x => ($"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0 ||
                           myGroups.Any(y => $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}g{y}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0))
                     && $"{Notification.NotifIdSep}{x.Deletions}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) < 0)
@@ -1214,7 +1224,18 @@ namespace goFriend.MobileAppService.Controllers
                         x.Reads = $"{Notification.NotifIdSep}{x.Reads}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}",
                             StringComparison.Ordinal).ToString(); //Reads = -1 ==> not read
                         return x;
-                    }).ToList();
+                    });
+
+                queryableResult = queryableResult.OrderByDescending(x => x.CreatedDate);
+                if (skip > 0)
+                {
+                    queryableResult = queryableResult.Skip(skip);
+                }
+                if (top > 0)
+                {
+                    queryableResult = queryableResult.Take(top);
+                }
+                result = queryableResult.ToList();
 
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));

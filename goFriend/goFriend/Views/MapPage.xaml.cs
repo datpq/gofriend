@@ -23,7 +23,7 @@ namespace goFriend.Views
             {
                 RefreshComponentsVisibility();
                 if (!Map.IsVisible) return;
-                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, true, arrCatValues).ContinueWith(task =>
+                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, arrCatValues).ContinueWith(task =>
                 {
                     var catGroupFriends = task.Result;
                     Map.Pins.Clear();
