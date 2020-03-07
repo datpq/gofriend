@@ -357,4 +357,7 @@
   <data name="MsgNoLocationSuggestion" xml:space="preserve">
     <value />
   </data>
+  <data name="SearchByName" xml:space="preserve">
+    <value />
+  </data>
 </root>

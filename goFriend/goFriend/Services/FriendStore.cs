@@ -283,24 +283,32 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive, int top = 0, int skip = 0, bool useCache = true, params string[] arrCatValues)
+        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive, int top = 0, int skip = 0,
+            bool useCache = true, string searchText = null, params string[] arrCatValues)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<GroupFriend> result = null;
             try
             {
-                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, top = {top}, skip = {skip}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, top = {top}, skip = {skip}, useCache={useCache}, searchText={searchText}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
 
                 Validate();
 
                 var client = GetSecuredHttpClient();
                 var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/{isActive}/{top}/{skip}/{useCache}";
+                var hasQueryParam = false;
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    requestUrl = $"{requestUrl}?{DataModel.Extension.ParamSearchText}={HttpUtility.UrlEncode(searchText)}";
+                    hasQueryParam = true;
+                }
                 if (arrCatValues.Length > 0)
                 {
                     for (var i = 0; i < arrCatValues.Length; i++)
                     {
-                        var sep = i == 0 ? "?" : "&";
-                        requestUrl = $"{requestUrl}{sep}Cat{i}={HttpUtility.UrlEncode(arrCatValues[i])}";
+                        var sep = hasQueryParam ? "&" : "?";
+                        requestUrl = $"{requestUrl}{sep}{DataModel.Extension.ParamCategory}{i}={HttpUtility.UrlEncode(arrCatValues[i])}";
+                        hasQueryParam = true;
                     }
                 }
                 Logger.Debug($"requestUrl: {requestUrl}");

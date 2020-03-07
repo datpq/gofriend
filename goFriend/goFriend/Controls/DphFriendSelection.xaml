@@ -3,12 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:goFriend;assembly=goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphFriendSelection">
   <ContentView.Content>
       <StackLayout>
           <Grid x:Name="Grid" ColumnSpacing="10" RowSpacing="0" HorizontalOptions="FillAndExpand">
               <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
                   <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
               <Grid.ColumnDefinitions>
@@ -36,6 +39,14 @@
                   <Button BackgroundColor="Transparent" x:Name="CmdRefresh" Clicked="CmdRefresh_OnClicked"
                           ImageSource="refresh.png" HorizontalOptions="End" WidthRequest="20"/>
               </StackLayout>
+              <Label x:Name="LblName" Grid.Row="1" Grid.Column="0" Text="{Static local:res.SearchByName}"
+                     FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center"/>
+              <Entry x:Name="EntryName" Grid.Row="1" Grid.Column="1" FontSize="{StaticResource LblDetailFontSize}"
+                     ClearButtonVisibility="WhileEditing">
+                  <Entry.Behaviors>
+                      <controls:BehaviorTextChangedEntry />
+                  </Entry.Behaviors>
+              </Entry>
           </Grid>
       </StackLayout>
   </ContentView.Content>

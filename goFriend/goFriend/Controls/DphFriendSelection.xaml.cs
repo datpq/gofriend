@@ -33,6 +33,11 @@ namespace goFriend.Controls
             set => SetValue(IsExpandableCategoriesProperty, value);
         }
 
+        //search criteria
+        private ApiGetGroupsModel _selectedGroup;
+        private List<string> _arrFixedCats;
+        private string[] _arrCatValues;
+
         public DphFriendSelection()
         {
             InitializeComponent();
@@ -43,12 +48,16 @@ namespace goFriend.Controls
             {
                 Command = new Command(() => CmdExpandCategories_OnClicked(null, null))
             });
+            EntryName.ReturnCommand = new Command(() =>
+            {
+                _onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
+            });
 
             Refresh();
         }
 
-        private Action<ApiGetGroupsModel, List<string>, string[]> _onSelectionAction;
-        public void Initialize(Action<ApiGetGroupsModel, List<string>, string[]> onSelectionAction)
+        private Action<ApiGetGroupsModel, string, List<string>, string[]> _onSelectionAction;
+        public void Initialize(Action<ApiGetGroupsModel, string, List<string>, string[]> onSelectionAction)
         {
             _onSelectionAction = onSelectionAction;
         }
@@ -79,30 +88,32 @@ namespace goFriend.Controls
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
+        private const int DynamicRowStartIndex = 2;
         private async void PickerGroups_OnSelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
                 Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                if (!(PickerGroups.SelectedItem is ApiGetGroupsModel selectedGroup)) return;
-                var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) > 0).ToList();
+                _selectedGroup = PickerGroups.SelectedItem as ApiGetGroupsModel;
+                if (_selectedGroup == null) return;
+                var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex).ToList();
                 foreach (var child in rowToRemove)
                 {
                     Grid.Children.Remove(child);
                 }
-                while (Grid.RowDefinitions.Count > 1)
+                while (Grid.RowDefinitions.Count > DynamicRowStartIndex)
                 {
-                    Grid.RowDefinitions.RemoveAt(1);
+                    Grid.RowDefinitions.RemoveAt(DynamicRowStartIndex);
                 }
-                var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(selectedGroup.Group.Id);
-                var arrCats = selectedGroup.Group.GetCatDescList().ToList();
-                var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
+                var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(_selectedGroup.Group.Id);
+                var arrCats = _selectedGroup.Group.GetCatDescList().ToList();
+                _arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
 
                 if (!IsExpandableCategories && !IsShowingCategories) return;
 
-                var arrPickers = new Picker[arrCats.Count - arrFixedCats.Count];
-                for (var i = 0; i < arrCats.Count - arrFixedCats.Count; i++)
+                var arrPickers = new Picker[arrCats.Count - _arrFixedCats.Count];
+                for (var i = 0; i < arrCats.Count - _arrFixedCats.Count; i++)
                 {
                     //Logger.Debug($"i={i}");
                     var lbl = new Label
@@ -111,10 +122,10 @@ namespace goFriend.Controls
                         VerticalOptions = LblGroup.VerticalOptions,
                         TextColor = LblGroup.TextColor,
                         IsVisible = IsShowingCategories,
-                        Text = $"{arrCats[i + arrFixedCats.Count]}:"
+                        Text = $"{arrCats[i + _arrFixedCats.Count]}:"
                     };
                     Grid.SetColumn(lbl, 0);
-                    Grid.SetRow(lbl, i + 1);
+                    Grid.SetRow(lbl, i + DynamicRowStartIndex);
                     Grid.Children.Add(lbl);
                     var picker = new Picker
                     {
@@ -123,12 +134,12 @@ namespace goFriend.Controls
                         //ItemDisplayBinding = new Binding("Display"),
                         ItemDisplayBinding = PickerGroups.ItemDisplayBinding,
                         IsVisible = IsShowingCategories,
-                        Title = $"{res.Select} {arrCats[i + arrFixedCats.Count]}"
+                        Title = $"{res.Select} {arrCats[i + _arrFixedCats.Count]}"
                     };
                     arrPickers[i] = picker;
                     if (i == 0)
                     {
-                        var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id);
+                        var groupCatValues = await App.FriendStore.GetGroupCatValues(_selectedGroup.Group.Id);
                         var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
                             .Concat(groupCatValues.ToList());
                         picker.ItemsSource = itemSourceList.ToList();
@@ -140,13 +151,13 @@ namespace goFriend.Controls
                         //Logger.Debug($"localI={localI}");
                         var arrCatValuesLen = localI + 1;
                         if (picker.SelectedIndex <= 0) arrCatValuesLen = localI; //nothing or first element selected
-                        var arrCatValues = new string[arrCatValuesLen];
-                        for (var k = 0; k < arrCatValues.Length; k++)
+                        _arrCatValues = new string[arrCatValuesLen];
+                        for (var k = 0; k < _arrCatValues.Length; k++)
                         {
                             //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
-                            arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
+                            _arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
                         }
-                        Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(arrCatValues)}");
+                        Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(_arrCatValues)}");
                         for (var j = localI + 1; j < arrPickers.Length; j++)
                         {
                             arrPickers[j].ItemsSource = null;
@@ -154,23 +165,26 @@ namespace goFriend.Controls
                             if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
                             {
                                 var localJ = j;
-                                var groupCatValues = await App.FriendStore.GetGroupCatValues(selectedGroup.Group.Id, true, arrCatValues);
+                                var groupCatValues = await App.FriendStore.GetGroupCatValues(_selectedGroup.Group.Id, true, _arrCatValues);
                                 var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
                                     .Concat(groupCatValues.ToList());
                                 arrPickers[localJ].ItemsSource = itemSourceList.ToList();
                             }
                         }
                         UserDialogs.Instance.HideLoading();
-                        _onSelectionAction?.Invoke(selectedGroup, arrFixedCats, arrCatValues);
+                        EntryName.ReturnCommand.Execute(null);
+                        //_onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
                     };
                     Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                     Grid.SetColumn(picker, 1);
-                    Grid.SetRow(picker, i + 1);
+                    Grid.SetRow(picker, i + DynamicRowStartIndex);
                     Grid.Children.Add(picker);
                 }
 
                 UserDialogs.Instance.HideLoading();
-                _onSelectionAction?.Invoke(selectedGroup, arrFixedCats, new string[0]);
+                _arrCatValues = new string[0];
+                EntryName.ReturnCommand.Execute(null);
+                //_onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
             }
             catch (Exception ex)
             {
@@ -194,7 +208,7 @@ namespace goFriend.Controls
         {
             IsShowingCategories = !IsShowingCategories;
             CmdExpandCategories.ImageSource = IsShowingCategories ? "folder_open.png" : "folder_close.png";
-            foreach (var child in Grid.Children.Where(x => Grid.GetRow(x) > 0))
+            foreach (var child in Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex))
             {
                 child.IsVisible = IsShowingCategories;
             }

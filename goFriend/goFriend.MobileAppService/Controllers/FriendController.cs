@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
+using Extension = goFriend.DataModel.Extension;
 using Group = goFriend.DataModel.Group;
 
 namespace goFriend.MobileAppService.Controllers
@@ -694,14 +695,23 @@ namespace goFriend.MobileAppService.Controllers
                     .AsQueryable().Include(x => x.Friend);
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
+                if (Request.Query.Keys.Contains(Extension.ParamSearchText))
+                {
+                    var searchText = Request.Query[Extension.ParamSearchText];
+                    if (!string.IsNullOrEmpty(searchText))
+                    {
+                        queryableResult = queryableResult.Where(x => x.Friend.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+                    }
+                }
+
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)
                 var startCatIdx = groupFixedCatValues?.GetCatList().Count() + 1 ?? 1;
                 var idx = 0;
-                while (Request.Query.Keys.Contains($"Cat{idx}"))
+                while (Request.Query.Keys.Contains($"{Extension.ParamCategory}{idx}"))
                 {
                     var localIdx = idx;
                     //Logger.Debug($"Cat{localIdx + startCatIdx}={Request.Query[$"Cat{localIdx}"]}");
-                    queryableResult = queryableResult.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]).ToList();
+                    queryableResult = queryableResult.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"{Extension.ParamCategory}{localIdx}"]).ToList();
                     idx++;
                 }
 

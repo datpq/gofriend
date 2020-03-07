@@ -357,4 +357,7 @@
   <data name="MsgNoLocationSuggestion" xml:space="preserve">
     <value>Bạn không thể nhìn thấy mọi người trên bản đồ nếu bạn không cập nhật vị trí của bạn. Hãy thay đổi vị trí của bạn bằng cách dịch chuyển con trỏ đến vị trí mong muốn rồi ấn Cập Nhật.</value>
   </data>
+  <data name="SearchByName" xml:space="preserve">
+    <value>Tìm tên:</value>
+  </data>
 </root>

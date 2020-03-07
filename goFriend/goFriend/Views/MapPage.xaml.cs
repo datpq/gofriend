@@ -19,11 +19,11 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
-            DphFriendSelection.Initialize((selectedGroup, arrFixedCats, arrCatValues) =>
+            DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
                 RefreshComponentsVisibility();
                 if (!Map.IsVisible) return;
-                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, arrCatValues).ContinueWith(task =>
+                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, searchText, arrCatValues).ContinueWith(task =>
                 {
                     var catGroupFriends = task.Result;
                     Map.Pins.Clear();

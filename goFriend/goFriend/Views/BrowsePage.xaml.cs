@@ -14,7 +14,7 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
-            DphFriendSelection.Initialize((selectedGroup, arrFixedCats, arrCatValues) =>
+            DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
                 DphListView.Initialize(async(selectedItem) =>
                 {
@@ -27,7 +27,7 @@ namespace goFriend.Views
                 {
                     var listViewModel = (DphListViewModel) DphListView.BindingContext;
                     var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true,
-                        listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true, arrCatValues);
+                        listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true, searchText, arrCatValues);
                     var result = catGroupFriends.Select(x => new DphListViewItemModel
                     {
                         Id = x.Id,
