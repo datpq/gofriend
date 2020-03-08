@@ -33,6 +33,8 @@ namespace goFriend.Controls
             set => SetValue(IsExpandableCategoriesProperty, value);
         }
 
+        public string SelectedGroupName { get; set; }
+
         //search criteria
         private ApiGetGroupsModel _selectedGroup;
         private List<string> _arrFixedCats;
@@ -73,16 +75,20 @@ namespace goFriend.Controls
                 //Task.Delay(5000).Wait();
             }).ContinueWith(task =>
             {
-                var selectedIndex = PickerGroups.SelectedIndex;
                 var myGroups = App.MyGroups == null ? new List<ApiGetGroupsModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
                 PickerGroups.ItemsSource = new ObservableCollection<ApiGetGroupsModel>(myGroups);
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
-                if (selectedIndex < 0 && PickerGroups.Items.Count > 0)
+                for (var i = 0; i < PickerGroups.Items.Count; i++)
+                {
+                    if (PickerGroups.Items[i].StartsWith($"{SelectedGroupName} ("))
+                    {
+                        PickerGroups.SelectedIndex = i;
+                        break;
+                    }
+                }
+                if (PickerGroups.SelectedIndex < 0 && PickerGroups.Items.Count > 0)
                 {
                     PickerGroups.SelectedIndex = 0;
-                } else if (selectedIndex >= 0 && selectedIndex < PickerGroups.Items.Count)
-                {
-                    PickerGroups.SelectedIndex = selectedIndex;
                 }
                 Logger.Debug("Refresh.END");
             }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -97,6 +103,7 @@ namespace goFriend.Controls
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 _selectedGroup = PickerGroups.SelectedItem as ApiGetGroupsModel;
                 if (_selectedGroup == null) return;
+                SelectedGroupName = _selectedGroup.Group.Name;
                 var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex).ToList();
                 foreach (var child in rowToRemove)
                 {

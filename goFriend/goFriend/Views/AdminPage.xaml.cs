@@ -33,7 +33,15 @@ namespace goFriend.Views
             {
                 PickerGroups.ItemsSource = App.MyGroups.Where(x => x.GroupFriend.UserRight >= UserType.Admin).OrderBy(x => x.Group.Name).ToList();
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
-                if (PickerGroups.Items.Count > 0)
+                for (var i = 0; i < PickerGroups.Items.Count; i++)
+                {
+                    if (PickerGroups.Items[i] == Settings.LastAdminPageGroupNme)
+                    {
+                        PickerGroups.SelectedIndex = i;
+                        break;
+                    }
+                }
+                if (PickerGroups.SelectedIndex < 0 && PickerGroups.Items.Count > 0)
                 {
                     PickerGroups.SelectedIndex = 0;
                 }
@@ -47,6 +55,7 @@ namespace goFriend.Views
             {
                 Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
                 if (!(PickerGroups.SelectedItem is ApiGetGroupsModel selectedGroup)) return;
+                Settings.LastAdminPageGroupNme = selectedGroup.Group.Name;
 
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(selectedGroup.Group.Id);

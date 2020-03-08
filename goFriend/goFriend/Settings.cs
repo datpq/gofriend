@@ -26,5 +26,23 @@ namespace goFriend
             get => AppSettings.GetValueOrDefault(nameof(LastGroupName), string.Empty);
             set => AppSettings.AddOrUpdateValue(nameof(LastGroupName), value);
         }
+
+        public static string LastBrowsePageGroupNme
+        {
+            get => AppSettings.GetValueOrDefault(nameof(LastBrowsePageGroupNme), string.Empty);
+            set => AppSettings.AddOrUpdateValue(nameof(LastBrowsePageGroupNme), value);
+        }
+
+        public static string LastMapPageGroupNme
+        {
+            get => AppSettings.GetValueOrDefault(nameof(LastMapPageGroupNme), string.Empty);
+            set => AppSettings.AddOrUpdateValue(nameof(LastMapPageGroupNme), value);
+        }
+
+        public static string LastAdminPageGroupNme
+        {
+            get => AppSettings.GetValueOrDefault(nameof(LastAdminPageGroupNme), string.Empty);
+            set => AppSettings.AddOrUpdateValue(nameof(LastAdminPageGroupNme), value);
+        }
     }
 }

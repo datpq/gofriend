@@ -19,8 +19,10 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
+            DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupNme;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
+                Settings.LastMapPageGroupNme = selectedGroup.Group.Name;
                 RefreshComponentsVisibility();
                 if (!Map.IsVisible) return;
                 App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, searchText, arrCatValues).ContinueWith(task =>
