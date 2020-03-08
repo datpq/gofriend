@@ -15,7 +15,8 @@ namespace goFriend.Services
         Task<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues(int groupId, bool useCache = true, params string[] arrCatValues);
         Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive = true, int top = 0, int skip = 0,
             bool useCache = true, string searchText = null, params string[] arrCatValues);
-        Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useCache = true);
+        Task<GroupFriend> GetGroupFriend(int groupId, int otherFriendId, bool useCache = true);
+        Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useClientCache = true, bool useCache = true);
         Task<Friend> GetProfile(bool useCache = true);
         Task<Friend> GetFriend(int groupId, int otherFriendId, bool useCache = true);
         Task<bool> ReadNotification(string notifIds);

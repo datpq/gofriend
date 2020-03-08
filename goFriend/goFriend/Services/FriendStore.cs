@@ -166,13 +166,28 @@ namespace goFriend.Services
             return result;
         }
 
-        public async Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useCache = true)
+        public async Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             GroupFixedCatValues result = null;
             try
             {
-                Logger.Debug($"GetGroupFixedCatValues.BEGIN(groupId={groupId}, useCache={useCache})");
+                Logger.Debug($"GetGroupFixedCatValues.BEGIN(groupId={groupId}, useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
+                var cacheKey = $"{cachePrefix}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as GroupFixedCatValues;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -197,6 +212,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -283,7 +299,62 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive, int top = 0, int skip = 0,
+        public async Task<GroupFriend> GetGroupFriend(int groupId, int otherFriendId, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            GroupFriend result = null;
+            try
+            {
+                Logger.Debug($"GetGroupFriend.BEGIN(groupId={groupId}, otherFriendId={otherFriendId}, useCache={useCache})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/0/0/{useCache}?{DataModel.Extension.ParamOtherFriendId}={otherFriendId}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var groupFriends = JsonConvert.DeserializeObject<IEnumerable<GroupFriend>>(jsonString.Result);
+                    result = groupFriends.FirstOrDefault();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetGroupFriends.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive = true, int top = 0, int skip = 0,
             bool useCache = true, string searchText = null, params string[] arrCatValues)
         {
             var stopWatch = Stopwatch.StartNew();
@@ -295,20 +366,16 @@ namespace goFriend.Services
                 Validate();
 
                 var client = GetSecuredHttpClient();
-                var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/{isActive}/{top}/{skip}/{useCache}";
-                var hasQueryParam = false;
+                var requestUrl = $"api/Friend/GetGroupFriends/{App.User.Id}/{groupId}/{top}/{skip}/{useCache}?{DataModel.Extension.ParamIsActive}={isActive}";
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    requestUrl = $"{requestUrl}?{DataModel.Extension.ParamSearchText}={HttpUtility.UrlEncode(searchText)}";
-                    hasQueryParam = true;
+                    requestUrl = $"{requestUrl}&{DataModel.Extension.ParamSearchText}={HttpUtility.UrlEncode(searchText)}";
                 }
                 if (arrCatValues.Length > 0)
                 {
                     for (var i = 0; i < arrCatValues.Length; i++)
                     {
-                        var sep = hasQueryParam ? "&" : "?";
-                        requestUrl = $"{requestUrl}{sep}{DataModel.Extension.ParamCategory}{i}={HttpUtility.UrlEncode(arrCatValues[i])}";
-                        hasQueryParam = true;
+                        requestUrl = $"{requestUrl}&{DataModel.Extension.ParamCategory}{i}={HttpUtility.UrlEncode(arrCatValues[i])}";
                     }
                 }
                 Logger.Debug($"requestUrl: {requestUrl}");

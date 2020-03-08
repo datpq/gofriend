@@ -623,15 +623,20 @@ namespace goFriend.MobileAppService.Controllers
         }
 
         [HttpGet]
-        [Route("GetGroupFriends/{friendId}/{groupId}/{isActive}/{top}/{skip}/{useCache}")]
+        [Route("GetGroupFriends/{friendId}/{groupId}/{top}/{skip}/{useCache}")]
         public ActionResult<IEnumerable<GroupFriend>> GetGroupFriends([FromHeader] string token, [FromRoute] int friendId,
-            [FromRoute] int groupId, bool isActive = true, int top = 0, int skip = 0, bool useCache = true)
+            [FromRoute] int groupId, int top = 0, int skip = 0, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             ActionResult<IEnumerable<GroupFriend>> result = null;
             try
             {
-                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, isActive={isActive}, top={top}, skip={skip}, useCache={useCache}, QueryString={Request.QueryString})");
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, groupId={groupId}, top={top}, skip={skip}, useCache={useCache}, QueryString={Request.QueryString})");
+                bool? isActive = null;
+                if (Request.Query.Keys.Contains(Extension.ParamIsActive))
+                {
+                    isActive = bool.Parse(Request.Query[Extension.ParamIsActive]);
+                }
 
                 #region Data Validation
 
@@ -670,7 +675,7 @@ namespace goFriend.MobileAppService.Controllers
                     Logger.Warn($"User is not an Active member of group: {Message.MsgUserNoPermission.Msg}");
                     return BadRequest(Message.MsgUserNoPermission);
                 }
-                if (!isActive && groupFriendMe.UserRight < UserType.Admin) // in order to get pending friend list ==> need to be Admin
+                if (isActive == false && groupFriendMe.UserRight < UserType.Admin) // in order to get pending friend list ==> need to be Admin
                 {
                     Logger.Warn($"User is not Admin: {Message.MsgUserNoPermission.Msg}");
                     return BadRequest(Message.MsgUserNoPermission);
@@ -678,7 +683,7 @@ namespace goFriend.MobileAppService.Controllers
 
                 var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
-                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{top}.{skip}.{Request.QueryString}.";
+                var cacheKey = $"{cachePrefix}.{groupId}.{top}.{skip}.{Request.QueryString}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
@@ -691,8 +696,12 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                IEnumerable<GroupFriend> queryableResult = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active == isActive)
+                IEnumerable<GroupFriend> queryableResult = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId)
                     .AsQueryable().Include(x => x.Friend);
+                if (isActive.HasValue)
+                {
+                    queryableResult = queryableResult.Where(x => x.Active == isActive.Value);
+                }
                 var groupFixedCatValues = _dataRepo.Get<GroupFixedCatValues>(x => x.GroupId == groupId, true);
 
                 if (Request.Query.Keys.Contains(Extension.ParamSearchText))
@@ -702,6 +711,12 @@ namespace goFriend.MobileAppService.Controllers
                     {
                         queryableResult = queryableResult.Where(x => x.Friend.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
                     }
+                }
+
+                if (Request.Query.Keys.Contains(Extension.ParamOtherFriendId))
+                {
+                    var otherFriendId = int.Parse(Request.Query[Extension.ParamOtherFriendId]);
+                    queryableResult = queryableResult.Where(x => x.FriendId == otherFriendId);
                 }
 
                 // if groupFixedCatValues contains Cat1, Cat2, Cat3 so we start to find Cat0 (idx) in QueryString which is Cat4 (startCatIdx)

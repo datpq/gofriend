@@ -6,6 +6,8 @@ namespace goFriend.DataModel
     {
         public const string ParamSearchText = "SearchText";
         public const string ParamCategory = "Cat";
+        public const string ParamOtherFriendId = "OtherFriendId";
+        public const string ParamIsActive = "IsActive";
 
         public static string ToStringStandardFormat(this TimeSpan ts)
         {
