@@ -29,11 +29,12 @@ namespace goFriend.Views
                 {
                     var catGroupFriends = task.Result;
                     Map.Pins.Clear();
+                    Map.CustomPins.Clear();
                     foreach (var groupFriend in catGroupFriends)
                     {
                         if (groupFriend.Friend.Location != null && groupFriend.Friend.ShowLocation == true)
                         {
-                            Map.Pins.Add(new DphPin
+                            var dphPin = new DphPin(Map)
                             {
                                 Position = new Position(groupFriend.Friend.Location.Y, groupFriend.Friend.Location.X),
                                 Title = groupFriend.Friend.Name,
@@ -42,7 +43,9 @@ namespace goFriend.Views
                                 IconUrl = groupFriend.Friend.GetImageUrl(),
                                 Draggable = false,
                                 Type = PinType.Place
-                            });
+                            };
+                            Map.CustomPins.Add(dphPin.Pin, dphPin);
+                            Map.Pins.Add(dphPin.Pin);
                         }
                     }
                     Map.MoveToRegionToCoverAllPins();

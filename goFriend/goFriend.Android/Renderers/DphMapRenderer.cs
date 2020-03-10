@@ -72,7 +72,8 @@ namespace goFriend.Droid.Renderers
 
         protected override MarkerOptions CreateMarker(Pin pin)
         {
-            var dphPin = (DphPin)pin;
+            var map = (DphMap) Map;
+            var dphPin = map.CustomPins[pin];
             var marker = new MarkerOptions();
             marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
             marker.SetTitle(pin.Label);
@@ -84,7 +85,8 @@ namespace goFriend.Droid.Renderers
 
         void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
-            var pin = GetPinForMarker(e.Marker) as DphPin;
+            var map = (DphMap)Map;
+            var pin = map.CustomPins[GetPinForMarker(e.Marker)];
             if (string.IsNullOrWhiteSpace(pin?.Url)) return;
             //try
             //{
@@ -105,7 +107,8 @@ namespace goFriend.Droid.Renderers
             var inflater = Android.App.Application.Context.GetSystemService(Context.LayoutInflaterService) as Android.Views.LayoutInflater;
             if (inflater != null)
             {
-                var pin = (DphPin)GetPinForMarker(marker);
+                var map = (DphMap)Map;
+                var pin = map.CustomPins[GetPinForMarker(marker)];
 
                 var view = inflater.Inflate(Resource.Layout.MapFriendInfoWindow, null);
 

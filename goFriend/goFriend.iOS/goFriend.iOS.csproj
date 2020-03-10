@@ -229,9 +229,6 @@
     <BundleResource Include="Resources\group_admin.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\tab_admin.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\tab_browse.png" />
   </ItemGroup>
   <ItemGroup>
@@ -248,9 +245,6 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_notification.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\tab_notification_selected.png" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_chat.png" />

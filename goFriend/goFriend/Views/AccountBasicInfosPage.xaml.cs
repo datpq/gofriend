@@ -78,12 +78,12 @@ namespace goFriend.Views
             CmdReset.IsEnabled = false;
             CmdSetGps.IsEnabled = true;
 
-            MessagingCenter.Subscribe<Application, Pin>(this,
-                Constants.MsgLocationChanged, (obj, pin) => CmdSave.IsEnabled = CmdReset.IsEnabled = true);
+            MessagingCenter.Subscribe<Application>(this,
+                Constants.MsgLocationChanged, obj => CmdSave.IsEnabled = CmdReset.IsEnabled = true);
 
             //set up Pins
             var position = await _viewModel.Friend.Location.GetPosition();
-            _pin = new DphPin
+            _pin = new DphPin(Map)
             {
                 Position = position,
                 Title = _viewModel.Name,
@@ -94,9 +94,12 @@ namespace goFriend.Views
                 Draggable = _viewModel.Editable,
                 Type = PinType.Place
             };
+
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
+            Map.CustomPins.Clear();
             Map.Pins.Clear();
-            Map.Pins.Add(_pin);
+            Map.CustomPins.Add(_pin.Pin, _pin);
+            Map.Pins.Add(_pin.Pin);
             SwitchShowLocation_OnToggled(null, null);
         }
 
@@ -175,7 +178,7 @@ namespace goFriend.Views
 
             //set up Pins
             var position = await _viewModel.Friend.Location.GetPosition(false);
-            _pin = new DphPin
+            _pin = new DphPin(Map)
             {
                 Position = position,
                 Title = _viewModel.Name,
@@ -187,8 +190,10 @@ namespace goFriend.Views
                 Type = PinType.Place
             };
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
+            Map.CustomPins.Clear();
             Map.Pins.Clear();
-            Map.Pins.Add(_pin);
+            Map.CustomPins.Add(_pin.Pin, _pin);
+            Map.Pins.Add(_pin.Pin);
             SwitchShowLocation_OnToggled(null, null);
         }
 
@@ -235,7 +240,8 @@ namespace goFriend.Views
                 var oldLocation = App.User.Location;
                 var oldAddress = App.User.Address;
                 var oldCountryName = App.User.CountryName;
-                var pin = (DphPin)Map.Pins.Single();
+                var pin = Map.Pins.Single();
+                var dphPin = Map.CustomPins[pin];
                 var position = pin.Position;
                 var geoCoder = new Geocoder();
                 var approximateLocations = await geoCoder.GetAddressesForPositionAsync(position);
@@ -251,8 +257,8 @@ namespace goFriend.Views
                 {
                     CmdSave.IsEnabled = CmdReset.IsEnabled = false;
                     Settings.LastUser = App.User;
-                    pin.SubTitle1 = App.User.Address;
-                    pin.SubTitle2 = App.User.CountryName;
+                    dphPin.SubTitle1 = App.User.Address;
+                    dphPin.SubTitle2 = App.User.CountryName;
                     _accountPage?.RefreshMenu();
                     App.DisplayMsgInfo(res.SaveSuccess);
                 }

@@ -7,11 +7,37 @@ using Xamarin.Forms.Maps;
 
 namespace goFriend.Controls
 {
-    public class DphPin : Pin
+    public class DphPin
     {
+        public DphMap Map { get; }
+
+        public DphPin(DphMap map)
+        {
+            Map = map;
+        }
+
         public string IconUrl { get; set; }
         public string Url { get; set; }
         public bool Draggable { get; set; }
+
+        public Position Position { get; set; }
+        public PinType Type { get; set; }
+        private Pin _pin;
+        public Pin Pin
+        {
+            get
+            {
+                if (_pin == null)
+                {
+                    _pin = new Pin
+                    {
+                        Position = Position,
+                        Type = Type
+                    };
+                }
+                return _pin;
+            }
+        }
 
         private string _title;
         public string Title
@@ -20,7 +46,7 @@ namespace goFriend.Controls
             set
             {
                 _title = value;
-                Label = _title;
+                Pin.Label = _title;
             }
         }
 
@@ -31,7 +57,7 @@ namespace goFriend.Controls
             set
             {
                 _subTitle1 = value;
-                Address = $"{_subTitle1}{Environment.NewLine}{_subTitle2}";
+                Pin.Address = $"{_subTitle1}{Environment.NewLine}{_subTitle2}";
             }
         }
 
@@ -42,7 +68,7 @@ namespace goFriend.Controls
             set
             {
                 _subTitle2 = value;
-                Address = $"{_subTitle1}{Environment.NewLine}{_subTitle2}";
+                Pin.Address = $"{_subTitle1}{Environment.NewLine}{_subTitle2}";
             }
         }
     }
@@ -51,6 +77,7 @@ namespace goFriend.Controls
     {
         public const double DefaultDistance = 5;
         public static readonly Position DefaultPosition = new Position(21.022642, 105.814416); // B7 thanh cong, Hanoi
+        public readonly Dictionary<Pin, DphPin> CustomPins = new Dictionary<Pin, DphPin>();
 
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 

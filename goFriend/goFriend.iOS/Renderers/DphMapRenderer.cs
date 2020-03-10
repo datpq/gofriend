@@ -66,21 +66,21 @@ namespace goFriend.iOS.Renderers
 
         protected override MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
         {
-            if (annotation is MKUserLocation)
-                return null;
-
-            var pin = (DphPin)GetPinForAnnotation(annotation);
+            var map = (DphMap) Element;
+            var pin = GetPinForAnnotation(annotation);
             //var pin = GetCustomPin(annotation as MKPointAnnotation);
             if (pin == null)
             {
                 return null;
             }
 
+            var dphPin = map.CustomPins[pin];
+
             var annotationView = mapView.DequeueReusableAnnotation(pin.Label);
             if (annotationView == null)
             {
                 var leftOutView = new UIImageView(new CGRect(0, 0, 50, 50));
-                ImageService.Instance.LoadUrl(pin.IconUrl)
+                ImageService.Instance.LoadUrl(dphPin.IconUrl)
                     .Transform(new CircleTransformation())
                     //.WithPriority(LoadingPriority.High)
                     //.WithCache(FFImageLoading.Cache.CacheType.All)
@@ -92,13 +92,13 @@ namespace goFriend.iOS.Renderers
                     Alignment = UIStackViewAlignment.Fill
                 };
                 var lblSubTitle1 = new UILabel {
-                    Text = pin.SubTitle1,
+                    Text = dphPin.SubTitle1,
                     Font = UIFont.PreferredCaption1,
                     TextColor = UIColor.Gray
                 };
                 var lblSubTitle2 = new UILabel
                 {
-                    Text = pin.SubTitle2,
+                    Text = dphPin.SubTitle2,
                     Font = UIFont.PreferredCaption1,
                     TextColor = UIColor.Gray
                 };
@@ -107,7 +107,7 @@ namespace goFriend.iOS.Renderers
                 annotationView = new CustomAnnotationView(annotation, pin.Label)
                 {
                     Image = UIImage.FromFile("pin.png"),
-                    Draggable = pin.Draggable,
+                    Draggable = dphPin.Draggable,
                     CalloutOffset = new CGPoint(0, 0),
                     DetailCalloutAccessoryView = detailCallOutView,
                     LeftCalloutAccessoryView = leftOutView //new UIImageView(FromUrl(pin.IconUrl))
