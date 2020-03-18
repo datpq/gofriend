@@ -8,7 +8,7 @@ using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
+using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
 using Point = NetTopologySuite.Geometries.Point;
 
@@ -78,8 +78,8 @@ namespace goFriend.Views
             CmdReset.IsEnabled = false;
             CmdSetGps.IsEnabled = true;
 
-            MessagingCenter.Subscribe<Application>(this,
-                Constants.MsgLocationChanged, obj => CmdSave.IsEnabled = CmdReset.IsEnabled = true);
+            MessagingCenter.Subscribe<Application, DphPin>(Application.Current,
+                Constants.MsgLocationChanged, (sender, dphPin) => CmdSave.IsEnabled = CmdReset.IsEnabled = true);
 
             //set up Pins
             var position = await _viewModel.Friend.Location.GetPosition();
@@ -91,16 +91,11 @@ namespace goFriend.Views
                 SubTitle2 = _viewModel.CountryName,
                 IconUrl = _viewModel.ImageUrl,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
-                Draggable = _viewModel.Editable,
+                IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
             };
 
-            //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
-            Map.CustomPins.Clear();
-            Map.Pins.Clear();
-            Map.CustomPins.Add(_pin.Pin, _pin);
-            Map.Pins.Add(_pin.Pin);
-            SwitchShowLocation_OnToggled(null, null);
+            PostInitialize();
         }
 
         public async Task Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
@@ -186,13 +181,17 @@ namespace goFriend.Views
                 SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
                 IconUrl = _viewModel.ImageUrl,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
-                Draggable = _viewModel.Editable,
+                IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
             };
+
+            PostInitialize();
+        }
+
+        private void PostInitialize()
+        {
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
-            Map.CustomPins.Clear();
-            Map.Pins.Clear();
-            Map.CustomPins.Add(_pin.Pin, _pin);
+            _pin.Pin.Tag = _pin;
             Map.Pins.Add(_pin.Pin);
             SwitchShowLocation_OnToggled(null, null);
         }
@@ -241,7 +240,7 @@ namespace goFriend.Views
                 var oldAddress = App.User.Address;
                 var oldCountryName = App.User.CountryName;
                 var pin = Map.Pins.Single();
-                var dphPin = Map.CustomPins[pin];
+                var dphPin = pin.Tag as DphPin;
                 var position = pin.Position;
                 var geoCoder = new Geocoder();
                 var approximateLocations = await geoCoder.GetAddressesForPositionAsync(position);

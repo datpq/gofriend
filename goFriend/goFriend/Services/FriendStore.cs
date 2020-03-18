@@ -176,7 +176,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
-                var cacheKey = $"{cachePrefix}.";
+                var cacheKey = $"{cachePrefix}.{groupId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)

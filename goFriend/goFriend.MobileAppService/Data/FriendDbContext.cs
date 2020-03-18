@@ -14,7 +14,7 @@ namespace goFriend.MobileAppService.Data
         {
             modelBuilder.Entity<Group>().ToTable("Groups").HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<Group>().Property(x => x.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Friend>().ToTable("Friends").HasIndex(x => x.FacebookId).IsUnique();
+            //modelBuilder.Entity<Friend>().ToTable("Friends").HasIndex(x => x.FacebookId).IsUnique();
             modelBuilder.Entity<Friend>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<GroupFixedCatValues>().ToTable("GroupFixedCatValues");
             modelBuilder.Entity<GroupFixedCatValues>().Property(x => x.Id).ValueGeneratedOnAdd();

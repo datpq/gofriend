@@ -1,6 +1,6 @@
 ﻿using System;
 using goFriend.DataModel;
-using Xamarin.Forms.Maps;
+using Xamarin.Forms.GoogleMaps;
 
 namespace goFriend.ViewModels
 {

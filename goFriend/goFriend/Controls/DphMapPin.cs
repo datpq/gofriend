@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using goFriend.Services;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
+using Xamarin.Forms.GoogleMaps;
+using Map = Xamarin.Forms.GoogleMaps.Map;
 
 namespace goFriend.Controls
 {
@@ -14,30 +15,28 @@ namespace goFriend.Controls
         public DphPin(DphMap map)
         {
             Map = map;
+            Pin = new Pin();
         }
 
         public string IconUrl { get; set; }
         public string Url { get; set; }
-        public bool Draggable { get; set; }
 
-        public Position Position { get; set; }
-        public PinType Type { get; set; }
-        private Pin _pin;
-        public Pin Pin
-        {
-            get
-            {
-                if (_pin == null)
-                {
-                    _pin = new Pin
-                    {
-                        Position = Position,
-                        Type = Type
-                    };
-                }
-                return _pin;
-            }
+        public bool IsDraggable {
+            get => Pin.IsDraggable;
+            set => Pin.IsDraggable = value;
         }
+
+        public Position Position {
+            get => Pin.Position;
+            set => Pin.Position = value;
+        }
+
+        public PinType Type {
+            get => Pin.Type;
+            set => Pin.Type = value;
+        }
+
+        public Pin Pin { get; set; }
 
         private string _title;
         public string Title
@@ -77,12 +76,32 @@ namespace goFriend.Controls
     {
         public const double DefaultDistance = 5;
         public static readonly Position DefaultPosition = new Position(21.022642, 105.814416); // B7 thanh cong, Hanoi
-        public readonly Dictionary<Pin, DphPin> CustomPins = new Dictionary<Pin, DphPin>();
 
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        public DphMap() : base(MapSpan.FromCenterAndRadius(
-            DefaultPosition, Distance.FromKilometers(DefaultDistance))) {}
+        //workaround for MoveToLastRegionOnLayoutChange
+        private CameraPosition _lastPosition;
+
+        public DphMap()
+        {
+            InitialCameraUpdate = CameraUpdateFactory.NewPositionZoom(DefaultPosition, DefaultDistance);
+            //MoveCamera(CameraUpdateFactory.NewPositionZoom(DefaultPosition, DefaultDistance));
+            CameraIdled += (sender, args) =>
+            {
+                _lastPosition = args.Position;
+            };
+        }
+
+        public void MoveToLastPosition()
+        {
+            if (_lastPosition != null)
+            {
+                MoveCamera(CameraUpdateFactory.NewCameraPosition(_lastPosition));
+            } else if (Pins.Count > 0)
+            {
+                MoveToRegionToCoverAllPins();
+            }
+        }
 
         public void MoveToRegionToCoverAllPins()
         {

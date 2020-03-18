@@ -67,7 +67,7 @@ namespace goFriend.Droid
             Forms.Init(this, savedInstanceState);
             UserDialogs.Init(this);
 
-            Xamarin.FormsMaps.Init(this, savedInstanceState);
+            Xamarin.FormsGoogleMaps.Init(this, savedInstanceState);
             CachedImageRenderer.Init(true);
             CachedImageRenderer.InitImageViewHandler();
 

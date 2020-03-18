@@ -4,6 +4,7 @@ using Foundation;
 using goFriend.Services;
 using Xamarin.Forms;
 using UIKit;
+using Xamarin.Forms.GoogleMaps.iOS;
 
 namespace goFriend.iOS
 {
@@ -86,7 +87,7 @@ namespace goFriend.iOS
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Forms.Init();
 
-            Xamarin.FormsMaps.Init();
+            Xamarin.FormsGoogleMaps.Init("AIzaSyAxU0F02kSfdb8oVeFoFWKwK619RK5HkqU");
             CachedImageRenderer.Init();
             CachedImageRenderer.InitImageSourceHandler();;
 

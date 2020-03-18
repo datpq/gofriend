@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Android.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
@@ -7,23 +8,24 @@ using FFImageLoading;
 using FFImageLoading.Transformations;
 using goFriend.Controls;
 using goFriend.Droid.Renderers;
+using NLog;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
-using Xamarin.Forms.Maps.Android;
-using Map = Xamarin.Forms.Maps.Map;
+using Xamarin.Forms.GoogleMaps;
+using Xamarin.Forms.GoogleMaps.Android;
+using BitmapDescriptorFactory = Android.Gms.Maps.Model.BitmapDescriptorFactory;
+using Map = Xamarin.Forms.GoogleMaps.Map;
 
 [assembly: ExportRenderer(typeof(DphMap), typeof(DphMapRenderer))]
 
 namespace goFriend.Droid.Renderers
 {
-    public class DphMapRenderer : MapRenderer, GoogleMap.IInfoWindowAdapter
+    public class DphMapRenderer : MapRenderer, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback
     {
-        //private DphMap _map;
+        private readonly Dictionary<string, DphPin> _mapMarkerPins = new Dictionary<string, DphPin>();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public DphMapRenderer(Context context) : base(context)
-        {
-        }
+        public DphMapRenderer(Context context) : base(context) { }
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
         {
@@ -40,54 +42,81 @@ namespace goFriend.Droid.Renderers
             {
                 //_map = (DphMap)e.NewElement;
             }
+
+            ((MapView)Control)?.GetMapAsync(this);
         }
+
+        //protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        //{
+        //    base.OnElementPropertyChanged(sender, e);
+
+        //    if (Element == null || Control == null)
+        //        return;
+
+        //    //if (e.PropertyName == _dphMap.CustomPinsProperty.PropertyName || e.PropertyName == _dphMap.ZoomLevelProperty.PropertyName)
+        //    //    UpdatePins();
+        //}
 
         private void MapOnMarkerDragEnd(object sender, GoogleMap.MarkerDragEndEventArgs e)
         {
-            var pin = GetPinForMarker(e.Marker);
-            pin.Position = new Position(e.Marker.Position.Latitude, e.Marker.Position.Longitude);
-            MessagingCenter.Send(Application.Current, Constants.MsgLocationChanged, pin);
+            if (!_mapMarkerPins.ContainsKey(e.Marker.Id))
+            {
+                Logger.Error("Marker not found");
+                return;
+            }
+            var dphPin = _mapMarkerPins[e.Marker.Id];
+            MessagingCenter.Send(Application.Current, Constants.MsgLocationChanged, dphPin);
         }
 
         //private void MapOnMarkerDragStart(object sender, GoogleMap.MarkerDragStartEventArgs e)
         //{
         //}
 
-        protected override void OnMapReady(GoogleMap map)
+        public void OnMapReady(GoogleMap googleMap)
         {
-            try
-            {
-                base.OnMapReady(map);
-            }
-            catch (Exception)
-            {
-                //Ignored
-            }
-
             NativeMap.InfoWindowClick += OnInfoWindowClick;
             //NativeMap.MarkerDragStart += MapOnMarkerDragStart;
             NativeMap.MarkerDragEnd += MapOnMarkerDragEnd;
             NativeMap.SetInfoWindowAdapter(this);
+            (Map as DphMap)?.MoveToLastPosition();
         }
 
-        protected override MarkerOptions CreateMarker(Pin pin)
+        //Important: Do not override this Method (MoveToRegion will not work)
+        //protected override void OnMapReady(GoogleMap nativeMap, Map map)
+        //{
+        //    OnMapReady(nativeMap);
+        //}
+
+        protected override void OnMarkerDeleted(Pin pin, Marker marker)
         {
-            var map = (DphMap) Map;
-            var dphPin = map.CustomPins[pin];
-            var marker = new MarkerOptions();
-            marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
-            marker.SetTitle(pin.Label);
-            marker.SetSnippet(pin.Address);
-            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
-            marker.Draggable(dphPin.Draggable);
-            return marker;
+            _mapMarkerPins.Remove(marker.Id);
+        }
+
+        protected override void OnMarkerCreated(Pin pin, Marker marker)
+        {
+            var dphPin = pin.Tag as DphPin;
+            _mapMarkerPins.Add(marker.Id, dphPin);
+        }
+
+        protected override void OnMarkerCreating(Pin pin, MarkerOptions markerOptions)
+        {
+            //var marker = new MarkerOptions();
+            markerOptions.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
+            markerOptions.SetTitle(pin.Label);
+            markerOptions.SetSnippet(pin.Address);
+            markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
+            markerOptions.Draggable(pin.IsDraggable);
         }
 
         void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
-            var map = (DphMap)Map;
-            var pin = map.CustomPins[GetPinForMarker(e.Marker)];
-            if (string.IsNullOrWhiteSpace(pin?.Url)) return;
+            if (!_mapMarkerPins.ContainsKey(e.Marker.Id))
+            {
+                Logger.Error("Marker not found");
+                return;
+            }
+            var dphPin = _mapMarkerPins[e.Marker.Id];
+            if (string.IsNullOrWhiteSpace(dphPin?.Url)) return;
             //try
             //{
             //    //Android.App.Application.Context.PackageManager.GetPackageInfo("com.facebook.katana", 0);
@@ -99,7 +128,7 @@ namespace goFriend.Droid.Renderers
             //{
             //    // ignored
             //}
-            Launcher.OpenAsync(new Uri(pin.Url));
+            Launcher.OpenAsync(new Uri(dphPin.Url));
         }
 
         public Android.Views.View GetInfoContents(Marker marker)
@@ -107,8 +136,12 @@ namespace goFriend.Droid.Renderers
             var inflater = Android.App.Application.Context.GetSystemService(Context.LayoutInflaterService) as Android.Views.LayoutInflater;
             if (inflater != null)
             {
-                var map = (DphMap)Map;
-                var pin = map.CustomPins[GetPinForMarker(marker)];
+                if (!_mapMarkerPins.ContainsKey(marker.Id))
+                {
+                    Logger.Error("Marker not found");
+                    return null;
+                }
+                var dphPin = _mapMarkerPins[marker.Id];
 
                 var view = inflater.Inflate(Resource.Layout.MapFriendInfoWindow, null);
 
@@ -116,12 +149,12 @@ namespace goFriend.Droid.Renderers
                 var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
                 var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
 
-                infoTitle.Text = pin.Title; //marker.Title
-                infoSubtitle.Text = $"{pin.SubTitle1}{Environment.NewLine}{pin.SubTitle2}"; //marker.Snippet
+                infoTitle.Text = dphPin.Title; //marker.Title
+                infoSubtitle.Text = $"{dphPin.SubTitle1}{Environment.NewLine}{dphPin.SubTitle2}"; //marker.Snippet
 
                 //ImageService.Instance.LoadUrl(pin.IconUrl).DownloadOnly();
                 //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
-                ImageService.Instance.LoadUrl(pin.IconUrl)
+                ImageService.Instance.LoadUrl(dphPin.IconUrl)
                     .Transform(new CircleTransformation())
                     //.WithPriority(LoadingPriority.High)
                     //.WithCache(FFImageLoading.Cache.CacheType.All)

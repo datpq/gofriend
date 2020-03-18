@@ -1,23 +1,25 @@
-﻿using CoreGraphics;
+﻿using System.Collections.Generic;
+using CoreGraphics;
+using CoreLocation;
 using FFImageLoading;
 using FFImageLoading.Transformations;
 using goFriend.Controls;
 using goFriend.iOS.Renderers;
-using MapKit;
+using Google.Maps;
+using NLog;
 using UIKit;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
-using Xamarin.Forms.Maps.iOS;
+using Xamarin.Forms.GoogleMaps;
+using Xamarin.Forms.GoogleMaps.iOS;
 using Xamarin.Forms.Platform.iOS;
 
 [assembly: ExportRenderer(typeof(DphMap), typeof(DphMapRenderer))]
 namespace goFriend.iOS.Renderers
 {
-    public class DphMapRenderer : MapRenderer
+    public class DphMapRenderer : MapRenderer, IMapViewDelegate
     {
-        private UIView _pinView;
-        //private DphMap _map;
-        //private ILogger _logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly Dictionary<Marker, DphPin> _mapMarkerPins = new Dictionary<Marker, DphPin>();
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
@@ -25,61 +27,43 @@ namespace goFriend.iOS.Renderers
 
             if (e.OldElement != null)
             {
-                var nativeMap = Control as MKMapView;
-                if (nativeMap != null)
+                if (Control is MapView nativeMap)
                 {
-                    nativeMap.RemoveAnnotations(nativeMap.Annotations);
-                    nativeMap.GetViewForAnnotation = null;
-                    nativeMap.ChangedDragState -= OnChangedDragState;
-                    nativeMap.CalloutAccessoryControlTapped -= OnCalloutAccessoryControlTapped;
-                    nativeMap.DidSelectAnnotationView -= OnDidSelectAnnotationView;
-                    nativeMap.DidDeselectAnnotationView -= OnDidDeselectAnnotationView;
+                    nativeMap.DraggingMarkerEnded -= OnDraggingMarkerEnded;
+                    nativeMap.MarkerInfoContents = null;
+                    nativeMap.MarkerInfoWindow = null;
                 }
             }
 
             if (e.NewElement != null)
             {
                 //_map = (DphMap)e.NewElement;
-                var nativeMap = Control as MKMapView;
-
-                nativeMap.GetViewForAnnotation = GetViewForAnnotation;
-                nativeMap.ChangedDragState += OnChangedDragState;
-                nativeMap.CalloutAccessoryControlTapped += OnCalloutAccessoryControlTapped;
-                nativeMap.DidSelectAnnotationView += OnDidSelectAnnotationView;
-                nativeMap.DidDeselectAnnotationView += OnDidDeselectAnnotationView;
+                var nativeMap = Control as MapView;
+                nativeMap.DraggingMarkerEnded += OnDraggingMarkerEnded;
+                nativeMap.MarkerInfoContents = MarkerInfoContents;
+                nativeMap.MarkerInfoWindow = MarkerInfoWindow;
+                (Map as DphMap)?.MoveToLastPosition();
             }
         }
 
-        private void OnChangedDragState(object sender, MKMapViewDragStateEventArgs e)
+        private UIView MarkerInfoWindow(MapView mapView, Marker marker)
         {
-            if (e.NewState == MKAnnotationViewDragState.Starting)
-            {
-                e.AnnotationView.DragState = MKAnnotationViewDragState.Dragging;
-            } else if (e.NewState == MKAnnotationViewDragState.Ending || e.NewState == MKAnnotationViewDragState.Canceling)
-            {
-                var pin = GetPinForAnnotation(e.AnnotationView.Annotation);
-                pin.Position = new Position(e.AnnotationView.Annotation.Coordinate.Latitude, e.AnnotationView.Annotation.Coordinate.Longitude);
-                MessagingCenter.Send(Xamarin.Forms.Application.Current, Constants.MsgLocationChanged, pin);
-                e.AnnotationView.DragState = MKAnnotationViewDragState.None;
-            }
+            return null;
         }
 
-        protected override MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
+        private UIView MarkerInfoContents(MapView mapView, Marker marker)
         {
-            var map = (DphMap) Element;
-            var pin = GetPinForAnnotation(annotation);
-            //var pin = GetCustomPin(annotation as MKPointAnnotation);
-            if (pin == null)
+            if (!_mapMarkerPins.ContainsKey(marker))
             {
+                Logger.Error("Marker not found");
                 return null;
             }
 
-            var dphPin = map.CustomPins[pin];
-
-            var annotationView = mapView.DequeueReusableAnnotation(pin.Label);
+            var dphPin = _mapMarkerPins[marker];
+            var annotationView = mapView.MarkerInfoWindow.Invoke(mapView, marker);
             if (annotationView == null)
             {
-                var leftOutView = new UIImageView(new CGRect(0, 0, 50, 50));
+                var leftOutView = new UIImageView(new CGRect(0, 5, 50, 50));
                 ImageService.Instance.LoadUrl(dphPin.IconUrl)
                     .Transform(new CircleTransformation())
                     //.WithPriority(LoadingPriority.High)
@@ -87,11 +71,19 @@ namespace goFriend.iOS.Renderers
                     .Into(leftOutView);
                 var detailCallOutView = new UIStackView
                 {
+                    Frame = new CGRect(60, 0, 240, 57),
                     Axis = UILayoutConstraintAxis.Vertical,
-                    Distribution = UIStackViewDistribution.FillEqually,
+                    //Distribution = UIStackViewDistribution.FillEqually,
                     Alignment = UIStackViewAlignment.Fill
                 };
-                var lblSubTitle1 = new UILabel {
+                var lblTitle = new UILabel
+                {
+                    Text = dphPin.Title,
+                    Font = UIFont.PreferredBody,
+                    TextColor = UIColor.Black
+                };
+                var lblSubTitle1 = new UILabel
+                {
                     Text = dphPin.SubTitle1,
                     Font = UIFont.PreferredCaption1,
                     TextColor = UIColor.Gray
@@ -102,55 +94,47 @@ namespace goFriend.iOS.Renderers
                     Font = UIFont.PreferredCaption1,
                     TextColor = UIColor.Gray
                 };
+                detailCallOutView.AddArrangedSubview(lblTitle);
                 detailCallOutView.AddArrangedSubview(lblSubTitle1);
                 detailCallOutView.AddArrangedSubview(lblSubTitle2);
-                annotationView = new CustomAnnotationView(annotation, pin.Label)
-                {
-                    Image = UIImage.FromFile("pin.png"),
-                    Draggable = dphPin.Draggable,
-                    CalloutOffset = new CGPoint(0, 0),
-                    DetailCalloutAccessoryView = detailCallOutView,
-                    LeftCalloutAccessoryView = leftOutView //new UIImageView(FromUrl(pin.IconUrl))
-                };
-                //annotationView.RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure);
+
+                annotationView = new UIView(new CGRect(0, 0, 300, 60));
+                annotationView.AddSubview(detailCallOutView);
+                annotationView.AddSubview(leftOutView);
             }
-            annotationView.CanShowCallout = true;
 
             return annotationView;
         }
 
-        private void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)
+        private void OnDraggingMarkerEnded(object sender, GMSMarkerEventEventArgs e)
         {
-            if (!e.View.Selected)
+            if (!_mapMarkerPins.ContainsKey(e.Marker))
             {
-                _pinView.RemoveFromSuperview();
-                _pinView.Dispose();
-                _pinView = null;
+                Logger.Error("Marker not found");
+                return;
             }
+            var dphPin = _mapMarkerPins[e.Marker];
+            MessagingCenter.Send(Xamarin.Forms.Application.Current, Constants.MsgLocationChanged, dphPin);
         }
 
-        private void OnDidSelectAnnotationView(object sender, MKAnnotationViewEventArgs e)
+        protected override void OnMarkerDeleted(Pin pin, Marker marker)
         {
-            //var customView = e.View as CustomAnnotationView;
-            _pinView = new UIView();
-
-            _pinView.Frame = new CGRect(0, 0, 200, 84);
-            //var image = new UIImageView(new CGRect(0, 0, 200, 84));
-            //image.Image = UIImage.FromFile("hn9194_25.png");
-            //_pinView.AddSubview(image);
-            _pinView.Center = new CGPoint(0, -(e.View.Frame.Height + 75));
-            e.View.AddSubview(_pinView);
+            _mapMarkerPins.Remove(marker);
         }
 
-        private void OnCalloutAccessoryControlTapped(object sender, MKMapViewAccessoryTappedEventArgs e)
+        protected override void OnMarkerCreated(Pin pin, Marker marker)
         {
+            var dphPin = pin.Tag as DphPin;
+            _mapMarkerPins.Add(marker, dphPin);
         }
 
-        //static UIImage FromUrl(string uri)
-        //{
-        //    using (var url = new NSUrl(uri))
-        //    using (var data = NSData.FromUrl(url))
-        //        return UIImage.LoadFromData(data);
-        //}
+        protected override void OnMarkerCreating(Pin pin, Marker marker)
+        {
+            marker.Position = new CLLocationCoordinate2D(pin.Position.Latitude, pin.Position.Longitude);
+            marker.Title = pin.Label;
+            marker.Snippet = pin.Address;
+            marker.Icon = UIImage.FromFile("pin.png");
+            marker.Draggable = pin.IsDraggable;
+        }
     }
 }

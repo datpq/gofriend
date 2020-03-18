@@ -70,7 +70,7 @@
             <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20"
                    VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
                    TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
-            <controls:DphMap x:Name="Map" IsShowingUser="False" MoveToLastRegionOnLayoutChange="False" />
+            <controls:DphMap x:Name="Map" MyLocationEnabled="False" />
             <!--IsVisible="{Binding Source={x:Reference SwitchShowLocation}, Path=IsToggled}"-->
             <!--<controls:DphMap.Triggers>
                 <DataTrigger TargetType="controls:DphMap" Binding="{Binding Source={x:Reference SwitchShowLocation}, Path=IsToggled}" Value="true">

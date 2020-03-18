@@ -5,7 +5,7 @@ using goFriend.DataModel;
 using goFriend.Services;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
+using Xamarin.Forms.GoogleMaps;
 
 namespace goFriend
 {

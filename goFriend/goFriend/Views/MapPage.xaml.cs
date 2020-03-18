@@ -5,7 +5,7 @@ using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
+using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
 
 namespace goFriend.Views
@@ -29,7 +29,6 @@ namespace goFriend.Views
                 {
                     var catGroupFriends = task.Result;
                     Map.Pins.Clear();
-                    Map.CustomPins.Clear();
                     foreach (var groupFriend in catGroupFriends)
                     {
                         if (groupFriend.Friend.Location != null && groupFriend.Friend.ShowLocation == true)
@@ -41,10 +40,10 @@ namespace goFriend.Views
                                 SubTitle1 = $"{res.Groups} {selectedGroup.Group.Name}",
                                 SubTitle2 = groupFriend.GetCatValueDisplay(arrFixedCats.Count),
                                 IconUrl = groupFriend.Friend.GetImageUrl(),
-                                Draggable = false,
+                                IsDraggable = false,
                                 Type = PinType.Place
                             };
-                            Map.CustomPins.Add(dphPin.Pin, dphPin);
+                            dphPin.Pin.Tag = dphPin;
                             Map.Pins.Add(dphPin.Pin);
                         }
                     }
