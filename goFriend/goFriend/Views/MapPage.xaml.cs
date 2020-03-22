@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
+using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
@@ -18,6 +20,9 @@ namespace goFriend.Views
         public MapPage()
         {
             InitializeComponent();
+            var minClusterSize = int.Parse(ConfigurationManager.AppSettings["MinimumClusterSize"]);
+            Map.ClusterOptions.Buckets[0] = minClusterSize;
+            Map.ClusterOptions.SetMinimumClusterSize(minClusterSize);
 
             DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupNme;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
@@ -33,13 +38,14 @@ namespace goFriend.Views
                     {
                         if (groupFriend.Friend.Location != null && groupFriend.Friend.ShowLocation == true)
                         {
-                            var dphPin = new DphPin(Map)
+                            var dphPin = new DphPin
                             {
                                 Position = new Position(groupFriend.Friend.Location.Y, groupFriend.Friend.Location.X),
                                 Title = groupFriend.Friend.Name,
                                 SubTitle1 = $"{res.Groups} {selectedGroup.Group.Name}",
                                 SubTitle2 = groupFriend.GetCatValueDisplay(arrFixedCats.Count),
                                 IconUrl = groupFriend.Friend.GetImageUrl(),
+                                UserRight = new[] { 4, 5 }.Contains(groupFriend.FriendId) ? UserType.Normal : groupFriend.UserRight,
                                 IsDraggable = false,
                                 Type = PinType.Place
                             };

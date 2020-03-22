@@ -152,7 +152,7 @@ namespace goFriend
                 }
             }
 
-            return DphMap.DefaultPosition;
+            return MapExtension.DefaultPosition;
         }
 
         public static string GetVersionTrackingInfo()

@@ -8,5 +8,6 @@
         public const string MsgLogout = "MsgLogout";
         public const int SearchCommandDelayTime = 1000; // in milliseconds
         public const int GeolocationRequestTimeout = 5; // in seconds
+        public static readonly int[] SuperUserIds = {4, 5};
     }
 }

@@ -47,6 +47,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Xamarin.Forms.GoogleMaps" Version="3.3.0" />
+    <PackageReference Include="Xamarin.Forms.GoogleMaps.Clustering" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\goFriend.AppleSignIn\goFriend.AppleSignIn.csproj" />

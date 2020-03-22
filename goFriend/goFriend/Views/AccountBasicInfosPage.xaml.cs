@@ -26,6 +26,8 @@ namespace goFriend.Views
         public AccountBasicInfosPage()
         {
             InitializeComponent();
+
+            Map.UiSettings.MyLocationButtonEnabled = true;
         }
 
         protected override async void OnAppearing()
@@ -83,13 +85,14 @@ namespace goFriend.Views
 
             //set up Pins
             var position = await _viewModel.Friend.Location.GetPosition();
-            _pin = new DphPin(Map)
+            _pin = new DphPin
             {
                 Position = position,
                 Title = _viewModel.Name,
                 SubTitle1 = _viewModel.Address,
                 SubTitle2 = _viewModel.CountryName,
                 IconUrl = _viewModel.ImageUrl,
+                UserRight = UserType.Normal,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
@@ -173,13 +176,14 @@ namespace goFriend.Views
 
             //set up Pins
             var position = await _viewModel.Friend.Location.GetPosition(false);
-            _pin = new DphPin(Map)
+            _pin = new DphPin
             {
                 Position = position,
                 Title = _viewModel.Name,
                 SubTitle1 = $"{res.Groups} {_viewModel.Group.Name}",
                 SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
                 IconUrl = _viewModel.ImageUrl,
+                UserRight = Constants.SuperUserIds.Contains(_viewModel.GroupFriend.FriendId) ? UserType.Normal : _viewModel.GroupFriend.UserRight,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
@@ -207,7 +211,7 @@ namespace goFriend.Views
                 if (location == null) return;
                 _pin.Position = new Position(location.Latitude, location.Longitude);
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                    new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
+                    new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(MapExtension.DefaultDistance)));
                 CmdReset.IsEnabled = CmdSave.IsEnabled = true;
             }
             catch (Exception)
@@ -224,7 +228,7 @@ namespace goFriend.Views
         {
             _pin.Position = await _viewModel.Friend.Location.GetPosition();
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
+                new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(MapExtension.DefaultDistance)));
             CmdReset.IsEnabled = false;
             CmdSave.IsEnabled = _viewModel.Friend.Location == null;
         }
@@ -323,7 +327,7 @@ namespace goFriend.Views
                 Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
                 {
                     Map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                        new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(DphMap.DefaultDistance)));
+                        new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(MapExtension.DefaultDistance)));
                     return false;
                 });
             }

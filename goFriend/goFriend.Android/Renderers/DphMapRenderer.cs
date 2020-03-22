@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
+using Android.Views;
 using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Transformations;
 using goFriend.Controls;
+using goFriend.DataModel;
 using goFriend.Droid.Renderers;
 using NLog;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.GoogleMaps.Android;
+using Xamarin.Forms.GoogleMaps.Clustering.Android;
 using BitmapDescriptorFactory = Android.Gms.Maps.Model.BitmapDescriptorFactory;
 using Map = Xamarin.Forms.GoogleMaps.Map;
+using View = Android.Views.View;
 
 [assembly: ExportRenderer(typeof(DphMap), typeof(DphMapRenderer))]
+[assembly: ExportRenderer(typeof(DphClusterMap), typeof(DphClusterRenderer))]
 
 namespace goFriend.Droid.Renderers
 {
@@ -100,11 +106,14 @@ namespace goFriend.Droid.Renderers
 
         protected override void OnMarkerCreating(Pin pin, MarkerOptions markerOptions)
         {
+            var dphPin = pin.Tag as DphPin;
             //var marker = new MarkerOptions();
             markerOptions.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
             markerOptions.SetTitle(pin.Label);
             markerOptions.SetSnippet(pin.Address);
-            markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
+            markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(
+                    dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
+                    dphPin?.UserRight == UserType.Pending ? Resource.Drawable.pin_Pending : Resource.Drawable.pin_Normal));
             markerOptions.Draggable(pin.IsDraggable);
         }
 
@@ -131,10 +140,9 @@ namespace goFriend.Droid.Renderers
             Launcher.OpenAsync(new Uri(dphPin.Url));
         }
 
-        public Android.Views.View GetInfoContents(Marker marker)
+        public View GetInfoContents(Marker marker)
         {
-            var inflater = Android.App.Application.Context.GetSystemService(Context.LayoutInflaterService) as Android.Views.LayoutInflater;
-            if (inflater != null)
+            if (Android.App.Application.Context.GetSystemService(Context.LayoutInflaterService) is LayoutInflater inflater)
             {
                 if (!_mapMarkerPins.ContainsKey(marker.Id))
                 {
@@ -174,7 +182,125 @@ namespace goFriend.Droid.Renderers
             return null;
         }
 
-        public Android.Views.View GetInfoWindow(Marker marker)
+        public View GetInfoWindow(Marker marker)
+        {
+            return null;
+        }
+    }
+
+    public class DphClusterRenderer : ClusteredMapRenderer, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback
+    {
+        private readonly Dictionary<string, DphPin> _mapMarkerPins = new Dictionary<string, DphPin>();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public DphClusterRenderer(Context context) : base(context) { }
+
+        protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.OldElement != null)
+            {
+                NativeMap.InfoWindowClick -= OnInfoWindowClick;
+            }
+
+            ((MapView)Control)?.GetMapAsync(this);
+        }
+
+        public void OnMapReady(GoogleMap googleMap)
+        {
+            NativeMap.InfoWindowClick += OnInfoWindowClick;
+            NativeMap.SetInfoWindowAdapter(this);
+            (Map as DphClusterMap)?.MoveToLastPosition();
+        }
+
+        protected override void OnClusteredMarkerDeleted(Pin pin, ClusteredMarker clusteredMarker)
+        {
+            if (_mapMarkerPins.Count == 0) return;
+            var dphPin = FindPin(clusteredMarker.Id, clusteredMarker.Position);
+            if (dphPin != null)
+            {
+                foreach (var item in _mapMarkerPins.Where(kvp => kvp.Value == dphPin).ToList())
+                {
+                    _mapMarkerPins.Remove(item.Key);
+                    return;
+                }
+            }
+        }
+
+        private DphPin FindPin(string id, LatLng pos)
+        {
+            if (_mapMarkerPins.ContainsKey(id))
+            {
+                return _mapMarkerPins[id];
+            }
+            Logger.Warn("ClusteredMarker not found by key");
+            foreach (var markerPin in _mapMarkerPins.Where(kvp =>
+                Math.Abs(kvp.Value.Position.Latitude - pos.Latitude) < 0.00001
+                && Math.Abs(kvp.Value.Position.Longitude - pos.Longitude) < 0.00001))
+            {
+                Logger.Debug("ClusteredMarker found by position");
+                return markerPin.Value;
+            }
+            Logger.Error("ClusteredMarker not found by key and position");
+            return null;
+        }
+
+        protected override void OnClusteredMarkerCreated(Pin pin, ClusteredMarker clusteredMarker)
+        {
+            var dphPin = pin.Tag as DphPin;
+            clusteredMarker.InfoWindowAnchorY = 0;
+            clusteredMarker.Icon = BitmapDescriptorFactory.FromResource(
+                dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
+                dphPin?.UserRight == UserType.Pending ? Resource.Drawable.pin_Pending : Resource.Drawable.pin_Normal);
+            _mapMarkerPins.Add(clusteredMarker.Id, dphPin);
+        }
+
+        //protected override void OnClusteredMarkerCreating(Pin pin, MarkerOptions clusteredMarker)
+        //{
+        //    clusteredMarker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
+        //    clusteredMarker.SetTitle(pin.Label);
+        //    clusteredMarker.SetSnippet(pin.Address);
+        //    clusteredMarker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
+        //    clusteredMarker.Draggable(pin.IsDraggable);
+        //}
+
+        void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
+        {
+            var dphPin = FindPin(e.Marker.Id, e.Marker.Position);
+            if (string.IsNullOrWhiteSpace(dphPin?.Url)) return;
+
+            Launcher.OpenAsync(new Uri(dphPin.Url));
+        }
+
+        public View GetInfoContents(Marker marker)
+        {
+            if (Android.App.Application.Context.GetSystemService(Context.LayoutInflaterService) is LayoutInflater inflater)
+            {
+                var dphPin = FindPin(marker.Id, marker.Position);
+                if (dphPin == null) return null;
+
+                var view = inflater.Inflate(Resource.Layout.MapFriendInfoWindow, null);
+
+                var infoIcon = view.FindViewById<ImageView>(Resource.Id.InfoWindowIcon);
+                var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
+                var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
+
+                infoTitle.Text = dphPin.Title; //marker.Title
+                infoSubtitle.Text = $"{dphPin.SubTitle1}{Environment.NewLine}{dphPin.SubTitle2}"; //marker.Snippet
+
+                ImageService.Instance.LoadUrl(dphPin.IconUrl)
+                    .Transform(new CircleTransformation())
+                    //.WithPriority(LoadingPriority.High)
+                    //.WithCache(FFImageLoading.Cache.CacheType.All)
+                    .Into(infoIcon);
+
+                return view;
+            }
+            return null;
+        }
+
+        public View GetInfoWindow(Marker marker)
         {
             return null;
         }

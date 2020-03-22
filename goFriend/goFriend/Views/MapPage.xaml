@@ -17,7 +17,7 @@
             <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20" IsVisible="False"
                    VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
                    TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
-            <controls:DphMap x:Name="Map" IsShowingUser="True" IsVisible="False" />
+            <controls:DphClusterMap x:Name="Map" MyLocationEnabled="False" IsVisible="False" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
