@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -52,6 +53,7 @@ namespace goFriend.Controls
             });
             EntryName.ReturnCommand = new Command(() =>
             {
+                if (_selectedGroup == null) return;
                 _onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
             });
 
@@ -91,6 +93,11 @@ namespace goFriend.Controls
                     PickerGroups.SelectedIndex = 0;
                 }
                 Logger.Debug("Refresh.END");
+                if (myGroups.Count == 0)
+                {
+                    App.DisplayMsgInfo(res.MsgNoGroupWarning);
+                    Navigation.PushAsync(new GroupConnectionPage());
+                }
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

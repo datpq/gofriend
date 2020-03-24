@@ -360,4 +360,7 @@
   <data name="SearchByName" xml:space="preserve">
     <value />
   </data>
+  <data name="MsgNoGroupWarning" xml:space="preserve">
+    <value />
+  </data>
 </root>
