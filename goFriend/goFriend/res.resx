@@ -363,4 +363,7 @@
   <data name="MsgNoGroupWarning" xml:space="preserve">
     <value />
   </data>
+  <data name="MsgNoGpsWarning" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -363,4 +363,7 @@
   <data name="MsgNoGroupWarning" xml:space="preserve">
     <value>Bạn chưa là thành viên của nhóm nào. Hảy gửi yêu cầu tham gia nhóm đến nhóm của bạn, đợi được chấp nhận, sau đó bạn sẽ truy cập được vào đày đủ các chức năng của chương trình.</value>
   </data>
+  <data name="MsgNoGpsWarning" xml:space="preserve">
+    <value>Bạn chưa bật định vị hoặc không cho phép chương trình truy cập định vị. Hãy kích hoạt định vị trước tiên.</value>
+  </data>
 </root>

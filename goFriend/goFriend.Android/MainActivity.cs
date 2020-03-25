@@ -65,6 +65,7 @@ namespace goFriend.Droid
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
+            FormsMaterial.Init(this, savedInstanceState);
             UserDialogs.Init(this);
 
             Xamarin.FormsGoogleMaps.Init(this, savedInstanceState);

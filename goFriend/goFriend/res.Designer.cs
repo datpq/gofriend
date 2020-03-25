@@ -504,6 +504,15 @@ namespace goFriend {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string MsgNoGpsWarning {
+            get {
+                return ResourceManager.GetString("MsgNoGpsWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string MsgNoGroupWarning {
             get {
                 return ResourceManager.GetString("MsgNoGroupWarning", resourceCulture);

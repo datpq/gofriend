@@ -208,7 +208,11 @@ namespace goFriend.Views
                 var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(Constants.GeolocationRequestTimeout));
                 var location = await Geolocation.GetLocationAsync(request);
 
-                if (location == null) return;
+                if (location == null)
+                {
+                    App.DisplayMsgInfo(res.MsgNoGpsWarning);
+                    return;
+                }
                 _pin.Position = new Position(location.Latitude, location.Longitude);
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(
                     new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(MapExtension.DefaultDistance)));

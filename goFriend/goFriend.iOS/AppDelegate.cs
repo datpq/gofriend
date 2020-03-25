@@ -86,6 +86,7 @@ namespace goFriend.iOS
             Rg.Plugins.Popup.Popup.Init();
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Forms.Init();
+            FormsMaterial.Init();
 
             Xamarin.FormsGoogleMaps.Init("AIzaSyAxU0F02kSfdb8oVeFoFWKwK619RK5HkqU");
             CachedImageRenderer.Init();

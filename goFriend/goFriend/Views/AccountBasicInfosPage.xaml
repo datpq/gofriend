@@ -9,6 +9,7 @@
              xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.BasicInfos}"
+             Visual="Material"
              x:Class="goFriend.Views.AccountBasicInfosPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -83,17 +84,17 @@
             <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
                 <Button x:Name="CmdSetGps"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
+                        BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdSetGPSPos}"
                         Clicked="CmdSetGps_Click"/>
                 <Button x:Name="CmdReset"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
+                        BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdReset}"
                         Clicked="CmdReset_Click"/>
                 <Button x:Name="CmdSave"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        TextColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
+                        BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdSave}"
                         Clicked="CmdSave_Click" />
             </StackLayout>

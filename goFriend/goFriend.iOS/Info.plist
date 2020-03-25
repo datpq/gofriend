@@ -76,8 +76,8 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Vị trí của bạn được dùng để tham khảo khi bạn thiết lập vị trí khi gia nhập nhóm</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.10</string>
+	<string>1.1.1</string>
 	<key>CFBundleVersion</key>
-	<string>10</string>
+	<string>11</string>
 </dict>
 </plist>
