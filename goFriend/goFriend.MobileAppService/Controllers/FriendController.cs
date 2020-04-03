@@ -371,6 +371,7 @@ namespace goFriend.MobileAppService.Controllers
                 var isUpdated = false;
                 if (friend.Location != null)
                 {
+                    Logger.Debug("Location not null. Location, Address, CountryName updated.");
                     result.Location = friend.Location;
                     result.Address = friend.Address;
                     result.CountryName = friend.CountryName;
@@ -379,12 +380,14 @@ namespace goFriend.MobileAppService.Controllers
 
                 if (friend.Info != null && friend.Info != result.Info)
                 {
+                    Logger.Debug($"Info updated: {friend.Info}");
                     result.Info = friend.Info;
                     isUpdated = true;
                 }
 
                 if (friend.ShowLocation.HasValue && friend.ShowLocation != result.ShowLocation)
                 {
+                    Logger.Debug($"ShowLocation updated: {friend.ShowLocation}");
                     result.ShowLocation = friend.ShowLocation;
                     isUpdated = true;
                 }
@@ -740,7 +743,8 @@ namespace goFriend.MobileAppService.Controllers
                 {
                     queryableResult = queryableResult.Take(top);
                 }
-                result = queryableResult.ToList();
+                //clear Token before returning friend object
+                result = queryableResult.Select(x => { x.Friend.Token = Guid.Empty; return x; }).ToList();
 
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
@@ -812,7 +816,12 @@ namespace goFriend.MobileAppService.Controllers
 
                 #endregion
 
-                result = friend;
+                var resultFriend = friend.CloneJson();
+                //TODO uncomment when deploying for a new version
+                //clear Token before returning friend object
+                //resultFriend.Token = Guid.Empty;
+                resultFriend.Info = null;
+                result = resultFriend;
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
@@ -986,7 +995,11 @@ namespace goFriend.MobileAppService.Controllers
                     }
                 }
 
-                result = _dataRepo.Get<Friend>(x => x.Id == otherFriendId);
+                var resultFriend = _dataRepo.Get<Friend>(x => x.Id == otherFriendId);
+                //clear Token before returning friend object
+                resultFriend = resultFriend.CloneJson();
+                resultFriend.Token = Guid.Empty;
+                result = resultFriend;
 
                 Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 

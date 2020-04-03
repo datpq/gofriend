@@ -84,7 +84,9 @@ namespace goFriend.Views
                         {
                             var myProfile = await App.FriendStore.GetProfile();
                             //App.User.Location = myProfile.Location;
+                            var backupToken = App.User.Token;
                             App.User = myProfile;
+                            App.User.Token = backupToken;
                             Settings.LastUser = App.User;
                         }
                     }
