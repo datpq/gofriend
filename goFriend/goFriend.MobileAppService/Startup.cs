@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using goFriend.MobileAppService.Hubs;
 using goFriend.MobileAppService.Data;
 using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Builder;
@@ -10,11 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite.Geometries;
+using NLog;
 
 namespace goFriend.MobileAppService
 {
     public class Startup
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -52,6 +56,7 @@ namespace goFriend.MobileAppService
             var validator = new SuppressChildValidationMetadataProvider(typeof(Point));
             services.AddMvc(options => options.ModelMetadataDetailsProviders.Add(validator));
             //services.AddMvc();
+
             services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
             services.AddScoped<DbContext, FriendDbContext>(); // same http session requests have the same object
             services.AddScoped<IDataRepository, DataRepository>();
@@ -61,15 +66,26 @@ namespace goFriend.MobileAppService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GoFriend API", Version = "v1" });
             });
+
+            //SignalR
+            var azureSignalRConnectionString = Configuration.GetSection("AppSettings")["AzureSignalRConnectionString"];
+            //Logger.Debug($"azureSignalRConnectionString = {azureSignalRConnectionString}");
+            services.AddSignalR().AddAzureSignalR(azureSignalRConnectionString);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
 
             app.UseMvc();
+            //SignalR
+            app.UseFileServer();
+            app.UseAzureSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chat");
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

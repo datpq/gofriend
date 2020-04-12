@@ -343,7 +343,7 @@
     <value>Bạn phải bật chế độ định vị trước tiên!</value>
   </data>
   <data name="Chat" xml:space="preserve">
-    <value>Trò chuyện</value>
+    <value>Tán gẫu</value>
   </data>
   <data name="MsgAppleSignInNoName" xml:space="preserve">
     <value>Không lấy được dữ liệu cá nhận khi đăng nhập với tài khoản Apple</value>
@@ -365,5 +365,8 @@
   </data>
   <data name="MsgNoGpsWarning" xml:space="preserve">
     <value>Bạn chưa bật định vị hoặc không cho phép chương trình truy cập định vị. Hãy kích hoạt định vị trước tiên.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Đóng</value>
   </data>
 </root>

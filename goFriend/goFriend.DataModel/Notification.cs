@@ -7,8 +7,6 @@ namespace goFriend.DataModel
 {
     public class Notification
     {
-        public const string NotifIdSep = ",";
-
         [Key]
         public int Id { get; set; }
 
@@ -89,7 +87,7 @@ namespace goFriend.DataModel
 
         public bool IsRead(int friendId)
         {
-            return $"{NotifIdSep}{Reads}{NotifIdSep}".IndexOf($"{NotifIdSep}u{friendId}{NotifIdSep}", StringComparison.Ordinal) >= 0;
+            return $"{Extension.Sep}{Reads}{Extension.Sep}".IndexOf($"{Extension.Sep}u{friendId}{Extension.Sep}", StringComparison.Ordinal) >= 0;
         }
 
         public bool DoRead(int friendId)

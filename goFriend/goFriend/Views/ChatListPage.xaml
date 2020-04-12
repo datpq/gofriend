@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
+             Title="{Static local:res.Chat}"
+             x:Class="goFriend.Views.ChatListPage">
+    <ContentPage.Content>
+        <StackLayout Margin="5,5,5,5">
+            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
+                      IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:DphViewCell Tapped="Cell_OnTapped">
+                            <Grid RowSpacing="0" ColumnSpacing="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <controls:DphOverlapImage WidthRequest="50" HeightRequest="50" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                                                          Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"
+                                                          Source1="{Binding LogoUrl}" />
+                                <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1" Margin="0,5,0,5"
+                                       FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
+                            </Grid>
+                        </controls:DphViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

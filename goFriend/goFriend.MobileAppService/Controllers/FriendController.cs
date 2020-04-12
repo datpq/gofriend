@@ -1251,15 +1251,15 @@ namespace goFriend.MobileAppService.Controllers
                 //Where clause is done in 2 times to avoid the error LINQ could not be translated. Either rewrite the query in a form that can be translated
                 //var queryableResult = _dataRepo.GetMany<Notification>(x => x.CreatedDate.HasValue && x.CreatedDate.Value.AddDays(_appSettings.Value.NotificationFetchingDays) >= DateTime.Now).Where(
                 var queryableResult = _dataRepo.GetMany<Notification>(x => true).Where(
-                    x => ($"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0 ||
-                          myGroups.Any(y => $"{Notification.NotifIdSep}{x.Destination}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}g{y}{Notification.NotifIdSep}", StringComparison.Ordinal) >= 0))
-                    && $"{Notification.NotifIdSep}{x.Deletions}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}", StringComparison.Ordinal) < 0)
+                    x => ($"{Extension.Sep}{x.Destination}{Extension.Sep}".IndexOf($"{Extension.Sep}u{friendId}{Extension.Sep}", StringComparison.Ordinal) >= 0 ||
+                          myGroups.Any(y => $"{Extension.Sep}{x.Destination}{Extension.Sep}".IndexOf($"{Extension.Sep}g{y}{Extension.Sep}", StringComparison.Ordinal) >= 0))
+                    && $"{Extension.Sep}{x.Deletions}{Extension.Sep}".IndexOf($"{Extension.Sep}u{friendId}{Extension.Sep}", StringComparison.Ordinal) < 0)
                     .Select(x =>
                     {
                         x.Deletions = null; //privacy reason
                         x.Destination = null; //privacy reason
                         x.OwnerId = 0; //privacy reason
-                        x.Reads = $"{Notification.NotifIdSep}{x.Reads}{Notification.NotifIdSep}".IndexOf($"{Notification.NotifIdSep}u{friendId}{Notification.NotifIdSep}",
+                        x.Reads = $"{Extension.Sep}{x.Reads}{Extension.Sep}".IndexOf($"{Extension.Sep}u{friendId}{Extension.Sep}",
                             StringComparison.Ordinal).ToString(); //Reads = -1 ==> not read
                         return x;
                     });
@@ -1340,7 +1340,7 @@ namespace goFriend.MobileAppService.Controllers
                 #endregion
 
                 var isUpdated = false;
-                var listIds = notifIds.Split(Notification.NotifIdSep).ToList();
+                var listIds = notifIds.Split(Extension.Sep).ToList();
                 foreach (var notif in _dataRepo.GetMany<Notification>(x => listIds.Contains(x.Id.ToString())))
                 {
                     if (notif.DoRead(friendId))
@@ -1464,7 +1464,7 @@ namespace goFriend.MobileAppService.Controllers
                 }
                 var groupAdmins = _dataRepo.GetMany<GroupFriend>(
                     x => x.GroupId == groupFriend.GroupId && x.UserRight >= UserType.Admin).Select(x => x.FriendId).ToList();
-                var jointGroupAdmins = string.Join(Notification.NotifIdSep, groupAdmins.Select(x => $"u{x}"));
+                var jointGroupAdmins = string.Join(Extension.Sep, groupAdmins.Select(x => $"u{x}"));
                 _dataRepo.Add(new Notification
                 {
                     CreatedDate = DateTime.Now,
@@ -1577,7 +1577,7 @@ namespace goFriend.MobileAppService.Controllers
                 var newGroupFriend = _dataRepo.Get<GroupFriend>(x => x.GroupId == groupFriend.GroupId && x.FriendId == groupFriend.FriendId);
                 var groupAdmins = _dataRepo.GetMany<GroupFriend>(
                     x => x.GroupId == groupFriend.GroupId && x.UserRight >= UserType.Admin).Select(x => x.FriendId).ToList();
-                var jointGroupAdmins = string.Join(Notification.NotifIdSep, groupAdmins.Select(x => $"u{x}"));
+                var jointGroupAdmins = string.Join(Extension.Sep, groupAdmins.Select(x => $"u{x}"));
                 Logger.Debug($"Notification sent to the groupAdmins={jointGroupAdmins}");
                 var f = _dataRepo.Get<Friend>(x => x.Id == groupFriend.FriendId);
                 var g = _dataRepo.Get<Group>(x => x.Id == groupFriend.GroupId);

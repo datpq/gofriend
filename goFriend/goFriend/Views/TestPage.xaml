@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="goFriend.Views.TestPage">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView
+                Grid.Row="0"
+                FlowDirection="RightToLeft"
+                HasUnevenRows="True"
+                ItemsSource="{Binding Messages}"
+                SeparatorVisibility="None"
+                VerticalOptions="End">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid IsVisible="{Binding IsSystemMessage}">
+                                    <Label Margin="20,5" FontSize="{StaticResource LblDetailFontSize}"
+                                    HorizontalOptions="CenterAndExpand"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{Binding Message}"
+                                    TextColor="{StaticResource ColorLabelDetail}" />
+                                </Grid>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <BoxView Grid.Row="1" HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <Grid Grid.Row="2" ColumnSpacing="0" RowSpacing="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <Editor Grid.Column="0" AutoSize="TextChanges" TextColor="{StaticResource ColorLabel}"
+                        HorizontalOptions="FillAndExpand" BackgroundColor="#F3F3F3"/>
+                <Image Grid.Column="1" Source="Send.png"
+                       VerticalOptions="End" HorizontalOptions="Center" Margin="0,0,0,5" HeightRequest="30" />
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

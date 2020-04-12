@@ -23,5 +23,10 @@ namespace goFriend.Services
         Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight);
         Task<bool> SubscribeGroup(GroupFriend groupFriend);
         Task<Setting> GetSetting(bool useClientCache = true, bool useCache = true);
+
+        Task ChatDisconnect();
+        Task ChatConnect();
+        Task SendMessage(ChatMessage chatMessage);
+        Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true);
     }
 }

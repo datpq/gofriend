@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
 using goFriend.DataModel;
+using goFriend.ViewModels;
 using goFriend.Views;
 using PCLAppConfig;
 using Xamarin.Essentials;
@@ -20,6 +21,7 @@ namespace goFriend
         public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         public static IFriendStore FriendStore;
+        public static Dictionary<int, ChatViewModel> MapChatViewModels = new Dictionary<int, ChatViewModel>();
 
         public static Task TaskGetMyGroups;
         public static IEnumerable<ApiGetGroupsModel> MyGroups;
@@ -40,7 +42,7 @@ namespace goFriend
 
             VersionTracking.Track();
             Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
-            Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl1010"]}");
+            Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl112"]}");
             var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
             Logger.Debug(deviceInfo);
             res.Culture = new CultureInfo("vi-VN");
@@ -71,6 +73,9 @@ namespace goFriend
 
             Initialize();
 
+            MainPage = new NavigationPage(new TestPage {Title = AppInfo.Name});
+            return;
+
             if (IsUserLoggedIn && User != null)
             {
                 MainPage = new AppShell();
@@ -84,17 +89,17 @@ namespace goFriend
 
         protected override void OnStart()
         {
-            // Handle when your app starts
+            App.FriendStore.ChatConnect();
         }
 
         protected override void OnSleep()
         {
-            // Handle when your app sleeps
+            //App.FriendStore.ChatDisconnect();
         }
 
         protected override void OnResume()
         {
-            // Handle when your app resumes
+            //App.FriendStore.ChatConnect();
         }
 
         public static void DisplayMsgInfo(string message)

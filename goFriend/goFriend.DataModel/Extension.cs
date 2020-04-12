@@ -9,6 +9,7 @@ namespace goFriend.DataModel
         public const string ParamCategory = "Cat";
         public const string ParamOtherFriendId = "OtherFriendId";
         public const string ParamIsActive = "IsActive";
+        public const string Sep = ",";
 
         public static string ToStringStandardFormat(this TimeSpan ts)
         {

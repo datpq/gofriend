@@ -76,9 +76,9 @@
         <ShellSection x:Name="TabMap" Title="{Static loc:res.Map}" Icon="tab_map.png">
             <ShellContent ContentTemplate="{DataTemplate local:MapPage}" />
         </ShellSection>
-        <!--<ShellSection x:Name="TabChat" Title="{Static loc:res.Chat}" Icon="tab_chat.png">
-            <ShellContent ContentTemplate="{DataTemplate local:ChatPage}" />
-        </ShellSection>-->
+        <ShellSection x:Name="TabChat" Title="{Static loc:res.Chat}" Icon="tab_chat.png">
+            <ShellContent ContentTemplate="{DataTemplate local:ChatListPage}" />
+        </ShellSection>
         <ShellSection x:Name="TabNotification" Title="{Static loc:res.Notification}" Icon="tab_notification.png">
             <ShellContent ContentTemplate="{DataTemplate local:NotificationPage}" />
         </ShellSection>

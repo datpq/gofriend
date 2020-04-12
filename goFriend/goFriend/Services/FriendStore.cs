@@ -10,6 +10,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Web;
 using goFriend.DataModel;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Caching.Memory;
 using PCLAppConfig;
 using Plugin.Connectivity;
@@ -22,15 +23,19 @@ namespace goFriend.Services
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
+        private readonly HubConnection _hubConnection;
+        private static readonly string BackendUrl = ConfigurationManager.AppSettings["AzureBackendUrl112"];
 
         public FriendStore()
         {
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
+            _hubConnection = new HubConnectionBuilder().WithUrl($"{BackendUrl}/chat").Build();
+            _hubConnection.On<ChatMessage>(ChatMessageType.SendMessage.ToString(), ChatReceiveMessage);
         }
 
         private static HttpClient GetHttpClient()
         {
-            return new HttpClient { BaseAddress = new Uri($"{ConfigurationManager.AppSettings["AzureBackendUrl1010"]}/") };
+            return new HttpClient { BaseAddress = new Uri($"{BackendUrl}/") };
         }
 
         private static HttpClient GetSecuredHttpClient()
@@ -898,6 +903,139 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"GetSetting.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        ////////////////// CHAT Functions ////////////////////
+        
+        public async Task ChatConnect()
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug("ChatConnect.BEGIN");
+                await _hubConnection.StartAsync();
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug($"ChatConnect.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task ChatDisconnect()
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug("ChatDisconnect.BEGIN");
+                await _hubConnection.StopAsync();
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug($"ChatDisconnect.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task SendMessage(ChatMessage chatMessage)
+        {
+            Logger.Debug($"SendMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
+            try
+            {
+                await _hubConnection.InvokeAsync(chatMessage.MessageType.ToString(), chatMessage);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("SendMessage.END");
+            }
+        }
+
+        private void ChatReceiveMessage(ChatMessage chatMessage)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"ChatReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message}, OwnerName={chatMessage.OwnerName})");
+                if (App.MapChatViewModels.ContainsKey(chatMessage.ChatId))
+                {
+                    Logger.Debug("Chat found. Message added.");
+                    chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
+                    App.MapChatViewModels[chatMessage.ChatId].Messages.Add(chatMessage);
+                }
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug($"ChatReceiveMessage.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<Chat> result = null;
+            try
+            {
+                Logger.Debug($"ChatGetChats.BEGIN(useCache={useCache})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Chat/GetChats/{App.User.Id}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<Chat>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"ChatGetChats.END(Count={result?.Count() ?? 0}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
     }
