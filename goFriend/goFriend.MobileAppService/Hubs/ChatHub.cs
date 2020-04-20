@@ -32,6 +32,7 @@ namespace goFriend.MobileAppService.Hubs
             try
             {
                 Logger.Debug($"SendMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message}, OwnerName={chatMessage.OwnerName})");
+                chatMessage.Time = DateTime.Now;
                 await Clients.All.SendAsync(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)

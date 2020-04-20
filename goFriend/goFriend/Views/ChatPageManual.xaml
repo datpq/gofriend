@@ -9,7 +9,7 @@
              xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:transformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
-             x:Class="goFriend.Views.TestPage">
+             x:Class="goFriend.Views.ChatPageManual">
     <NavigationPage.TitleView>
         <StackLayout Orientation="Horizontal" VerticalOptions="Center">
             <controls:DphOverlapImage WidthRequest="40" HeightRequest="40" Margin="5,5,5,5"

@@ -8,6 +8,7 @@ using Android.OS;
 using Xamarin.Facebook;
 using Xamarin.Forms;
 using Android.Content;
+using Android.Views;
 using FFImageLoading.Forms.Platform;
 using goFriend.Services;
 
@@ -115,6 +116,29 @@ namespace goFriend.Droid
             else
             {
                 // Do something if there are not any pages in the `PopupStack`
+            }
+        }
+
+        //Keep Entry focused when click button
+        private bool _lieAboutCurrentFocus;
+        public override bool DispatchTouchEvent(MotionEvent ev)
+        {
+            _lieAboutCurrentFocus = true;
+            var result = base.DispatchTouchEvent(ev);
+            _lieAboutCurrentFocus = false;
+
+            return result;
+        }
+        public override Android.Views.View CurrentFocus
+        {
+            get
+            {
+                if (_lieAboutCurrentFocus)
+                {
+                    return null;
+                }
+
+                return base.CurrentFocus;
             }
         }
     }

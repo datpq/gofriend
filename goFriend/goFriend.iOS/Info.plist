@@ -23,7 +23,7 @@
 	<key>MinimumOSVersion</key>
 	<string>9.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>GoFriend Hanoi9194</string>
+	<string>Hanoi9194</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.dph.GoFriend9194</string>
 	<key>UILaunchStoryboardName</key>

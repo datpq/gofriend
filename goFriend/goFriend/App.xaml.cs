@@ -73,8 +73,11 @@ namespace goFriend
 
             Initialize();
 
-            MainPage = new NavigationPage(new TestPage {Title = AppInfo.Name});
-            return;
+            //MainPage = new NavigationPage(new TestPageUiChat { Title = AppInfo.Name })
+            //{
+            //    BarBackgroundColor = (Color)Resources["ColorPrimary"]
+            //};
+            //return;
 
             if (IsUserLoggedIn && User != null)
             {

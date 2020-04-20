@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="goFriend.Views.ChatSystemMsgViewCell">
+  <ViewCell.View>
+      <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0"
+            HorizontalOptions="FillAndExpand">
+          <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="60" />
+          </Grid.ColumnDefinitions>
+          <Label Margin="0,5" FontSize="{StaticResource LblDetailFontSize}"
+                 HorizontalOptions="CenterAndExpand"
+                 HorizontalTextAlignment="Center"
+                 Text="{Binding Message}"
+                 TextColor="{StaticResource ColorLabelDetail}" />
+      </Grid>
+  </ViewCell.View>
+</ViewCell>

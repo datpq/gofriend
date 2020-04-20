@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -7,11 +8,11 @@ using Xamarin.Forms.Xaml;
 namespace goFriend.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ChatPage : ContentPage
+    public partial class ChatPageManual : ContentPage
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        public ChatPage(ChatListItemViewModel chatListItem)
+        public ChatPageManual(ChatListItemViewModel chatListItem)
         {
             if (!App.MapChatViewModels.ContainsKey(chatListItem.Chat.Id))
             {
@@ -40,28 +41,6 @@ namespace goFriend.Views
             Navigation.PopModalAsync();
         }
 
-        public void ScrollTap(object sender, System.EventArgs e)
-        {
-            lock (new object())
-            {
-                if (BindingContext != null)
-                {
-                    var vm = BindingContext as ChatViewModel;
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        while (vm.DelayedMessages.Count > 0)
-                        {
-                            vm.Messages.Insert(0, vm.DelayedMessages.Dequeue());
-                        }
-                        vm.ShowScrollTap = false;
-                        vm.LastMessageVisible = true;
-                        vm.PendingMessageCount = 0;
-                        LvMessages.ScrollToFirst();
-                    });
-                }
-            }
-        }
-
         private void ImgSend_OnTapped(object sender, EventArgs e)
         {
             ((ChatViewModel) BindingContext).SendMessageCommand.Execute(null);
@@ -69,16 +48,14 @@ namespace goFriend.Views
 
         private void ListView_OnItemTapped(object sender, ItemTappedEventArgs e)
         {
-            ChatInput.UnFocusEntry();
+            // don't do anything if we just de-selected the row.
+            if (e.Item == null) return;
 
-            //// don't do anything if we just de-selected the row.
-            //if (e.Item == null) return;
+            // Optionally pause a bit to allow the preselect hint.
+            Task.Delay(500);
 
-            //// Optionally pause a bit to allow the preselect hint.
-            //Task.Delay(500);
-
-            //// Deselect the item.
-            //if (sender is ListView lv) lv.SelectedItem = null;
+            // Deselect the item.
+            if (sender is ListView lv) lv.SelectedItem = null;
         }
     }
 }

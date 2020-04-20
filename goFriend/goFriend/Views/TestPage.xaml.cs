@@ -1,49 +1,213 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using goFriend.DataModel;
+using goFriend.Services;
+using goFriend.ViewModels;
+using Microsoft.Extensions.Logging;
+using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using ILogger = goFriend.Services.ILogger;
 
 namespace goFriend.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class TestPage : ContentPage
     {
+        private readonly TestModel _viewModel;
         public TestPage()
         {
-            BindingContext = new TestModel();
+            BindingContext = _viewModel = new TestModel();
             InitializeComponent();
+            _viewModel.RefreshScrollDown = () => {
+                if (_viewModel.Messages.Count > 0)
+                {
+                    Device.BeginInvokeOnMainThread(() => {
+                        LvMessages.ScrollTo(_viewModel.Messages[_viewModel.Messages.Count - 1], ScrollToPosition.End, true);
+                    });
+                }
+            };
+        }
+
+        private void ListView_OnItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            // don't do anything if we just de-selected the row.
+            if (e.Item == null) return;
+
+            // Optionally pause a bit to allow the preselect hint.
+            Task.Delay(500);
+
+            // Deselect the item.
+            if (sender is ListView lv) lv.SelectedItem = null;
+        }
+
+        private void ImgSend_OnTapped(object sender, EventArgs e)
+        {
+            _viewModel.SendMessageCommand.Execute(null);
+        }
+
+        private void MnuItemClose_OnClicked(object sender, EventArgs e)
+        {
+            //Navigation.PopModalAsync();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.RefreshScrollDown();
         }
     }
 
-    public class TestModel
+    public class TestModel : ChatViewModel
     {
-        private ObservableCollection<TestItemModel> _messages = new ObservableCollection<TestItemModel>
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+
+        public TestModel()
         {
-            new TestItemModel {Message = "Bảo Anh Bảo Linh Bảo Châu tham gia hội thoại", IsSystemMessage = true},
-            new TestItemModel {Message = "Thắng Phạm thoát khỏi hội thoại", IsSystemMessage = false},
-            new TestItemModel { Message = "Bảo Thoa tham gia hội thoại", IsSystemMessage = true}
-        };
-        public ObservableCollection<TestItemModel> Messages
-        {
-            get => _messages;
-            set
+            SendMessageCommand = new Command(async () => {
+                Message = string.Empty;
+            });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "Bảo Anh Bảo Linh Bảo Châu tham gia hội thoại",
+                    OwnerId = 0, Time = new DateTime(2020, 04, 12, 13, 06, 00)
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "Xin chào, có ai ở đây không?", OwnerName = "Bảo Anh Bảo Linh Bảo Châu",
+                    OwnerId = 1, IsOwnMessage = true,
+                    LogoUrl = "https://graph.facebook.com/10217327271725297/picture?type=small",
+                    Time = new DateTime(2020, 04, 12, 14, 06, 00)
+                });
+            Messages.Insert(0,
+                new ChatMessage {Message = "Bảo Thoa tham gia hội thoại", OwnerId = 0});
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "Có tôi đây?", OwnerName = "Thắng Phạm",
+                    Time = new DateTime(2020, 04, 12, 15, 06, 00),
+                    OwnerId = 2, IsOwnMessage = false,
+                    LogoUrl = "https://graph.facebook.com/2678476115565775/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "Còn ai nữa không?", OwnerName = "Bảo Anh Bảo Linh Bảo Châu", OwnerId = 1,
+                    Time = new DateTime(2020, 04, 12, 15, 07, 00),
+                    IsOwnMessage = true, LogoUrl = "https://graph.facebook.com/10217327271725297/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "Có tớ nữa", OwnerName = "Duong Vu", OwnerId = 3,
+                    Time = new DateTime(2020, 04, 12, 15, 07, 30),
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2959609917385257/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "Vậy là đủ thành 1 nhóm rồi. Chúng ta sẽ nói chuyện về chủ đề gì ngày hôm nay?:-)",
+                    OwnerName = "Thắng Phạm", OwnerId = 2,
+                    Time = new DateTime(2020, 04, 12, 15, 23, 00),
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2678476115565775/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "máy tớ dùng chrome, để tự động login google, mỗi vấn đề đó thôi",
+                    OwnerName = "Bảo Thoa Anh Linh Châu", OwnerId = 4,
+                    Time = new DateTime(2020, 04, 12, 16, 25, 00),
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2351327781814388/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
+                              "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
+                    OwnerName = "Duong Vu",
+                    Time = new DateTime(2020, 04, 12, 17, 06, 00), OwnerId = 3,
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2959609917385257/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
+                              "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
+                    OwnerName = "Duong Vu",
+                    Time = new DateTime(2020, 04, 12, 17, 06, 10), OwnerId = 3,
+                    IsOwnMessage = true, LogoUrl = "https://graph.facebook.com/2959609917385257/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "WHEN WILL WE HAVE A REAL CEO?" +
+                              "Năm 1999, Ben Horowitz trong vị trí CEO đến gặp một số quỹ đầu tư hàng đầu ở Sillion Valley để gọi vốn cho LoudCloud. Sau một buổi họp tích cực và vui vẻ, người đại diện quỹ đầu tư hỏi Ben?",
+                    OwnerName = "Bảo Anh Bảo Linh Bảo Châu",
+                    Time = new DateTime(2020, 04, 12, 17, 07, 00), OwnerId = 1,
+                    IsOwnMessage = true, LogoUrl = "https://graph.facebook.com/10217327271725297/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message =
+                        "Nhiều nhà máy ở nước ngoài cũng phải ngừng sản xuất khi có công nhân +. Hậu quả mà ngành y tế phải gánh còn nặng nề hơn. Chủ động buộc đóng cửa cũng là 1 cách hay",
+                    OwnerName = "Minh",
+                    Time = new DateTime(2020, 04, 12, 17, 09, 00), OwnerId = 5,
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2719282418189321/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
+                              "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
+                    OwnerName = "Duong Vu",
+                    Time = new DateTime(2020, 04, 12, 17, 10, 00), OwnerId = 3,
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2959609917385257/picture?type=small"
+                });
+            Messages.Insert(0,
+                new ChatMessage
+                {
+                    Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
+                              "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
+                    OwnerName = "Duong Vu",
+                    Time = new DateTime(2020, 04, 12, 19, 06, 00), OwnerId = 3,
+                    IsOwnMessage = false, LogoUrl = "https://graph.facebook.com/2959609917385257/picture?type=small"
+                });
+            ChatName = "A0-K26DHTH";
+            ChatLogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png";
+
+            //Code to simulate reveing a new message procces
+            var random = new Random();
+            Device.StartTimer(TimeSpan.FromSeconds(5), () =>
             {
-                _messages = value;
-                OnPropertyChanged(nameof(Messages));
-            }
+                var randomNum = random.Next(14);
+                var msgIdx = Messages.Count - randomNum - 1; // 0-14
+                Logger.Debug($"randomNum={randomNum}, msgIdx={msgIdx}");
+                var newMessage = new ChatMessage
+                {
+                    Message = Messages[msgIdx].Message,
+                    OwnerName = Messages[msgIdx].OwnerName,
+                    OwnerId = Messages[msgIdx].OwnerId,
+                    Time = Messages[msgIdx].Time,
+                    IsOwnMessage = Messages[msgIdx].IsOwnMessage,
+                    LogoUrl = Messages[msgIdx].LogoUrl
+                };
+                if (LastMessageVisible)
+                {
+                    Messages.Insert(0, newMessage);
+                }
+                else
+                {
+                    DelayedMessages.Enqueue(newMessage);
+                    PendingMessageCount++;
+                }
+                return true;
+            });
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class TestItemModel
-    {
-        public bool IsSystemMessage { get; set; }
-        public string Message { get; set; }
     }
 }

@@ -971,7 +971,8 @@ namespace goFriend.Services
                 {
                     Logger.Debug("Chat found. Message added.");
                     chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
-                    App.MapChatViewModels[chatMessage.ChatId].Messages.Add(chatMessage);
+                    App.MapChatViewModels[chatMessage.ChatId].Messages.Insert(0, chatMessage);
+                    //App.MapChatViewModels[chatMessage.ChatId].RefreshScrollDown();
                 }
             }
             catch (Exception e) //Unknown error

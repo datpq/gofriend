@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using goFriend.ViewModels;
 using PCLAppConfig;
 using Xamarin.Forms;
@@ -30,8 +31,23 @@ namespace goFriend.Views
         private async void Cell_OnTapped(object sender, EventArgs e)
         {
             var selectedItem = (ChatListItemViewModel)Lv.SelectedItem;
-            var chatPage = new NavigationPage(new ChatPage(selectedItem));
+            var chatPage = new NavigationPage(new ChatPage(selectedItem))
+            {
+                BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"]
+            };
             await Navigation.PushModalAsync(chatPage);
+        }
+
+        private void Lv_OnItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            // don't do anything if we just de-selected the row.
+            if (e.Item == null) return;
+
+            // Optionally pause a bit to allow the preselect hint.
+            Task.Delay(500);
+
+            // Deselect the item.
+            if (sender is ListView lv) lv.SelectedItem = null;
         }
     }
 }

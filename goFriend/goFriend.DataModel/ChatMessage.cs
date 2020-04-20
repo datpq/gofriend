@@ -22,6 +22,11 @@ namespace goFriend.DataModel
         [Column(TypeName = "NVARCHAR(100)")]
         public string OwnerName { get; set; }
 
+        [NotMapped]
+        public string LogoUrl { get; set; }
+
+        public DateTime Time { get; set; }
+
         [Column(TypeName = "NVARCHAR(200)")]
         public string Reads { get; set; } // List of users who have read the message
 

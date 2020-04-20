@@ -8,7 +8,7 @@
              xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              xmlns:views="clr-namespace:goFriend.Views;assembly=goFriend"
-             x:Class="goFriend.Views.ChatPage">
+             x:Class="goFriend.Views.TestPageUiChat">
     <NavigationPage.TitleView>
         <StackLayout Orientation="Horizontal" VerticalOptions="Center">
             <controls:DphOverlapImage WidthRequest="40" HeightRequest="40" Margin="5,5,5,5"
@@ -52,7 +52,7 @@
                    IsVisible="{Binding ShowScrollTap,Mode=TwoWay}">
                 <StackLayout Spacing="3">
                     <Label Text="{Binding PendingMessageCount}"
-                                    HorizontalOptions="CenterAndExpand"
+                           HorizontalOptions="CenterAndExpand"
                            IsVisible="{Binding PendingMessageCountVisible}"
                            VerticalTextAlignment="Center"
                            TextColor="{StaticResource ColorLabel}"/>
@@ -64,7 +64,7 @@
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Tapped="ScrollTap"/>
                 </Frame.GestureRecognizers>
-                                            </Frame>
+            </Frame>
             <BoxView Grid.Row="1" HorizontalOptions="FillAndExpand" HeightRequest="1" Color="LightGray" />
             <views:ChatInputBarView x:Name="ChatInput" Grid.Row="2" Margin="5" />
         </Grid>

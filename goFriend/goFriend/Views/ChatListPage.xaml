@@ -10,7 +10,7 @@
              x:Class="goFriend.Views.ChatListPage">
     <ContentPage.Content>
         <StackLayout Margin="5,5,5,5">
-            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
+            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true" ItemTapped="Lv_OnItemTapped"
                       IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
