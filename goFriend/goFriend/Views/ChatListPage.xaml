@@ -8,13 +8,23 @@
              xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              Title="{Static local:res.Chat}"
              x:Class="goFriend.Views.ChatListPage">
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
+            </On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout Margin="5,5,5,5">
             <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true" ItemTapped="Lv_OnItemTapped"
                       IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <controls:DphViewCell Tapped="Cell_OnTapped">
+                        <ViewCell Tapped="Cell_OnTapped">
                             <Grid RowSpacing="0" ColumnSpacing="5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -29,7 +39,7 @@
                                 <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1" Margin="0,5,0,5"
                                        FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
                             </Grid>
-                        </controls:DphViewCell>
+                        </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

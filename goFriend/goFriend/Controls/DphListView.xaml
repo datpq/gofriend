@@ -4,17 +4,15 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:goFriend.Controls"
-             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-             xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphListView">
   <ContentView.Content>
       <StackLayout Orientation="Vertical">
-            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
+            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true" ItemTapped="Lv_OnItemTapped"
                       IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" ItemAppearing="Lv_OnItemAppearing" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <controls:DphViewCell Tapped="Cell_OnTapped">
+                        <ViewCell Tapped="Cell_OnTapped">
                             <StackLayout Orientation="Vertical">
                                 <Grid RowSpacing="0" ColumnSpacing="5">
                                     <Grid.RowDefinitions>
@@ -70,7 +68,7 @@
                                     </StackLayout>
                                 </Grid>
                             </StackLayout>
-                        </controls:DphViewCell>
+                        </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -118,7 +118,6 @@
     <Compile Include="NLogManager.cs" />
     <Compile Include="Renderers\CustomEditorRenderer.cs" />
     <Compile Include="Renderers\DphMapRenderer.cs" />
-    <Compile Include="Renderers\DphViewCellRenderer.cs" />
     <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

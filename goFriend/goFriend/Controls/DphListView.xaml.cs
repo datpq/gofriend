@@ -91,5 +91,17 @@ namespace goFriend.Controls
                 _dphListViewModel.FetchMoreItems();
             }
         }
+
+        private void Lv_OnItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            // don't do anything if we just de-selected the row.
+            if (e.Item == null) return;
+
+            // Optionally pause a bit to allow the preselect hint.
+            Task.Delay(500);
+
+            // Deselect the item.
+            if (sender is ListView lv) lv.SelectedItem = null;
+        }
     }
 }
