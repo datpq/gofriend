@@ -1,8 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using goFriend.Helpers;
 using goFriend.Services;
 using PCLAppConfig;
 using Xamarin.Forms;
@@ -35,35 +38,56 @@ namespace goFriend.ViewModels
             }
         }
 
-        public ICommand RefreshCommand
+        public async Task RefreshCommandAsyncExec()
         {
-            get
+            try
             {
-                return new Command(async () =>
+                Logger.Debug("RefreshCommand.BEGIN");
+
+                IsRefreshing = true;
+
+                var myChats = await App.FriendStore.ChatGetChats();
+                foreach (var chat in myChats)
                 {
-                    Logger.Debug("RefreshCommand.BEGIN");
-                    Items.Clear();
-                    await FetchItems();
-                    Logger.Debug("RefreshCommand.END");
-                });
+                    if (chat.LogoUrl == null)
+                    {
+                        chat.LogoUrl = "/logos/group.png";
+                    }
+
+                    chat.LogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}{chat.LogoUrl}";
+                    if (Items.Any(x => x.Chat.Id == chat.Id))
+                    {
+                        Logger.Debug($"Updating chat {chat.Name}{chat.Id})");
+                        var item = Items.Single(x => x.Chat.Id == chat.Id);
+                        item.Chat = chat;
+                    }
+                    else
+                    {
+                        Logger.Debug($"Adding new chat {chat.Name}{chat.Id})");
+                        Items.Add(new ChatListItemViewModel {Chat = chat});
+                    }
+                }
+
+                foreach (var item in Items.Where(x => myChats.All(y => y.Id != x.Chat.Id)).ToList())
+                {
+                    Logger.Warn($"Removing chat {item.Chat.Name}{item.Chat.Id})");
+                    Items.Remove(item);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                IsRefreshing = false;
+                Logger.Debug("RefreshCommand.END");
             }
         }
 
-        private async Task FetchItems()
-        {
-            IsRefreshing = true;
-            var chats = await App.FriendStore.ChatGetChats();
-            foreach (var chat in chats)
-            {
-                if (chat.LogoUrl == null)
-                {
-                    chat.LogoUrl = "/logos/group.png";
-                }
-                chat.LogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}{chat.LogoUrl}";
-                _items.Add(new ChatListItemViewModel {Chat = chat});
-            }
-            IsRefreshing = false;
-        }
+        //public ICommand RefreshCommand => new Command(RefreshCommandAsyncExec);
+        public IAsyncCommand RefreshCommand => new AsyncCommand(RefreshCommandAsyncExec, () => !IsRefreshing);
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "")

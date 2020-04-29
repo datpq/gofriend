@@ -5,12 +5,16 @@ using Newtonsoft.Json;
 
 namespace goFriend.DataModel
 {
-    public class ChatMessage
+    public class ChatMessage : IChatMessage
     {
         [Key]
         public int Id { get; set; }
 
         public int ChatId { get; set; }
+        //[ForeignKey("ChatId")]
+        public Chat Chat { get; set; }
+
+        public int MessageIndex { get; set; }
 
         public ChatMessageType MessageType { get; set; }
 
@@ -46,11 +50,5 @@ namespace goFriend.DataModel
             Reads = string.IsNullOrEmpty(Reads) ? $"u{friendId}" : $"{Reads},u{friendId}";
             return true;
         }
-    }
-
-    public enum ChatMessageType
-    {
-        Ping = 0,
-        SendMessage
     }
 }

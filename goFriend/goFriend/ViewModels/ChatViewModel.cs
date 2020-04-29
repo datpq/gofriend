@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using goFriend.DataModel;
 using goFriend.Services;
+using Microsoft.AspNetCore.SignalR.Client;
 using Xamarin.Forms;
 
 namespace goFriend.ViewModels
@@ -88,6 +89,7 @@ namespace goFriend.ViewModels
             }
         }
 
+        public bool IsEnabled => App.FriendStore.ChatHubConnection.State == HubConnectionState.Connected;
         public string Name => App.User.Name;
         public string LogoUrl => App.User.GetImageUrl(FacebookImageType.small);
 
@@ -119,6 +121,11 @@ namespace goFriend.ViewModels
         {
             SendMessageCommand = new Command(async () => {
                 if (string.IsNullOrEmpty(Message)) return;
+                if (!IsEnabled)
+                {
+                    App.DisplayMsgError(res.MsgErrConnection);
+                    return;
+                }
                 await App.FriendStore.SendMessage(new ChatMessage
                 {
                     ChatId = ChatListItem.Chat.Id,
@@ -134,10 +141,14 @@ namespace goFriend.ViewModels
             MessageDisappearingCommand = new Command<ChatMessage>(OnMessageDisappearing);
         }
 
+        public void ReceiveMessage(ChatMessage chatMessage)
+        {
+            Messages.Insert(0, chatMessage);
+        }
+
         void OnMessageAppearing(ChatMessage message)
         {
             var idx = Messages.IndexOf(message);
-            Logger.Debug($"OnMessageAppearing.idx={idx},ShowScrollTap={ShowScrollTap}");
             if (idx <= 6)
             {
                 Device.BeginInvokeOnMainThread(() =>
@@ -151,13 +162,11 @@ namespace goFriend.ViewModels
                     PendingMessageCount = 0;
                 });
             }
-            Logger.Debug($"OnMessageAppearing.ShowScrollTap={ShowScrollTap}");
         }
 
         void OnMessageDisappearing(ChatMessage message)
         {
             var idx = Messages.IndexOf(message);
-            Logger.Debug($"OnMessageDisappearing.idx={idx},ShowScrollTap={ShowScrollTap}");
             if (idx >= 6)
             {
                 Device.BeginInvokeOnMainThread(() =>
@@ -166,7 +175,6 @@ namespace goFriend.ViewModels
                     LastMessageVisible = false;
                 });
             }
-            Logger.Debug($"OnMessageDisappearing.ShowScrollTap={ShowScrollTap}");
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "")

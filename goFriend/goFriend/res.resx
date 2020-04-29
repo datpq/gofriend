@@ -369,4 +369,10 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="TypeMsgHere" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MsgErrConnection" xml:space="preserve">
+    <value>Connection error</value>
+  </data>
 </root>

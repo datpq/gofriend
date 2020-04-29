@@ -42,6 +42,13 @@ namespace goFriend.MobileAppService.Data
             modelBuilder.Entity<Setting>().ToTable("Settings");
             modelBuilder.Entity<Chat>().ToTable("Chat");
             modelBuilder.Entity<Chat>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ChatMessage>().ToTable("ChatMessage");
+            modelBuilder.Entity<ChatMessage>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ChatMessage>().HasKey(x => new { x.ChatId, Index = x.MessageIndex });
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(x => x.Chat)
+                .WithMany(x => x.ChatMessages)
+                .HasForeignKey(x => x.ChatId);
         }
 
         public DbSet<Friend> Friends { get; set; }
@@ -52,6 +59,7 @@ namespace goFriend.MobileAppService.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
         //public DbSet<NotifNewSubscriptionRequest> NotifNewSubscriptionRequests { get; set; }
         //public DbSet<NotifSubscriptionApproved> NotifSubscriptionApproveds { get; set; }
     }

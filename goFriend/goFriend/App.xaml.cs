@@ -21,9 +21,9 @@ namespace goFriend
         public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         public static IFriendStore FriendStore;
-        public static Dictionary<int, ChatViewModel> MapChatViewModels = new Dictionary<int, ChatViewModel>();
+        public static ChatListViewModel ChatListVm = new ChatListViewModel(); // List of all Chats
 
-        public static Task TaskGetMyGroups;
+        public static Task TaskInitialization;
         public static IEnumerable<ApiGetGroupsModel> MyGroups;
         public static IEnumerable<ApiGetGroupsModel> AllGroups;
 
@@ -92,7 +92,6 @@ namespace goFriend
 
         protected override void OnStart()
         {
-            App.FriendStore.ChatConnect();
         }
 
         protected override void OnSleep()
@@ -132,21 +131,52 @@ namespace goFriend
             return tcs.Task;
         }
 
+        public static async void JoinChats()
+        {
+            try
+            {
+                Logger.Debug("JoinChats.BEGIN");
+                foreach (var chatListItemVm in ChatListVm.Items)
+                {
+                    Logger.Debug($"Joining chat {chatListItemVm.Name}({chatListItemVm.Chat.Id})");
+                    await FriendStore.ChatConnect(User.Id, User.Token.ToString(), new ChatJoinChatModel
+                    {
+                        ChatId = chatListItemVm.Chat.Id,
+                        LastMsgIndex = chatListItemVm.ChatViewModel.Messages.Count == 0 ? 0
+                            : chatListItemVm.ChatViewModel.Messages[0].MessageIndex,
+                        PageSize = 10,
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("JoinChats.END");
+            }
+        }
+
         public static void Initialize()
         {
-            TaskGetMyGroups = new Task(() =>
+            TaskInitialization = new Task(async () =>
             {
                 try
                 {
-                    Logger.Debug("TaskGetMyGroups.BEGIN");
+                    Logger.Debug("TaskInitialization.BEGIN");
                     if (IsUserLoggedIn && User != null)
                     {
                         MyGroups = FriendStore.GetMyGroups().Result;
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
                             Logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
-                            FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
+                            await FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
                         }
+
+                        await ChatListVm.RefreshCommandAsyncExec();
+
+                        JoinChats();
                     }
                     else
                     {
@@ -186,10 +216,10 @@ namespace goFriend
                 }
                 finally
                 {
-                    Logger.Debug("TaskGetMyGroups.END");
+                    Logger.Debug("TaskInitialization.END");
                 }
             });
-            TaskGetMyGroups.Start();
+            TaskInitialization.Start();
         }
     }
 }

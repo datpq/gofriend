@@ -24,7 +24,7 @@ namespace goFriend.Helpers
                 return null;
 
             return chatMessage.IsSystemMessage ? _systemMsgDataTemplate
-                : chatMessage.IsOwnMessage ? _incomingDataTemplate : _outgoingDataTemplate;
+                : chatMessage.IsOwnMessage ? _outgoingDataTemplate : _incomingDataTemplate;
         }
 
     }

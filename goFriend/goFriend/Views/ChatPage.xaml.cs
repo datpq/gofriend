@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -13,24 +14,15 @@ namespace goFriend.Views
 
         public ChatPage(ChatListItemViewModel chatListItem)
         {
-            if (!App.MapChatViewModels.ContainsKey(chatListItem.Chat.Id))
-            {
-                Logger.Debug($"Joined chat: {chatListItem.Chat.Name}");
-                App.MapChatViewModels.Add(chatListItem.Chat.Id, new ChatViewModel
-                {
-                    ChatListItem = chatListItem
-                });
-            }
-            var chatViewModel = App.MapChatViewModels[chatListItem.Chat.Id];
-            BindingContext = chatViewModel;
-            chatViewModel.RefreshScrollDown = () => {
-                if (chatViewModel.Messages.Count > 0)
-                {
-                    Device.BeginInvokeOnMainThread(() => {
-                        LvMessages.ScrollTo(chatViewModel.Messages[chatViewModel.Messages.Count - 1], ScrollToPosition.End, true);
-                    });
-                }
-            };
+            BindingContext = chatListItem.ChatViewModel;
+            //chatViewModel.RefreshScrollDown = () => {
+            //    if (chatViewModel.Messages.Count > 0)
+            //    {
+            //        Device.BeginInvokeOnMainThread(() => {
+            //            LvMessages.ScrollTo(chatViewModel.Messages[chatViewModel.Messages.Count - 1], ScrollToPosition.End, true);
+            //        });
+            //    }
+            //};
 
             InitializeComponent();
         }

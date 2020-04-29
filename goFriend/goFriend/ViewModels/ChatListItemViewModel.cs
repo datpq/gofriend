@@ -18,6 +18,13 @@ namespace goFriend.ViewModels
             set
             {
                 _chat = value;
+                if (ChatViewModel == null)
+                {
+                    ChatViewModel = new ChatViewModel
+                    {
+                        ChatListItem = this
+                    };
+                }
                 OnPropertyChanged(nameof(Chat));
                 OnPropertyChanged(nameof(FormattedText));
             }
@@ -25,6 +32,8 @@ namespace goFriend.ViewModels
 
         public string Name => Chat.Name;
         public string LogoUrl => Chat.LogoUrl;
+
+        public ChatViewModel ChatViewModel { get; private set; }
 
         public FormattedString FormattedText =>
             new FormattedString

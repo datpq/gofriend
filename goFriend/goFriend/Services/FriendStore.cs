@@ -29,9 +29,16 @@ namespace goFriend.Services
         public FriendStore()
         {
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
-            _hubConnection = new HubConnectionBuilder().WithUrl($"{BackendUrl}/chat").Build();
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl($"{BackendUrl}/chat")
+                .WithAutomaticReconnect()
+                .Build();
             _hubConnection.On<ChatMessage>(ChatMessageType.SendMessage.ToString(), ChatReceiveMessage);
+            _hubConnection.Closed += HubConnectionOnClosed;
+            _hubConnection.Reconnected += HubConnectionOnReconnected;
         }
+
+        public HubConnection ChatHubConnection => _hubConnection;
 
         private static HttpClient GetHttpClient()
         {
@@ -907,14 +914,33 @@ namespace goFriend.Services
         }
 
         ////////////////// CHAT Functions ////////////////////
-        
-        public async Task ChatConnect()
+
+        private Task HubConnectionOnReconnected(string arg)
+        {
+            Logger.Debug($"Reconnected(arg={arg})");
+            App.JoinChats();
+            return Task.CompletedTask;
+        }
+
+        private Task HubConnectionOnClosed(Exception arg)
+        {
+            Logger.Debug($"Closed(exception={arg})");
+            return Task.CompletedTask;
+        }
+
+        public async Task ChatConnect(int friendId, string token, ChatJoinChatModel joinChatModel)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
                 Logger.Debug("ChatConnect.BEGIN");
-                await _hubConnection.StartAsync();
+                if (_hubConnection.State == HubConnectionState.Disconnected)
+                {
+                    Logger.Debug("starting connection...");
+                    await _hubConnection.StartAsync();
+                }
+                Logger.Debug("joining chats...");
+                await _hubConnection.InvokeAsync(joinChatModel.MessageType.ToString(), friendId, token, joinChatModel);
             }
             catch (Exception e) //Unknown error
             {
@@ -967,11 +993,12 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"ChatReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message}, OwnerName={chatMessage.OwnerName})");
-                if (App.MapChatViewModels.ContainsKey(chatMessage.ChatId))
+                if (App.ChatListVm.Items.Any(x => x.Chat.Id == chatMessage.ChatId))
                 {
                     Logger.Debug("Chat found. Message added.");
                     chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
-                    App.MapChatViewModels[chatMessage.ChatId].Messages.Insert(0, chatMessage);
+                    App.ChatListVm.Items.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
+                    //App.MapChatViewModels[chatMessage.ChatId].Messages.Insert(0, chatMessage);
                     //App.MapChatViewModels[chatMessage.ChatId].RefreshScrollDown();
                 }
             }

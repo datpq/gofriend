@@ -26,7 +26,7 @@ namespace goFriend.Views
                 try
                 {
                     Logger.Debug("NotificationClicked.BEGIN");
-                    await App.TaskGetMyGroups;
+                    await App.TaskInitialization;
                     var selectedNotification = _allNotifications.Single(x => x.Id == selectedItem.Id);
                     switch (selectedNotification.Type)
                     {

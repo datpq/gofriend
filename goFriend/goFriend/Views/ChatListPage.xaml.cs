@@ -25,7 +25,7 @@ namespace goFriend.Views
                     _lastRefreshDateTime = DateTime.Now;
                 }
             };
-            BindingContext = _viewModel = new ChatListViewModel();
+            BindingContext = _viewModel = App.ChatListVm;
         }
 
         private async void Cell_OnTapped(object sender, EventArgs e)

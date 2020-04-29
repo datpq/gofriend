@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace goFriend.DataModel
 {
@@ -18,5 +20,8 @@ namespace goFriend.DataModel
 
         [Column(TypeName = "VARCHAR(255)")]
         public string LogoUrl { get; set; }
+
+        [JsonIgnore]
+        public ICollection<ChatMessage> ChatMessages { get; set; }
     }
 }

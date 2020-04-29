@@ -24,10 +24,10 @@ namespace goFriend.Views
             LblGroup.Text = $"{res.Groups}:";
 
             UserDialogs.Instance.ShowLoading(res.Processing);
-            //can not await TaskGetMyGroups because we are in a constructor, and not in an async method.
+            //can not await TaskInitialization because we are in a constructor, and not in an async method.
             Task.Run(() =>
             {
-                App.TaskGetMyGroups.Wait();
+                App.TaskInitialization.Wait();
                 //Task.Delay(5000).Wait();
             }).ContinueWith(task =>
             {

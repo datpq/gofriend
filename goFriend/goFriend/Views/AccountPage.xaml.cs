@@ -110,7 +110,7 @@ namespace goFriend.Views
                     {
                         //if (App.User.Location != null)
                         //{
-                            await App.TaskGetMyGroups;
+                            await App.TaskInitialization;
                             if (App.MyGroups != null &&
                                 App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
                             {

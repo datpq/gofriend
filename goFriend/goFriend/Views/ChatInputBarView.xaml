@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Views.ChatInputBarView">
     <Grid>
@@ -17,7 +18,7 @@
         <Frame Grid.Column="0" CornerRadius="20" BackgroundColor="#F3F3F3" HorizontalOptions="FillAndExpand" Padding="10,0" HasShadow="False">
             <controls:ExtendedEditorControl x:Name="ChatTextInput" BackgroundColor="#F3F3F3"
                 Margin="1" Keyboard="Chat" IsExpandable="True" HorizontalOptions="FillAndExpand" 
-                TextColor="{StaticResource ColorLabel}" PlaceholderColor="Gray" Placeholder="Gõ tin nhắn..."
+                TextColor="{StaticResource ColorLabel}" PlaceholderColor="Gray" Placeholder="{Static local:res.TypeMsgHere}"
                 Text="{Binding Message}"/>
         </Frame>
         <Image Grid.Column="1" Source="send.png"

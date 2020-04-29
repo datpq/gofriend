@@ -369,4 +369,10 @@
   <data name="Close" xml:space="preserve">
     <value>Đóng</value>
   </data>
+  <data name="TypeMsgHere" xml:space="preserve">
+    <value>Gõ tin nhắn...</value>
+  </data>
+  <data name="MsgErrConnection" xml:space="preserve">
+    <value>Lỗi kết nối</value>
+  </data>
 </root>

@@ -3,46 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-             xmlns:transformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              mc:Ignorable="d"
              x:Class="goFriend.Views.ChatOutgoingViewCell">
-  <ViewCell.View>
-      <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0">
+    <ViewCell.View>
+        <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid HorizontalOptions="EndAndExpand">
+            <Grid HorizontalOptions="StartAndExpand">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-              <Label Margin="20,0,5,-5" HorizontalOptions="EndAndExpand"
-                     Text="{Binding OwnerName}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
-                     FontSize="{StaticResource LblDetailFontSize}" TextColor="{StaticResource ColorLabelDetail}" />
-              <Label Grid.Column="0" Grid.Row="1" Text="{Binding Time, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="Start" VerticalTextAlignment="End"
-                     TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-              <Frame Grid.Column="1" Grid.Row="1" BackgroundColor="#F0F0F0" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False">
-                  <Label LineBreakMode="WordWrap"
-                         Text="{Binding Message}"
-                         TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"
-                         VerticalOptions="FillAndExpand" />
-              </Frame>
-          </Grid>
-          <forms:CachedImage Source="{Binding LogoUrl}" WidthRequest="40" HeightRequest="40" Grid.Column="1"
-                             Margin="10,0" VerticalOptions="EndAndExpand" HorizontalOptions="Center">
-              <forms:CachedImage.Transformations>
-                  <transformations:CircleTransformation/>
-              </forms:CachedImage.Transformations>
-          </forms:CachedImage>
+                <Frame BackgroundColor="{StaticResource ColorPrimary}" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="10" HasShadow="False">
+                    <Label LineBreakMode="WordWrap"
+                           Text="{Binding Message}"
+                           TextColor="White"  FontSize="{StaticResource LblFontSize}"
+                           VerticalOptions="FillAndExpand" />
+                </Frame>
+                <Label Grid.Column="1" Text="{Binding Time, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="End" VerticalTextAlignment="End"
+                       TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"/>
+            </Grid>
         </Grid>
     </ViewCell.View>
 </ViewCell>

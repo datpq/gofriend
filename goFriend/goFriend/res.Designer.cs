@@ -430,6 +430,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connection error.
+        /// </summary>
+        public static string MsgErrConnection {
+            get {
+                return ResourceManager.GetString("MsgErrConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Api connection error. Please relogin and try again!.
         /// </summary>
         public static string MsgErrWrongToken {
@@ -804,6 +813,15 @@ namespace goFriend {
         public static string TermConditionMsg2 {
             get {
                 return ResourceManager.GetString("TermConditionMsg2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string TypeMsgHere {
+            get {
+                return ResourceManager.GetString("TypeMsgHere", resourceCulture);
             }
         }
         

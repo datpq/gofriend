@@ -35,7 +35,7 @@ namespace goFriend.Views
                     new SearchPage(res.Groups, false, async (searchText) =>
                     {
                         Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
-                        App.TaskGetMyGroups.Wait();
+                        App.TaskInitialization.Wait();
                         App.AllGroups = await App.FriendStore.GetGroups(searchText);
                         var searchResult = App.MyGroups.Where(
                             x => x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
@@ -108,8 +108,8 @@ namespace goFriend.Views
                 if (string.IsNullOrEmpty(groupName)) return;
 
                 //Logger.Debug("Before Wait");
-                //App.TaskGetMyGroups.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread
-                await App.TaskGetMyGroups; // await will block this thread but return the control to the parent thread, so the processing dialog can be seen.
+                //App.TaskInitialization.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread
+                await App.TaskInitialization; // await will block this thread but return the control to the parent thread, so the processing dialog can be seen.
                 //Logger.Debug($"MyGroups={JsonConvert.SerializeObject(App.MyGroups)}");
                 //Logger.Debug($"After Wait: {App.MyGroups?.Count()}");
 
