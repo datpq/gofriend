@@ -33,6 +33,30 @@ namespace goFriend.ViewModels
         public string Name => Chat.Name;
         public string LogoUrl => Chat.LogoUrl;
 
+        public bool IsAppearing { get; set; }
+        private bool _isLastMessageRead; 
+        public bool IsLastMessageRead
+        {
+            get => _isLastMessageRead;
+            set
+            {
+                _isLastMessageRead = value;
+                OnPropertyChanged(nameof(IsLastMessageRead));
+                OnPropertyChanged(nameof(FormattedText));
+            }
+        }
+        private string _lastMessage;
+        public string LastMessage
+        {
+            get => _lastMessage;
+            set
+            {
+                _lastMessage = value;
+                OnPropertyChanged(nameof(LastMessage));
+                OnPropertyChanged(nameof(FormattedText));
+            }
+        }
+
         public ChatViewModel ChatViewModel { get; private set; }
 
         public FormattedString FormattedText =>
@@ -46,7 +70,8 @@ namespace goFriend.ViewModels
                         FontSize = (double) Application.Current.Resources["LblFontSize"], LineHeight = 1.2
                     },
                     new Span { Text = Environment.NewLine },
-                    new Span {Text = Chat.Name, LineHeight = 1.2}
+                    new Span {Text = LastMessage, LineHeight = 1.2,
+                        FontAttributes = IsLastMessageRead ? FontAttributes.None : FontAttributes.Bold}
                 }
             };
 

@@ -75,9 +75,9 @@ namespace goFriend.Views
                 var result = arrNotifications?.Select(x => new DphListViewItemModel
                 {
                     Id = x.Id,
-                    ImageUrl = Extension.GetImageUrlByFacebookId(
+                    ImageUrl = DataModel.Extension.GetImageUrlByFacebookId(
                         (x.NotificationObject as GroupSubscriptionNotifBase)?.FacebookId, FacebookImageType.small), // normal 100 x 100
-                    OverlappingImageUrl = Extension.GetImageUrl((x.NotificationObject as GroupSubscriptionNotifBase)?.ImageFile),
+                    OverlappingImageUrl = DataModel.Extension.GetImageUrl((x.NotificationObject as GroupSubscriptionNotifBase)?.ImageFile),
                     FormattedText = x.GetNotificationMessage(App.User.Id)
                 });
                 return result;

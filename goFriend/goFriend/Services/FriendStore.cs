@@ -33,7 +33,12 @@ namespace goFriend.Services
                 .WithUrl($"{BackendUrl}/chat")
                 .WithAutomaticReconnect()
                 .Build();
-            _hubConnection.On<ChatMessage>(ChatMessageType.SendMessage.ToString(), ChatReceiveMessage);
+            //var allChatMessageTypes = Enum.GetValues(typeof(ChatMessageType)).Cast<ChatMessageType>();
+            //foreach (var messageType in new []{ ChatMessageType.JoinChat, ChatMessageType.Text })
+            //{
+            //    _hubConnection.On<IChatMessage>(messageType.ToString(), ChatReceiveMessage);
+            //}
+            _hubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
             _hubConnection.Closed += HubConnectionOnClosed;
             _hubConnection.Reconnected += HubConnectionOnReconnected;
         }
@@ -928,9 +933,10 @@ namespace goFriend.Services
             return Task.CompletedTask;
         }
 
-        public async Task ChatConnect(int friendId, string token, ChatJoinChatModel joinChatModel)
+        public async Task<ChatJoinChatModel> ChatConnect(ChatJoinChatModel joinChatModel)
         {
             var stopWatch = Stopwatch.StartNew();
+            ChatJoinChatModel result = null;
             try
             {
                 Logger.Debug("ChatConnect.BEGIN");
@@ -940,15 +946,17 @@ namespace goFriend.Services
                     await _hubConnection.StartAsync();
                 }
                 Logger.Debug("joining chats...");
-                await _hubConnection.InvokeAsync(joinChatModel.MessageType.ToString(), friendId, token, joinChatModel);
+                result = await _hubConnection.InvokeAsync<ChatJoinChatModel>(joinChatModel.MessageType.ToString(), joinChatModel);
+                return result;
             }
             catch (Exception e) //Unknown error
             {
                 Logger.Error(e.ToString());
+                return result;
             }
             finally
             {
-                Logger.Debug($"ChatConnect.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"ChatConnect.END(result={JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -970,9 +978,9 @@ namespace goFriend.Services
             }
         }
 
-        public async Task SendMessage(ChatMessage chatMessage)
+        public async Task SendText(ChatMessage chatMessage)
         {
-            Logger.Debug($"SendMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
+            Logger.Debug($"Text.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
             try
             {
                 await _hubConnection.InvokeAsync(chatMessage.MessageType.ToString(), chatMessage);
@@ -983,23 +991,33 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug("SendMessage.END");
+                Logger.Debug("Text.END");
             }
         }
 
-        private void ChatReceiveMessage(ChatMessage chatMessage)
+        private void ChatReceiveMessage(IChatMessage chatObj)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                Logger.Debug($"ChatReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message}, OwnerName={chatMessage.OwnerName})");
-                if (App.ChatListVm.Items.Any(x => x.Chat.Id == chatMessage.ChatId))
+                Logger.Debug($"ChatReceiveMessage.BEGIN(MessageType={chatObj.MessageType})");
+                Logger.Debug($"chatObj={JsonConvert.SerializeObject(chatObj)})");
+                switch (chatObj.MessageType)
                 {
-                    Logger.Debug("Chat found. Message added.");
-                    chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
-                    App.ChatListVm.Items.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
-                    //App.MapChatViewModels[chatMessage.ChatId].Messages.Insert(0, chatMessage);
-                    //App.MapChatViewModels[chatMessage.ChatId].RefreshScrollDown();
+                    case ChatMessageType.Text:
+                        var chatMessage = chatObj as ChatMessage;
+                        if (App.ChatListVm.Items.Any(x => x.Chat.Id == chatMessage.ChatId))
+                        {
+                            Logger.Debug("Chat found. Message added.");
+                            App.ChatListVm.Items.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
+                            //App.MapChatViewModels[chatMessage.ChatId].RefreshScrollDown();
+                        }
+                        break;
+                    case ChatMessageType.JoinChat:
+                        break;
+                    default:
+                        Logger.Error("Type of message supported.");
+                        break;
                 }
             }
             catch (Exception e) //Unknown error

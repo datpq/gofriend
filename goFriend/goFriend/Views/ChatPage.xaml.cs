@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -25,6 +24,12 @@ namespace goFriend.Views
             //};
 
             InitializeComponent();
+
+            Appearing += (sender, args) =>
+            {
+                chatListItem.IsLastMessageRead = chatListItem.IsAppearing = true;
+            };
+            Disappearing += (sender, args) => chatListItem.IsAppearing = false;
         }
 
         private void MnuItemClose_OnClicked(object sender, EventArgs e)

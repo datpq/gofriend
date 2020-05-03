@@ -6,7 +6,9 @@ using goFriend.DataModel;
 using goFriend.MobileAppService.Data;
 using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NLog;
 
 namespace goFriend.MobileAppService.Hubs
@@ -27,17 +29,17 @@ namespace goFriend.MobileAppService.Hubs
             CacheNameSpace = GetType().FullName;
         }
 
-        public async Task<ChatJoinChatModel> JoinChat(int friendId, string token, ChatJoinChatModel joinChatModel)
+        public async Task<ChatJoinChatModel> JoinChat(ChatJoinChatModel result)
         {
             var stopWatch = Stopwatch.StartNew();
-            ChatJoinChatModel result = null;
             try
             {
-                Logger.Debug($"BEGIN(friendId={friendId}, token={token}, ChatId={joinChatModel.ChatId}, LastMsgIndex={joinChatModel.LastMsgIndex})");
+                Logger.Debug($"JoinChat.BEGIN({result.MessageType}, OwnerId={result.OwnerId}, Token={result.Token})");
+                Logger.Debug($"ChatId={result.ChatId}, LastMsgIndex ={result.LastMsgIndex}");
 
                 #region Data Validation
 
-                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == result.OwnerId).ToList();
                 if (arrFriends.Count != 1)
                 {
                     Logger.Warn(Message.MsgUserNotFound.Msg);
@@ -45,7 +47,7 @@ namespace goFriend.MobileAppService.Hubs
                     return result;
                 }
                 var friend = arrFriends.Single();
-                if (friend.Token != Guid.Parse(token))
+                if (friend.Token != Guid.Parse(result.Token))
                 {
                     Logger.Warn(Message.MsgWrongToken.Msg);
                     //return Message.MsgWrongToken;
@@ -83,22 +85,30 @@ namespace goFriend.MobileAppService.Hubs
 
                 //_cacheService.Set(cacheKey, chats, DateTimeOffset.Now.AddMinutes(cacheTimeout));
 
-                var chat = _dataRepo.Get<Chat>(x => x.Id == joinChatModel.ChatId);
+                var chat = _dataRepo.Get<Chat>(x => x.Id == result.ChatId);
                 if (chat == null)
                 {
-                    Logger.Error($"Chat not found({joinChatModel.ChatId})");
+                    Logger.Error($"Chat not found({result.ChatId})");
                 }
 
-                joinChatModel.MissingMsgCount = _dataRepo.GetMany<ChatMessage>(x =>
-                    x.ChatId == joinChatModel.ChatId && x.MessageIndex > joinChatModel.LastMsgIndex).Count();
-                joinChatModel.ChatMessages = _dataRepo.GetMany<ChatMessage>(x =>
-                        x.ChatId == joinChatModel.ChatId && x.MessageIndex > joinChatModel.LastMsgIndex)
-                    .OrderByDescending(x => x.MessageIndex).Take(joinChatModel.PageSize).ToList();
+                result.Token = null;
+                result.MissingMsgCount = _dataRepo.GetMany<ChatMessage>(x =>
+                    x.ChatId == result.ChatId && x.MessageIndex > result.LastMsgIndex).Count();
+                result.ChatMessages = _dataRepo.GetMany<ChatMessage>(x =>
+                        x.ChatId == result.ChatId && x.MessageIndex > result.LastMsgIndex)
+                    .AsQueryable().Include(x => x.Owner)
+                    .OrderByDescending(x => x.MessageIndex).Take(result.PageSize).ToList();
+                foreach (var chatMessage in result.ChatMessages)
+                {
+                    chatMessage.LogoUrl = _dataRepo.Get<Friend>(x => x.Id == chatMessage.OwnerId, true)
+                        .GetImageUrl(FacebookImageType.small);
+                    chatMessage.OwnerName = chatMessage.Owner.Name;
+                    chatMessage.OwnerFirstName = chatMessage.Owner.FirstName;
+                }
 
-                Logger.Debug($"{friend.Name} joining group {chat.Id}({chat.Name})");
+                Logger.Debug($"{friend.Name} joining group {chat.Id}({chat.Name}) MissingMsgCount={result.MissingMsgCount}, ChatMessages.Count={result.ChatMessages.Count()}");
                 await Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString());
 
-                result = joinChatModel;
                 PrintChatInfo();
                 return result;
             }
@@ -110,58 +120,7 @@ namespace goFriend.MobileAppService.Hubs
             }
             finally
             {
-                Logger.Debug($"END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
-            }
-        }
-
-        public async Task<Message> LeaveChat(int friendId, string token, int chatId = 0)
-        {
-            var stopWatch = Stopwatch.StartNew();
-            Message result = null;
-            try
-            {
-                Logger.Debug($"BEGIN(friendId={friendId}, token={token}, chatId={chatId})");
-
-                #region Data Validation
-
-                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
-                if (arrFriends.Count != 1)
-                {
-                    Logger.Warn(Message.MsgUserNotFound.Msg);
-                    return Message.MsgUserNotFound;
-                }
-                var friend = arrFriends.Single();
-                if (friend.Token != Guid.Parse(token))
-                {
-                    Logger.Warn(Message.MsgWrongToken.Msg);
-                    return Message.MsgWrongToken;
-                }
-
-                Logger.Debug($"friend={friend}");
-
-                #endregion
-
-                if (chatId > 0)
-                {
-                    Logger.Debug($"{friend.Name} leaving group {chatId}");
-                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId.ToString());
-                }
-                else
-                {
-                    Logger.Debug($"{friend.Name} leaving all the chat");
-                }
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e.ToString());
-                result = Message.MsgUnknown;
-                return result;
-            }
-            finally
-            {
-                Logger.Debug($"END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"JoinChat.END(result={JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -182,29 +141,56 @@ namespace goFriend.MobileAppService.Hubs
             }
         }
 
-        public async Task SendMessage(ChatMessage chatMessage)
+        public async Task Text(ChatMessage result)
         {
+            var stopWatch = Stopwatch.StartNew();
             try
             {
-                Logger.Debug($"SendMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message}, OwnerName={chatMessage.OwnerName})");
-                chatMessage.Time = DateTime.Now;
-                var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == chatMessage.ChatId);
+                Logger.Debug($"Text.BEGIN({result.MessageType}, OwnerId={result.OwnerId}, Token={result.Token})");
+                Logger.Debug($"ChatId={result.ChatId}, Message={result.Message}");
+
+                #region Data Validation
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == result.OwnerId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    //return Message.MsgUserNotFound;
+                    return;
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(result.Token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    //return Message.MsgWrongToken;
+                    return;
+                }
+
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                result.Time = DateTime.UtcNow;
+                var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == result.ChatId);
                 if (allChatMessages.Any())
                 {
-                    chatMessage.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
+                    result.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
                 }
                 else
                 {
-                    chatMessage.MessageIndex = 1;
+                    result.MessageIndex = 1;
                 }
 
                 Logger.Debug("Saving to database");
-                _dataRepo.Add(chatMessage);
+                _dataRepo.Add(result);
                 _dataRepo.Commit();
 
-                Logger.Debug("Sending message to the group");
-                await Clients.Group(chatMessage.ChatId.ToString()).SendAsync(chatMessage.MessageType.ToString(), chatMessage);
-                PrintChatInfo(chatMessage.ChatId);
+                Logger.Debug($"Sending message to the group {result.ChatId}");
+                result.Token = null;
+                result.OwnerName = friend.Name;
+                result.OwnerFirstName = friend.FirstName;
+                await Clients.Group(result.ChatId.ToString()).SendAsync(result.MessageType.ToString(), result);
+                PrintChatInfo(result.ChatId);
                 //await Clients.All.SendAsync(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
@@ -213,7 +199,7 @@ namespace goFriend.MobileAppService.Hubs
             }
             finally
             {
-                Logger.Debug("SendMessage.END");
+                Logger.Debug("Text.END");
             }
         }
 

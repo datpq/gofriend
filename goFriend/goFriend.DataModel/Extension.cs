@@ -3,6 +3,15 @@ using Newtonsoft.Json;
 
 namespace goFriend.DataModel
 {
+    public enum FacebookImageType
+    {
+        small, // 50 x 50
+        normal, // 100 x 100
+        album, // 50 x 50
+        large, // 200 x 200
+        square // 50 x 50
+    }
+
     public static class Extension
     {
         public const string ParamSearchText = "SearchText";
@@ -38,5 +47,47 @@ namespace goFriend.DataModel
 
             return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
         }
+
+        public static string GetImageUrl(this Friend friend, FacebookImageType imageType = FacebookImageType.normal)
+        {
+            string result;
+            if (!string.IsNullOrEmpty(friend.FacebookId))
+            {
+                result = $"https://graph.facebook.com/{friend.FacebookId}/picture?type={imageType}";
+                //Logger.Debug($"URL = {result}");
+            }
+            else if (friend.ThirdPartyLogin == ThirdPartyLogin.Apple)
+            {
+                result = GetImageUrl("apple.jpg");
+            }
+            else
+            {
+                result = friend.Gender == "female" ? "default_female.jpg" : "default_male.jpg";
+                result = GetImageUrl(result);
+            }
+
+            return result;
+        }
+
+        public static string GetImageUrl(string fileName)
+        {
+            return $"resource://goFriend.Images.{fileName}";
+        }
+
+        public static string GetImageUrlByFacebookId(string facebookId, FacebookImageType imageType = FacebookImageType.normal)
+        {
+            string result;
+            if (!string.IsNullOrEmpty(facebookId))
+            {
+                result = $"https://graph.facebook.com/{facebookId}/picture?type={imageType}";
+                //Logger.Debug($"URL = {result}");
+            }
+            else
+            {
+                result = GetImageUrl("default_male.jpg");
+            }
+            return result;
+        }
+
     }
 }

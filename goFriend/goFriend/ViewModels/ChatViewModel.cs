@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -126,14 +127,14 @@ namespace goFriend.ViewModels
                     App.DisplayMsgError(res.MsgErrConnection);
                     return;
                 }
-                await App.FriendStore.SendMessage(new ChatMessage
+                await App.FriendStore.SendText(new ChatMessage
                 {
                     ChatId = ChatListItem.Chat.Id,
                     Message = Message,
-                    MessageType = ChatMessageType.SendMessage,
+                    MessageType = ChatMessageType.Text,
                     OwnerId = App.User.Id,
-                    LogoUrl = App.User.GetImageUrl(),
-                    OwnerName = App.User.Name
+                    Token = App.User.Token.ToString(),
+                    LogoUrl = App.User.GetImageUrl()
                 });
                 Message = string.Empty;
             });
@@ -143,7 +144,51 @@ namespace goFriend.ViewModels
 
         public void ReceiveMessage(ChatMessage chatMessage)
         {
-            Messages.Insert(0, chatMessage);
+            chatMessage.Time = chatMessage.Time.ToLocalTime();
+            var lastDateTime = new DateTime(2000, 1, 1);
+            var arrIdx = 0;
+            for(arrIdx = 0; arrIdx < Messages.Count; arrIdx++)
+            {
+                if (Messages[arrIdx].MessageIndex < chatMessage.MessageIndex)
+                {
+                    lastDateTime = Messages[arrIdx].Time.Date;
+                    break;
+                }
+            }
+
+            if (lastDateTime < chatMessage.Time.Date)
+            {
+                // if the SysDate message on the same day exist already, just change the MessageIndex
+                if (arrIdx > 0 && Messages[arrIdx - 1].MessageType == ChatMessageType.SysDate
+                               && Messages[arrIdx - 1].Time.Date == chatMessage.Time.Date)
+                {
+                    arrIdx--;
+                    Messages[arrIdx].MessageIndex = chatMessage.MessageIndex;
+                }
+                else
+                {
+                    Logger.Debug($"SysDate message added for {chatMessage.Time.Date:yyyy MMMM dd}");
+                    Messages.Insert(arrIdx, new ChatMessage
+                    {
+                        Time = chatMessage.Time.Date,
+                        Message = chatMessage.Time.Date.ToString("dddd, d MMMM", res.Culture),
+                        OwnerId = 0,
+                        MessageIndex = chatMessage.MessageIndex,
+                        MessageType = ChatMessageType.SysDate
+                    });
+                }
+            }
+
+            chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
+            Messages.Insert(arrIdx, chatMessage);
+            if (arrIdx == 0)
+            {
+                ChatListItem.IsLastMessageRead = ChatListItem.IsAppearing; //when page is appearing, the last message is read
+                ChatListItem.LastMessage = chatMessage.IsOwnMessage
+                    ? "Bạn: " + chatMessage.Message
+                    : $"{chatMessage.OwnerFirstName}: {chatMessage.Message}";
+            }
+            Logger.Debug($"Message {chatMessage.Id}, ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex} received. Added at {arrIdx}.");
         }
 
         void OnMessageAppearing(ChatMessage message)

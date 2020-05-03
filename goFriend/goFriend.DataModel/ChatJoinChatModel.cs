@@ -11,5 +11,7 @@ namespace goFriend.DataModel
         public IEnumerable<ChatMessage> ChatMessages { get; set; }
 
         public ChatMessageType MessageType { get; set; } = ChatMessageType.JoinChat;
+        public int OwnerId { get; set; }
+        public string Token { get; set; }
     }
 }

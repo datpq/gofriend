@@ -13,7 +13,7 @@
           </Grid.RowDefinitions>
           <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="60" />
+              <!--<ColumnDefinition Width="60" />-->
           </Grid.ColumnDefinitions>
           <Label Margin="0,5" FontSize="{StaticResource LblDetailFontSize}"
                  HorizontalOptions="CenterAndExpand"

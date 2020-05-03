@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Xamarin.Forms;
 using goFriend.Services;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using goFriend.DataModel;
@@ -139,13 +140,19 @@ namespace goFriend
                 foreach (var chatListItemVm in ChatListVm.Items)
                 {
                     Logger.Debug($"Joining chat {chatListItemVm.Name}({chatListItemVm.Chat.Id})");
-                    await FriendStore.ChatConnect(User.Id, User.Token.ToString(), new ChatJoinChatModel
+                    var joinChatModel = await FriendStore.ChatConnect(new ChatJoinChatModel
                     {
                         ChatId = chatListItemVm.Chat.Id,
+                        OwnerId = User.Id,
+                        Token = User.Token.ToString(),
                         LastMsgIndex = chatListItemVm.ChatViewModel.Messages.Count == 0 ? 0
                             : chatListItemVm.ChatViewModel.Messages[0].MessageIndex,
                         PageSize = 10,
                     });
+                    foreach (var chatMessage in joinChatModel.ChatMessages.OrderBy(x => x.MessageIndex))
+                    {
+                        chatListItemVm.ChatViewModel.ReceiveMessage(chatMessage);
+                    }
                 }
             }
             catch (Exception e)

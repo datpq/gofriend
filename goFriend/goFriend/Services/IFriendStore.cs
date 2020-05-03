@@ -27,8 +27,8 @@ namespace goFriend.Services
 
         HubConnection ChatHubConnection { get; }
         Task ChatDisconnect();
-        Task ChatConnect(int friendId, string token, ChatJoinChatModel joinChatModel);
-        Task SendMessage(ChatMessage chatMessage);
+        Task<ChatJoinChatModel> ChatConnect(ChatJoinChatModel joinChatModel);
+        Task SendText(ChatMessage chatMessage);
         Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true);
     }
 }
