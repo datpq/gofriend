@@ -97,7 +97,10 @@ namespace goFriend
 
         protected override void OnSleep()
         {
-            //App.FriendStore.ChatDisconnect();
+            foreach (var chatListItemViewModel in ChatListVm.Items)
+            {
+                chatListItemViewModel.IsAppearing = false;
+            }
         }
 
         protected override void OnResume()
@@ -121,6 +124,12 @@ namespace goFriend
             //Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
         }
 
+        public static async Task<string> DisplayContextMenu(params string[] buttons)
+        {
+            var result = await Current.MainPage.DisplayActionSheet(AppInfo.Name, res.Cancel, null, buttons);
+            return result;
+        }
+
         public static Task<bool> DisplayMsgQuestion(string message)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -132,7 +141,7 @@ namespace goFriend
             return tcs.Task;
         }
 
-        public static async void JoinChats()
+        public static async Task JoinChats()
         {
             try
             {
@@ -183,7 +192,7 @@ namespace goFriend
 
                         await ChatListVm.RefreshCommandAsyncExec();
 
-                        JoinChats();
+                        await JoinChats();
                     }
                     else
                     {

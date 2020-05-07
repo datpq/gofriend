@@ -29,6 +29,10 @@ namespace goFriend.DataModel
         public string Message { get; set; }
 
         [NotMapped]
+        [JsonIgnore]
+        public string MessageLinkify => Message.Linkify();
+
+        [NotMapped]
         public string OwnerName { get; set; }
         [NotMapped]
         public string OwnerFirstName { get; set; }

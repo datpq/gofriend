@@ -31,11 +31,12 @@ namespace goFriend.Views
         private async void Cell_OnTapped(object sender, EventArgs e)
         {
             var selectedItem = (ChatListItemViewModel)Lv.SelectedItem;
-            var chatPage = new NavigationPage(new ChatPage(selectedItem))
-            {
-                BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"]
-            };
-            await Navigation.PushModalAsync(chatPage);
+            //var chatPage = new NavigationPage(new ChatPage(selectedItem))
+            //{
+            //    BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"]
+            //};
+            //await Navigation.PushModalAsync(chatPage);]
+            await Navigation.PushAsync(new ChatPage(selectedItem));
         }
 
         private void Lv_OnItemTapped(object sender, ItemTappedEventArgs e)

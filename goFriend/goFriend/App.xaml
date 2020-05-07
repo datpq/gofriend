@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              x:Class="goFriend.App">
     <Application.Resources>
         <Color x:Key="ColorPageBackground">White</Color>
@@ -17,5 +18,7 @@
         <x:Double x:Key="LblSectionFontSize">14</x:Double>
         <x:Double x:Key="LblDetailFontSize">13</x:Double>
         <x:Double x:Key="LblMicroFontSize">10</x:Double>
+        <helpers:HtmlLabelConverter x:Key="HtmlLabelConverter" />
+        <helpers:InverseBoolConverter x:Key="InverseBoolConverter" />
     </Application.Resources>
 </Application>

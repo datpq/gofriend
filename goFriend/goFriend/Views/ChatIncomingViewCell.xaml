@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:transformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Views.ChatIncomingViewCell">
   <ViewCell.View>
@@ -30,11 +31,15 @@
                      FontSize="{StaticResource LblDetailFontSize}" TextColor="{StaticResource ColorLabelDetail}" />
               <Label Grid.Column="0" Grid.Row="1" Text="{Binding Time, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="Start" VerticalTextAlignment="End"
                      TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-              <Frame Grid.Column="1" Grid.Row="1" BackgroundColor="#F0F0F0" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False">
+              <Frame x:Name="FraMessage"  Grid.Column="1" Grid.Row="1" BackgroundColor="#F0F0F0" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False"
+                     helpers:LongPressedEffect.Command="{Binding ShowAlertCommand}" helpers:LongPressedEffect.CommandParameter="{Binding .}">
                   <Label LineBreakMode="WordWrap"
-                         Text="{Binding Message}"
+                         FormattedText="{Binding MessageLinkify, Converter={StaticResource HtmlLabelConverter}}"
                          TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"
                          VerticalOptions="FillAndExpand" />
+                  <Frame.Effects>
+                      <helpers:LongPressedEffect />
+                  </Frame.Effects>
               </Frame>
           </Grid>
           <forms:CachedImage Source="{Binding LogoUrl}" WidthRequest="40" HeightRequest="40" Grid.Column="1"

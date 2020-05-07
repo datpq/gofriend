@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Views.ChatOutgoingViewCell">
     <ViewCell.View>
@@ -19,11 +20,15 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
-                <Frame BackgroundColor="{StaticResource ColorPrimary}" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="10" HasShadow="False">
+                <Frame BackgroundColor="{StaticResource ColorPrimary}" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="10" HasShadow="False"
+                       x:Name="FraMessage" helpers:LongPressedEffect.Command="{Binding ShowAlertCommand}" helpers:LongPressedEffect.CommandParameter="{Binding .}">
                     <Label LineBreakMode="WordWrap"
-                           Text="{Binding Message}"
+                           FormattedText="{Binding MessageLinkify, Converter={StaticResource HtmlLabelConverter}}"
                            TextColor="White"  FontSize="{StaticResource LblFontSize}"
                            VerticalOptions="FillAndExpand" />
+                    <Frame.Effects>
+                        <helpers:LongPressedEffect />
+                    </Frame.Effects>
                 </Frame>
                 <Label Grid.Column="1" Text="{Binding Time, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="End" VerticalTextAlignment="End"
                        TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"/>

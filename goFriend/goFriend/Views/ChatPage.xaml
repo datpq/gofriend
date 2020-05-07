@@ -8,16 +8,20 @@
              xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              xmlns:views="clr-namespace:goFriend.Views;assembly=goFriend"
+             Title="{Binding ChatName}"
              x:Class="goFriend.Views.ChatPage">
-    <NavigationPage.TitleView>
+    <!--<NavigationPage.TitleView>
         <StackLayout Orientation="Horizontal" VerticalOptions="Center">
             <controls:DphOverlapImage WidthRequest="40" HeightRequest="40" Margin="5,5,5,5"
                                       Source1="{Binding ChatLogoUrl}" />
             <Label Text="{Binding ChatName}" TextColor="{StaticResource ColorTitle}" FontSize="Subtitle" FontAttributes="Bold" VerticalTextAlignment="Center" />
         </StackLayout>
-    </NavigationPage.TitleView>
+    </NavigationPage.TitleView>-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="{Static local:res.Close}" Clicked="MnuItemClose_OnClicked" />
+        <ToolbarItem Order="Secondary" Text="Thành viên" Priority="0" />
+        <!--<ToolbarItem Order="Primary" Priority="0"
+                     IconImageSource="{Binding ChatLogoUrl}"/>-->
+        <!--<ToolbarItem Text="{Static local:res.Close}" Clicked="MnuItemClose_OnClicked" />-->
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>

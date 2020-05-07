@@ -101,6 +101,7 @@
     <Compile Include="Renderers\DphMapRenderer.cs" />
     <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
     <Compile Include="Renderers\IconViewRenderer.cs" />
+    <Compile Include="Renderers\iOSLongPressedEffect.cs" />
     <Compile Include="Services\AppleSignInServiceiOS.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />

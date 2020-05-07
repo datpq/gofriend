@@ -1,4 +1,5 @@
 ﻿using System;
+using goFriend.Controls;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -24,6 +25,34 @@ namespace goFriend.Views
             //};
 
             InitializeComponent();
+
+            //hide Shell tab bar for this page
+            Shell.SetTabBarIsVisible(this, false);
+
+            //NavigationPage.TitleView in XAML not working, so the code below is for this purpose.
+            Shell.SetTitleView(this, new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                VerticalOptions = LayoutOptions.Center,
+                Children = {
+                    new Label
+                    {
+                        HorizontalOptions = LayoutOptions.StartAndExpand,
+                        Text = chatListItem.ChatViewModel.ChatName,
+                        TextColor = (Color)Application.Current.Resources["ColorTitle"],
+                        FontSize = 18,
+                        FontAttributes = FontAttributes.Bold,
+                        VerticalTextAlignment = TextAlignment.Center
+                    },
+                    new DphOverlapImage
+                    {
+                        HorizontalOptions = LayoutOptions.End,
+                        WidthRequest = HeightRequest = 40,
+                        Margin = 5,
+                        Source1 = chatListItem.ChatViewModel.ChatLogoUrl
+                    }
+                }
+            });
 
             Appearing += (sender, args) =>
             {

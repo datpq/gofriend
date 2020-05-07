@@ -23,13 +23,12 @@ namespace goFriend.Services
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
-        private readonly HubConnection _hubConnection;
         private static readonly string BackendUrl = ConfigurationManager.AppSettings["AzureBackendUrl112"];
 
         public FriendStore()
         {
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
-            _hubConnection = new HubConnectionBuilder()
+            ChatHubConnection = new HubConnectionBuilder()
                 .WithUrl($"{BackendUrl}/chat")
                 .WithAutomaticReconnect()
                 .Build();
@@ -38,12 +37,12 @@ namespace goFriend.Services
             //{
             //    _hubConnection.On<IChatMessage>(messageType.ToString(), ChatReceiveMessage);
             //}
-            _hubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
-            _hubConnection.Closed += HubConnectionOnClosed;
-            _hubConnection.Reconnected += HubConnectionOnReconnected;
+            ChatHubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
+            ChatHubConnection.Closed += HubConnectionOnClosed;
+            ChatHubConnection.Reconnected += HubConnectionOnReconnected;
         }
 
-        public HubConnection ChatHubConnection => _hubConnection;
+        public HubConnection ChatHubConnection { get; }
 
         private static HttpClient GetHttpClient()
         {
@@ -922,14 +921,13 @@ namespace goFriend.Services
 
         private Task HubConnectionOnReconnected(string arg)
         {
-            Logger.Debug($"Reconnected(arg={arg})");
-            App.JoinChats();
-            return Task.CompletedTask;
+            Logger.Debug($"OnReconnected(arg={arg})");
+            return App.JoinChats();
         }
 
         private Task HubConnectionOnClosed(Exception arg)
         {
-            Logger.Debug($"Closed(exception={arg})");
+            Logger.Debug($"OnClosed(exception={arg})");
             return Task.CompletedTask;
         }
 
@@ -940,13 +938,13 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug("ChatConnect.BEGIN");
-                if (_hubConnection.State == HubConnectionState.Disconnected)
+                if (ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
                     Logger.Debug("starting connection...");
-                    await _hubConnection.StartAsync();
+                    await ChatHubConnection.StartAsync();
                 }
                 Logger.Debug("joining chats...");
-                result = await _hubConnection.InvokeAsync<ChatJoinChatModel>(joinChatModel.MessageType.ToString(), joinChatModel);
+                result = await ChatHubConnection.InvokeAsync<ChatJoinChatModel>(joinChatModel.MessageType.ToString(), joinChatModel);
                 return result;
             }
             catch (Exception e) //Unknown error
@@ -966,7 +964,7 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug("ChatDisconnect.BEGIN");
-                await _hubConnection.StopAsync();
+                await ChatHubConnection.StopAsync();
             }
             catch (Exception e) //Unknown error
             {
@@ -983,7 +981,7 @@ namespace goFriend.Services
             Logger.Debug($"Text.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
             try
             {
-                await _hubConnection.InvokeAsync(chatMessage.MessageType.ToString(), chatMessage);
+                await ChatHubConnection.InvokeAsync(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
             {

@@ -116,6 +116,7 @@
     <Compile Include="NLogLogger.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="NLogManager.cs" />
+    <Compile Include="Renderers\AndroidLongPressedEffect.cs" />
     <Compile Include="Renderers\CustomEditorRenderer.cs" />
     <Compile Include="Renderers\DphMapRenderer.cs" />
     <Compile Include="Renderers\IconViewRenderer.cs" />

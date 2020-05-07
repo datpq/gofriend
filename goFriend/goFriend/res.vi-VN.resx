@@ -375,4 +375,10 @@
   <data name="MsgErrConnection" xml:space="preserve">
     <value>Lỗi kết nối</value>
   </data>
+  <data name="You" xml:space="preserve">
+    <value>Bạn</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
 </root>

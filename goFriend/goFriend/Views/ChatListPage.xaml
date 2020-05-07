@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
+             xmlns:helpers="clr-namespace:goFriend.Helpers"
              Title="{Static local:res.Chat}"
              x:Class="goFriend.Views.ChatListPage">
     <ContentPage.BackgroundColor>
@@ -32,12 +33,16 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <controls:DphOverlapImage WidthRequest="50" HeightRequest="50" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
                                                           Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"
                                                           Source1="{Binding LogoUrl}" />
                                 <Label LineBreakMode="WordWrap" Grid.Row="0" Grid.Column="1" Margin="0,5,0,5" MaxLines="2"
                                        FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
+                                <BoxView Grid.Column="2" CornerRadius="7" HeightRequest="14" WidthRequest="14" Margin="10"
+                                         IsVisible="{Binding IsLastMessageRead, Converter={StaticResource InverseBoolConverter}}"
+                                         Color="{StaticResource ColorPrimaryLight}" HorizontalOptions="Center" VerticalOptions="Center" />
                             </Grid>
                         </ViewCell>
                     </DataTemplate>

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using goFriend.DataModel;
+using goFriend.Helpers;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -15,6 +12,13 @@ namespace goFriend.Views
         public ChatOutgoingViewCell()
         {
             InitializeComponent();
+            LongPressedEffect.SetCommand(FraMessage, new Command(async () =>
+            {
+                if (res.Copy == await App.DisplayContextMenu(res.Copy))
+                {
+                    await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
+                };
+            }));
         }
     }
 }

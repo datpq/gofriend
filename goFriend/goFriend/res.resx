@@ -370,9 +370,15 @@
     <value>Close</value>
   </data>
   <data name="TypeMsgHere" xml:space="preserve">
-    <value />
+    <value>Type message here...</value>
   </data>
   <data name="MsgErrConnection" xml:space="preserve">
     <value>Connection error</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
   </data>
 </root>
