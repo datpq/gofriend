@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using goFriend.DataModel;
@@ -16,16 +17,39 @@ namespace goFriend.ViewModels
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        private bool _showScrollTab = false;
-        public bool ShowScrollTap
+        private bool _isRefreshing;
+        public bool IsRefreshing
         {
-            get => _showScrollTab;
+            get => _isRefreshing;
             set
             {
-                _showScrollTab = value;
-                OnPropertyChanged(nameof(ShowScrollTap));
+                _isRefreshing = value;
+                OnPropertyChanged(nameof(IsRefreshing));
             }
-        }//Show the jump icon
+        }
+        private bool _showScrollTabUp = false;
+        public bool ShowScrollTapUp
+        {
+            get => _showScrollTabUp;
+            set
+            {
+                _showScrollTabUp = value;
+                OnPropertyChanged(nameof(ShowScrollTapUp));
+            }
+        }//Show the jump up icon
+        private bool _showScrollTabDown = false;
+        public bool ShowScrollTapDown
+        {
+            get => _showScrollTabDown;
+            set
+            {
+                _showScrollTabDown = value;
+                OnPropertyChanged(nameof(ShowScrollTapDown));
+            }
+        }//Show the jump down icon
+
+        public int LastReadMsgIdxWhenAppearing { get; set; }
+        public int LastReadMsgIdx { get; set; }
         private bool _lastMessageVisible = true;
         public bool LastMessageVisible
         {
@@ -37,23 +61,20 @@ namespace goFriend.ViewModels
             }
         }
         private int _pendingMessageCount = 0;
-        public int PendingMessageCount
+        public string PendingMessageCount
         {
-            get => _pendingMessageCount;
+            get => _pendingMessageCount > Constants.ChatMaxPendingMsg ? $"+{Constants.ChatMaxPendingMsg}" : _pendingMessageCount.ToString();
             set
             {
-                _pendingMessageCount = value;
+                _pendingMessageCount = int.Parse(value);
                 OnPropertyChanged(nameof(PendingMessageCount));
-                OnPropertyChanged(nameof(PendingMessageCountVisible));
+                ShowScrollTapUp = _pendingMessageCount > Constants.ChatMinPendingMsg;
             }
         }
-        public bool PendingMessageCountVisible => PendingMessageCount > 0;
-        public Queue<ChatMessage> DelayedMessages { get; set; } = new Queue<ChatMessage>();
         public ICommand MessageAppearingCommand { get; set; }
         public ICommand MessageDisappearingCommand { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public System.Action RefreshScrollDown { get; set; }
 
         private ChatListItemViewModel _chatListItem;
         public ChatListItemViewModel ChatListItem
@@ -103,7 +124,13 @@ namespace goFriend.ViewModels
             {
                 _message = value;
                 OnPropertyChanged(nameof(Message));
+                OnPropertyChanged(nameof(SendImage));
             }
+        }
+
+        public string SendImage
+        {
+            get => string.IsNullOrWhiteSpace(Message) ? "thumbsup.png" : "send.png";
         }
 
         private ObservableCollection<ChatMessage> _messages = new ObservableCollection<ChatMessage>();
@@ -122,7 +149,7 @@ namespace goFriend.ViewModels
         public ChatViewModel()
         {
             SendMessageCommand = new Command(async () => {
-                if (string.IsNullOrEmpty(Message)) return;
+                if (string.IsNullOrEmpty(Message.Trim())) return;
                 if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
                     await App.JoinChats();
@@ -135,7 +162,7 @@ namespace goFriend.ViewModels
                 await App.FriendStore.SendText(new ChatMessage
                 {
                     ChatId = ChatListItem.Chat.Id,
-                    Message = Message,
+                    Message = Message.Trim(),
                     MessageType = ChatMessageType.Text,
                     OwnerId = App.User.Id,
                     Token = App.User.Token.ToString(),
@@ -157,11 +184,9 @@ namespace goFriend.ViewModels
                 var arrIdx = 0;
                 for (arrIdx = 0; arrIdx < Messages.Count; arrIdx++)
                 {
-                    if (Messages[arrIdx].MessageIndex < chatMessage.MessageIndex)
-                    {
-                        lastDateTime = Messages[arrIdx].Time.Date;
-                        break;
-                    }
+                    if (Messages[arrIdx].MessageIndex >= chatMessage.MessageIndex) continue;
+                    lastDateTime = Messages[arrIdx].Time.Date;
+                    break;
                 }
 
                 if (lastDateTime < chatMessage.Time.Date)
@@ -189,15 +214,19 @@ namespace goFriend.ViewModels
 
                 chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
                 Messages.Insert(arrIdx, chatMessage);
-                if (arrIdx == 0)
+                if (arrIdx == 0 && ChatListItem != null)
                 {
-                    ChatListItem.IsLastMessageRead =
-                        ChatListItem.IsAppearing; //when page is appearing, the last message is read
+                    ChatListItem.IsLastMessageRead = LastMessageVisible && ChatListItem.IsAppearing; //when page is appearing, the last message is read
                     ChatListItem.LastMessage =
                         $"{(chatMessage.IsOwnMessage ? res.You : chatMessage.OwnerFirstName)}: {chatMessage.Message}";
+                    if (!ChatListItem.IsAppearing && chatMessage.MessageIndex >= LastReadMsgIdxWhenAppearing + Constants.ChatMinPendingMsg)
+                    {
+                        LastReadMsgIdx = LastReadMsgIdxWhenAppearing;
+                        PendingMessageCount = (chatMessage.MessageIndex - LastReadMsgIdx).ToString();
+                    }
                 }
 
-                if (!ChatListItem.IsAppearing && !chatMessage.IsOwnMessage)
+                if (ChatListItem != null && !ChatListItem.IsAppearing && !chatMessage.IsOwnMessage)
                 {
                     Vibration.Vibrate();
                 }
@@ -213,35 +242,132 @@ namespace goFriend.ViewModels
             }
         }
 
-        void OnMessageAppearing(ChatMessage message)
+        public ChatMessage GetPreviousMessage(ChatMessage message)
         {
-            var idx = Messages.IndexOf(message);
-            if (idx <= 6)
+            var msgListIdx = Messages.IndexOf(message);
+            return GetPreviousMessage(msgListIdx, message.MessageType);
+        }
+
+        public ChatMessage GetPreviousMessage(int msgListIdx, ChatMessageType msgType = ChatMessageType.Text)
+        {
+            ChatMessage result = null;
+            var idx = msgListIdx + 1;
+            while (idx < Messages.Count)
             {
-                Device.BeginInvokeOnMainThread(() =>
+                if (Messages[idx].MessageType == msgType)
                 {
-                    while (DelayedMessages.Count > 0)
+                    result = Messages[idx];
+                    //Logger.Debug($"GetPreviousMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
+                    break;
+                }
+                idx++;
+            }
+            return result;
+        }
+
+        public ChatMessage GetNexMessage(ChatMessage message)
+        {
+            var msgListIdx = Messages.IndexOf(message);
+            return GetNextMessage(msgListIdx, message.MessageType);
+        }
+
+        public ChatMessage GetNextMessage(int msgListIdx, ChatMessageType msgType = ChatMessageType.Text)
+        {
+            ChatMessage result = null;
+            var idx = msgListIdx - 1;
+            while (idx >= 0)
+            {
+                if (Messages[idx].MessageType == msgType)
+                {
+                    result = Messages[idx];
+                    //Logger.Debug($"GetNextMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
+                    break;
+                }
+                idx--;
+            }
+            return result;
+        }
+
+        async void OnMessageAppearing(ChatMessage message)
+        {
+            if (message.MessageType != ChatMessageType.Text) return;
+            try
+            {
+                var listIdx = Messages.IndexOf(message);
+                Logger.Debug($"OnMessageAppearing.BEGIN(listIdx={listIdx}, MessageIndex={message.MessageIndex})");
+
+                //go up the list find the previous message
+                var previousMessage = GetPreviousMessage(listIdx);
+                if ((previousMessage == null && message.MessageIndex != 1) ||
+                    (previousMessage != null && previousMessage.MessageIndex + 1 != message.MessageIndex))
+                {
+                    Logger.Debug("There is some missing messages up the list");
+                    IsRefreshing = true;
+                    var missingMessages = await App.FriendStore.ChatGetMessages(message.ChatId, message.MessageIndex,
+                        previousMessage?.MessageIndex ?? 0, Constants.ChatMessagePageSize);
+                    IsRefreshing = false;
+                    foreach (var msg in missingMessages.OrderByDescending(x => x.MessageIndex))
                     {
-                        Messages.Insert(0, DelayedMessages.Dequeue());
+                        ReceiveMessage(msg);
                     }
-                    ShowScrollTap = false;
+                }
+
+                //go down the list find the next message
+                var nextMessage = GetNextMessage(listIdx); ;
+                if (nextMessage != null && nextMessage.MessageIndex - 1 != message.MessageIndex)
+                {
+                    Logger.Debug("There is some missing messages down the list");
+                    IsRefreshing = true;
+                    var missingMessages = await App.FriendStore.ChatGetMessages(message.ChatId, message.MessageIndex,
+                        nextMessage?.MessageIndex ?? 0, Constants.ChatMessagePageSize);
+                    IsRefreshing = false;
+                    foreach (var msg in missingMessages.OrderBy(x => x.MessageIndex))
+                    {
+                        ReceiveMessage(msg);
+                    }
+                }
+
+                if (listIdx >= Constants.ChatStartIdxToHideScrollUp)
+                {
+                    //Device.BeginInvokeOnMainThread(() =>
+                    //{
+                    //while (DelayedMessages.Count > 0)
+                    //{
+                    //    Messages.Insert(0, DelayedMessages.Dequeue());
+                    //}
+                    ShowScrollTapUp = false;
+                    PendingMessageCount = 0.ToString();
+                    //});
+                }
+                else if (listIdx <= 6)
+                {
                     LastMessageVisible = true;
-                    PendingMessageCount = 0;
-                });
+                    Logger.Debug($"listIdx={listIdx}, LastMessageVisible={LastMessageVisible}");
+                }
+                ShowScrollTapDown = listIdx > Constants.ChatStartIdxToShowScrollDown;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                IsRefreshing = false;
+                Logger.Debug($"OnMessageAppearing.END");
             }
         }
 
         void OnMessageDisappearing(ChatMessage message)
         {
-            var idx = Messages.IndexOf(message);
-            if (idx >= 6)
+            Logger.Debug("OnMessageDisappearing.BEGIN");
+            if (message.MessageType != ChatMessageType.Text) return;
+            var listIdx = Messages.IndexOf(message);
+            if (listIdx <= 6)
             {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    ShowScrollTap = true;
-                    LastMessageVisible = false;
-                });
+                LastMessageVisible = false;
+                Logger.Debug($"listIdx={listIdx}, LastMessageVisible={LastMessageVisible}");
             }
+            Logger.Debug("OnMessageDisappearing.END");
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "")

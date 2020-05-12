@@ -40,10 +40,34 @@
                                        ItemsSource="{Binding Messages}" 
                                        ItemAppearingCommand="{Binding MessageAppearingCommand}"
                                        ItemDisappearingCommand="{Binding MessageDisappearingCommand}"
+                                       IsRefreshing="{Binding IsRefreshing}"
                                        FlowDirection="RightToLeft" Rotation="180"
                                        VerticalScrollBarVisibility="Never" SeparatorVisibility="None" SeparatorColor="Transparent"
                                        Margin="0" VerticalOptions="FillAndExpand">
             </controls:ExtendedListView>
+            <Frame HorizontalOptions="EndAndExpand" 
+                   Margin="0,15,5,0"
+                   VerticalOptions="Start"
+                   HasShadow="false" 
+                   Grid.Row="0"  
+                   HeightRequest="50" WidthRequest="50"
+                   CornerRadius="25"
+                   Padding="1"
+                   BackgroundColor="#F0F0F0"
+                   IsVisible="{Binding ShowScrollTapUp,Mode=TwoWay}">
+                <StackLayout Spacing="3">
+                    <Image Source="ic_scrollup"
+                           WidthRequest="30"
+                           HeightRequest="30"
+                           VerticalOptions="CenterAndExpand"/>
+                    <Label Text="{Binding PendingMessageCount}"
+                           HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center"
+                           TextColor="{StaticResource ColorLabel}"/>
+                </StackLayout>
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="ScrollTapUp"/>
+                </Frame.GestureRecognizers>
+            </Frame>
             <Frame HorizontalOptions="EndAndExpand" 
                    Margin="0,0,5,15"
                    VerticalOptions="End"
@@ -53,22 +77,17 @@
                    CornerRadius="25"
                    Padding="1"
                    BackgroundColor="#F0F0F0"
-                   IsVisible="{Binding ShowScrollTap,Mode=TwoWay}">
+                   IsVisible="{Binding ShowScrollTapDown,Mode=TwoWay}">
                 <StackLayout Spacing="3">
-                    <Label Text="{Binding PendingMessageCount}"
-                                    HorizontalOptions="CenterAndExpand"
-                           IsVisible="{Binding PendingMessageCountVisible}"
-                           VerticalTextAlignment="Center"
-                           TextColor="{StaticResource ColorLabel}"/>
                     <Image Source="ic_scrolldown"
                            WidthRequest="30"
                            HeightRequest="30"
                            VerticalOptions="CenterAndExpand"/>
                 </StackLayout>
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="ScrollTap"/>
+                    <TapGestureRecognizer Tapped="ScrollTapDown"/>
                 </Frame.GestureRecognizers>
-                                            </Frame>
+            </Frame>
             <BoxView Grid.Row="1" HorizontalOptions="FillAndExpand" HeightRequest="1" Color="LightGray" />
             <views:ChatInputBarView x:Name="ChatInput" Grid.Row="2" Margin="5" />
         </Grid>

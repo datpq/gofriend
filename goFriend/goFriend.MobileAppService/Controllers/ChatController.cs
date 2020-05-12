@@ -7,6 +7,7 @@ using goFriend.DataModel;
 using goFriend.MobileAppService.Data;
 using goFriend.MobileAppService.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
@@ -31,6 +32,86 @@ namespace goFriend.MobileAppService.Controllers
             _cacheService = cacheService;
             CacheNameSpace = GetType().FullName;
         }
+
+        [HttpGet]
+        [Route("GetMessages/{friendId}/{chatId}/{startMsgIdx}/{stopMsgIdx}/{pageSize}")]
+        public ActionResult<IEnumerable<ChatMessage>> GetMessages([FromHeader] string token, [FromRoute] int friendId,
+            int chatId, int startMsgIdx, int stopMsgIdx, int pageSize)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<IEnumerable<ChatMessage>> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, chatId={chatId}, startMsgIdx={startMsgIdx}, stopMsgIdx={stopMsgIdx}, pageSize={pageSize})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                var orderByAscending = startMsgIdx < stopMsgIdx;
+                if (!orderByAscending)
+                {
+                    var tmp = startMsgIdx;
+                    startMsgIdx = stopMsgIdx;
+                    stopMsgIdx = tmp;
+                }
+
+                IEnumerable<ChatMessage> queryableResult = _dataRepo.GetMany<ChatMessage>(x =>
+                        x.ChatId == chatId && x.MessageIndex > startMsgIdx && x.MessageIndex < stopMsgIdx)
+                    .AsQueryable().Include(x => x.Owner);
+                queryableResult = orderByAscending ? queryableResult.OrderBy(x => x.MessageIndex)
+                    : queryableResult.OrderByDescending(x => x.MessageIndex);
+
+                var messages = queryableResult.Take(pageSize).ToList();
+                    
+                foreach (var chatMessage in messages)
+                {
+                    chatMessage.LogoUrl = _dataRepo.Get<Friend>(x => x.Id == chatMessage.OwnerId, true)
+                        .GetImageUrl(FacebookImageType.small);
+                    chatMessage.OwnerName = chatMessage.Owner.Name;
+                    chatMessage.OwnerFirstName = chatMessage.Owner.FirstName;
+                }
+
+                result = messages;
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(Count={result?.Value.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
 
         [HttpGet]
         [Route("GetChats/{friendId}/{useCache}")]

@@ -21,7 +21,7 @@
                 TextColor="{StaticResource ColorLabel}" PlaceholderColor="Gray" Placeholder="{Static local:res.TypeMsgHere}"
                 Text="{Binding Message}"/>
         </Frame>
-        <Image Grid.Column="1" Source="send.png"
+        <Image Grid.Column="1" Source="{Binding SendImage}"
                VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="0,0,0,5" HeightRequest="30">
             <Image.GestureRecognizers>
                 <TapGestureRecognizer Tapped="ImgSend_OnTapped" NumberOfTapsRequired="1" />

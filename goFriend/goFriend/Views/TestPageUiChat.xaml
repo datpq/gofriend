@@ -8,16 +8,20 @@
              xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls;assembly=goFriend"
              xmlns:views="clr-namespace:goFriend.Views;assembly=goFriend"
+             Title="{Binding ChatName}"
              x:Class="goFriend.Views.TestPageUiChat">
-    <NavigationPage.TitleView>
+    <!--<NavigationPage.TitleView>
         <StackLayout Orientation="Horizontal" VerticalOptions="Center">
             <controls:DphOverlapImage WidthRequest="40" HeightRequest="40" Margin="5,5,5,5"
                                       Source1="{Binding ChatLogoUrl}" />
             <Label Text="{Binding ChatName}" TextColor="{StaticResource ColorTitle}" FontSize="Subtitle" FontAttributes="Bold" VerticalTextAlignment="Center" />
         </StackLayout>
-    </NavigationPage.TitleView>
+    </NavigationPage.TitleView>-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="{Static local:res.Close}" Clicked="MnuItemClose_OnClicked" />
+        <ToolbarItem Order="Secondary" Text="Thành viên" Priority="0" />
+        <!--<ToolbarItem Order="Primary" Priority="0"
+                     IconImageSource="{Binding ChatLogoUrl}"/>-->
+        <!--<ToolbarItem Text="{Static local:res.Close}" Clicked="MnuItemClose_OnClicked" />-->
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -36,10 +40,34 @@
                                        ItemsSource="{Binding Messages}" 
                                        ItemAppearingCommand="{Binding MessageAppearingCommand}"
                                        ItemDisappearingCommand="{Binding MessageDisappearingCommand}"
+                                       IsRefreshing="{Binding IsRefreshing}"
                                        FlowDirection="RightToLeft" Rotation="180"
                                        VerticalScrollBarVisibility="Never" SeparatorVisibility="None" SeparatorColor="Transparent"
                                        Margin="0" VerticalOptions="FillAndExpand">
             </controls:ExtendedListView>
+            <Frame HorizontalOptions="EndAndExpand" 
+                   Margin="0,15,5,0"
+                   VerticalOptions="Start"
+                   HasShadow="false" 
+                   Grid.Row="0"  
+                   HeightRequest="50" WidthRequest="50"
+                   CornerRadius="25"
+                   Padding="1"
+                   BackgroundColor="#F0F0F0"
+                   IsVisible="{Binding ShowScrollTapUp,Mode=TwoWay}">
+                <StackLayout Spacing="3">
+                    <Image Source="ic_scrollup"
+                           WidthRequest="30"
+                           HeightRequest="30"
+                           VerticalOptions="CenterAndExpand"/>
+                    <Label Text="{Binding PendingMessageCount}"
+                           HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center"
+                           TextColor="{StaticResource ColorLabel}"/>
+                </StackLayout>
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="ScrollTapUp"/>
+                </Frame.GestureRecognizers>
+            </Frame>
             <Frame HorizontalOptions="EndAndExpand" 
                    Margin="0,0,5,15"
                    VerticalOptions="End"
@@ -49,20 +77,15 @@
                    CornerRadius="25"
                    Padding="1"
                    BackgroundColor="#F0F0F0"
-                   IsVisible="{Binding ShowScrollTap,Mode=TwoWay}">
+                   IsVisible="{Binding ShowScrollTapDown,Mode=TwoWay}">
                 <StackLayout Spacing="3">
-                    <Label Text="{Binding PendingMessageCount}"
-                           HorizontalOptions="CenterAndExpand"
-                           IsVisible="{Binding PendingMessageCountVisible}"
-                           VerticalTextAlignment="Center"
-                           TextColor="{StaticResource ColorLabel}"/>
                     <Image Source="ic_scrolldown"
                            WidthRequest="30"
                            HeightRequest="30"
                            VerticalOptions="CenterAndExpand"/>
                 </StackLayout>
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="ScrollTap"/>
+                    <TapGestureRecognizer Tapped="ScrollTapDown"/>
                 </Frame.GestureRecognizers>
             </Frame>
             <BoxView Grid.Row="1" HorizontalOptions="FillAndExpand" HeightRequest="1" Color="LightGray" />

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using goFriend.Controls;
+using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -15,14 +17,6 @@ namespace goFriend.Views
         public ChatPage(ChatListItemViewModel chatListItem)
         {
             BindingContext = chatListItem.ChatViewModel;
-            //chatViewModel.RefreshScrollDown = () => {
-            //    if (chatViewModel.Messages.Count > 0)
-            //    {
-            //        Device.BeginInvokeOnMainThread(() => {
-            //            LvMessages.ScrollTo(chatViewModel.Messages[chatViewModel.Messages.Count - 1], ScrollToPosition.End, true);
-            //        });
-            //    }
-            //};
 
             InitializeComponent();
 
@@ -66,25 +60,97 @@ namespace goFriend.Views
             Navigation.PopModalAsync();
         }
 
-        public void ScrollTap(object sender, System.EventArgs e)
+        public void ScrollTapDown(object sender, System.EventArgs args)
         {
-            lock (new object())
+            if (!(BindingContext is ChatViewModel vm))
             {
-                if (BindingContext != null)
+                Logger.Error("Error when casting BindingContext");
+                return;
+            }
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                vm.ShowScrollTapDown = false;
+                LvMessages.ScrollToFirst();
+            });
+        }
+
+        public async void ScrollTapUp(object sender, System.EventArgs args)
+        {
+            //lock (new object())
+            //{
+            //}
+            try
+            {
+                Logger.Debug("ScrollTap.BEGIN");
+                if (!(BindingContext is ChatViewModel vm))
                 {
-                    var vm = BindingContext as ChatViewModel;
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        while (vm.DelayedMessages.Count > 0)
-                        {
-                            vm.Messages.Insert(0, vm.DelayedMessages.Dequeue());
-                        }
-                        vm.ShowScrollTap = false;
-                        vm.LastMessageVisible = true;
-                        vm.PendingMessageCount = 0;
-                        LvMessages.ScrollToFirst();
-                    });
+                    Logger.Error("Error when casting BindingContext");
+                    return;
                 }
+
+                var fetchCount = 0;
+                var idx = 0;
+                while (idx < vm.Messages.Count)
+                {
+                    var message = vm.Messages[idx];
+                    if (message.MessageType != ChatMessageType.Text)
+                    {
+                        idx++;
+                        continue;
+                    }
+
+                    if (message.MessageIndex <= vm.LastReadMsgIdx ||
+                        (message.MessageIndex == 1 && vm.LastReadMsgIdx == 0))
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            //while (vm.DelayedMessages.Count > 0)
+                            //{
+                            //    vm.Messages.Insert(0, vm.DelayedMessages.Dequeue());
+                            //}
+                            vm.ShowScrollTapUp = false;
+                            vm.LastMessageVisible = false;
+                            Logger.Debug($"Set LastMessageVisible={vm.LastMessageVisible}");
+                            vm.PendingMessageCount = 0.ToString();
+                            LvMessages.ScrollToLast(message);
+                        });
+                        break;
+                    }
+
+                    //go up the list find the previous message
+                    var previousMessage = vm.GetPreviousMessage(idx);
+                    if ((previousMessage == null && message.MessageIndex != 1) ||
+                        (previousMessage != null && previousMessage.MessageIndex + 1 != message.MessageIndex))
+                    {
+                        if (fetchCount >= Constants.ChatMaxPagesFetched)
+                        {
+                            vm.LastReadMsgIdx = message.MessageIndex;
+                            Logger.Debug($"Max number of fetching reached. Stop fetching. set LastReadMsgIdx = {vm.LastReadMsgIdx}");
+                            continue;
+                        }
+                        Logger.Debug("There is some missing messages up the list");
+                        vm.IsRefreshing = true;
+                        var missingMessages = await App.FriendStore.ChatGetMessages(message.ChatId,
+                            message.MessageIndex,
+                            previousMessage?.MessageIndex ?? 0, Constants.ChatMessagePageSize);
+                        vm.IsRefreshing = false;
+                        foreach (var msg in missingMessages.OrderByDescending(x => x.MessageIndex))
+                        {
+                            vm.ReceiveMessage(msg);
+                        }
+                        fetchCount++;
+                    }
+                    idx++;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("ScrollTap.END");
             }
         }
 

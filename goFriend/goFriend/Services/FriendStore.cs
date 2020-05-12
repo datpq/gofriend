@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Caching.Memory;
 using PCLAppConfig;
 using Plugin.Connectivity;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace goFriend.Services
@@ -40,6 +41,7 @@ namespace goFriend.Services
             ChatHubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
             ChatHubConnection.Closed += HubConnectionOnClosed;
             ChatHubConnection.Reconnected += HubConnectionOnReconnected;
+            Connectivity.ConnectivityChanged += ConnectivityOnConnectivityChanged;
         }
 
         public HubConnection ChatHubConnection { get; }
@@ -53,7 +55,7 @@ namespace goFriend.Services
         {
             var client = GetHttpClient();
             client.DefaultRequestHeaders.Add("token", App.User.Token.ToString());
-            Logger.Debug($"id={App.User.Id}, token={App.User.Token}");
+            //Logger.Debug($"id={App.User.Id}, token={App.User.Token}");
             return client;
         }
 
@@ -919,6 +921,16 @@ namespace goFriend.Services
 
         ////////////////// CHAT Functions ////////////////////
 
+        private async void ConnectivityOnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+        {
+            Logger.Debug($"ConnectivityOnConnectivityChanged(NetworkAccess={e.NetworkAccess})");
+            if (CrossConnectivity.Current.IsConnected)
+            {
+                Logger.Debug("Internet available. Rejoining chat...");
+                await App.JoinChats();
+            }
+        }
+
         private Task HubConnectionOnReconnected(string arg)
         {
             Logger.Debug($"OnReconnected(arg={arg})");
@@ -928,13 +940,14 @@ namespace goFriend.Services
         private Task HubConnectionOnClosed(Exception arg)
         {
             Logger.Debug($"OnClosed(exception={arg})");
-            return Task.CompletedTask;
+            Logger.Debug("Waiting for 5 seconds before rejoining the chat");
+            Task.Delay(TimeSpan.FromSeconds(5));
+            return App.JoinChats();
         }
 
-        public async Task<ChatJoinChatModel> ChatConnect(ChatJoinChatModel joinChatModel)
+        public async Task ChatConnect(ChatJoinChatModel joinChatModel)
         {
             var stopWatch = Stopwatch.StartNew();
-            ChatJoinChatModel result = null;
             try
             {
                 Logger.Debug("ChatConnect.BEGIN");
@@ -943,18 +956,24 @@ namespace goFriend.Services
                     Logger.Debug("starting connection...");
                     await ChatHubConnection.StartAsync();
                 }
-                Logger.Debug("joining chats...");
-                result = await ChatHubConnection.InvokeAsync<ChatJoinChatModel>(joinChatModel.MessageType.ToString(), joinChatModel);
-                return result;
+
+                Logger.Debug($"joining chats... HubConnectionState={ChatHubConnection.State}");
+                if (ChatHubConnection.State == HubConnectionState.Connected)
+                {
+                    await ChatHubConnection.InvokeAsync<ChatJoinChatModel>(joinChatModel.MessageType.ToString(), joinChatModel);
+                }
+                else
+                {
+                    Logger.Warn("Hub not connected yet. Wait for automatic connection to be completed.");
+                }
             }
             catch (Exception e) //Unknown error
             {
                 Logger.Error(e.ToString());
-                return result;
             }
             finally
             {
-                Logger.Debug($"ChatConnect.END(result={JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"ChatConnect.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -1008,13 +1027,12 @@ namespace goFriend.Services
                         {
                             Logger.Debug("Chat found. Message added.");
                             App.ChatListVm.Items.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
-                            //App.MapChatViewModels[chatMessage.ChatId].RefreshScrollDown();
                         }
                         break;
                     case ChatMessageType.JoinChat:
                         break;
                     default:
-                        Logger.Error("Type of message supported.");
+                        Logger.Error("Type of message not supported.");
                         break;
                 }
             }
@@ -1025,6 +1043,61 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"ChatReceiveMessage.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<ChatMessage>> ChatGetMessages(int chatId, int startMsgIdx, int stopMsgIdx, int pageSize)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<ChatMessage> result = null;
+            try
+            {
+                Logger.Debug($"ChatGetMessages.BEGIN(chatId={chatId}, startMsgIdx={startMsgIdx}, stopMsgIdx={stopMsgIdx}, pageSize={pageSize})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Chat/GetMessages/{App.User.Id}/{chatId}/{startMsgIdx}/{stopMsgIdx}/{pageSize}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<ChatMessage>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"ChatGetMessages.END(Count={result?.Count() ?? 0}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

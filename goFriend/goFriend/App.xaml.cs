@@ -72,13 +72,13 @@ namespace goFriend
                 User = Settings.LastUser;
             }
 
-            Initialize();
-
             //MainPage = new NavigationPage(new TestPageUiChat { Title = AppInfo.Name })
             //{
             //    BarBackgroundColor = (Color)Resources["ColorPrimary"]
             //};
             //return;
+
+            Initialize();
 
             if (IsUserLoggedIn && User != null)
             {
@@ -99,13 +99,17 @@ namespace goFriend
         {
             foreach (var chatListItemViewModel in ChatListVm.Items)
             {
+                chatListItemViewModel.Tag = chatListItemViewModel.IsAppearing;
                 chatListItemViewModel.IsAppearing = false;
             }
         }
 
         protected override void OnResume()
         {
-            //App.FriendStore.ChatConnect();
+            foreach (var chatListItemViewModel in ChatListVm.Items)
+            {
+                chatListItemViewModel.IsAppearing = (bool)chatListItemViewModel.Tag;
+            }
         }
 
         public static void DisplayMsgInfo(string message)
@@ -149,18 +153,26 @@ namespace goFriend
                 foreach (var chatListItemVm in ChatListVm.Items)
                 {
                     Logger.Debug($"Joining chat {chatListItemVm.Name}({chatListItemVm.Chat.Id})");
-                    var joinChatModel = await FriendStore.ChatConnect(new ChatJoinChatModel
+                    await FriendStore.ChatConnect(new ChatJoinChatModel
                     {
                         ChatId = chatListItemVm.Chat.Id,
                         OwnerId = User.Id,
-                        Token = User.Token.ToString(),
-                        LastMsgIndex = chatListItemVm.ChatViewModel.Messages.Count == 0 ? 0
-                            : chatListItemVm.ChatViewModel.Messages[0].MessageIndex,
-                        PageSize = 10,
+                        Token = User.Token.ToString()
                     });
-                    foreach (var chatMessage in joinChatModel.ChatMessages.OrderBy(x => x.MessageIndex))
+                    const int startMsgIdx = 999999;
+                    chatListItemVm.ChatViewModel.LastReadMsgIdx = chatListItemVm.ChatViewModel.Messages.Count == 0
+                        ? 0 : chatListItemVm.ChatViewModel.Messages[0].MessageIndex;
+                    var messages = await FriendStore.ChatGetMessages(chatListItemVm.Chat.Id,
+                        startMsgIdx, chatListItemVm.ChatViewModel.LastReadMsgIdx, Constants.ChatMessagePageSize);
+                    messages = messages.OrderBy(x => x.MessageIndex);
+                    foreach (var chatMessage in messages)
                     {
                         chatListItemVm.ChatViewModel.ReceiveMessage(chatMessage);
+                    }
+                    if (messages.Count() == Constants.ChatMessagePageSize) //there might be some missing messages not fetched yet
+                    {
+                        chatListItemVm.ChatViewModel.PendingMessageCount =
+                            (messages.Last().MessageIndex - chatListItemVm.ChatViewModel.LastReadMsgIdx).ToString();
                     }
                 }
             }

@@ -17,7 +17,6 @@ namespace goFriend.Views
         {
             (Parent.Parent.BindingContext as ChatViewModel)?.SendMessageCommand.Execute(null);
             ChatTextInput.Focus();
-            //(Parent.Parent.BindingContext as ChatViewModel)?.RefreshScrollDown();
         }
 
         public void UnFocusEntry()

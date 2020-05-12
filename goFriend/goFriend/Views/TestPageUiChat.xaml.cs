@@ -16,35 +16,34 @@ namespace goFriend.Views
         {
             BindingContext = _viewModel = new TestModel();
             InitializeComponent();
-            //_viewModel.RefreshScrollDown = () => {
-            //    if (_viewModel.Messages.Count > 0)
-            //    {
-            //        Device.BeginInvokeOnMainThread(() => {
-            //            LvMessages.ScrollTo(_viewModel.Messages[_viewModel.Messages.Count - 1], ScrollToPosition.End, true);
-            //        });
-            //    }
-            //};
         }
 
-        public void ScrollTap(object sender, System.EventArgs e)
+        public void ScrollTapDown(object sender, System.EventArgs args)
+        {
+            if (!(BindingContext is ChatViewModel vm))
+            {
+                return;
+            }
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                vm.ShowScrollTapDown = false;
+                LvMessages.ScrollToFirst();
+            });
+        }
+
+        public void ScrollTapUp(object sender, System.EventArgs e)
         {
             lock (new object())
             {
-                if (BindingContext != null)
+                if (!(BindingContext is ChatViewModel vm)) return;
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    var vm = BindingContext as ChatViewModel;
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        while (vm.DelayedMessages.Count > 0)
-                        {
-                            vm.Messages.Insert(0, vm.DelayedMessages.Dequeue());
-                        }
-                        vm.ShowScrollTap = false;
-                        vm.LastMessageVisible = true;
-                        vm.PendingMessageCount = 0;
-                        LvMessages.ScrollToFirst();
-                    });
-                }
+                    vm.ShowScrollTapUp = false;
+                    vm.LastMessageVisible = false;
+                    vm.PendingMessageCount = 0.ToString();
+                    LvMessages.ScrollToLast();
+                });
             }
         }
 
@@ -249,6 +248,9 @@ namespace goFriend.Views
             ChatName = "A0-K26DHTH";
             ChatLogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png";
 
+            LastReadMsgIdx = 5;
+            PendingMessageCount = 115.ToString();
+
             //Code to simulate reveing a new message procces
             var random = new Random();
             Device.StartTimer(TimeSpan.FromSeconds(5), () =>
@@ -267,15 +269,15 @@ namespace goFriend.Views
                     IsOwnMessage = Messages[msgIdx].IsOwnMessage,
                     LogoUrl = Messages[msgIdx].LogoUrl
                 };
-                if (LastMessageVisible)
-                {
+                //if (LastMessageVisible)
+                //{
                     ReceiveMessage(newMessage);
-                }
-                else
-                {
-                    DelayedMessages.Enqueue(newMessage);
-                    PendingMessageCount++;
-                }
+                //}
+                //else
+                //{
+                //    DelayedMessages.Enqueue(newMessage);
+                    //PendingMessageCount++;
+                //}
                 return true;
             });
         }

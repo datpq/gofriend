@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using goFriend.DataModel;
 using goFriend.Services;
@@ -32,8 +33,27 @@ namespace goFriend.ViewModels
 
         public string Name => Chat.Name;
         public string LogoUrl => Chat.LogoUrl;
+        public object Tag { get; set; }
 
-        public bool IsAppearing { get; set; }
+        private bool _isAppearing;
+        public bool IsAppearing
+        {
+            get => _isAppearing;
+            set
+            {
+                //Logger.Debug($"_isAppearing={_isAppearing}, value={value}, LastMessageVisible={ChatViewModel.LastMessageVisible}");
+                if (_isAppearing && !value && ChatViewModel.LastMessageVisible) //Disappearing && LastMessageVisible
+                {
+                    ChatViewModel.LastReadMsgIdxWhenAppearing = ChatViewModel.Messages.Any() ? ChatViewModel.Messages[0].MessageIndex : 0;
+                    Logger.Debug($"Chat={ChatViewModel.Name}, LastReadMsgIdxWhenAppearing={ChatViewModel.LastReadMsgIdxWhenAppearing}");
+                }
+                _isAppearing = value;
+                if (_isAppearing) //app go sleep and resume
+                {
+                    IsLastMessageRead = ChatViewModel.LastMessageVisible && IsAppearing; //when page is appearing, the last message is read
+                }
+            }
+        }
         private bool _isLastMessageRead; 
         public bool IsLastMessageRead
         {

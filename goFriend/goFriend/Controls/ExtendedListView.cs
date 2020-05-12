@@ -80,19 +80,22 @@ namespace goFriend.Controls
         }
 
 
-        public void ScrollToFirst()
+        public void ScrollToFirst(object msgObj = null)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
                 try
                 {
-                    if (ItemsSource != null && ItemsSource.Cast<object>().Count() > 0)
+                    if (msgObj == null)
                     {
-                        var msg = ItemsSource.Cast<object>().FirstOrDefault();
-                        if (msg != null)
+                        if (ItemsSource != null && ItemsSource.Cast<object>().Any())
                         {
-                            ScrollTo(msg, ScrollToPosition.Start, false);
+                            msgObj = ItemsSource.Cast<object>().FirstOrDefault();
                         }
+                    }
+                    if (msgObj != null)
+                    {
+                        ScrollTo(msgObj, ScrollToPosition.Start, true);
                     }
                 }
                 catch (Exception ex)
@@ -102,19 +105,22 @@ namespace goFriend.Controls
             });
         }
 
-        public void ScrollToLast()
+        public void ScrollToLast(object msgObj = null)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
                 try
                 {
-                    if (ItemsSource != null && ItemsSource.Cast<object>().Count() > 0)
+                    if (msgObj == null)
                     {
-                        var msg = ItemsSource.Cast<object>().LastOrDefault();
-                        if (msg != null)
+                        if (ItemsSource != null && ItemsSource.Cast<object>().Any())
                         {
-                            ScrollTo(msg, ScrollToPosition.End, false);
+                            msgObj = ItemsSource.Cast<object>().LastOrDefault();
                         }
+                    }
+                    if (msgObj != null)
+                    {
+                        ScrollTo(msgObj, ScrollToPosition.End, true);
                     }
                 }
                 catch (Exception ex)
