@@ -12,3 +12,7 @@ goFriend/goFriend.DataModel/obj/
 goFriend/goFriend.AppleSignIn/obj/
 goFriend/goFriend.AppleSignIn/bin/
 goFriend/goFriend.MobileAppService/Properties/PublishProfiles/
+goFriend.Test/
+packages/
+goFriend/goFriend.Services/bin/
+goFriend/goFriend.Services/obj/

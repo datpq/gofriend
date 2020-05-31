@@ -232,6 +232,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email:.
         /// </summary>
         public static string Email {
@@ -327,6 +336,15 @@ namespace goFriend {
         public static string Information {
             get {
                 return ResourceManager.GetString("Information", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string LastMessageIsImage {
+            get {
+                return ResourceManager.GetString("LastMessageIsImage", resourceCulture);
             }
         }
         
@@ -531,6 +549,24 @@ namespace goFriend {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string MsgMuteTitle {
+            get {
+                return ResourceManager.GetString("MsgMuteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgNoCamera {
+            get {
+                return ResourceManager.GetString("MsgNoCamera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string MsgNoGpsWarning {
             get {
                 return ResourceManager.GetString("MsgNoGpsWarning", resourceCulture);
@@ -561,6 +597,15 @@ namespace goFriend {
         public static string MsgNoLocationWarning {
             get {
                 return ResourceManager.GetString("MsgNoLocationWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgNoPhotosPermission {
+            get {
+                return ResourceManager.GetString("MsgNoPhotosPermission", resourceCulture);
             }
         }
         
@@ -615,6 +660,60 @@ namespace goFriend {
         public static string MsgTitleInfo {
             get {
                 return ResourceManager.GetString("MsgTitleInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mute.
+        /// </summary>
+        public static string Mute {
+            get {
+                return ResourceManager.GetString("Mute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MuteFor15Mins {
+            get {
+                return ResourceManager.GetString("MuteFor15Mins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MuteFor1Hour {
+            get {
+                return ResourceManager.GetString("MuteFor1Hour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MuteFor24Hours {
+            get {
+                return ResourceManager.GetString("MuteFor24Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MuteFor8Hours {
+            get {
+                return ResourceManager.GetString("MuteFor8Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MuteUntilTurnOn {
+            get {
+                return ResourceManager.GetString("MuteUntilTurnOn", resourceCulture);
             }
         }
         
@@ -831,6 +930,15 @@ namespace goFriend {
         public static string TypeMsgHere {
             get {
                 return ResourceManager.GetString("TypeMsgHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unmute.
+        /// </summary>
+        public static string Unmute {
+            get {
+                return ResourceManager.GetString("Unmute", resourceCulture);
             }
         }
         

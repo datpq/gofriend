@@ -26,6 +26,19 @@ namespace goFriend.DataModel
             return $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
         }
 
+        public static string CapitalizeFirstLetter(this string str)
+        {
+            switch (str.Length)
+            {
+                case 0:
+                    return string.Empty;
+                case 1:
+                    return char.ToUpper(str[0]).ToString();
+                default:
+                    return (char.ToUpper(str[0]) + str.Substring(1));
+            }
+        }
+
         /// <summary>
         /// Perform a deep Copy of the object, using Json as a serialisation method. NOTE: Private members are not cloned using this method.
         /// </summary>

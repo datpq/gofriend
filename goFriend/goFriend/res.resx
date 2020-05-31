@@ -381,4 +381,40 @@
   <data name="Copy" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="MsgMuteTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MuteFor15Mins" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MuteFor1Hour" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MuteFor24Hours" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MuteFor8Hours" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MuteUntilTurnOn" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
+  <data name="MsgNoCamera" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MsgNoPhotosPermission" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LastMessageIsImage" xml:space="preserve">
+    <value />
+  </data>
 </root>

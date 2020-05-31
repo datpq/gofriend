@@ -1,4 +1,5 @@
-﻿using goFriend.DataModel;
+﻿using System;
+using goFriend.DataModel;
 using goFriend.Helpers;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -12,12 +13,20 @@ namespace goFriend.Views
         public ChatIncomingViewCell()
         {
             InitializeComponent();
-            LongPressedEffect.SetCommand(FraMessage, new Command(async () =>
+            LongPressedEffect.SetCommand(FraMessage, new Command(() =>
             {
-                if (res.Copy == await App.DisplayContextMenu(res.Copy))
-                {
-                    await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
-                };
+                //if (res.Copy == await App.DisplayContextMenu(res.Copy))
+                //{
+                //    await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
+                //};
+                App.DisplayContextMenu(new[] {res.Copy, Constants.ImgCopy},
+                    new[]
+                    {
+                        new Action(async () =>
+                        {
+                            await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
+                        })
+                    });
             }));
         }
     }

@@ -90,7 +90,8 @@ namespace goFriend.iOS
 
             Xamarin.FormsGoogleMaps.Init("AIzaSyAxU0F02kSfdb8oVeFoFWKwK619RK5HkqU");
             CachedImageRenderer.Init();
-            CachedImageRenderer.InitImageSourceHandler();;
+            //This line causes error: "Cannot access a disposed object.\nObject name: 'PrimaryToolbarItem'.
+            CachedImageRenderer.InitImageSourceHandler(); ;
 
             _logger = DependencyService.Get<ILogManager>().GetLog();
             _logger.Debug("Loading application...");

@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200528004617_Chat.cs" />
+    <Compile Remove="Migrations\20200528004617_Chat.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Models\AppSettingsModel.cs" />
   </ItemGroup>
 
@@ -21,14 +26,14 @@
     <PackageReference Include="Facebook" Version="7.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.8" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.4.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NetTopologySuite" Version="2.0.0" />
-    <PackageReference Include="NLog" Version="4.7.0" />
+    <PackageReference Include="NLog" Version="4.7.2" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.2" />
     <PackageReference Include="QueryInterceptor" Version="0.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
@@ -39,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\goFriend.DataModel\goFriend.DataModel.csproj" />
+    <ProjectReference Include="..\goFriend.Services\goFriend.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

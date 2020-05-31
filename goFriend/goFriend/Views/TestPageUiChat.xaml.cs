@@ -82,7 +82,7 @@ namespace goFriend.Views
                     Message = "Bảo Anh Bảo Linh Bảo Châu tham gia hội thoại",
                     OwnerId = 0,
                     MessageIndex = ++msgIndex,
-                    Time = new DateTime(2020, 04, 12, 13, 06, 00)
+                    CreatedDate = new DateTime(2020, 04, 12, 13, 06, 00)
                 },
                 new ChatMessage
                 {
@@ -93,7 +93,7 @@ namespace goFriend.Views
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = true,
                     LogoUrl = "https://graph.facebook.com/10217327271725297/picture?type=small",
-                    Time = new DateTime(2020, 04, 12, 14, 06, 00)
+                    CreatedDate = new DateTime(2020, 04, 12, 14, 06, 00)
                 },
                 new ChatMessage
                 {
@@ -106,7 +106,7 @@ namespace goFriend.Views
                     MessageType = ChatMessageType.Text,
                     Message = "Có tôi đây?",
                     OwnerName = "Thắng Phạm",
-                    Time = new DateTime(2020, 04, 12, 15, 06, 00),
+                    CreatedDate = new DateTime(2020, 04, 12, 15, 06, 00),
                     OwnerId = 2,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = false,
@@ -119,7 +119,7 @@ namespace goFriend.Views
                     OwnerName = "Bảo Anh Bảo Linh Bảo Châu",
                     OwnerId = 1,
                     MessageIndex = ++msgIndex,
-                    Time = new DateTime(2020, 04, 13, 15, 07, 00),
+                    CreatedDate = new DateTime(2020, 04, 13, 15, 07, 00),
                     IsOwnMessage = true,
                     LogoUrl = "https://graph.facebook.com/10217327271725297/picture?type=small"
                 },
@@ -130,7 +130,7 @@ namespace goFriend.Views
                     OwnerName = "Duong Vu",
                     OwnerId = 3,
                     MessageIndex = ++msgIndex,
-                    Time = new DateTime(2020, 04, 13, 15, 07, 30),
+                    CreatedDate = new DateTime(2020, 04, 13, 15, 07, 30),
                     IsOwnMessage = false,
                     LogoUrl = "https://graph.facebook.com/2959609917385257/picture?type=small"
                 },
@@ -141,7 +141,7 @@ namespace goFriend.Views
                     OwnerName = "Thắng Phạm",
                     OwnerId = 2,
                     MessageIndex = ++msgIndex,
-                    Time = new DateTime(2020, 04, 13, 15, 23, 00),
+                    CreatedDate = new DateTime(2020, 04, 13, 15, 23, 00),
                     IsOwnMessage = false,
                     LogoUrl = "https://graph.facebook.com/2678476115565775/picture?type=small"
                 },
@@ -152,7 +152,7 @@ namespace goFriend.Views
                     OwnerName = "Bảo Thoa Anh Linh Châu",
                     OwnerId = 4,
                     MessageIndex = ++msgIndex,
-                    Time = new DateTime(2020, 04, 15, 16, 25, 00),
+                    CreatedDate = new DateTime(2020, 04, 15, 16, 25, 00),
                     IsOwnMessage = false,
                     LogoUrl = "https://graph.facebook.com/2351327781814388/picture?type=small"
                 },
@@ -162,7 +162,7 @@ namespace goFriend.Views
                     Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
                               "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
                     OwnerName = "Duong Vu",
-                    Time = new DateTime(2020, 04, 15, 17, 06, 00),
+                    CreatedDate = new DateTime(2020, 04, 15, 17, 06, 00),
                     OwnerId = 3,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = false,
@@ -174,7 +174,7 @@ namespace goFriend.Views
                     Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
                               "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
                     OwnerName = "Duong Vu",
-                    Time = new DateTime(2020, 04, 16, 17, 06, 10),
+                    CreatedDate = new DateTime(2020, 04, 16, 17, 06, 10),
                     OwnerId = 3,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = true,
@@ -186,7 +186,7 @@ namespace goFriend.Views
                     Message = "WHEN WILL WE HAVE A REAL CEO?" +
                               "Năm 1999, Ben Horowitz trong vị trí CEO đến gặp một số quỹ đầu tư hàng đầu ở Sillion Valley để gọi vốn cho LoudCloud. Sau một buổi họp tích cực và vui vẻ, người đại diện quỹ đầu tư hỏi Ben?",
                     OwnerName = "Bảo Anh Bảo Linh Bảo Châu",
-                    Time = new DateTime(2020, 04, 16, 17, 07, 00),
+                    CreatedDate = new DateTime(2020, 04, 16, 17, 07, 00),
                     OwnerId = 1,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = true,
@@ -198,7 +198,7 @@ namespace goFriend.Views
                     Message =
                         "Nhiều nhà máy ở nước ngoài cũng phải ngừng sản xuất khi có công nhân +. Hậu quả mà ngành y tế phải gánh còn nặng nề hơn. Chủ động buộc đóng cửa cũng là 1 cách hay",
                     OwnerName = "Minh",
-                    Time = new DateTime(2020, 04, 17, 17, 09, 00),
+                    CreatedDate = new DateTime(2020, 04, 17, 17, 09, 00),
                     OwnerId = 5,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = false,
@@ -211,7 +211,7 @@ namespace goFriend.Views
                     OwnerName = "Bảo Thoa Anh Linh Châu",
                     OwnerId = 4,
                     MessageIndex = ++msgIndex,
-                    Time = new DateTime(2020, 04, 17, 16, 25, 00),
+                    CreatedDate = new DateTime(2020, 04, 17, 16, 25, 00),
                     IsOwnMessage = false,
                     LogoUrl = "https://graph.facebook.com/2351327781814388/picture?type=small"
                 },
@@ -221,7 +221,7 @@ namespace goFriend.Views
                     Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
                               "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
                     OwnerName = "Duong Vu",
-                    Time = new DateTime(2020, 04, 17, 17, 10, 00),
+                    CreatedDate = new DateTime(2020, 04, 17, 17, 10, 00),
                     OwnerId = 3,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = false,
@@ -233,7 +233,7 @@ namespace goFriend.Views
                     Message = "- Vậy khi nào chúng ta sẽ có một CEO thực sự?" +
                               "Cảm xúc của Ben khi đó? Câm nín! Trong một cuộc họp với những nhân vật có ảnh hưởng, Ben được coi là 'fake CEO' ngay trước mặt chính nhân viên của mình và sẽ đến lúc công ty cần thuê một người khác. Đơn giản chỉ vì anh là Engineering founder, và không được coi là người phù hợp dẫn dắt công ty.",
                     OwnerName = "Duong Vu",
-                    Time = new DateTime(2020, 04, 20, 19, 06, 00),
+                    CreatedDate = new DateTime(2020, 04, 20, 19, 06, 00),
                     OwnerId = 3,
                     MessageIndex = ++msgIndex,
                     IsOwnMessage = false,
@@ -265,7 +265,7 @@ namespace goFriend.Views
                     OwnerFirstName = Messages[msgIdx].OwnerFirstName,
                     OwnerId = Messages[msgIdx].OwnerId,
                     MessageIndex = ++msgIndex,
-                    Time = Messages[msgIdx].Time,
+                    CreatedDate = Messages[msgIdx].CreatedDate,
                     IsOwnMessage = Messages[msgIdx].IsOwnMessage,
                     LogoUrl = Messages[msgIdx].LogoUrl
                 };

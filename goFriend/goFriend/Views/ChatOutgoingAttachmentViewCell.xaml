@@ -6,9 +6,9 @@
              xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
-             x:Class="goFriend.Views.ChatOutgoingViewCell">
+             x:Class="goFriend.Views.ChatOutgoingAttachmentViewCell">
     <ViewCell.View>
-        <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0">
+        <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0" RowSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -21,17 +21,9 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
-                <Image HorizontalOptions="StartAndExpand" IsVisible="{Binding IsThumbsUp}" Source="{Static local:Constants.ImgThumbsUp}" />
-                <Frame BackgroundColor="{StaticResource ColorPrimary}" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="10" HasShadow="False"
-                       IsVisible="{Binding IsThumbsUp, Converter={StaticResource InverseBoolConverter}}"
-                       x:Name="FraMessage">
-                    <Label LineBreakMode="WordWrap"
-                           FormattedText="{Binding MessageLinkify, Converter={StaticResource HtmlLabelConverter}}"
-                           TextColor="White"  FontSize="{StaticResource LblFontSize}"
-                           VerticalOptions="FillAndExpand" />
-                    <Frame.Effects>
-                        <helpers:LongPressedEffect />
-                    </Frame.Effects>
+                <Frame BackgroundColor="{StaticResource ColorPrimary}" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="0" HasShadow="False"
+                       IsClippedToBounds="True" x:Name="FraMessage">
+                    <Image Source="{Binding Attachments, StringFormat='https://gofriendstorage.blob.core.windows.net/chat/{0}'}"/>
                 </Frame>
                 <Label Grid.Column="1" Text="{Binding CreatedDate, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="End" VerticalTextAlignment="End"
                        TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"/>

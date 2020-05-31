@@ -1,6 +1,6 @@
 ﻿namespace goFriend.DataModel
 {
-    public class ChatJoinChatModel : IChatMessage
+    public class ChatJoinChatModel
     {
         public int ChatId { get; set; }
 

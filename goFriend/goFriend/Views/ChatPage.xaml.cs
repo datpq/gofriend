@@ -23,6 +23,9 @@ namespace goFriend.Views
             //hide Shell tab bar for this page
             Shell.SetTabBarIsVisible(this, false);
 
+            //MnuMembers.Text = res.members.CapitalizeFirstLetter();
+            //MnuMute.Text = res.Mute;
+
             //NavigationPage.TitleView in XAML not working, so the code below is for this purpose.
             Shell.SetTitleView(this, new StackLayout
             {
@@ -44,7 +47,7 @@ namespace goFriend.Views
                         WidthRequest = HeightRequest = 40,
                         Margin = 5,
                         Source1 = chatListItem.ChatViewModel.ChatLogoUrl
-                    }
+                    },
                 }
             });
 
@@ -171,6 +174,37 @@ namespace goFriend.Views
 
             //// Deselect the item.
             //if (sender is ListView lv) lv.SelectedItem = null;
+        }
+
+        private void MnuMute_OnClicked(object sender, EventArgs e)
+        {
+            var vm = (ChatViewModel)BindingContext;
+            if (vm.IsMute)
+            {
+                vm.MuteExpiryTime = null; //un-mute
+            }
+            else
+            {
+                App.DisplayContextMenu(new[] {
+                        res.MuteFor15Mins, Constants.ImgMute,
+                        res.MuteFor1Hour, Constants.ImgMute,
+                        res.MuteFor8Hours, Constants.ImgMute,
+                        res.MuteFor24Hours, Constants.ImgMute,
+                        res.MuteUntilTurnOn, Constants.ImgMute
+                    },
+                    new Action[]
+                    {
+                        () => { vm.MuteExpiryTime = DateTime.Now.AddMinutes(15); },
+                        () => { vm.MuteExpiryTime = DateTime.Now.AddHours(1); },
+                        () => { vm.MuteExpiryTime = DateTime.Now.AddHours(8); },
+                        () => { vm.MuteExpiryTime = DateTime.Now.AddHours(24); },
+                        () => { vm.MuteExpiryTime = DateTime.Now.AddYears(1); }
+                    }, res.MsgMuteTitle);
+            }
+        }
+
+        private void MnuMembers_OnClicked(object sender, EventArgs e)
+        {
         }
     }
 }

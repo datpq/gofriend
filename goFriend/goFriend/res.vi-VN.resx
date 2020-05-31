@@ -381,4 +381,40 @@
   <data name="Copy" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Tắt tiếng</value>
+  </data>
+  <data name="MsgMuteTitle" xml:space="preserve">
+    <value>Tắt tiếng cho cuộc hội thoại này</value>
+  </data>
+  <data name="MuteFor15Mins" xml:space="preserve">
+    <value>Trong vòng 15 phút</value>
+  </data>
+  <data name="MuteFor1Hour" xml:space="preserve">
+    <value>Trong vòng 1 giờ</value>
+  </data>
+  <data name="MuteFor24Hours" xml:space="preserve">
+    <value>Trong vòng 24 giờ</value>
+  </data>
+  <data name="MuteFor8Hours" xml:space="preserve">
+    <value>Trong vòng 8 giờ</value>
+  </data>
+  <data name="MuteUntilTurnOn" xml:space="preserve">
+    <value>Đến khi bật lại</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Bật tiếng</value>
+  </data>
+  <data name="MsgNoCamera" xml:space="preserve">
+    <value>Không có máy ảnh</value>
+  </data>
+  <data name="MsgNoPhotosPermission" xml:space="preserve">
+    <value>Không có quyền truy cập thư viện ảnh</value>
+  </data>
+  <data name="LastMessageIsImage" xml:space="preserve">
+    <value>Gửi ảnh</value>
+  </data>
 </root>

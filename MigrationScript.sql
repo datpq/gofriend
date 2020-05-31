@@ -1,7 +1,12 @@
 select * from GroupFixedCatValues;
-select * from GroupFriends;
+select F.Name, G.Name, F.CountryName, F.Address, GF.* from GroupFriends GF
+	join Friends F ON F.Id = GF.FriendId
+	join Groups G ON G.Id = GF.GroupId
+order by GF.Id;
 select * from Groups;
 select * from Friends;
+select * from Friends where Info like 'CurrentVersion=1.0.10.10%';
+select * from Friends where Location is null;
 select * from GroupPredefinedCategory;
 select * from CacheConfiguration;
 select * from Notification;
@@ -19,6 +24,24 @@ drop table Settings;
 --ALTER TABLE GroupFriends ADD [Id] [int] IDENTITY(1,1) NOT NULL
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
 
+INSERT INTO ChatMessage(ChatId, MessageIndex, MessageType, OwnerId, [Message], CreatedDate, ModifiedDate, Reads, IsDeleted)
+select ChatId, MessageIndex, MessageType, OwnerId, [Message], [Time], [Time], Reads, 0 FROM ChatMessage_;
+
+insert into Chat([Name], Members, LogoUrl) select [Name], Members, LogoUrl from Chat_;
+
+DECLARE @cnt INT = 0;
+DECLARE @msgIdx INT;
+
+WHILE @cnt < 10
+BEGIN
+	SET @msgIdx = 70 + @cnt;
+	INSERT INTO ChatMessage (ChatId, MessageIndex, MessageType, OwnerId, Message, Time, Reads)
+	VALUES (5, @msgIdx, 2, 8, Concat('Auto ', @msgIdx), '2020-05-08 23:45:08.5875462', NULL);
+    SET @cnt = @cnt + 1;
+END;
+
+INSERT INTO Groups VALUES('OMCC', 'Ottawa Math and Chess Club', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, getdate(), getdate(), NULL, NULL)
+
 ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null;
 ALTER TABLE Friends ADD Address NVARCHAR(100) NULL, CountryName VARCHAR(30) NULL;
 ALTER TABLE Friends ADD Info VARCHAR(255) NULL;
@@ -27,6 +50,11 @@ UPDATE Friends SET ThirdPartyLogin = 'Facebook' WHERE FacebookToken IS NOT NULL;
 ALTER TABLE Friends ALTER COLUMN FacebookId VARCHAR(20) NULL
 Delete Friends where Name = 'Clemence Pham';
 Delete Friends where Name = 'Quoc Dat PHAM';
+
+update Friends set CountryName = N'Đức' where CountryName = 'Ð?c';
+update Friends set CountryName = N'Bỉ' where CountryName = 'B?'
+update Friends set CountryName = N'Việt Nam' where CountryName = 'Vi?t Nam';
+update Friends set CountryName = N'Cộng hòa Séc' where CountryName = 'C?ng hòa Séc';
 
 --Approve subscription
 UPDATE GroupFriends SET Active = 1, UserRight = 3 WHERE Id = 19;

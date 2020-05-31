@@ -11,14 +11,14 @@ using goFriend.MobileAppService.Data;
 namespace goFriend.MobileAppService.Migrations
 {
     [DbContext(typeof(FriendDbContext))]
-    [Migration("20200502142407_Chat")]
+    [Migration("20200528005205_Chat")]
     partial class Chat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -77,10 +77,19 @@ namespace goFriend.MobileAppService.Migrations
                     b.Property<int>("MessageIndex")
                         .HasColumnType("int");
 
+                    b.Property<string>("Attachments")
+                        .HasColumnType("NVARCHAR(200)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Message")
                         .HasColumnType("NVARCHAR(1000)");
@@ -88,16 +97,18 @@ namespace goFriend.MobileAppService.Migrations
                     b.Property<int>("MessageType")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Reads")
                         .HasColumnType("NVARCHAR(200)");
 
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("ChatId", "MessageIndex");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("ChatMessage");
                 });
@@ -442,6 +453,12 @@ namespace goFriend.MobileAppService.Migrations
                     b.HasOne("goFriend.DataModel.Chat", "Chat")
                         .WithMany("ChatMessages")
                         .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("goFriend.DataModel.Friend", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

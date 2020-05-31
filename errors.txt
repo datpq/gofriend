@@ -39,6 +39,16 @@
 	- unplug USB to Samsung
 - Nlog
 	- https://martynnw.wordpress.com/2016/10/16/logging-with-nlog-in-xamarin-forms/
+- Unable to get provider com.google.android.gms.ads.MobileAdsInitProvider: java.lang.IllegalStateException
+	<manifest>
+	   <application>
+		  <!-- TODO: Replace with your real AdMob app ID -->
+		  <meta-data
+			  android:name="com.google.android.gms.ads.APPLICATION_ID"
+			  android:value="ca-app-pub-################~##########"/>
+		</application>
+	</manifest>
+	https://apps.admob.com/v2/apps/2612776501/settings
 - Test on iOS
 	- Install VMware Workstation 15 Player
 	- Install macOS Mojave 10.14 on VMware workstation on Windows https://www.intoguide.com/install-macos-mojave-vmware-windows/
@@ -100,6 +110,13 @@
 	- Navigation.PushAsync is not working --> ShellContent must be static
 	- The assembly 'Xamarin.iOS.dll' can't be AOT-compiled for 32-bit architectures because the native code is too big for the 32-bit ARM architecture.	goFriend.iOS			
 		- Supported Architectures --> ARM64
+	- Build error - targeted OS version does not support use of thread local variables
+		- change Deployment target to 9.0 or greater under Deployment Info tab. (info.plist)
+	- Attempting to JIT compile method '(wrapper delegate-invoke)
+		- do not imlement interface
+	- Unable to remove directory "obj\iPhone\Release\". Could not find a part of the path 'FacebookSDK.strings'.	goFriend.iOS			
+		- switch to debug mode
+
 
 - deployment Android:
 	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
@@ -155,6 +172,7 @@
 
 - error MT1006: Could not install the application on the device 'KISA007': AMDeviceSecureInstallApplicationBundle returned: 0xe8000087 (kAMDIncorrectArchitectureError).
 	- restart iphone, mac
+	- Build and Deploy again
 - Could not decompress the native framework '*' from '*'. Please review the build log for more information from the native 'zip' command.
 	- go to mac computer and remove cache directory: /User/dat/Library/Caches/Xamarin/mtbs/builds/goFriend.iOS/a14...
 - Error: System.IO.FileNotFoundException: /Users/.../obj/iPhone/Release/actool/bundle/AppIcon20x20@2x.png does not exist
@@ -191,6 +209,8 @@ at least in my case this was the issue
 - IIS Error
 		- HTTP Error 500.19 - Internal Server Error.
 		The AspNetCoreModule has to be installed on your server and is part of the ASP.NET Core Server Hosting Bundle. http://go.microsoft.com/fwlink/?LinkId=798480
+- Debug with IIS
+	- goto directory and run: dotnet restore   --> dotnet run
 - Login failed for user 'IIS APPPOOL\ASP.NET v4.0'
 	https://stackoverflow.com/questions/7698286/login-failed-for-user-iis-apppool-asp-net-v4-0
 - “Unable to cast object of type 'ConcreteTypeMapping' to type 'Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping”
@@ -217,13 +237,42 @@ at least in my case this was the issue
 	- Deploy on IIS (with binding www.gofriend.com, gofriend.azurewebsites.net)
 	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)
 	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
+
+- Deployment on Google Play
+	- Select store on the list (or C:\Users\dat\source\repos\goFriend\GoFriend9194.keystore) pass: goFriend9194
+	- if error An error occur uploading 'com.dph.GoFriend.aab': The caller does not have permission [403] --> find the signed bundle and upload to googleplay
+	- Save As
+	- Upload to https://play.google.com/
 	
+- Deployment on Apple Store:
+	- Switch to Release
+	- Certificate: GoFriend Store
+		Apple Id: datpquk@gmail.com
+		app-specific password: hzen-hooc-wvtg-gjxz
+		https://appleid.apple.com/account/manage
+		Cannot create iOS Archive - Process cannot be executed on XMA server (the path or filename are too long) -->  Tools> Options> Xamarin> iOS Settings> Archives
+	- If Signing Identity and Provisioning profile are empty:
+		- Tools\Options\Xamarin\Apple --> Create Certificates
+		- https://developer.apple.com/account/resources/profiles/list --> Edit profile and assigne the Certificate which is generated
+	- Screen shot:
+		6.5 --> iPhone 11 Pro Max
+		5.5 --> iPhone 8 Plus
+		12.9 iPad Pro 3rd --> iPad Pro 3rd
+		12.9 iPad Pro 2nd --> iPad Pro 3rd
+
+In Package Manager Console:
+			Change Default Project to: goFriendMobileAppService
+Change Start up prokect to goFriendMobileAppService
+Add-Migration InitialCreate
+Update-Database
+Remove-Migration
+Update-Database InitialCreate
 
 Google Map Key:
 AIzaSyCDslbf6JY0MUU5KafJW_F67Eso476Tl80
 	
-	
-	
-	
+	iphone 11 Pro Max iOS 13.3 -> Catherine, Bao Anh Bao Linh Bao Chau
+	iphone 11 Pro iOS 13.3 -> Bao Anh Bao Linh Bao Chau
+	iphone 11 iOS 13.3 -> Bao Anh Bao Linh Bao Chau Dark Mode
 	
 

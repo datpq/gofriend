@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -112,6 +111,23 @@ namespace goFriend.ViewModels
             }
         }
 
+        public bool IsMute => _muteExpiryTime.HasValue && _muteExpiryTime.Value > DateTime.Now;
+        public ImageSource MuteImage => IsMute ? Constants.ImgMute : Constants.ImgUnMute;
+        public string MuteText=> IsMute ? res.Unmute : res.Mute;
+        private DateTime? _muteExpiryTime;
+        public DateTime? MuteExpiryTime
+        {
+            get => _muteExpiryTime;
+            set
+            {
+                _muteExpiryTime = value;
+                OnPropertyChanged(nameof(MuteExpiryTime));
+                OnPropertyChanged(nameof(IsMute));
+                OnPropertyChanged(nameof(MuteImage));
+                OnPropertyChanged(nameof(MuteText));
+            }
+        }
+
         public bool IsEnabled => App.FriendStore.ChatHubConnection.State == HubConnectionState.Connected;
         public string Name => App.User.Name;
         public string LogoUrl => App.User.GetImageUrl(FacebookImageType.small);
@@ -128,10 +144,7 @@ namespace goFriend.ViewModels
             }
         }
 
-        public string SendImage
-        {
-            get => string.IsNullOrWhiteSpace(Message) ? "thumbsup.png" : "send.png";
-        }
+        public ImageSource SendImage => string.IsNullOrWhiteSpace(Message) ? Constants.ImgThumbsUp : Constants.ImgSend;
 
         private ObservableCollection<ChatMessage> _messages = new ObservableCollection<ChatMessage>();
         public ObservableCollection<ChatMessage> Messages
@@ -145,11 +158,11 @@ namespace goFriend.ViewModels
         }
 
         public Command SendMessageCommand { get; set; }
+        public Action<string> SendAttachmentCommand { get; set; }
 
         public ChatViewModel()
         {
             SendMessageCommand = new Command(async () => {
-                if (string.IsNullOrEmpty(Message.Trim())) return;
                 if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
                     await App.JoinChats();
@@ -159,15 +172,40 @@ namespace goFriend.ViewModels
                     App.DisplayMsgError(res.MsgErrConnection);
                     return;
                 }
-                await App.FriendStore.SendText(new ChatMessage
+                var chatMessage = new ChatMessage
                 {
                     ChatId = ChatListItem.Chat.Id,
-                    Message = Message.Trim(),
+                    Message = string.IsNullOrWhiteSpace(Message) ? null : Message.Trim(),
                     MessageType = ChatMessageType.Text,
                     OwnerId = App.User.Id,
                     Token = App.User.Token.ToString(),
                     LogoUrl = App.User.GetImageUrl()
-                });
+                };
+                await App.FriendStore.SendText(chatMessage);
+                Message = string.Empty;
+            });
+            SendAttachmentCommand = (async uploadedFilePath =>
+            {
+                if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
+                {
+                    await App.JoinChats();
+                }
+                if (!IsEnabled)
+                {
+                    App.DisplayMsgError(res.MsgErrConnection);
+                    return;
+                }
+                var chatMessage = new ChatMessage
+                {
+                    ChatId = ChatListItem.Chat.Id,
+                    Message = string.IsNullOrWhiteSpace(Message) ? null : Message.Trim(),
+                    MessageType = ChatMessageType.Attachment,
+                    Attachments = uploadedFilePath,
+                    OwnerId = App.User.Id,
+                    Token = App.User.Token.ToString(),
+                    LogoUrl = App.User.GetImageUrl()
+                };
+                await App.FriendStore.SendAttachment(chatMessage);
                 Message = string.Empty;
             });
             MessageAppearingCommand = new Command<ChatMessage>(OnMessageAppearing);
@@ -179,32 +217,32 @@ namespace goFriend.ViewModels
             try
             {
                 Logger.Debug($"ReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex})");
-                chatMessage.Time = chatMessage.Time.ToLocalTime();
+                chatMessage.CreatedDate = chatMessage.CreatedDate.ToLocalTime();
                 var lastDateTime = new DateTime(2000, 1, 1);
                 var arrIdx = 0;
                 for (arrIdx = 0; arrIdx < Messages.Count; arrIdx++)
                 {
                     if (Messages[arrIdx].MessageIndex >= chatMessage.MessageIndex) continue;
-                    lastDateTime = Messages[arrIdx].Time.Date;
+                    lastDateTime = Messages[arrIdx].CreatedDate.Date;
                     break;
                 }
 
-                if (lastDateTime < chatMessage.Time.Date)
+                if (lastDateTime < chatMessage.CreatedDate.Date)
                 {
                     // if the SysDate message on the same day exist already, just change the MessageIndex
                     if (arrIdx > 0 && Messages[arrIdx - 1].MessageType == ChatMessageType.SysDate
-                                   && Messages[arrIdx - 1].Time.Date == chatMessage.Time.Date)
+                                   && Messages[arrIdx - 1].CreatedDate.Date == chatMessage.CreatedDate.Date)
                     {
                         arrIdx--;
                         Messages[arrIdx].MessageIndex = chatMessage.MessageIndex;
                     }
                     else
                     {
-                        Logger.Debug($"SysDate message added for {chatMessage.Time.Date:yyyy MMMM dd}");
+                        Logger.Debug($"SysDate message added for {chatMessage.CreatedDate.Date:yyyy MMMM dd}");
                         Messages.Insert(arrIdx, new ChatMessage
                         {
-                            Time = chatMessage.Time.Date,
-                            Message = chatMessage.Time.Date.ToString("dddd, d MMMM", res.Culture),
+                            CreatedDate = chatMessage.CreatedDate.Date,
+                            Message = chatMessage.CreatedDate.Date.ToString("dddd, d MMMM", res.Culture),
                             OwnerId = 0,
                             MessageIndex = chatMessage.MessageIndex,
                             MessageType = ChatMessageType.SysDate
@@ -217,8 +255,9 @@ namespace goFriend.ViewModels
                 if (arrIdx == 0 && ChatListItem != null)
                 {
                     ChatListItem.IsLastMessageRead = LastMessageVisible && ChatListItem.IsAppearing; //when page is appearing, the last message is read
-                    ChatListItem.LastMessage =
-                        $"{(chatMessage.IsOwnMessage ? res.You : chatMessage.OwnerFirstName)}: {chatMessage.Message}";
+                    var msg = chatMessage.MessageType == ChatMessageType.Text ? (chatMessage.IsThumbsUp ? "👍" : chatMessage.Message)
+                        : chatMessage.MessageType  == ChatMessageType.Attachment ? res.LastMessageIsImage : null;
+                    ChatListItem.LastMessage = $"{(chatMessage.IsOwnMessage ? res.You : chatMessage.OwnerFirstName)}: {msg}";
                     if (!ChatListItem.IsAppearing && chatMessage.MessageIndex >= LastReadMsgIdxWhenAppearing + Constants.ChatMinPendingMsg)
                     {
                         LastReadMsgIdx = LastReadMsgIdxWhenAppearing;
@@ -226,7 +265,7 @@ namespace goFriend.ViewModels
                     }
                 }
 
-                if (ChatListItem != null && !ChatListItem.IsAppearing && !chatMessage.IsOwnMessage)
+                if (ChatListItem != null && !ChatListItem.IsAppearing && !chatMessage.IsOwnMessage && !IsMute)
                 {
                     Vibration.Vibrate();
                 }
@@ -242,19 +281,13 @@ namespace goFriend.ViewModels
             }
         }
 
-        public ChatMessage GetPreviousMessage(ChatMessage message)
-        {
-            var msgListIdx = Messages.IndexOf(message);
-            return GetPreviousMessage(msgListIdx, message.MessageType);
-        }
-
-        public ChatMessage GetPreviousMessage(int msgListIdx, ChatMessageType msgType = ChatMessageType.Text)
+        public ChatMessage GetPreviousMessage(int msgListIdx)
         {
             ChatMessage result = null;
             var idx = msgListIdx + 1;
             while (idx < Messages.Count)
             {
-                if (Messages[idx].MessageType == msgType)
+                if (Messages[idx].MessageType == ChatMessageType.Text || Messages[idx].MessageType == ChatMessageType.Attachment)
                 {
                     result = Messages[idx];
                     //Logger.Debug($"GetPreviousMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
@@ -265,19 +298,13 @@ namespace goFriend.ViewModels
             return result;
         }
 
-        public ChatMessage GetNexMessage(ChatMessage message)
-        {
-            var msgListIdx = Messages.IndexOf(message);
-            return GetNextMessage(msgListIdx, message.MessageType);
-        }
-
-        public ChatMessage GetNextMessage(int msgListIdx, ChatMessageType msgType = ChatMessageType.Text)
+        public ChatMessage GetNextMessage(int msgListIdx)
         {
             ChatMessage result = null;
             var idx = msgListIdx - 1;
             while (idx >= 0)
             {
-                if (Messages[idx].MessageType == msgType)
+                if (Messages[idx].MessageType == ChatMessageType.Text || Messages[idx].MessageType == ChatMessageType.Attachment)
                 {
                     result = Messages[idx];
                     //Logger.Debug($"GetNextMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");

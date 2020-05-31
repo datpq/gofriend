@@ -22,6 +22,7 @@ namespace goFriend.Services
     public class FriendStore : IFriendStore
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
         private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
         private static readonly string BackendUrl = ConfigurationManager.AppSettings["AzureBackendUrl112"];
@@ -39,6 +40,7 @@ namespace goFriend.Services
             //    _hubConnection.On<IChatMessage>(messageType.ToString(), ChatReceiveMessage);
             //}
             ChatHubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
+            ChatHubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), ChatReceiveAttachement);
             ChatHubConnection.Closed += HubConnectionOnClosed;
             ChatHubConnection.Reconnected += HubConnectionOnReconnected;
             Connectivity.ConnectivityChanged += ConnectivityOnConnectivityChanged;
@@ -995,12 +997,12 @@ namespace goFriend.Services
             }
         }
 
-        public async Task SendText(ChatMessage chatMessage)
+        public async Task SendAttachment(ChatMessage chatMessage)
         {
-            Logger.Debug($"Text.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
+            Logger.Debug($"SendAttachment.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Attachments={chatMessage.Attachments})");
             try
             {
-                await ChatHubConnection.InvokeAsync(chatMessage.MessageType.ToString(), chatMessage);
+                await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
             {
@@ -1008,28 +1010,50 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug("Text.END");
+                Logger.Debug("SendAttachment.END");
             }
         }
 
-        private void ChatReceiveMessage(IChatMessage chatObj)
+        public async Task SendText(ChatMessage chatMessage)
+        {
+            Logger.Debug($"SendText.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
+            try
+            {
+                await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("SendText.END");
+            }
+        }
+
+        private void ChatReceiveAttachement(ChatMessage chatMessage)
+        {
+            Logger.Debug($"ChatReceiveAttachement.BEGIN(MessageType={chatMessage.MessageType})");
+            ChatReceiveMessage(chatMessage);
+            Logger.Debug($"ChatReceiveAttachement.END");
+        }
+
+        private void ChatReceiveMessage(ChatMessage chatMessage)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                Logger.Debug($"ChatReceiveMessage.BEGIN(MessageType={chatObj.MessageType})");
-                Logger.Debug($"chatObj={JsonConvert.SerializeObject(chatObj)})");
-                switch (chatObj.MessageType)
+                Logger.Debug($"ChatReceiveMessage.BEGIN(MessageType={chatMessage.MessageType})");
+                Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)})");
+                switch (chatMessage.MessageType)
                 {
                     case ChatMessageType.Text:
-                        var chatMessage = chatObj as ChatMessage;
+                    case ChatMessageType.Attachment:
                         if (App.ChatListVm.Items.Any(x => x.Chat.Id == chatMessage.ChatId))
                         {
                             Logger.Debug("Chat found. Message added.");
                             App.ChatListVm.Items.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
                         }
-                        break;
-                    case ChatMessageType.JoinChat:
                         break;
                     default:
                         Logger.Error("Type of message not supported.");

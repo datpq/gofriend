@@ -10,10 +10,19 @@
         public const int GeolocationRequestTimeout = 5; // in seconds
         public static readonly int[] SuperUserIds = {4, 5};
         public const int ChatMessagePageSize = 10; // number of message in a page (bundle)
-        public const int ChatMaxPagesFetched = 10; // maximum number of fetching when there are unread messages to scroll
-        public const int ChatMaxPendingMsg = 100;
+        public const int ChatMaxPagesFetched = 5; // maximum number of fetching when there are unread messages to scroll
+        public const int ChatMaxPendingMsg = 50;
         public const int ChatMinPendingMsg = 10;
         public const int ChatStartIdxToShowScrollDown = 15;
         public const int ChatStartIdxToHideScrollUp = 10;
+
+        public const string ImgCopy = "copy.png";
+        public const string ImgDelete = "delete.png";
+        public const string ImgSend = "send.png";
+        public const string ImgThumbsUp = "thumbsup.png";
+        public const string ImgMute = "mute.png";
+        public const string ImgUnMute = "unmute.png";
+        public const string ImgPhoto = "photo.png";
+        public const string ImgCamera = "camera.png";
     }
 }

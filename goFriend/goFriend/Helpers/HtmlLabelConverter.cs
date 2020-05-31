@@ -14,6 +14,8 @@ namespace goFriend.Helpers
         {
             var formatted = new FormattedString();
 
+            if (value == null) return formatted;
+
             foreach (var item in ProcessString((string)value))
                 formatted.Spans.Add(CreateSpan(item));
 

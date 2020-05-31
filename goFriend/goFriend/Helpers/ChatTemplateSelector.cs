@@ -6,14 +6,16 @@ namespace goFriend.Helpers
 {
     class ChatTemplateSelector : DataTemplateSelector
     {
-        private readonly DataTemplate _incomingDataTemplate;
-        private readonly DataTemplate _outgoingDataTemplate;
+        private readonly DataTemplate _incomingTextDataTemplate;
+        private readonly DataTemplate _outgoingTextDataTemplate;
+        private readonly DataTemplate _outgoingAttachmentDataTemplate;
         private readonly DataTemplate _systemMsgDataTemplate;
 
         public ChatTemplateSelector()
         {
-            _incomingDataTemplate = new DataTemplate(typeof(ChatIncomingViewCell));
-            _outgoingDataTemplate = new DataTemplate(typeof(ChatOutgoingViewCell));
+            _incomingTextDataTemplate = new DataTemplate(typeof(ChatIncomingViewCell));
+            _outgoingTextDataTemplate = new DataTemplate(typeof(ChatOutgoingViewCell));
+            _outgoingAttachmentDataTemplate = new DataTemplate(typeof(ChatOutgoingAttachmentViewCell));
             _systemMsgDataTemplate = new DataTemplate(typeof(ChatSystemMsgViewCell));
         }
 
@@ -23,9 +25,33 @@ namespace goFriend.Helpers
             if (chatMessage == null)
                 return null;
 
-            return chatMessage.IsSystemMessage ? _systemMsgDataTemplate
-                : chatMessage.IsOwnMessage ? _outgoingDataTemplate : _incomingDataTemplate;
+            if (chatMessage.IsSystemMessage)
+            {
+                return _systemMsgDataTemplate;
+            }
+            if (chatMessage.IsOwnMessage)
+            {
+                if (chatMessage.MessageType == ChatMessageType.Text)
+                {
+                    return _outgoingTextDataTemplate;
+                }
+                if (chatMessage.MessageType == ChatMessageType.Attachment)
+                {
+                    return _outgoingAttachmentDataTemplate;
+                }
+            }
+            else
+            {
+                if (chatMessage.MessageType == ChatMessageType.Text)
+                {
+                    return _incomingTextDataTemplate;
+                }
+                if (chatMessage.MessageType == ChatMessageType.Attachment)
+                {
+                    return _incomingTextDataTemplate;
+                }
+            }
+            return null;
         }
-
     }
 }

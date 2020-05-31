@@ -29,6 +29,7 @@ namespace goFriend.Services
         Task ChatDisconnect();
         Task ChatConnect(ChatJoinChatModel joinChatModel);
         Task SendText(ChatMessage chatMessage);
+        Task SendAttachment(ChatMessage chatMessage);
         Task<IEnumerable<ChatMessage>> ChatGetMessages(int chatId, int startMsgIdx, int stopMsgIdx, int pageSize);
         Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true);
     }

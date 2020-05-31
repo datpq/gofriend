@@ -33,8 +33,11 @@ namespace goFriend.MobileAppService.Migrations
                     MessageType = table.Column<int>(nullable: false),
                     OwnerId = table.Column<int>(nullable: false),
                     Message = table.Column<string>(type: "NVARCHAR(1000)", nullable: true),
-                    Time = table.Column<DateTime>(nullable: false),
-                    Reads = table.Column<string>(type: "NVARCHAR(200)", nullable: true)
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
+                    Reads = table.Column<string>(type: "NVARCHAR(200)", nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    Attachments = table.Column<string>(type: "NVARCHAR(200)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -45,7 +48,18 @@ namespace goFriend.MobileAppService.Migrations
                         principalTable: "Chat",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatMessage_Friends_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Friends",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatMessage_OwnerId",
+                table: "ChatMessage",
+                column: "OwnerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

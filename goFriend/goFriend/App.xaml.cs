@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.ViewModels;
 using goFriend.Views;
@@ -22,6 +23,7 @@ namespace goFriend
         public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         public static IFriendStore FriendStore;
+        public static IStorageService StorageService;
         public static ChatListViewModel ChatListVm = new ChatListViewModel(); // List of all Chats
 
         public static Task TaskInitialization;
@@ -30,6 +32,7 @@ namespace goFriend
 
         public App()
         {
+            //NinjectManager.Wire(new ApplicationModule());
             try
             {
                 //ConfigurationManager initialization
@@ -61,6 +64,8 @@ namespace goFriend
 
             DependencyService.Register<FriendStore>();
             FriendStore = DependencyService.Get<IFriendStore>();
+            //StorageService = NinjectManager.Resolve<IStorageService>();
+            StorageService = new StorageService(Logger, DependencyService.Get<IMediaService>());
             if (UseMockDataStore)
                 DependencyService.Register<MockDataStore>();
             else
@@ -128,10 +133,23 @@ namespace goFriend
             //Current.MainPage.DisplayAlert(res.MsgTitleError, message, res.Accept);
         }
 
-        public static async Task<string> DisplayContextMenu(params string[] buttons)
+        public static async Task<string> DisplayActionSheet(params string[] buttons)
         {
-            var result = await Current.MainPage.DisplayActionSheet(AppInfo.Name, res.Cancel, null, buttons);
-            return result;
+            return await Current.MainPage.DisplayActionSheet(AppInfo.Name, res.Cancel, null, buttons);
+        }
+
+        public static void DisplayContextMenu(string[] buttons, Action[] actions, string title = null)
+        {
+            var cfg = new ActionSheetConfig()
+                .SetTitle(title ?? AppInfo.Name)
+                .SetCancel(res.Cancel)
+                //.SetDestructive(res.Cancel)
+                ;
+            for(var i=0; i< actions.Length; i++)
+            {
+                cfg.Add(buttons[2*i], actions[i], buttons[2*i+1]);
+            }
+            UserDialogs.Instance.ActionSheet(cfg);
         }
 
         public static Task<bool> DisplayMsgQuestion(string message)
