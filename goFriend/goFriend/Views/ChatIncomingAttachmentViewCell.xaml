@@ -5,11 +5,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
-             xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
              mc:Ignorable="d"
-             x:Class="goFriend.Views.ChatIncomingViewCell">
-  <ViewCell.View>
-      <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0">
+             x:Class="goFriend.Views.ChatIncomingAttachmentViewCell">
+    <ViewCell.View>
+        <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
@@ -31,24 +30,21 @@
                      FontSize="{StaticResource LblDetailFontSize}" TextColor="{StaticResource ColorLabelDetail}" />
                 <Label Grid.Column="0" Grid.Row="1" Text="{Binding CreatedDate, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="Start" VerticalTextAlignment="End"
                      TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-                <Image Margin="20,0" Grid.Column="1" Grid.Row="1" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsThumbsUp}" Source="thumbsup.png" />
-                <Frame x:Name="FraMessage"  Grid.Column="1" Grid.Row="1" BackgroundColor="#F0F0F0" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False"
-                       IsVisible="{Binding IsThumbsUp, Converter={StaticResource InverseBoolConverter}}">
-                    <Label LineBreakMode="WordWrap"
-                         FormattedText="{Binding MessageLinkify, Converter={StaticResource HtmlLabelConverter}}"
-                         TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"
-                         VerticalOptions="FillAndExpand" />
-                    <Frame.Effects>
-                        <helpers:LongPressedEffect />
-                    </Frame.Effects>
+                <Frame Grid.Column="1" Grid.Row="1" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="0" HasShadow="False"
+                       IsClippedToBounds="True" x:Name="FraMessage">
+                    <Image Source="{Binding Attachments, StringFormat='https://gofriendstorage.blob.core.windows.net/chat/{0}'}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Attachments_Tapped" NumberOfTapsRequired="1" />
+                        </Image.GestureRecognizers>
+                    </Image>
                 </Frame>
-          </Grid>
-          <ff:CachedImage Source="{Binding LogoUrl}" WidthRequest="40" HeightRequest="40" Grid.Column="1"
+            </Grid>
+            <ff:CachedImage Source="{Binding LogoUrl}" WidthRequest="40" HeightRequest="40" Grid.Column="1"
                              Margin="10,0" VerticalOptions="EndAndExpand" HorizontalOptions="Center">
-              <ff:CachedImage.Transformations>
+                <ff:CachedImage.Transformations>
                     <ffTransformations:CircleTransformation/>
-              </ff:CachedImage.Transformations>
-          </ff:CachedImage>
+                </ff:CachedImage.Transformations>
+            </ff:CachedImage>
         </Grid>
     </ViewCell.View>
 </ViewCell>

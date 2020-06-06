@@ -7,7 +7,6 @@ using goFriend.AppleSignIn;
 using goFriend.DataModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Xamarin.Essentials;
 
 namespace goFriend.Views
 {
@@ -28,9 +27,8 @@ namespace goFriend.Views
                 App.IsUserLoggedIn = true;
                 Settings.IsUserLoggedIn = App.IsUserLoggedIn;
                 await Navigation.PopAsync();
-                var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                App.User = await App.FriendStore.LoginWithFacebook(authToken, deviceInfo);
+                App.User = await App.FriendStore.LoginWithFacebook(authToken, Extension.GetDeviceInfo());
                 UserDialogs.Instance.HideLoading();
                 Settings.LastUser = App.User;
                 App.Initialize(); //redo the initialization background task
@@ -54,7 +52,6 @@ namespace goFriend.Views
             try
             {
                 var account = await theTask;
-                var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
                 var friend = new Friend
                 {
                     Name = account.Name,
@@ -68,7 +65,7 @@ namespace goFriend.Views
                     Info = Extension.GetVersionTrackingInfo()
                 };
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                App.User = await App.FriendStore.LoginWithThirdParty(friend, deviceInfo);
+                App.User = await App.FriendStore.LoginWithThirdParty(friend, Extension.GetDeviceInfo());
                 UserDialogs.Instance.HideLoading();
                 if (App.User != null)
                 {

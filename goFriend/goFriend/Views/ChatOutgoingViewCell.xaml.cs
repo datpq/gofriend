@@ -19,13 +19,13 @@ namespace goFriend.Views
                 //{
                 //    await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
                 //};
-                App.DisplayContextMenu(new[] { res.Copy, Constants.ImgCopy, res.Delete, Constants.ImgDelete },
+                App.DisplayContextMenu(new[] { res.Copy, Constants.ImgCopy/*, res.Delete, Constants.ImgDelete */},
                     new[]
                     {
                         new Action(async () =>
                         {
                             await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
-                        }), null
+                        })
                     });
             }));
         }

@@ -3,30 +3,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-             xmlns:transformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphOverlapImage">
     <ContentView.Content>
         <RelativeLayout x:Name="RelativeLayout">
-            <forms:CachedImage x:Name="Image1"
+            <ff:CachedImage x:Name="Image1"
                              RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0,Constant=0}"
                              RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=0}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1,Constant=0}"
                              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=1,Constant=0}">
-                <forms:CachedImage.Transformations>
-                    <transformations:CircleTransformation/>
-                </forms:CachedImage.Transformations>
-            </forms:CachedImage>
-            <forms:CachedImage x:Name="Image2"
+                <ff:CachedImage.Transformations>
+                    <ffTransformations:CircleTransformation/>
+                </ff:CachedImage.Transformations>
+            </ff:CachedImage>
+            <ff:CachedImage x:Name="Image2"
                              RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.55,Constant=0}"
                              RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0.55,Constant=0}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.5,Constant=0}"
                              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0.5,Constant=0}">
-                <forms:CachedImage.Transformations>
-                    <transformations:CircleTransformation/>
-                </forms:CachedImage.Transformations>
-            </forms:CachedImage>
+                <ff:CachedImage.Transformations>
+                    <ffTransformations:CircleTransformation/>
+                </ff:CachedImage.Transformations>
+            </ff:CachedImage>
         </RelativeLayout>
     </ContentView.Content>
 </ContentView>

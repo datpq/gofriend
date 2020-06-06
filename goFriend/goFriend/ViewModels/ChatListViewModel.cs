@@ -15,14 +15,14 @@ namespace goFriend.ViewModels
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        private ObservableCollection<ChatListItemViewModel> _items = new ObservableCollection<ChatListItemViewModel>();
-        public ObservableCollection<ChatListItemViewModel> Items
+        private ObservableCollection<ChatListItemViewModel> _chatListItems = new ObservableCollection<ChatListItemViewModel>();
+        public ObservableCollection<ChatListItemViewModel> ChatListItems
         {
-            get => _items;
+            get => _chatListItems;
             set
             {
-                _items = value;
-                OnPropertyChanged(nameof(Items));
+                _chatListItems = value;
+                OnPropertyChanged(nameof(ChatListItems));
             }
         }
 
@@ -54,23 +54,23 @@ namespace goFriend.ViewModels
                     }
 
                     chat.LogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}{chat.LogoUrl}";
-                    if (Items.Any(x => x.Chat.Id == chat.Id))
+                    if (ChatListItems.Any(x => x.Chat.Id == chat.Id))
                     {
                         Logger.Debug($"Updating chat {chat.Name}{chat.Id})");
-                        var item = Items.Single(x => x.Chat.Id == chat.Id);
+                        var item = ChatListItems.Single(x => x.Chat.Id == chat.Id);
                         item.Chat = chat;
                     }
                     else
                     {
                         Logger.Debug($"Adding new chat {chat.Name}{chat.Id})");
-                        Items.Add(new ChatListItemViewModel {Chat = chat});
+                        ChatListItems.Add(new ChatListItemViewModel {Chat = chat});
                     }
                 }
 
-                foreach (var item in Items.Where(x => myChats.All(y => y.Id != x.Chat.Id)).ToList())
+                foreach (var item in ChatListItems.Where(x => myChats.All(y => y.Id != x.Chat.Id)).ToList())
                 {
                     Logger.Warn($"Removing chat {item.Chat.Name}{item.Chat.Id})");
-                    Items.Remove(item);
+                    ChatListItems.Remove(item);
                 }
 
             }

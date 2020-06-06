@@ -280,7 +280,7 @@
     <value>Yêu cầu tham gia nhóm đã được gửi thành công.</value>
   </data>
   <data name="Browse" xml:space="preserve">
-    <value>Danh sách</value>
+    <value>Bạn bè</value>
   </data>
   <data name="Select" xml:space="preserve">
     <value>Chọn</value>
@@ -295,13 +295,13 @@
     <value>xin gia nhập nhóm</value>
   </data>
   <data name="SpentTimeInDays" xml:space="preserve">
-    <value> ngày trước.</value>
+    <value> ngày trước</value>
   </data>
   <data name="SpentTimeInHours" xml:space="preserve">
-    <value> giờ trước.</value>
+    <value> giờ trước</value>
   </data>
   <data name="SpentTimeInMinutes" xml:space="preserve">
-    <value> phút trước.</value>
+    <value> phút trước</value>
   </data>
   <data name="Notification" xml:space="preserve">
     <value>Tin mới</value>
@@ -416,5 +416,11 @@
   </data>
   <data name="LastMessageIsImage" xml:space="preserve">
     <value>Gửi ảnh</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>Đang trực tuyến</value>
+  </data>
+  <data name="OnlineEarlier" xml:space="preserve">
+    <value>Trực tuyến {0}</value>
   </data>
 </root>

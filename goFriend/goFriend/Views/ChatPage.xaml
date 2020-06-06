@@ -18,10 +18,10 @@
         </StackLayout>
     </NavigationPage.TitleView>-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem Order="Secondary" Text="Thành viên" Priority="0" />
+        <ToolbarItem x:Name="MnuMembers" Order="Secondary" Priority="0" Clicked="MnuMembers_OnClicked" />
+        <ToolbarItem x:Name="MnuMute" Order="Secondary" Priority="1" Clicked="MnuMute_OnClicked"/>
         <!--<ToolbarItem Order="Primary" Priority="0"
                      IconImageSource="{Binding ChatLogoUrl}"/>-->
-        <!--<ToolbarItem Text="{Static local:res.Close}" Clicked="MnuItemClose_OnClicked" />-->
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>

@@ -75,6 +75,14 @@
 	<string>Vị trí của bạn được dùng để tham khảo khi bạn thiết lập vị trí khi gia nhập nhóm</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Vị trí của bạn được dùng để tham khảo khi bạn thiết lập vị trí khi gia nhập nhóm</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Chương trình cần truy cập vào máy ảnh để chụp.</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Chương trình cần truy cập vào thư viện ảnh.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Chương trình cần truy cập vào micro.</string>
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>Chương trình cần truy cập vào thư viện ảnh.</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.1.1</string>
 	<key>CFBundleVersion</key>

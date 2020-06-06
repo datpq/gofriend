@@ -20,23 +20,30 @@ namespace goFriend.Services
             _mediaService = mediaService;
         }
 
-        public bool Upload(string localFilePath, string remoteFilePath)
+        public bool Upload(string localFilePath, string remoteFilePath, float width = 0, float height = 0)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                _logger.Debug($"Upload.BEGIN(localFilePath={localFilePath}, remoteFilePath={remoteFilePath})");
+                _logger.Debug($"Upload.BEGIN(localFilePath={localFilePath}, remoteFilePath={remoteFilePath}, width={width}, height={height})");
                 var chatContainerClient = new BlobContainerClient(ChatStorageConnectionString, ChatStorageContainer);
                 //chatContainerClient.Create();
                 var blobClient = chatContainerClient.GetBlobClient(remoteFilePath);
-                var localSmallFilePath = Path.GetTempFileName();
-                File.WriteAllBytes(localSmallFilePath, _mediaService.ResizeImage(File.ReadAllBytes(localFilePath), 640, 400));
-                _logger.Debug($"localSmallFilePath={localSmallFilePath}");
+                var localFileToUpload = localFilePath;
+                if (width != 0 && height != 0)
+                {
+                    _logger.Debug("Resizing image before sending.");
+                    localFileToUpload = Path.GetTempFileName();
+                    File.WriteAllBytes(localFileToUpload, _mediaService.ResizeImage(File.ReadAllBytes(localFilePath), width, height));
+                }
                 _logger.Debug($"Deleting file if exists: {remoteFilePath}");
                 blobClient.DeleteIfExists();
-                _logger.Debug("Uploading file...");
-                blobClient.Upload(localSmallFilePath);
-                File.Delete(localSmallFilePath);
+                _logger.Debug($"Uploading file...{localFileToUpload}");
+                blobClient.Upload(localFileToUpload);
+                if (width != 0 && height != 0)
+                {
+                    File.Delete(localFileToUpload);
+                }
                 return true;
             }
             catch (Exception e)

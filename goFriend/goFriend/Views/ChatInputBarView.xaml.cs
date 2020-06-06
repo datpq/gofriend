@@ -51,7 +51,7 @@ namespace goFriend.Views
 
             var chatViewModel = (ChatViewModel)BindingContext;
             var remoteFilePath = $"{chatViewModel.ChatListItem.Chat.Id}/tmp_{App.User.Id}{Path.GetExtension(file.Path)}";
-            if (App.StorageService.Upload(file.Path, remoteFilePath))
+            if (App.StorageService.Upload(file.Path, remoteFilePath, 800, 600))
             {
                 chatViewModel?.SendAttachmentCommand.Invoke(remoteFilePath);
             }
@@ -80,7 +80,7 @@ namespace goFriend.Views
 
             var chatViewModel = (ChatViewModel)BindingContext;
             var remoteFilePath = $"{chatViewModel.ChatListItem.Chat.Id}/tmp_{App.User.Id}{Path.GetExtension(file.Path)}";
-            if (App.StorageService.Upload(file.Path, remoteFilePath))
+            if (App.StorageService.Upload(file.Path, remoteFilePath, 800, 600))
             {
                 chatViewModel?.SendAttachmentCommand.Invoke(remoteFilePath);
             }

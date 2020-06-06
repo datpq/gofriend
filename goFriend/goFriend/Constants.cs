@@ -15,7 +15,9 @@
         public const int ChatMinPendingMsg = 10;
         public const int ChatStartIdxToShowScrollDown = 15;
         public const int ChatStartIdxToHideScrollUp = 10;
+        public const int ChatPingFrequence = 5; //in minutes
 
+        public const string ImgGroup = "group.png";
         public const string ImgCopy = "copy.png";
         public const string ImgDelete = "delete.png";
         public const string ImgSend = "send.png";

@@ -997,6 +997,39 @@ namespace goFriend.Services
             }
         }
 
+        public async Task<IEnumerable<ChatFriendOnline>> SendPing(int chatId)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<ChatFriendOnline> result = null;
+            try
+            {
+                Logger.Debug($"SendPing.BEGIN(ChatId={chatId})");
+                result = await ChatHubConnection.InvokeAsync<IEnumerable<ChatFriendOnline>>(
+                    ChatMessageType.Ping.ToString(),
+                    new ChatMessage
+                    {
+                        ChatId = chatId,
+                        MessageType = ChatMessageType.Ping,
+                        OwnerId = App.User.Id,
+                        OwnerName = App.User.Name,
+                        Token = App.User.Token.ToString(),
+                        LogoUrl = App.User.GetImageUrl(FacebookImageType.small)
+                    });
+                App.ChatListVm.ChatListItems.Single(x => x.Chat.Id == chatId).ChatViewModel.UpdateMembers(result);
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+                return result;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"SendPing.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         public async Task SendAttachment(ChatMessage chatMessage)
         {
             Logger.Debug($"SendAttachment.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Attachments={chatMessage.Attachments})");
@@ -1031,6 +1064,24 @@ namespace goFriend.Services
             }
         }
 
+        //private void ChatReceivePing()
+        //{
+        //    var stopWatch = Stopwatch.StartNew();
+        //    try
+        //    {
+        //        Logger.Debug($"ChatReceivePing.BEGIN()");
+        //        //Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)})");
+        //    }
+        //    catch (Exception e) //Unknown error
+        //    {
+        //        Logger.Error(e.ToString());
+        //    }
+        //    finally
+        //    {
+        //        Logger.Debug($"ChatReceivePing.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+        //    }
+        //}
+
         private void ChatReceiveAttachement(ChatMessage chatMessage)
         {
             Logger.Debug($"ChatReceiveAttachement.BEGIN(MessageType={chatMessage.MessageType})");
@@ -1049,10 +1100,10 @@ namespace goFriend.Services
                 {
                     case ChatMessageType.Text:
                     case ChatMessageType.Attachment:
-                        if (App.ChatListVm.Items.Any(x => x.Chat.Id == chatMessage.ChatId))
+                        if (App.ChatListVm.ChatListItems.Any(x => x.Chat.Id == chatMessage.ChatId))
                         {
                             Logger.Debug("Chat found. Message added.");
-                            App.ChatListVm.Items.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
+                            App.ChatListVm.ChatListItems.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
                         }
                         break;
                     default:

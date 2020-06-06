@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 using goFriend.DataModel;
 using goFriend.MobileAppService.Data;
 using goFriend.MobileAppService.Helpers;
-using goFriend.MobileAppService.Models;
 using goFriend.Services;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
 
@@ -19,15 +18,14 @@ namespace goFriend.MobileAppService.Hubs
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly object LockChatMessage = new object();
-        private readonly IOptions<AppSettingsModel> _appSettings;
+        private static readonly Dictionary<int, List<ChatFriendOnline>> OnlineMembers = new Dictionary<int, List<ChatFriendOnline>>();
         private readonly IDataRepository _dataRepo;
         private readonly ICacheService _cacheService;
         private readonly IStorageService _storageService;
         protected readonly string CacheNameSpace;
 
-        public ChatHub(IOptions<AppSettingsModel> appSettings, IDataRepository dataRepo, ICacheService cacheService)
+        public ChatHub(IDataRepository dataRepo, ICacheService cacheService)
         {
-            _appSettings = appSettings;
             _dataRepo = dataRepo;
             _cacheService = cacheService;
             _storageService = new StorageService(new LoggerImpl(Logger));
@@ -85,20 +83,49 @@ namespace goFriend.MobileAppService.Hubs
             }
         }
 
-        public async Task Ping()
+        public IEnumerable<ChatFriendOnline> Ping(ChatMessage msg)
         {
+            var stopWatch = Stopwatch.StartNew();
+            List<ChatFriendOnline> result = null;
             try
             {
-                Logger.Debug("Ping.BEGIN");
-                await Clients.Client(Context.ConnectionId).SendAsync(ChatMessageType.Ping.ToString(), "reply from server OK");
+                Logger.Debug($"Ping.BEGIN(chatId={msg.ChatId}, friendId={msg.OwnerId}, Name={msg.OwnerName})");
+                //Logger.Debug($"chatMessage={JsonConvert.SerializeObject(msg)}");
+                if (!OnlineMembers.TryGetValue(msg.ChatId, out result))
+                {
+                    result = new List<ChatFriendOnline>();
+                    OnlineMembers.Add(msg.ChatId, result);
+                }
+                var friendOnline = result.SingleOrDefault(x => x.Friend.Id == msg.OwnerId);
+                if (friendOnline != null)
+                {
+                    //friendOnline.Friend = new Friend {
+                    //    Id = msg.OwnerId,
+                    //    Name = msg.OwnerName
+                    //}; //may be not neccesary
+                    friendOnline.Time = DateTime.UtcNow;
+                } else
+                {
+                    result.Add(new ChatFriendOnline
+                    {
+                        Friend = new Friend {
+                            Id = msg.OwnerId,
+                            Name = msg.OwnerName
+                        },
+                        LogoUrl = msg.LogoUrl,
+                        Time = DateTime.UtcNow
+                    });
+                }
+                return result;
             }
             catch (Exception e)
             {
                 Logger.Error(e.ToString());
+                return result;
             }
             finally
             {
-                Logger.Debug("Ping.END");
+                Logger.Debug($"Ping.END(result={JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

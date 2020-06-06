@@ -7,6 +7,7 @@ namespace goFriend.Helpers
     class ChatTemplateSelector : DataTemplateSelector
     {
         private readonly DataTemplate _incomingTextDataTemplate;
+        private readonly DataTemplate _incomingAttachmentDataTemplate;
         private readonly DataTemplate _outgoingTextDataTemplate;
         private readonly DataTemplate _outgoingAttachmentDataTemplate;
         private readonly DataTemplate _systemMsgDataTemplate;
@@ -14,6 +15,7 @@ namespace goFriend.Helpers
         public ChatTemplateSelector()
         {
             _incomingTextDataTemplate = new DataTemplate(typeof(ChatIncomingViewCell));
+            _incomingAttachmentDataTemplate = new DataTemplate(typeof(ChatIncomingAttachmentViewCell));
             _outgoingTextDataTemplate = new DataTemplate(typeof(ChatOutgoingViewCell));
             _outgoingAttachmentDataTemplate = new DataTemplate(typeof(ChatOutgoingAttachmentViewCell));
             _systemMsgDataTemplate = new DataTemplate(typeof(ChatSystemMsgViewCell));
@@ -21,8 +23,7 @@ namespace goFriend.Helpers
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
-            var chatMessage = item as ChatMessage;
-            if (chatMessage == null)
+            if (!(item is ChatMessage chatMessage))
                 return null;
 
             if (chatMessage.IsSystemMessage)
@@ -48,7 +49,7 @@ namespace goFriend.Helpers
                 }
                 if (chatMessage.MessageType == ChatMessageType.Attachment)
                 {
-                    return _incomingTextDataTemplate;
+                    return _incomingAttachmentDataTemplate;
                 }
             }
             return null;

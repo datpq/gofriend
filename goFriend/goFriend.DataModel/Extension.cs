@@ -26,6 +26,19 @@ namespace goFriend.DataModel
             return $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
         }
 
+        public static bool IsShowableMessage(this ChatMessageType chatMessageType)
+        {
+            return chatMessageType == ChatMessageType.Text || chatMessageType == ChatMessageType.Attachment;
+        }
+
+        public static string TruncateAtWord(this string input, int length)
+        {
+            if (input == null || input.Length < length)
+                return input;
+            int iNextSpace = input.LastIndexOf(" ", length, StringComparison.Ordinal);
+            return string.Format("{0}…", input.Substring(0, (iNextSpace > 0) ? iNextSpace : length).Trim());
+        }
+
         public static string CapitalizeFirstLetter(this string str)
         {
             switch (str.Length)

@@ -116,7 +116,8 @@
 		- do not imlement interface
 	- Unable to remove directory "obj\iPhone\Release\". Could not find a part of the path 'FacebookSDK.strings'.	goFriend.iOS			
 		- switch to debug mode
-
+	- cannot access a disposed object xamarin forms ios
+		- remove the binding in ToolbarItem
 
 - deployment Android:
 	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
@@ -239,6 +240,8 @@ at least in my case this was the issue
 	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
 
 - Deployment on Google Play
+	- modify version in: C:\Users\dat\source\repos\goFriend\goFriend\goFriend.Android\Properties\AndroidManifest.xml
+	- Ritght click on the project Android --> Archive --> Distribute 
 	- Select store on the list (or C:\Users\dat\source\repos\goFriend\GoFriend9194.keystore) pass: goFriend9194
 	- if error An error occur uploading 'com.dph.GoFriend.aab': The caller does not have permission [403] --> find the signed bundle and upload to googleplay
 	- Save As
@@ -262,9 +265,11 @@ at least in my case this was the issue
 
 In Package Manager Console:
 			Change Default Project to: goFriendMobileAppService
+The term “Add-Migration” is not recognized
+	--> Restart VS
 Change Start up prokect to goFriendMobileAppService
 Add-Migration InitialCreate
-Update-Database
+Update-Database Chat
 Remove-Migration
 Update-Database InitialCreate
 

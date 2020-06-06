@@ -23,8 +23,10 @@ namespace goFriend.Views
             //hide Shell tab bar for this page
             Shell.SetTabBarIsVisible(this, false);
 
-            //MnuMembers.Text = res.members.CapitalizeFirstLetter();
-            //MnuMute.Text = res.Mute;
+            MnuMembers.Text = res.members.CapitalizeFirstLetter();
+            //MnuMembers.IconImageSource = Constants.ImgGroup;
+            MnuMute.Text = chatListItem.ChatViewModel.MuteText;
+            //MnuMute.IconImageSource = chatListItem.ChatViewModel.MuteImage;
 
             //NavigationPage.TitleView in XAML not working, so the code below is for this purpose.
             Shell.SetTitleView(this, new StackLayout
@@ -45,15 +47,16 @@ namespace goFriend.Views
                     {
                         HorizontalOptions = LayoutOptions.End,
                         WidthRequest = HeightRequest = 40,
-                        Margin = 5,
+                        Margin = new Thickness(0, 5), //for iOS
                         Source1 = chatListItem.ChatViewModel.ChatLogoUrl
                     },
                 }
             });
 
-            Appearing += (sender, args) =>
+            Appearing += async (sender, args) =>
             {
                 chatListItem.IsLastMessageRead = chatListItem.IsAppearing = true;
+                await chatListItem.RefreshOnlineStatus();
             };
             Disappearing += (sender, args) => chatListItem.IsAppearing = false;
         }
@@ -65,15 +68,9 @@ namespace goFriend.Views
 
         public void ScrollTapDown(object sender, System.EventArgs args)
         {
-            if (!(BindingContext is ChatViewModel vm))
-            {
-                Logger.Error("Error when casting BindingContext");
-                return;
-            }
-
             Device.BeginInvokeOnMainThread(() =>
             {
-                vm.ShowScrollTapDown = false;
+                ((ChatViewModel)BindingContext).ShowScrollTapDown = false;
                 LvMessages.ScrollToFirst();
             });
         }
@@ -86,18 +83,14 @@ namespace goFriend.Views
             try
             {
                 Logger.Debug("ScrollTap.BEGIN");
-                if (!(BindingContext is ChatViewModel vm))
-                {
-                    Logger.Error("Error when casting BindingContext");
-                    return;
-                }
+                var vm = (ChatViewModel)BindingContext;
 
                 var fetchCount = 0;
                 var idx = 0;
                 while (idx < vm.Messages.Count)
                 {
                     var message = vm.Messages[idx];
-                    if (message.MessageType != ChatMessageType.Text)
+                    if (!message.MessageType.IsShowableMessage())
                     {
                         idx++;
                         continue;
@@ -182,6 +175,7 @@ namespace goFriend.Views
             if (vm.IsMute)
             {
                 vm.MuteExpiryTime = null; //un-mute
+                MnuMute.Text = vm.MuteText;
             }
             else
             {
@@ -194,17 +188,34 @@ namespace goFriend.Views
                     },
                     new Action[]
                     {
-                        () => { vm.MuteExpiryTime = DateTime.Now.AddMinutes(15); },
-                        () => { vm.MuteExpiryTime = DateTime.Now.AddHours(1); },
-                        () => { vm.MuteExpiryTime = DateTime.Now.AddHours(8); },
-                        () => { vm.MuteExpiryTime = DateTime.Now.AddHours(24); },
-                        () => { vm.MuteExpiryTime = DateTime.Now.AddYears(1); }
+                        () => {
+                            vm.MuteExpiryTime = DateTime.Now.AddMinutes(15);
+                            MnuMute.Text = vm.MuteText;
+                        },
+                        () => {
+                            vm.MuteExpiryTime = DateTime.Now.AddHours(1);
+                            MnuMute.Text = vm.MuteText;
+                        },
+                        () => {
+                            vm.MuteExpiryTime = DateTime.Now.AddHours(8);
+                            MnuMute.Text = vm.MuteText;
+                        },
+                        () => {
+                            vm.MuteExpiryTime = DateTime.Now.AddHours(24);
+                            MnuMute.Text = vm.MuteText;
+                        },
+                        () => {
+                            vm.MuteExpiryTime = DateTime.Now.AddYears(1);
+                            MnuMute.Text = vm.MuteText;
+                        }
                     }, res.MsgMuteTitle);
             }
         }
 
         private void MnuMembers_OnClicked(object sender, EventArgs e)
         {
+            var vm = (ChatViewModel)BindingContext;
+            Navigation.PushAsync(new OnlineMembersPage(vm));
         }
     }
 }

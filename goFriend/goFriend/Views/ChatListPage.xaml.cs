@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using goFriend.Services;
 using goFriend.ViewModels;
-using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,45 +9,49 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChatListPage : ContentPage
     {
+        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
         private readonly ChatListViewModel _viewModel;
-        private static readonly int Timeout = int.Parse(ConfigurationManager.AppSettings["ListViewTimeout"]);
-        private DateTime _lastRefreshDateTime = DateTime.Today.AddYears(-1); //default value is a very small value
 
         public ChatListPage()
         {
             InitializeComponent();
+            BindingContext = _viewModel = App.ChatListVm;
+            App.ChatListPage = this;
+
             Appearing += (sender, args) =>
             {
-                if (!_viewModel.IsRefreshing && (_lastRefreshDateTime.AddMinutes(Timeout) < DateTime.Now))
-                {
-                    _viewModel.RefreshCommand.Execute(null);
-                    _lastRefreshDateTime = DateTime.Now;
-                }
+                DphListView.Refresh(true);
             };
-            BindingContext = _viewModel = App.ChatListVm;
+
+            DphListView.Initialize(async (selectedItem) =>
+            {
+                await Navigation.PushAsync(new ChatPage((ChatListItemViewModel)selectedItem.SelectedObject));
+            });
+            DphListView.LoadItems(async () =>
+            {
+                var result = _viewModel.ChatListItems.Select(x => new DphListViewItemModel
+                {
+                    Id = x.Chat.Id,
+                    SelectedObject = x,
+                    ImageSize = 50,
+                    ImageUrl = x.LogoUrl,
+                    IsHighlight = !x.IsLastMessageRead,
+                    FormattedText = x.FormattedText
+                });
+                return result;
+            });
         }
 
-        private async void Cell_OnTapped(object sender, EventArgs e)
+        public void RefreshLastMessage(ChatListItemViewModel chatListItemVm)
         {
-            var selectedItem = (ChatListItemViewModel)Lv.SelectedItem;
-            //var chatPage = new NavigationPage(new ChatPage(selectedItem))
-            //{
-            //    BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"]
-            //};
-            //await Navigation.PushModalAsync(chatPage);]
-            await Navigation.PushAsync(new ChatPage(selectedItem));
-        }
-
-        private void Lv_OnItemTapped(object sender, ItemTappedEventArgs e)
-        {
-            // don't do anything if we just de-selected the row.
-            if (e.Item == null) return;
-
-            // Optionally pause a bit to allow the preselect hint.
-            Task.Delay(500);
-
-            // Deselect the item.
-            if (sender is ListView lv) lv.SelectedItem = null;
+            //Logger.Debug($"RefreshLastMessage.BEGIN(ChatId={chatListItemVm.Chat.Id})");
+            var item = ((DphListViewModel)DphListView.BindingContext).DphListItems.SingleOrDefault(x => x.Id == chatListItemVm.Chat.Id);
+            if (item != null) {
+                item.IsHighlight = !chatListItemVm.IsLastMessageRead;
+                item.FormattedText = chatListItemVm.FormattedText;
+                //Logger.Debug($"IsHighlight={item.IsHighlight}, LastMessage={chatListItemVm.LastMessage}, FormattedText={item.FormattedText}");
+            }
+            //Logger.Debug($"RefreshLastMessage.END");
         }
     }
 }

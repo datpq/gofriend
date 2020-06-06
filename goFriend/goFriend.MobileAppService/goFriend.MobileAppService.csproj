@@ -14,11 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200528004617_Chat.cs" />
-    <Compile Remove="Migrations\20200528004617_Chat.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="Models\AppSettingsModel.cs" />
   </ItemGroup>
 

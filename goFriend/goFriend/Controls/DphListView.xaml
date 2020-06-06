@@ -8,7 +8,7 @@
              x:Class="goFriend.Controls.DphListView">
   <ContentView.Content>
       <StackLayout Orientation="Vertical">
-            <ListView x:Name="Lv" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true" ItemTapped="Lv_OnItemTapped"
+            <ListView x:Name="Lv" ItemsSource="{Binding DphListItems}" VerticalOptions="FillAndExpand" HasUnevenRows="true" ItemTapped="Lv_OnItemTapped"
                       IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" ItemAppearing="Lv_OnItemAppearing" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -23,7 +23,7 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <controls:DphOverlapImage WidthRequest="65" HeightRequest="65" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                                    <controls:DphOverlapImage WidthRequest="{Binding ImageSize}" HeightRequest="{Binding ImageSize}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
                                                               Grid.Row="0" Grid.Column="0" Margin="10,5,5,5"
                                                               Source1="{Binding ImageUrl}"
                                                               Source2="{Binding OverlappingImageUrl}">
@@ -32,6 +32,9 @@
                                            FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" FormattedText="{Binding FormattedText}" />
                                     <!--Style="{DynamicResource ListItemDetailTextStyle}"-->
                                     <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Padding="10">
+                                        <BoxView Grid.Column="2" CornerRadius="7" HeightRequest="14" WidthRequest="14"
+                                         IsVisible="{Binding IsHighlight}"
+                                         Color="{StaticResource ColorPrimaryLight}" HorizontalOptions="Center" VerticalOptions="Center" />
                                         <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button1Radius}" HorizontalOptions="Center" VerticalOptions="Center"
                                                 WidthRequest="{Binding Button1Width}" HeightRequest="{Binding Button1Height}"
                                                 ImageSource="{Binding Button1ImageSource}"

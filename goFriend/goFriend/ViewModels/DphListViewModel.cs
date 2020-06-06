@@ -15,14 +15,14 @@ namespace goFriend.ViewModels
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
-        private ObservableCollection<DphListViewItemModel> _items = new ObservableCollection<DphListViewItemModel>();
-        public ObservableCollection<DphListViewItemModel> Items
+        private ObservableCollection<DphListViewItemModel> _dphListItems = new ObservableCollection<DphListViewItemModel>();
+        public ObservableCollection<DphListViewItemModel> DphListItems
         {
-            get => _items;
+            get => _dphListItems;
             set
             {
-                _items = value;
-                OnPropertyChanged(nameof(Items));
+                _dphListItems = value;
+                OnPropertyChanged(nameof(DphListItems));
             }
         }
 
@@ -61,7 +61,7 @@ namespace goFriend.ViewModels
                     Logger.Debug("RefreshCommand.BEGIN");
                     _allItemsFetched = false;
                     CurrentPage = 0; //reset to page 0
-                    Items.Clear();
+                    DphListItems.Clear();
                     await FetchItems();
                     Logger.Debug("RefreshCommand.END");
                 });
@@ -87,9 +87,9 @@ namespace goFriend.ViewModels
             }
             if (result != null)
             {
-                foreach (var item in result.Where(x => Items.All(y => y.Id != x.Id)))
+                foreach (var item in result.Where(x => DphListItems.All(y => y.Id != x.Id)))
                 {
-                    Items.Add(item);
+                    DphListItems.Add(item);
                 }
                 Logger.Debug($"{result.Count()} item(s) fetched.");
             }
@@ -117,13 +117,32 @@ namespace goFriend.ViewModels
         public ICommand Button2Command { get; set; }
     }
 
-    public class DphListViewItemModel
+    public class DphListViewItemModel : INotifyPropertyChanged
     {
         public int Id { get; set; }
         public object SelectedObject { get; set; }
-        public FormattedString FormattedText { get; set; }
+        public double ImageSize { get; set; } = 65;
         public string ImageUrl { get; set; }
         public string OverlappingImageUrl { get; set; }
+
+        private bool _isHighlight = false;
+        public bool IsHighlight {
+            get => _isHighlight;
+            set
+            {
+                _isHighlight = value;
+                OnPropertyChanged(nameof(IsHighlight));
+            }
+        }
+        private FormattedString _formattedText;
+        public FormattedString FormattedText {
+            get => _formattedText;
+            set
+            {
+                _formattedText = value;
+                OnPropertyChanged(nameof(FormattedText));
+            }
+        }
 
         public double Button1Width => Button1ImageSource == null ? 0 : 30;
         public double Button1Height => Button1Width;
@@ -132,6 +151,13 @@ namespace goFriend.ViewModels
         public double Button2Width => Button2ImageSource == null ? 0 : 30;
         public double Button2Height => Button2Width;
         public double Button2Radius => Button2Width / 2;
+
         public ImageSource Button2ImageSource { get; set; }
+        //INotifyPropertyChanged implementation method  
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

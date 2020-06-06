@@ -110,6 +110,11 @@ namespace goFriend
             return $"CurrentVersion={VersionTracking.CurrentVersion}.{VersionTracking.CurrentBuild}|PreviousVersion={VersionTracking.PreviousVersion}.{VersionTracking.PreviousBuild}";
         }
 
+        public static string GetDeviceInfo()
+        {
+            return $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
+        }
+
         /*
         public static ImageSource GetImageSource(this Friend friend, FacebookImageType imageType = FacebookImageType.normal)
         {

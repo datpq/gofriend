@@ -5,9 +5,9 @@ using Xamarin.Forms.Xaml;
 namespace goFriend.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ChatOutgoingAttachmentViewCell : ViewCell
+    public partial class ChatIncomingAttachmentViewCell : ViewCell
     {
-        public ChatOutgoingAttachmentViewCell()
+        public ChatIncomingAttachmentViewCell()
         {
             InitializeComponent();
         }

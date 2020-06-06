@@ -417,4 +417,10 @@
   <data name="LastMessageIsImage" xml:space="preserve">
     <value />
   </data>
+  <data name="Online" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OnlineEarlier" xml:space="preserve">
+    <value />
+  </data>
 </root>

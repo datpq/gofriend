@@ -25,6 +25,7 @@ namespace goFriend
         public static IFriendStore FriendStore;
         public static IStorageService StorageService;
         public static ChatListViewModel ChatListVm = new ChatListViewModel(); // List of all Chats
+        public static ChatListPage ChatListPage = null;
 
         public static Task TaskInitialization;
         public static IEnumerable<ApiGetGroupsModel> MyGroups;
@@ -47,8 +48,7 @@ namespace goFriend
             VersionTracking.Track();
             Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
             Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl112"]}");
-            var deviceInfo = $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
-            Logger.Debug(deviceInfo);
+            Logger.Debug(Extension.GetDeviceInfo());
             res.Culture = new CultureInfo("vi-VN");
             //res.Culture = new CultureInfo("");
             //Thread.CurrentThread.CurrentCulture = res.Culture;
@@ -102,18 +102,19 @@ namespace goFriend
 
         protected override void OnSleep()
         {
-            foreach (var chatListItemViewModel in ChatListVm.Items)
+            foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
             {
                 chatListItemViewModel.Tag = chatListItemViewModel.IsAppearing;
                 chatListItemViewModel.IsAppearing = false;
             }
         }
 
-        protected override void OnResume()
+        protected override async void OnResume()
         {
-            foreach (var chatListItemViewModel in ChatListVm.Items)
+            foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
             {
                 chatListItemViewModel.IsAppearing = (bool)chatListItemViewModel.Tag;
+                await chatListItemViewModel.RefreshOnlineStatus();
             }
         }
 
@@ -168,7 +169,7 @@ namespace goFriend
             try
             {
                 Logger.Debug("JoinChats.BEGIN");
-                foreach (var chatListItemVm in ChatListVm.Items)
+                foreach (var chatListItemVm in ChatListVm.ChatListItems)
                 {
                     Logger.Debug($"Joining chat {chatListItemVm.Name}({chatListItemVm.Chat.Id})");
                     await FriendStore.ChatConnect(new ChatJoinChatModel

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,7 @@ using goFriend.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace goFriend.ViewModels
 {
@@ -109,6 +111,27 @@ namespace goFriend.ViewModels
                 _chatLogoUrl = value;
                 OnPropertyChanged(nameof(ChatLogoUrl));
             }
+        }
+
+        public IList<ChatFriendOnline> Members { get; } = new List<ChatFriendOnline>();
+        public void UpdateMembers(IEnumerable<ChatFriendOnline> members)
+        {
+            Logger.Debug($"UpdateMembers.BEGIN(Count={members.Count()})");
+            members.ForEach(x =>
+            {
+                x.Time = x.Time.ToLocalTime();
+                var friendOnline = Members.SingleOrDefault(y => y.Friend.Id == x.Friend.Id);
+                if (friendOnline != null)
+                {
+                    friendOnline.Time = x.Time;
+                }
+                else
+                {
+                    Members.Add(x);
+                    Logger.Debug($"new user online. {x.Friend.Name}");
+                }
+            });
+            Logger.Debug($"UpdateMembers.END");
         }
 
         public bool IsMute => _muteExpiryTime.HasValue && _muteExpiryTime.Value > DateTime.Now;
@@ -287,7 +310,7 @@ namespace goFriend.ViewModels
             var idx = msgListIdx + 1;
             while (idx < Messages.Count)
             {
-                if (Messages[idx].MessageType == ChatMessageType.Text || Messages[idx].MessageType == ChatMessageType.Attachment)
+                if (Messages[idx].MessageType.IsShowableMessage())
                 {
                     result = Messages[idx];
                     //Logger.Debug($"GetPreviousMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
@@ -304,7 +327,7 @@ namespace goFriend.ViewModels
             var idx = msgListIdx - 1;
             while (idx >= 0)
             {
-                if (Messages[idx].MessageType == ChatMessageType.Text || Messages[idx].MessageType == ChatMessageType.Attachment)
+                if (Messages[idx].MessageType.IsShowableMessage())
                 {
                     result = Messages[idx];
                     //Logger.Debug($"GetNextMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
@@ -317,7 +340,7 @@ namespace goFriend.ViewModels
 
         async void OnMessageAppearing(ChatMessage message)
         {
-            if (message.MessageType != ChatMessageType.Text) return;
+            if (!message.MessageType.IsShowableMessage()) return;
             try
             {
                 var listIdx = Messages.IndexOf(message);
@@ -387,7 +410,7 @@ namespace goFriend.ViewModels
         void OnMessageDisappearing(ChatMessage message)
         {
             Logger.Debug("OnMessageDisappearing.BEGIN");
-            if (message.MessageType != ChatMessageType.Text) return;
+            if (!message.MessageType.IsShowableMessage()) return;
             var listIdx = Messages.IndexOf(message);
             if (listIdx <= 6)
             {

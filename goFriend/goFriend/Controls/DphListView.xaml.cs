@@ -85,8 +85,8 @@ namespace goFriend.Controls
 
         private void Lv_OnItemAppearing(object sender, ItemVisibilityEventArgs e)
         {
-            if (_dphListViewModel.IsRefreshing || _dphListViewModel.Items.Count == 0) return;
-            if (((DphListViewItemModel) e.Item).Id == _dphListViewModel.Items[_dphListViewModel.Items.Count - 1].Id)
+            if (_dphListViewModel.IsRefreshing || _dphListViewModel.DphListItems.Count == 0) return;
+            if (((DphListViewItemModel) e.Item).Id == _dphListViewModel.DphListItems[_dphListViewModel.DphListItems.Count - 1].Id)
             {
                 _dphListViewModel.FetchMoreItems();
             }

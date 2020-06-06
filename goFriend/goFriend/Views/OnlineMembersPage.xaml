@@ -3,12 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
-             xmlns:helpers="clr-namespace:goFriend.Helpers"
-             Title="{Static local:res.Chat}"
-             x:Class="goFriend.Views.ChatListPage">
+             xmlns:local="clr-namespace:goFriend"
+             mc:Ignorable="d"
+             x:Class="goFriend.Views.OnlineMembersPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">
@@ -19,6 +17,9 @@
             </On>
         </OnPlatform>
     </ContentPage.BackgroundColor>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Priority="0" x:Name="MnuMembers"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
             <controls:DphListView x:Name="DphListView" Timeout="5" />

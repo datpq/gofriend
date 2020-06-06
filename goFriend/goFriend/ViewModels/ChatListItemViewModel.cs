@@ -2,8 +2,10 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using goFriend.DataModel;
 using goFriend.Services;
+using Microsoft.AspNetCore.SignalR.Client;
 using Xamarin.Forms;
 
 namespace goFriend.ViewModels
@@ -35,6 +37,8 @@ namespace goFriend.ViewModels
         public string LogoUrl => Chat.LogoUrl;
         public object Tag { get; set; }
 
+        public DateTime LastPingTime { get; set; }
+
         private bool _isAppearing;
         public bool IsAppearing
         {
@@ -54,6 +58,30 @@ namespace goFriend.ViewModels
                 }
             }
         }
+
+        public async Task RefreshOnlineStatus()
+        {
+            if (IsAppearing)
+            {
+                if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
+                {
+                    await App.JoinChats();
+                }
+                if (App.FriendStore.ChatHubConnection.State != HubConnectionState.Connected)
+                {
+                    //App.DisplayMsgError(res.MsgErrConnection);
+                    return;
+                }
+                //ping to Chat server to make the user Active
+                if (LastPingTime.AddMinutes(Constants.ChatPingFrequence) < DateTime.Now)
+                {
+                    Logger.Debug("Last ping expired. Sending another ping...");
+                    LastPingTime = DateTime.Now;
+                    await App.FriendStore.SendPing(Chat.Id);
+                }
+            }
+        }
+
         private bool _isLastMessageRead; 
         public bool IsLastMessageRead
         {
@@ -74,6 +102,7 @@ namespace goFriend.ViewModels
                 _lastMessage = value;
                 OnPropertyChanged(nameof(LastMessage));
                 OnPropertyChanged(nameof(FormattedText));
+                App.ChatListPage?.RefreshLastMessage(this);
             }
         }
 
@@ -90,7 +119,8 @@ namespace goFriend.ViewModels
                         FontSize = (double) Application.Current.Resources["LblFontSize"], LineHeight = 1.2
                     },
                     new Span { Text = Environment.NewLine },
-                    new Span {Text = LastMessage, LineHeight = 1.2,
+                    new Span {Text = LastMessage.TruncateAtWord(70), LineHeight = 1.2,
+                        FontSize = (double) Application.Current.Resources["LblDetailFontSize"],
                         FontAttributes = IsLastMessageRead ? FontAttributes.None : FontAttributes.Bold}
                 }
             };
