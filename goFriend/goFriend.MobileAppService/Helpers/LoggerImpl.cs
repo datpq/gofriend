@@ -1,4 +1,6 @@
 ﻿using NLog;
+using System;
+using System.Collections.Generic;
 
 namespace goFriend.MobileAppService.Helpers
 {
@@ -19,6 +21,12 @@ namespace goFriend.MobileAppService.Helpers
         public void Error(string text, params object[] args)
         {
             logger.Error(text, args);
+        }
+
+        public void TrackError(Exception ex, IDictionary<string, string> properties = null)
+        {
+            //Do not TrackError on server side
+            logger.Error(ex);
         }
 
         public void Fatal(string text, params object[] args)

@@ -11,6 +11,9 @@ using Android.Content;
 using Android.Views;
 using FFImageLoading.Forms.Platform;
 using goFriend.Services;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace goFriend.Droid
 {
@@ -72,6 +75,8 @@ namespace goFriend.Droid
             Xamarin.FormsGoogleMaps.Init(this, savedInstanceState);
             CachedImageRenderer.Init(true);
             CachedImageRenderer.InitImageViewHandler();
+
+            AppCenter.Start(Constants.AppCenterAppSecretAndroid, typeof(Analytics), typeof(Crashes));
 
             _logger = DependencyService.Get<ILogManager>().GetLog();
 

@@ -1,5 +1,8 @@
 ﻿using goFriend.iOS;
+using Microsoft.AppCenter.Crashes;
 using NLog;
+using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(NLogLogger))]
@@ -29,6 +32,12 @@ namespace goFriend.iOS
         {
             text = ReformatText(text);
             _log.Error(text, args);
+        }
+
+        public void TrackError(Exception ex, IDictionary<string, string> properties = null)
+        {
+            Crashes.TrackError(ex, properties);
+            _log.Error(ex);
         }
 
         public void Fatal(string text, params object[] args)

@@ -35,6 +35,7 @@ namespace goFriend.Views
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {
                 var setting = await App.FriendStore.GetSetting();
+                if (setting == null) return;
                 if (!setting.DefaultShowLocation)
                 {
                     Logger.Debug("iOS Location Check Compliance");

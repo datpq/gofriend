@@ -24,10 +24,10 @@ namespace goFriend.Views
             Map.ClusterOptions.Buckets[0] = minClusterSize;
             Map.ClusterOptions.SetMinimumClusterSize(minClusterSize);
 
-            DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupNme;
+            DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupName;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
-                Settings.LastMapPageGroupNme = selectedGroup.Group.Name;
+                Settings.LastMapPageGroupName = selectedGroup.Group.Name;
                 RefreshComponentsVisibility();
                 if (!Map.IsVisible) return;
                 App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, searchText, arrCatValues).ContinueWith(task =>
@@ -63,6 +63,7 @@ namespace goFriend.Views
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {
                 var setting = await App.FriendStore.GetSetting();
+                if (setting == null) return;
                 if (!setting.DefaultShowLocation)
                 {
                     Logger.Debug("iOS Location Check Compliance");

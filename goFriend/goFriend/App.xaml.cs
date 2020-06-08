@@ -12,6 +12,10 @@ using goFriend.ViewModels;
 using goFriend.Views;
 using PCLAppConfig;
 using Xamarin.Essentials;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Device = Xamarin.Forms.Device;
 
 namespace goFriend
 {
@@ -57,7 +61,11 @@ namespace goFriend
             AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
                 var ex = (Exception)args.ExceptionObject;
                 Logger.Error("UnhandledException exception");
-                Logger.Error(ex.ToString());
+                AppCenter.SetUserId(User?.Id.ToString());
+                Logger.TrackError(ex, new Dictionary<string, string> {
+                    { "FriendId", User?.Id.ToString() },
+                    { "Comment", Extension.GetDeviceInfo() }
+                });
             };
 
             InitializeComponent();
@@ -98,6 +106,8 @@ namespace goFriend
 
         protected override void OnStart()
         {
+            AppCenter.Start($"android={Constants.AppCenterAppSecretAndroid};ios={Constants.AppCenterAppSecretiOS}",
+                  typeof(Analytics), typeof(Crashes));
         }
 
         protected override void OnSleep()

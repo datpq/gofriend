@@ -118,6 +118,8 @@
 		- switch to debug mode
 	- cannot access a disposed object xamarin forms ios
 		- remove the binding in ToolbarItem
+	- error XARDF7024: System.IO.IOException: The directory is not empty.
+		- Clean the project
 
 - deployment Android:
 	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
@@ -257,6 +259,13 @@ at least in my case this was the issue
 	- If Signing Identity and Provisioning profile are empty:
 		- Tools\Options\Xamarin\Apple --> Create Certificates
 		- https://developer.apple.com/account/resources/profiles/list --> Edit profile and assigne the Certificate which is generated
+	- Project Properties --> iOS Bundle Signing
+		- Manual Provisioning
+		- Signing Identity: Apple Distribution Quoc Dat Pham 77W..FLA
+		- GoFriend9194 Store Provisioning Profile
+	- Errors:
+		- Missing required icon file. The bundle does not contain
+			- open info.plist by code, save it with WF end lines
 	- Screen shot:
 		6.5 --> iPhone 11 Pro Max
 		5.5 --> iPhone 8 Plus

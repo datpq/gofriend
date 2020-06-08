@@ -122,7 +122,7 @@ namespace goFriend.Controls
                 }
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(_selectedGroup.Group.Id);
                 var arrCats = _selectedGroup.Group.GetCatDescList().ToList();
-                _arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
+                _arrFixedCats = groupFixedCatValues == null ? new List<string>() : groupFixedCatValues.GetCatList().ToList();
 
                 if (IsExpandableCategories || IsShowingCategories)
                 {

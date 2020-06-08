@@ -5,6 +5,9 @@ using goFriend.Services;
 using Xamarin.Forms;
 using UIKit;
 using Xamarin.Forms.GoogleMaps.iOS;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace goFriend.iOS
 {
@@ -92,6 +95,8 @@ namespace goFriend.iOS
             CachedImageRenderer.Init();
             //This line causes error: "Cannot access a disposed object.\nObject name: 'PrimaryToolbarItem'.
             CachedImageRenderer.InitImageSourceHandler(); ;
+
+            AppCenter.Start(Constants.AppCenterAppSecretiOS, typeof(Analytics), typeof(Crashes));
 
             _logger = DependencyService.Get<ILogManager>().GetLog();
             _logger.Debug("Loading application...");

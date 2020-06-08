@@ -14,10 +14,10 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
-            DphFriendSelection.SelectedGroupName = Settings.LastBrowsePageGroupNme;
+            DphFriendSelection.SelectedGroupName = Settings.LastBrowsePageGroupName;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
-                Settings.LastBrowsePageGroupNme = selectedGroup.Group.Name;
+                Settings.LastBrowsePageGroupName = selectedGroup.Group.Name;
                 DphListView.Initialize(async(selectedItem) =>
                 {
                     var selectedGroupFriend = (GroupFriend)selectedItem.SelectedObject;
