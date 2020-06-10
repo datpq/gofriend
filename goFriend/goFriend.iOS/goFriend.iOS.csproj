@@ -330,4 +330,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\photo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\account_info.png" />
+  </ItemGroup>
 </Project>

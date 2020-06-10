@@ -24,6 +24,8 @@ drop table Settings;
 --ALTER TABLE GroupFriends ADD [Id] [int] IDENTITY(1,1) NOT NULL
 --UPDATE Groups SET Active = 0 WHERE Name = 'Amser9497';
 
+select * from Friends where Info like '%1.2.5%' or Info like '%1.2.3%'
+
 INSERT INTO ChatMessage(ChatId, MessageIndex, MessageType, OwnerId, [Message], CreatedDate, ModifiedDate, Reads, IsDeleted)
 select ChatId, MessageIndex, MessageType, OwnerId, [Message], [Time], [Time], Reads, 0 FROM ChatMessage_;
 

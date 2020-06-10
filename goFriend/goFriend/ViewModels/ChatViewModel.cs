@@ -240,6 +240,7 @@ namespace goFriend.ViewModels
             try
             {
                 Logger.Debug($"ReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex})");
+                chatMessage.Chat = ChatListItem.Chat;
                 chatMessage.CreatedDate = chatMessage.CreatedDate.ToLocalTime();
                 var lastDateTime = new DateTime(2000, 1, 1);
                 var arrIdx = 0;

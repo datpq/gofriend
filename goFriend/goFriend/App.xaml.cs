@@ -149,6 +149,22 @@ namespace goFriend
             return await Current.MainPage.DisplayActionSheet(AppInfo.Name, res.Cancel, null, buttons);
         }
 
+        public static async Task GotoAccountInfo(int groupId, int friendId)
+        {
+            var groupFriend = await App.FriendStore.GetGroupFriend(groupId, friendId);
+            if (groupFriend == null)
+            {
+                Logger.Warn($"Friend {friendId} is not found in the Group {groupId}");
+                return;
+            }
+            var groupFixedCatValues =
+                await App.FriendStore.GetGroupFixedCatValues(groupId);
+            var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
+            var accountBasicInfoPage = new AccountBasicInfosPage();
+            await accountBasicInfoPage.Initialize(groupFriend.Group, groupFriend, arrFixedCats.Count);
+            await App.Current.MainPage.Navigation.PushAsync(accountBasicInfoPage);
+        }
+
         public static void DisplayContextMenu(string[] buttons, Action[] actions, string title = null)
         {
             var cfg = new ActionSheetConfig()

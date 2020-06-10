@@ -35,21 +35,7 @@ namespace goFriend.Views
                         case NotificationType.SubscriptionApproved:
                         case NotificationType.SubscriptionRejected:
                             var subscription = (GroupSubscriptionNotifBase) selectedNotification.NotificationObject;
-                            var groupFriend =
-                                await App.FriendStore.GetGroupFriend(subscription.GroupId, subscription.FriendId);
-                            if (groupFriend == null)
-                            {
-                                Logger.Warn(
-                                    $"Friend {subscription.FriendName} is not found in the Group {subscription.GroupName}");
-                                return;
-                            }
-
-                            var groupFixedCatValues =
-                                await App.FriendStore.GetGroupFixedCatValues(subscription.GroupId);
-                            var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
-                            var accountBasicInfoPage = new AccountBasicInfosPage();
-                            await accountBasicInfoPage.Initialize(groupFriend.Group, groupFriend, arrFixedCats.Count);
-                            await Navigation.PushAsync(accountBasicInfoPage);
+                            await App.GotoAccountInfo(subscription.GroupId, subscription.FriendId);
                             break;
                     }
                 }

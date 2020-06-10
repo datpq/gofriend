@@ -10,12 +10,11 @@ namespace goFriend.Views
     public partial class ChatListPage : ContentPage
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
-        private readonly ChatListViewModel _viewModel;
 
         public ChatListPage()
         {
             InitializeComponent();
-            BindingContext = _viewModel = App.ChatListVm;
+            BindingContext = App.ChatListVm;
             App.ChatListPage = this;
 
             Appearing += (sender, args) =>
@@ -29,7 +28,8 @@ namespace goFriend.Views
             });
             DphListView.LoadItems(async () =>
             {
-                var result = _viewModel.ChatListItems.Select(x => new DphListViewItemModel
+                App.Initialize();
+                var result = App.ChatListVm.ChatListItems.Select(x => new DphListViewItemModel
                 {
                     Id = x.Chat.Id,
                     SelectedObject = x,

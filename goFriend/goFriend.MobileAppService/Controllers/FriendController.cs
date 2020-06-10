@@ -728,8 +728,10 @@ namespace goFriend.MobileAppService.Controllers
                 while (Request.Query.Keys.Contains($"{Extension.ParamCategory}{idx}"))
                 {
                     var localIdx = idx;
+                    var catVal = Request.Query[$"{Extension.ParamCategory}{localIdx}"];
+                    if (string.IsNullOrEmpty(catVal)) continue;
                     //Logger.Debug($"Cat{localIdx + startCatIdx}={Request.Query[$"Cat{localIdx}"]}");
-                    queryableResult = queryableResult.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"{Extension.ParamCategory}{localIdx}"]).ToList();
+                    queryableResult = queryableResult.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == catVal).ToList();
                     idx++;
                 }
 

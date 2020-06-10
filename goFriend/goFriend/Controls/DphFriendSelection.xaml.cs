@@ -40,6 +40,7 @@ namespace goFriend.Controls
         private ApiGetGroupsModel _selectedGroup;
         private List<string> _arrFixedCats;
         private string[] _arrCatValues;
+        private bool isSelectionEventEnabled = true;
 
         public DphFriendSelection()
         {
@@ -161,6 +162,8 @@ namespace goFriend.Controls
                         var localI = i;
                         picker.SelectedIndexChanged += async (o, args) =>
                         {
+                            if (!isSelectionEventEnabled) return;;
+                            isSelectionEventEnabled = false; // Do not fire selection event of the picker children
                             UserDialogs.Instance.ShowLoading(res.Processing);
                             //Logger.Debug($"localI={localI}");
                             var arrCatValuesLen = localI + 1;
@@ -174,7 +177,6 @@ namespace goFriend.Controls
                             Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(_arrCatValues)}");
                             for (var j = localI + 1; j < arrPickers.Length; j++)
                             {
-                                arrPickers[j].ItemsSource = null;
                                 //Logger.Debug($"j={j}");
                                 if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
                                 {
@@ -184,9 +186,14 @@ namespace goFriend.Controls
                                         .Concat(groupCatValues.ToList());
                                     arrPickers[localJ].ItemsSource = itemSourceList.ToList();
                                 }
+                                else
+                                {
+                                    arrPickers[j].ItemsSource = null;
+                                }
                             }
                             UserDialogs.Instance.HideLoading();
                             EntryName.ReturnCommand.Execute(null);
+                            isSelectionEventEnabled = true; // Restore the initial value
                             //_onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
                         };
                         Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
