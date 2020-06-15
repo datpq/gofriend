@@ -457,6 +457,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgDataRequired {
+            get {
+                return ResourceManager.GetString("MsgDataRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connection error.
         /// </summary>
         public static string MsgErrConnection {

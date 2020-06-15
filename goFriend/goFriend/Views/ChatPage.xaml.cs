@@ -61,11 +61,6 @@ namespace goFriend.Views
             Disappearing += (sender, args) => chatListItem.IsAppearing = false;
         }
 
-        private void MnuItemClose_OnClicked(object sender, EventArgs e)
-        {
-            Navigation.PopModalAsync();
-        }
-
         public void ScrollTapDown(object sender, System.EventArgs args)
         {
             Device.BeginInvokeOnMainThread(() =>

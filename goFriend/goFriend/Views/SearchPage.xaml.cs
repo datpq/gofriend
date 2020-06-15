@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using goFriend.Services;
 using goFriend.ViewModels;
@@ -89,41 +88,17 @@ namespace goFriend.Views
                 Navigation.PopAsync();
             }
         }
-    }
 
-    public class TextChangedBehavior : Behavior<SearchBar>
-    {
-        private CancellationTokenSource _cancelToken = new CancellationTokenSource();
-        //private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
-
-        protected override void OnAttachedTo(SearchBar bindable)
+        private void LvResults_OnItemTapped(object sender, ItemTappedEventArgs e)
         {
-            base.OnAttachedTo(bindable);
-            bindable.TextChanged += Bindable_TextChanged;
-        }
+            // don't do anything if we just de-selected the row.
+            if (e.Item == null) return;
 
-        protected override void OnDetachingFrom(SearchBar bindable)
-        {
-            base.OnDetachingFrom(bindable);
-            bindable.TextChanged -= Bindable_TextChanged;
-        }
+            // Optionally pause a bit to allow the preselect hint.
+            Task.Delay(500);
 
-        private void Bindable_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            StopSearchCommand();
-            var cts = _cancelToken; // safe copy
-            Device.StartTimer(TimeSpan.FromMilliseconds(Constants.SearchCommandDelayTime),
-                () => {
-                    //Logger.Debug($"timer running: {e.NewTextValue}");
-                    if (cts.IsCancellationRequested) return false;
-                    ((SearchBar)sender).SearchCommand?.Execute(e.NewTextValue);
-                    return false; // or true for periodic behavior
-                });
-        }
-
-        private void StopSearchCommand()
-        {
-            Interlocked.Exchange(ref _cancelToken, new CancellationTokenSource()).Cancel();
+            // Deselect the item.
+            if (sender is ListView lv) lv.SelectedItem = null;
         }
     }
 }

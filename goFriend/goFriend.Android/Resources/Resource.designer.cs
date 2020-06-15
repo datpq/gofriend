@@ -19733,43 +19733,46 @@ namespace goFriend.Droid
 			public const int roundedbgdark = 2131165578;
 			
 			// aapt resource value: 0x7F07018B
-			public const int send = 2131165579;
+			public const int search = 2131165579;
 			
 			// aapt resource value: 0x7F07018C
-			public const int splash_screen = 2131165580;
+			public const int send = 2131165580;
 			
 			// aapt resource value: 0x7F07018D
-			public const int tab_about = 2131165581;
+			public const int splash_screen = 2131165581;
 			
 			// aapt resource value: 0x7F07018E
-			public const int tab_admin = 2131165582;
+			public const int tab_about = 2131165582;
 			
 			// aapt resource value: 0x7F07018F
-			public const int tab_browse = 2131165583;
+			public const int tab_admin = 2131165583;
 			
 			// aapt resource value: 0x7F070190
-			public const int tab_chat = 2131165584;
+			public const int tab_browse = 2131165584;
 			
 			// aapt resource value: 0x7F070191
-			public const int tab_home = 2131165585;
+			public const int tab_chat = 2131165585;
 			
 			// aapt resource value: 0x7F070192
-			public const int tab_map = 2131165586;
+			public const int tab_home = 2131165586;
 			
 			// aapt resource value: 0x7F070193
-			public const int tab_notification = 2131165587;
+			public const int tab_map = 2131165587;
 			
 			// aapt resource value: 0x7F070194
-			public const int thumbsup = 2131165588;
+			public const int tab_notification = 2131165588;
 			
 			// aapt resource value: 0x7F070195
-			public const int tooltip_frame_dark = 2131165589;
+			public const int thumbsup = 2131165589;
 			
 			// aapt resource value: 0x7F070196
-			public const int tooltip_frame_light = 2131165590;
+			public const int tooltip_frame_dark = 2131165590;
 			
 			// aapt resource value: 0x7F070197
-			public const int unmute = 2131165591;
+			public const int tooltip_frame_light = 2131165591;
+			
+			// aapt resource value: 0x7F070198
+			public const int unmute = 2131165592;
 			
 			static Drawable()
 			{

@@ -182,7 +182,7 @@
       <Version>3.2.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
-      <Version>3.1.4</Version>
+      <Version>3.1.5</Version>
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.7.2</Version>
@@ -332,5 +332,8 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\account_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\search.png" />
   </ItemGroup>
 </Project>

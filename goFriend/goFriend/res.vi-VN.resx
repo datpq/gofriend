@@ -423,4 +423,7 @@
   <data name="OnlineEarlier" xml:space="preserve">
     <value>Trực tuyến {0}</value>
   </data>
+  <data name="MsgDataRequired" xml:space="preserve">
+    <value>Thiếu thông tin về {0}</value>
+  </data>
 </root>

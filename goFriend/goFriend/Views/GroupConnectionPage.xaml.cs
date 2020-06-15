@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Acr.UserDialogs;
-using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
@@ -17,76 +16,77 @@ namespace goFriend.Views
     public partial class GroupConnectionPage : ContentPage
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
-        private readonly IList<SearchBar> _lstCatSearchBars = new List<SearchBar>();
-        private readonly IList<string> _lstCatSearchBarsText = new List<string>();
+        private readonly IList<StackLayout> _lstCatEntries = new List<StackLayout>();
+        private readonly IList<string> _lstCatEntriesText = new List<string>();
         private IList<string> _arrFixedCatValues;
         private Group _selectedGroup;
+        private bool resetWhenAppearing = true;
 
         public GroupConnectionPage()
         {
             InitializeComponent();
 
-            _textChangedCorrect = true;
-            SbGroup.Text = Settings.LastGroupName;
-
-            SbGroup.Focused += (s, e) =>
+            if (Device.RuntimePlatform == Device.Android)
             {
-                Navigation.PushAsync(
-                    new SearchPage(res.Groups, false, async (searchText) =>
+                Appearing += (sender, args) =>
+                {
+                    //for (var i = 0; i < _lstCatEntries.Count; i++)
+                    //{
+                    //    var entry = (Entry)_lstCatEntries[i].Children[0];
+                    //    entry.Text = _lstCatEntriesText[i];
+                    //}
+                    if (resetWhenAppearing)
                     {
-                        Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
-                        App.TaskInitialization.Wait();
-                        App.AllGroups = await App.FriendStore.GetGroups(searchText);
-                        var searchResult = App.MyGroups.Where(
-                            x => x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
-                            App.AllGroups.Where(x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(
-                            x => new SearchItemModel
-                        {
-                            Text = x.Group.Name,
-                            Description = x.Group.Desc,
-                            Id = x.Group.Id,
-                            ItemType = (int)x.UserRight,
-                            SubItemCount = x.MemberCount,
-                            ImageSource = x.UserRight == UserType.Admin ? "group_admin.png" : "group.png",
-                            ImageForeground = x.UserRight == UserType.Admin ? Color.BlueViolet :
-                                x.UserRight == UserType.Normal ? (Color)Application.Current.Resources["ColorPrimary"] :
-                                x.UserRight == UserType.Pending ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.LightGray
-                        });
-                        //Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
-                        Logger.Debug("Search.Group.END");
-                        return searchResult;
-                    }, groupName =>
+                        DphGroupSearch.Reset();
+                    }
+                    else
                     {
-                        _textChangedCorrect = true;
-                        Settings.LastGroupName = SbGroup.Text = groupName;
-                    }, SbGroup.Text));
-            };
+                        resetWhenAppearing = true;
+                    }
+                };
+            }
+
+            //Disappearing += (sender, args) =>
+            //{
+            //Reset the form because of an unexpected behavior
+            //(all categories got the value of the last category, don't know why?)
+            //Ex: Chuyen DHTH, Toan A --> Toan A, Toan A
+            //DphGroupSearch.Reset();
+            //};
+
+            DphGroupSearch.Initialize(async (searchText) =>
+            {
+                Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
+                App.TaskInitialization.Wait();
+                App.AllGroups = await App.FriendStore.GetGroups(searchText);
+                var searchResult = App.MyGroups.Where(
+                    x => x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
+                    App.AllGroups.Where(x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(
+                    x => new SearchItemModel
+                    {
+                        Text = x.Group.Name,
+                        Description = x.Group.Desc,
+                        Id = x.Group.Id,
+                        ItemType = (int)x.UserRight,
+                        SubItemCount = x.MemberCount,
+                        ImageSource = x.UserRight == UserType.Admin ? Constants.ImgGroupAdmin : Constants.ImgGroup,
+                        ImageForeground = x.UserRight == UserType.Admin ? Color.BlueViolet :
+                        x.UserRight == UserType.Normal ? (Color)Application.Current.Resources["ColorPrimary"] :
+                        x.UserRight == UserType.Pending ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.LightGray
+                    });
+                //Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
+                Logger.Debug("Search.Group.END");
+                return searchResult;
+            }, SelectItemAction, () => SlGroupDetail.IsVisible = false);
         }
 
-        private bool _textChangedCorrect; //happened with Android only. It's called when user go to another shell tab and come back to the Account tab
-        private async void SbGroup_OnTextChanged(object sender, TextChangedEventArgs e)
+        private async void SelectItemAction(string groupName)
         {
-            if (!_textChangedCorrect)
-            {
-                var correctTextVal = Settings.LastGroupName;
-                if (e.NewTextValue != correctTextVal && e.OldTextValue == correctTextVal)
-                {
-                    SbGroup.Text = correctTextVal;
-                    Logger.Warn("TextChanged happened unexpectedly. Group Picker's text is reset");
-                    return;
-                }
-                else
-                {
-                    Logger.Warn("TextChanged happened unexpectedly. Group Picker Fixed.");
-                    return;
-                }
-            }
-            _textChangedCorrect = false; //once consumed --> set to false for not being consumed unexpectedly
             try
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                var groupName = SbGroup.Text;
                 Logger.Debug($"BEGIN({groupName})");
+                SlGroupDetail.IsVisible = true;
 
                 //remove all the grid rows
                 Grid.Children.Clear();
@@ -96,10 +96,10 @@ namespace goFriend.Views
                 //{
                 //    SlMain.Children.RemoveAt(SlMain.Children.Count - 1);
                 //}
-                _lstCatSearchBars.ForEach(x => SlMain.Children.Remove(x));
+                _lstCatEntries.ForEach(x => SlMain.Children.Remove(x));
                 LblSubscriptionMsg.Text = string.Empty;
-                _lstCatSearchBars.Clear();
-                _lstCatSearchBarsText.Clear();
+                _lstCatEntries.Clear();
+                _lstCatEntriesText.Clear();
                 LblInfoCats.Text = res.Information;
                 _arrFixedCatValues = null;
 
@@ -126,7 +126,6 @@ namespace goFriend.Views
                 Logger.Debug($"selectedApiGroup={JsonConvert.SerializeObject(selectedApiGroup)}");
                 CmdModify.IsVisible = selectedApiGroup?.UserRight == UserType.Pending; // Modify button visible when subscription is in pending
                 CmdSubscribe.IsVisible = selectedApiGroup?.UserRight == UserType.NotMember;
-                CmdSubscribe.IsEnabled = false;
 
                 _selectedGroup = selectedApiGroup?.Group;
 
@@ -153,7 +152,8 @@ namespace goFriend.Views
                         {
                             VerticalOptions = LayoutOptions.Center,
                             //FontSize = (double)Application.Current.Resources["LblDetailFontSize"],
-                            FontSize = (double)Application.Current.Resources["LblFontSize"],
+                            //FontSize = (double)Application.Current.Resources["LblFontSize"],
+                            FontSize = (double)Application.Current.Resources["LblSectionFontSize"],
                             //TextColor = (Color)Application.Current.Resources["ColorLabelDetail"],
                             TextColor = (Color)Application.Current.Resources["ColorLabel"],
                             Text = arrCatDesc[i] + ":"
@@ -164,7 +164,8 @@ namespace goFriend.Views
                         var lblVal = new Label
                         {
                             VerticalOptions = LayoutOptions.Center,
-                            FontSize = (double)Application.Current.Resources["LblFontSize"],
+                            //FontSize = (double)Application.Current.Resources["LblFontSize"],
+                            FontSize = (double)Application.Current.Resources["LblSectionFontSize"],
                             TextColor = (Color)Application.Current.Resources["ColorLabel"],
                             //FontAttributes = FontAttributes.Bold,
                             //HorizontalTextAlignment = TextAlignment.End,
@@ -176,57 +177,40 @@ namespace goFriend.Views
                     }
                     else
                     {
-                        var sb = new DphSearchBar
+                        var idx = i;
+                        var entry = new Entry
                         {
                             Placeholder = arrCatDesc[i],
-                            FontAttributes = FontAttributes.Bold,
                             Text = selectedApiGroup?.GroupFriend?.GetCatByIdx(i + 1),
-                            //BackgroundColor = Color.Aqua,
-                            BackgroundColor = SbGroup.BackgroundColor,
-                            IsEnabled = i == _arrFixedCatValues.Count // only first SearchBar is enabled
+                            PlaceholderColor = (Color)Application.Current.Resources["ColorLabel"],
+                            TextColor = (Color)Application.Current.Resources["ColorPrimary"],
+                            ClearButtonVisibility = ClearButtonVisibility.WhileEditing,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
                         };
-                        sb.LastText = sb.Text;
-                        if (!string.IsNullOrEmpty(sb.Text)) sb.IsEnabled = false; // search bar is disable when user is a member of Group
-                        var sbIdx = i;
-                        sb.TextChanged += (o, args) =>
+                        entry.IsEnabled = string.IsNullOrEmpty(entry.Text);
+                        var button = new ImageButton
                         {
-                            if (!sb.TextChangedCorrect)
-                            {
-                                var correctTextVal = sb.LastText;
-                                if (args.NewTextValue != correctTextVal && args.OldTextValue == correctTextVal)
-                                {
-                                    sb.Text = correctTextVal;
-                                    Logger.Warn("TextChanged happened unexpectedly. Category Picker's text is reset");
-                                    return;
-                                }
-                                else
-                                {
-                                    Logger.Warn("TextChanged happened unexpectedly. Category Picker Fixed.");
-                                    return;
-                                }
-                            }
-                            sb.TextChangedCorrect = false;
-                            if (sbIdx == arrCatDesc.Count - 1)
-                            {
-                                CmdSubscribe.IsEnabled = sb.Text != string.Empty;
-                            }
-                            else
-                            {
-                                _lstCatSearchBars[sbIdx - _arrFixedCatValues.Count + 1].Text = string.Empty;
-                                _lstCatSearchBars[sbIdx - _arrFixedCatValues.Count + 1].IsEnabled = sb.Text != string.Empty;
-                            }
+                            Source = Constants.ImgSearch,
+                            BackgroundColor = BackgroundColor,
+                            Aspect = Aspect.AspectFit,
+                            WidthRequest = 32,
+                            HeightRequest = 32,
+                            IsEnabled = entry.IsEnabled,
+                            VerticalOptions = LayoutOptions.Center,
+                            HorizontalOptions = LayoutOptions.End,
                         };
-                        sb.Focused += (s, args) =>
+                        // IsEnabled doesn't work with Command, but work properly with Clicked event.
+                        button.Clicked += (s, e) =>
                         {
-                            var arrCatValues = new string[sbIdx - _arrFixedCatValues.Count];
+                            var arrCatValues = new string[idx - _arrFixedCatValues.Count];
                             for (var j = 0; j < arrCatValues.Length; j++)
                             {
-                                arrCatValues[j] = _lstCatSearchBars[j].Text;
+                                arrCatValues[j] = ((Entry)_lstCatEntries[j].Children[0]).Text;
                             }
                             Navigation.PushAsync(
-                                new SearchPage(arrCatDesc[sbIdx], true, async (searchText) =>
+                                new SearchPage(arrCatDesc[idx], false, async (searchText) =>
                                 {
-                                    Logger.Debug($"Search.{arrCatDesc[sbIdx]}.BEGIN(searchText={searchText})");
+                                    Logger.Debug($"Search.{arrCatDesc[idx]}.BEGIN(searchText={searchText})");
 
                                     var catValueList = await App.FriendStore.GetGroupCatValues(_selectedGroup.Id, true, arrCatValues);
                                     var searchResult = catValueList.Where(x => x.CatValue.IndexOf(searchText ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) >= 0)
@@ -235,18 +219,25 @@ namespace goFriend.Views
                                             Text = x.CatValue,
                                             SubItemCount = x.MemberCount
                                         }).OrderBy(x => x.Text);
-                                    //Logger.Debug($"searchResult={JsonConvert.SerializeObject(searchResult)}");
-                                    Logger.Debug($"Search.{arrCatDesc[sbIdx]}.END");
+                                        //Logger.Debug($"searchResult={JsonConvert.SerializeObject(searchResult)}");
+                                        Logger.Debug($"Search.{arrCatDesc[idx]}.END");
                                     return searchResult;
                                 }, selectedValue =>
                                 {
-                                    sb.TextChangedCorrect = true;
-                                    sb.LastText = sb.Text = selectedValue;
-                                }, sb.Text));
+                                    resetWhenAppearing = false;
+                                    entry.Text = selectedValue;
+                                    CmdSubscribe.Focus();
+                                }/*, entry.Text*/));
                         };
-                        SlMain.Children.Insert(SlMain.Children.Count - 1, sb);
-                        _lstCatSearchBars.Add(sb);
-                        _lstCatSearchBarsText.Add(sb.Text);
+                        var sl = new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            Margin = new Thickness(5,0),
+                            Children = { entry, button }
+                        };
+                        SlMain.Children.Insert(SlMain.Children.Count - 1, sl);
+                        _lstCatEntries.Add(sl);
+                        _lstCatEntriesText.Add(entry.Text);
                     }
                 }
 
@@ -298,9 +289,15 @@ namespace goFriend.Views
                     groupFriend.SetCatByIdx(i + 1, _arrFixedCatValues[i]);
                 }
 
-                for (var i = 0; i < _lstCatSearchBars.Count; i++)
+                for (var i = 0; i < _lstCatEntries.Count; i++)
                 {
-                    groupFriend.SetCatByIdx(i + 1 + _arrFixedCatValues.Count, _lstCatSearchBars[i].Text);
+                    var entry = (Entry)_lstCatEntries[i].Children[0];
+                    if (string.IsNullOrWhiteSpace(entry.Text))
+                    {
+                        App.DisplayMsgError(string.Format(res.MsgDataRequired, entry.Placeholder));
+                        return;
+                    }
+                    groupFriend.SetCatByIdx(i + 1 + _arrFixedCatValues.Count, entry.Text);
                 }
 
                 var result = await App.FriendStore.SubscribeGroup(groupFriend);
@@ -309,8 +306,7 @@ namespace goFriend.Views
                     App.DisplayMsgInfo(res.MsgSubscriptionSuccessful);
                     App.Initialize();
 
-                    _textChangedCorrect = true;
-                    SbGroup_OnTextChanged(null, null);
+                    SelectItemAction(_selectedGroup.Name);
                 }
             }
             catch (Exception ex)
@@ -328,10 +324,10 @@ namespace goFriend.Views
         private async void CmdCancel_OnClicked(object sender, EventArgs e)
         {
             if (!await App.DisplayMsgQuestion(res.MsgCancelConfirmation)) return;
-            for (var i=0; i < _lstCatSearchBars.Count; i++)
+            for (var i=0; i < _lstCatEntries.Count; i++)
             {
-                _lstCatSearchBars[i].IsEnabled = false;
-                _lstCatSearchBars[i].Text = _lstCatSearchBarsText[i];
+                _lstCatEntries[i].Children.ForEach(x => x.IsEnabled = false);
+                ((Entry)_lstCatEntries[i].Children[0]).Text = _lstCatEntriesText[i];
             }
             CmdCancel.IsVisible = false;
             CmdSubscribe.IsVisible = false;
@@ -341,10 +337,7 @@ namespace goFriend.Views
         private async void CmdModify_OnClicked(object sender, EventArgs e)
         {
             if (!await App.DisplayMsgQuestion(res.MsgModifyConfirmation)) return;
-            foreach (var sb in _lstCatSearchBars)
-            {
-                sb.IsEnabled = true;
-            }
+            _lstCatEntries.ForEach(x => x.Children.ForEach(y => y.IsEnabled = true));
             CmdCancel.IsVisible = true;
             CmdSubscribe.IsVisible = true;
             CmdSubscribe.IsEnabled = true;

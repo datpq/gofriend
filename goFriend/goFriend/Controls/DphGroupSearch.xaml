@@ -1,57 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
              xmlns:helpers="clr-namespace:goFriend.Helpers"
-             xmlns:vm="clr-namespace:goFriend.ViewModels"
-             x:Class="goFriend.Views.SearchPage"
-             Title="{Binding Title}">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
-    <ContentPage.BindingContext>
-        <vm:SearchViewModel />
-    </ContentPage.BindingContext>
-    <ContentPage.Content>
-        <StackLayout>
-            <Grid ColumnSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <SearchBar x:Name="Sb" Placeholder="{Static local:res.SearchBarPlaceHolder}" Text="{Binding Text}" FontAttributes="Bold"
-                       SearchCommand="{Binding SearchCommand}" SearchCommandParameter="{Binding Text, Source={x:Reference Sb}}"
-                       Grid.Column="0">
-                    <SearchBar.Behaviors>
-                        <helpers:TextChangedBehavior />
-                    </SearchBar.Behaviors>
-                    <SearchBar.BackgroundColor>
-                        <OnPlatform x:TypeArguments="Color">
-                            <On Platform="Android, WinPhone">
-                                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                            </On>
-                            <On Platform="iOS">
-                                <StaticResource Key="ColorTabPageBackgroundIOS" />
-                            </On>
-                        </OnPlatform>
-                    </SearchBar.BackgroundColor>
-                </SearchBar>
-                <Button x:Name="CmdOk" Text="OK" WidthRequest="45" Grid.Column="1" Clicked="Button_OnClicked" IsVisible="{Binding AcceptNotFoundValue}"/>
-            </Grid>
+             mc:Ignorable="d"
+             x:Class="goFriend.Controls.DphGroupSearch">
+  <ContentView.Content>
+      <StackLayout>
+            <SearchBar x:Name="Sb" Placeholder="{Static local:res.SearchBarPlaceHolder}" Text="{Binding Text}" FontAttributes="Bold"
+                       SearchCommand="{Binding SearchCommand}" SearchCommandParameter="{Binding Text, Source={x:Reference Sb}}">
+                <SearchBar.Behaviors>
+                    <helpers:TextChangedBehavior />
+                </SearchBar.Behaviors>
+                <SearchBar.BackgroundColor>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="Android, WinPhone">
+                            <StaticResource Key="ColorTabPageBackgroundAndroid" />
+                        </On>
+                        <On Platform="iOS">
+                            <StaticResource Key="ColorTabPageBackgroundIOS" />
+                        </On>
+                    </OnPlatform>
+                </SearchBar.BackgroundColor>
+            </SearchBar>
             <ListView x:Name="LvResults" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
                       ItemTapped="LvResults_OnItemTapped">
                 <ListView.ItemTemplate>
@@ -98,5 +72,5 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+  </ContentView.Content>
+</ContentView>

@@ -21,11 +21,11 @@ namespace goFriend
             set => AppSettings.AddOrUpdateValue(nameof(LastUser), JsonConvert.SerializeObject(value));
         }
 
-        public static string LastGroupName
-        {
-            get => AppSettings.GetValueOrDefault(nameof(LastGroupName), string.Empty);
-            set => AppSettings.AddOrUpdateValue(nameof(LastGroupName), value);
-        }
+        //public static string LastGroupName
+        //{
+        //    get => AppSettings.GetValueOrDefault(nameof(LastGroupName), string.Empty);
+        //    set => AppSettings.AddOrUpdateValue(nameof(LastGroupName), value);
+        //}
 
         public static string LastBrowsePageGroupName
         {

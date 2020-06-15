@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -17,6 +18,19 @@ namespace goFriend.Views
             BindingContext = App.ChatListVm;
             App.ChatListPage = this;
 
+            Task.Run(() =>
+            {
+                App.TaskInitialization.Wait();
+                //Task.Delay(5000).Wait();
+            }).ContinueWith(task =>
+            {
+                if (!App.MyGroups.Any())
+                {
+                    App.DisplayMsgInfo(res.MsgNoGroupWarning);
+                    Navigation.PushAsync(new GroupConnectionPage());
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
             Appearing += (sender, args) =>
             {
                 DphListView.Refresh(true);
@@ -28,7 +42,6 @@ namespace goFriend.Views
             });
             DphListView.LoadItems(async () =>
             {
-                App.Initialize();
                 var result = App.ChatListVm.ChatListItems.Select(x => new DphListViewItemModel
                 {
                     Id = x.Chat.Id,

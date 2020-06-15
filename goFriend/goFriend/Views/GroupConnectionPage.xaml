@@ -4,8 +4,9 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             xmlns:local="clr-namespace:goFriend"
+             xmlns:local="clr-namespace:goFriend" xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.Groups}"
+             Visual="Material"
              x:Class="goFriend.Views.GroupConnectionPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -19,54 +20,42 @@
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
-            <SearchBar x:Name="SbGroup" Placeholder="{Static local:res.Groups}" TextChanged="SbGroup_OnTextChanged" FontAttributes="Bold" >
-                <SearchBar.BackgroundColor>
-                    <OnPlatform x:TypeArguments="Color">
-                        <On Platform="Android, WinPhone">
-                            <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                        </On>
-                        <On Platform="iOS">
-                            <StaticResource Key="ColorTabPageBackgroundIOS" />
-                        </On>
-                    </OnPlatform>
-                </SearchBar.BackgroundColor>
-            </SearchBar>
-            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" x:Name="CommonConnectionInfoLine" />
-            <StackLayout Margin="20,10,20,0" x:Name="CommonConnectionInfoLayout">
-                <Label TextColor="{StaticResource ColorLabel}" Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblSectionFontSize}" />
-                <Grid Margin="0,10" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                </Grid>
-            </StackLayout>
-            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <ScrollView Margin="0,10,0,0">
-                <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand" HeightRequest="230">
-                    <Label Margin="20,0,20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblSectionFontSize}" />
-                    <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblDetailFontSize}" />
+            <controls:DphGroupSearch x:Name="DphGroupSearch" />
+            <StackLayout x:Name="SlGroupDetail" IsVisible="False">
+                <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" x:Name="CommonConnectionInfoLine" />
+                <StackLayout Margin="20,5,20,0" x:Name="CommonConnectionInfoLayout">
+                    <Label TextColor="{StaticResource ColorLabel}" Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" />
+                    <Grid Margin="0,5" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
                 </StackLayout>
-            </ScrollView>
-            <StackLayout Orientation="Horizontal" VerticalOptions="End" Margin="10" HorizontalOptions="Center">
-                <Button x:Name="CmdModify" WidthRequest="120"
+                <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+                <ScrollView Margin="0,5,0,0">
+                    <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand" HeightRequest="230">
+                        <Label Margin="20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblDetailFontSize}" />
+                        <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblSectionFontSize}" />
+                    </StackLayout>
+                </ScrollView>
+                <StackLayout Orientation="Horizontal" VerticalOptions="End" Margin="10" HorizontalOptions="Center">
+                    <Button x:Name="CmdModify"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        BackgroundColor="{StaticResource ColorPrimary}"
-                        TextColor="{StaticResource ColorTitle}"
+                        BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.Modify}" Clicked="CmdModify_OnClicked" />
-                <Button x:Name="CmdSubscribe" WidthRequest="140"
+                    <Button x:Name="CmdSubscribe" WidthRequest="140"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        BackgroundColor="{StaticResource ColorPrimary}"
-                        TextColor="{StaticResource ColorTitle}"
+                        BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.SubscribeGroup}" Clicked="CmdSubscribe_OnClicked" />
-                <Button x:Name="CmdCancel" WidthRequest="120"
+                    <Button x:Name="CmdCancel" WidthRequest="120"
                         CornerRadius="{StaticResource BtnCornerRadius}"
-                        BackgroundColor="{StaticResource ColorPrimary}"
-                        TextColor="{StaticResource ColorTitle}"
+                        BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.Cancel}" Clicked="CmdCancel_OnClicked" />
+                </StackLayout>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

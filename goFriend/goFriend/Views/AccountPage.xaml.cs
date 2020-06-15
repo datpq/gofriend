@@ -119,7 +119,11 @@ namespace goFriend.Views
                         //}
                         //else
                         //{
-                        if (App.User.Location == null && App.User.ShowLocation == true)
+                        if (!App.MyGroups.Any(x => x.GroupFriend.Active)) {
+                            App.DisplayMsgInfo(res.MsgNoGroupWarning);
+                            await Navigation.PushAsync(new GroupConnectionPage());
+                        }
+                        else if (App.User.Location == null && App.User.ShowLocation == true)
                         {
                             //App.DisplayMsgInfo(res.MsgNoLocationSuggestion);
                             CellBasicInfo_Tapped(null, null);
