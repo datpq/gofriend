@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using goFriend.Controls;
 using goFriend.DataModel;
@@ -113,6 +115,14 @@ namespace goFriend
         public static string GetDeviceInfo()
         {
             return $"Name={DeviceInfo.Name}|Type={DeviceInfo.DeviceType}|Model={DeviceInfo.Model}|Manufacturer={DeviceInfo.Manufacturer}|Platform={DeviceInfo.Platform}|Version={DeviceInfo.Version}";
+        }
+
+        public static Stream GetStreamFromFile(string filename)
+        {
+            var assembly = typeof(App).GetTypeInfo().Assembly;
+            var stream = assembly.GetManifestResourceStream($"goFriend.{filename}");
+
+            return stream;
         }
 
         /*

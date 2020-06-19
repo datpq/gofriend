@@ -135,7 +135,7 @@ namespace goFriend.MobileAppService.Hubs
             try
             {
                 Logger.Debug($"Text.BEGIN({msg.MessageType}, OwnerId={msg.OwnerId}, Token={msg.Token})");
-                Logger.Debug($"ChatId={msg.ChatId}, Message={msg.Message}");
+                Logger.Debug($"ChatId={msg.ChatId}, Message={msg.Message}, MessageIndex={msg.MessageIndex}");
 
                 #region Data Validation
 
@@ -158,22 +158,41 @@ namespace goFriend.MobileAppService.Hubs
 
                 #endregion
 
-                msg.CreatedDate = msg.ModifiedDate = DateTime.UtcNow;
-                lock (LockChatMessage)
+                msg.ModifiedDate = DateTime.UtcNow;
+                if (msg.MessageIndex > 0) //Modification, Deletion
                 {
-                    var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == msg.ChatId);
-                    if (allChatMessages.Any())
+                    var chatMessage = _dataRepo.Get<ChatMessage>(
+                        x => x.ChatId == msg.ChatId && x.MessageIndex == msg.MessageIndex);
+                    if (chatMessage != null)
                     {
-                        msg.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
+                        chatMessage.IsDeleted = msg.IsDeleted; // Deletion
+                        chatMessage.ModifiedDate = DateTime.UtcNow;
+                        _dataRepo.Commit();
                     }
                     else
                     {
-                        msg.MessageIndex = 1;
+                        Logger.Error("Message not found for update");
                     }
+                }
+                else // New message
+                {
+                    msg.CreatedDate = DateTime.UtcNow;
+                    lock (LockChatMessage)
+                    {
+                        var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == msg.ChatId);
+                        if (allChatMessages.Any())
+                        {
+                            msg.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
+                        }
+                        else
+                        {
+                            msg.MessageIndex = 1;
+                        }
 
-                    Logger.Debug("Saving to database");
-                    _dataRepo.Add(msg);
-                    _dataRepo.Commit();
+                        Logger.Debug("Saving to database");
+                        _dataRepo.Add(msg);
+                        _dataRepo.Commit();
+                    }
                 }
 
                 Logger.Debug($"Sending message to the group {msg.ChatId}");

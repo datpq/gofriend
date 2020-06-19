@@ -4,7 +4,6 @@ using Xamarin.Forms;
 using goFriend.Services;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
@@ -15,6 +14,7 @@ using Xamarin.Essentials;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Plugin.SimpleAudioPlayer;
 using Device = Xamarin.Forms.Device;
 
 namespace goFriend
@@ -34,6 +34,7 @@ namespace goFriend
         public static Task TaskInitialization;
         public static IEnumerable<ApiGetGroupsModel> MyGroups;
         public static IEnumerable<ApiGetGroupsModel> AllGroups;
+        public static ISimpleAudioPlayer SapChatNewMessage = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
 
         public App()
         {
@@ -41,13 +42,15 @@ namespace goFriend
             try
             {
                 //ConfigurationManager initialization
-                var assembly = typeof(App).GetTypeInfo().Assembly;
-                ConfigurationManager.Initialise(assembly.GetManifestResourceStream("goFriend.App.config"));
+                ConfigurationManager.Initialise(Extension.GetStreamFromFile("App.config"));
             }
             catch
             {
                 // ignored
             }
+
+            SapChatNewMessage.Loop = false;
+            SapChatNewMessage.Load(Extension.GetStreamFromFile("Audios.chat_newmsg.wav"));
 
             VersionTracking.Track();
             Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");

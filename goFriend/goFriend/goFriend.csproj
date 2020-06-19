@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
+    <None Remove="Audios\chat_newmsg.wav" />
     <None Remove="Images\apple.jpg" />
     <None Remove="Images\default_female.jpg" />
     <None Remove="Images\default_male.jpg" />
@@ -22,6 +23,7 @@
     <None Remove="Images\notif_UpdateSubscriptionRequest.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Audios\chat_newmsg.wav" />
     <EmbeddedResource Include="Images\apple.jpg" />
     <EmbeddedResource Include="Images\default_female.jpg" />
     <EmbeddedResource Include="Images\default_male.jpg" />
@@ -43,6 +45,7 @@
     <PackageReference Include="Xam.Plugin.Connectivity" Version="4.0.0.190-beta" />
     <PackageReference Include="Xam.Plugin.DeviceInfo" Version="4.1.1" />
     <PackageReference Include="Xam.Plugin.Media" Version="5.0.1" />
+    <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.4.0" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.10.0" />
     <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.11.982" />
@@ -118,7 +121,13 @@
     <EmbeddedResource Update="Views\ChatIncomingAttachmentViewCell.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Views\ChatIncomingDeletedViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\ChatOutgoingAttachmentViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\ChatOutgoingDeletedViewCell.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ChatOutgoingViewCell.xaml">

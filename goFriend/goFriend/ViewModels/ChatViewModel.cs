@@ -242,6 +242,14 @@ namespace goFriend.ViewModels
                 Logger.Debug($"ReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex})");
                 chatMessage.Chat = ChatListItem.Chat;
                 chatMessage.CreatedDate = chatMessage.CreatedDate.ToLocalTime();
+                chatMessage.ModifiedDate = chatMessage.ModifiedDate.ToLocalTime();
+                chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
+                if (chatMessage.IsDeleted)
+                {
+                    chatMessage.Message =
+                        $"{(chatMessage.IsOwnMessage ? res.You : chatMessage.OwnerFirstName)}: {res.ChatMessageIsDeleted}";
+                }
+
                 var lastDateTime = new DateTime(2000, 1, 1);
                 var arrIdx = 0;
                 for (arrIdx = 0; arrIdx < Messages.Count; arrIdx++)
@@ -274,13 +282,24 @@ namespace goFriend.ViewModels
                     }
                 }
 
-                chatMessage.IsOwnMessage = chatMessage.OwnerId == App.User.Id;
-                Messages.Insert(arrIdx, chatMessage);
+                if (Messages.Any(x => x.MessageIndex == chatMessage.MessageIndex)) // Modification, Deletion
+                {
+                    arrIdx = Messages.IndexOf(Messages.Single(x => x.MessageIndex == chatMessage.MessageIndex));
+                    if (arrIdx != -1)
+                    {
+                        Messages[arrIdx] = chatMessage;
+                    }
+                }
+                else // New message
+                {
+                    Messages.Insert(arrIdx, chatMessage);
+                }
                 if (arrIdx == 0 && ChatListItem != null)
                 {
                     ChatListItem.IsLastMessageRead = LastMessageVisible && ChatListItem.IsAppearing; //when page is appearing, the last message is read
-                    var msg = chatMessage.MessageType == ChatMessageType.Text ? (chatMessage.IsThumbsUp ? "👍" : chatMessage.Message)
-                        : chatMessage.MessageType  == ChatMessageType.Attachment ? res.LastMessageIsImage : null;
+                    var msg = chatMessage.IsDeleted ? res.ChatMessageIsDeleted
+                        : chatMessage.MessageType == ChatMessageType.Text ? (chatMessage.IsThumbsUp ? "👍" : chatMessage.Message)
+                        : chatMessage.MessageType  == ChatMessageType.Attachment ? res.ChatMessageIsImage : null;
                     ChatListItem.LastMessage = $"{(chatMessage.IsOwnMessage ? res.You : chatMessage.OwnerFirstName)}: {msg}";
                     if (!ChatListItem.IsAppearing && chatMessage.MessageIndex >= LastReadMsgIdxWhenAppearing + Constants.ChatMinPendingMsg)
                     {
@@ -291,6 +310,7 @@ namespace goFriend.ViewModels
 
                 if (ChatListItem != null && !ChatListItem.IsAppearing && !chatMessage.IsOwnMessage && !IsMute)
                 {
+                    App.SapChatNewMessage.Play();
                     Vibration.Vibrate();
                 }
                 Logger.Debug($"Message {chatMessage.Id}, ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex} received. Added at {arrIdx}.");

@@ -40,7 +40,7 @@ namespace goFriend.Controls
         private ApiGetGroupsModel _selectedGroup;
         private List<string> _arrFixedCats;
         private string[] _arrCatValues;
-        private bool isSelectionEventEnabled = true;
+        private bool _isSelectionEventEnabled = true;
 
         public DphFriendSelection()
         {
@@ -135,7 +135,7 @@ namespace goFriend.Controls
                         {
                             FontSize = LblGroup.FontSize,
                             VerticalOptions = LblGroup.VerticalOptions,
-                            TextColor = LblGroup.TextColor,
+                            TextColor = LblName.TextColor,
                             IsVisible = IsShowingCategories,
                             Text = $"{arrCats[i + _arrFixedCats.Count]}:"
                         };
@@ -162,8 +162,8 @@ namespace goFriend.Controls
                         var localI = i;
                         picker.SelectedIndexChanged += async (o, args) =>
                         {
-                            if (!isSelectionEventEnabled) return;;
-                            isSelectionEventEnabled = false; // Do not fire selection event of the picker children
+                            if (!_isSelectionEventEnabled) return;;
+                            _isSelectionEventEnabled = false; // Do not fire selection event of the picker children
                             UserDialogs.Instance.ShowLoading(res.Processing);
                             //Logger.Debug($"localI={localI}");
                             var arrCatValuesLen = localI + 1;
@@ -193,7 +193,7 @@ namespace goFriend.Controls
                             }
                             UserDialogs.Instance.HideLoading();
                             EntryName.ReturnCommand.Execute(null);
-                            isSelectionEventEnabled = true; // Restore the initial value
+                            _isSelectionEventEnabled = true; // Restore the initial value
                             //_onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
                         };
                         Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });

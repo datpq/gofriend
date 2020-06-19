@@ -414,7 +414,7 @@
   <data name="MsgNoPhotosPermission" xml:space="preserve">
     <value>Không có quyền truy cập thư viện ảnh</value>
   </data>
-  <data name="LastMessageIsImage" xml:space="preserve">
+  <data name="ChatMessageIsImage" xml:space="preserve">
     <value>Gửi ảnh</value>
   </data>
   <data name="Online" xml:space="preserve">
@@ -425,5 +425,11 @@
   </data>
   <data name="MsgDataRequired" xml:space="preserve">
     <value>Thiếu thông tin về {0}</value>
+  </data>
+  <data name="ChatMessageIsDeleted" xml:space="preserve">
+    <value>Xóa tin nhắn</value>
+  </data>
+  <data name="MsgDeleteConfirm" xml:space="preserve">
+    <value>Bạn thực sự muốn xóa?</value>
   </data>
 </root>

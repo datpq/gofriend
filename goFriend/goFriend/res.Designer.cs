@@ -169,6 +169,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ChatMessageIsDeleted {
+            get {
+                return ResourceManager.GetString("ChatMessageIsDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ChatMessageIsImage {
+            get {
+                return ResourceManager.GetString("ChatMessageIsImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [Clear selection].
         /// </summary>
         public static string ClearSelection {
@@ -340,15 +358,6 @@ namespace goFriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string LastMessageIsImage {
-            get {
-                return ResourceManager.GetString("LastMessageIsImage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Last Name.
         /// </summary>
         public static string LastName {
@@ -462,6 +471,15 @@ namespace goFriend {
         public static string MsgDataRequired {
             get {
                 return ResourceManager.GetString("MsgDataRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgDeleteConfirm {
+            get {
+                return ResourceManager.GetString("MsgDeleteConfirm", resourceCulture);
             }
         }
         

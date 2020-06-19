@@ -3,12 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-             xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
+             xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
-             x:Class="goFriend.Views.ChatOutgoingAttachmentViewCell">
+             x:Class="goFriend.Views.ChatOutgoingDeletedViewCell">
     <ViewCell.View>
-        <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0" RowSpacing="0">
+        <Grid Margin="15,5,0,5" Rotation="180" ColumnSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -21,17 +20,11 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
-                <Frame CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="0" HasShadow="False"
-                       IsClippedToBounds="True" x:Name="FraMessage">
-                    <Image Source="{Binding Attachments, StringFormat='https://gofriendstorage.blob.core.windows.net/chat/{0}'}">
-                        <Image.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="Attachments_Tapped" NumberOfTapsRequired="1" />
-                        </Image.GestureRecognizers>
-                    </Image>
-                    <Frame.Effects>
-                        <helpers:LongPressedEffect />
-                    </Frame.Effects>
-                    <!--<ff:CachedImage Source="{Binding Attachments, StringFormat='https://gofriendstorage.blob.core.windows.net/chat/{0}'}"/>-->
+                <Frame BackgroundColor="White" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="10" HasShadow="False"
+                       BorderColor="LightGray">
+                    <Label LineBreakMode="WordWrap" Text="{Binding Message}"
+                           TextColor="LightGray"  FontSize="{StaticResource LblFontSize}"
+                           VerticalOptions="FillAndExpand" />
                 </Frame>
                 <Label Grid.Column="1" Text="{Binding CreatedDate, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="End" VerticalTextAlignment="End"
                        TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"/>

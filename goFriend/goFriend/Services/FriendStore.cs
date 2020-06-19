@@ -40,7 +40,7 @@ namespace goFriend.Services
             //    _hubConnection.On<IChatMessage>(messageType.ToString(), ChatReceiveMessage);
             //}
             ChatHubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
-            ChatHubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), ChatReceiveAttachement);
+            ChatHubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), ChatReceiveAttachment);
             ChatHubConnection.Closed += HubConnectionOnClosed;
             ChatHubConnection.Reconnected += HubConnectionOnReconnected;
             Connectivity.ConnectivityChanged += ConnectivityOnConnectivityChanged;
@@ -1052,6 +1052,7 @@ namespace goFriend.Services
             Logger.Debug($"SendText.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Message={chatMessage.Message})");
             try
             {
+                Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)}");
                 await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
@@ -1082,11 +1083,11 @@ namespace goFriend.Services
         //    }
         //}
 
-        private void ChatReceiveAttachement(ChatMessage chatMessage)
+        private void ChatReceiveAttachment(ChatMessage chatMessage)
         {
-            Logger.Debug($"ChatReceiveAttachement.BEGIN(MessageType={chatMessage.MessageType})");
+            Logger.Debug($"ChatReceiveAttachment.BEGIN(MessageType={chatMessage.MessageType})");
             ChatReceiveMessage(chatMessage);
-            Logger.Debug($"ChatReceiveAttachement.END");
+            Logger.Debug($"ChatReceiveAttachment.END");
         }
 
         private void ChatReceiveMessage(ChatMessage chatMessage)

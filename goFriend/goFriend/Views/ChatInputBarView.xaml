@@ -17,17 +17,17 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
+        <ImageButton x:Name="BtnShowAttachments" Grid.Column="0" Source="{Static local:Constants.ImgFolderClose}" Clicked="BtnShowAttachments_OnClicked"  BackgroundColor="White"
+                     VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="0,0,0,7" HeightRequest="30" WidthRequest="25"/>
         <ImageButton x:Name="BtnCamera" Grid.Column="0" Source="{Static local:Constants.ImgCamera}" Clicked="BtnCamera_OnClicked" BackgroundColor="White"
-               VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="5,0,5,8" HeightRequest="30">
-        </ImageButton>
+                     VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="5,0,5,8" HeightRequest="30"/>
         <ImageButton x:Name="BtnPhoto" Grid.Column="1" Source="{Static local:Constants.ImgPhoto}" Clicked="BtnPhoto_OnClicked" BackgroundColor="White"
-               VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="5,0,5,8" HeightRequest="30">
-        </ImageButton>
+                     VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="5,0,5,8" HeightRequest="30"/>
         <Frame Grid.Column="2" CornerRadius="20" BackgroundColor="#F3F3F3" HorizontalOptions="FillAndExpand" Padding="10,0" HasShadow="False"
                Margin="5,0,0,0">
             <controls:ExtendedEditorControl x:Name="ChatTextInput" BackgroundColor="#F3F3F3"
                 Margin="1" Keyboard="Chat" IsExpandable="True" HorizontalOptions="FillAndExpand"
-                Focused="ChatTextInput_OnFocused" Unfocused="ChatTextInput_OnUnfocused"
+                Focused="ChatTextInput_OnFocused" Unfocused="ChatTextInput_OnUnfocused" TextChanged="ChatTextInput_OnTextChanged"
                 TextColor="{StaticResource ColorLabel}" PlaceholderColor="Gray" Placeholder="{Static local:res.TypeMsgHere}"
                 Text="{Binding Message}"/>
         </Frame>

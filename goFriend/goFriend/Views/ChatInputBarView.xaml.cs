@@ -13,6 +13,7 @@ namespace goFriend.Views
         public ChatInputBarView()
         {
             InitializeComponent();
+            ChatTextInput_OnUnfocused(null, null);
         }
 
         private void ImgSend_OnTapped(object sender, EventArgs e)
@@ -89,11 +90,29 @@ namespace goFriend.Views
         private void ChatTextInput_OnFocused(object sender, FocusEventArgs e)
         {
             BtnCamera.IsVisible = BtnPhoto.IsVisible = false;
+            BtnShowAttachments.IsVisible = true;
         }
 
         private void ChatTextInput_OnUnfocused(object sender, FocusEventArgs e)
         {
+            BtnShowAttachments_OnClicked(null, null);
+        }
+
+        private void BtnShowAttachments_OnClicked(object sender, EventArgs e)
+        {
             BtnCamera.IsVisible = BtnPhoto.IsVisible = true;
+            BtnShowAttachments.IsVisible = false;
+        }
+
+        private void ChatTextInput_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(ChatTextInput.Text) && BtnShowAttachments.IsVisible)
+            {
+                BtnShowAttachments_OnClicked(null, null);
+            } else if (!string.IsNullOrEmpty(ChatTextInput.Text) && !BtnShowAttachments.IsVisible)
+            {
+                ChatTextInput_OnFocused(null, null);
+            }
         }
     }
 }

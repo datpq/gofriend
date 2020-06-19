@@ -17,6 +17,8 @@
         public const int ChatStartIdxToHideScrollUp = 10;
         public const int ChatPingFrequence = 5; //in minutes
 
+        public const string ImgFolderOpen = "folder_open.png";
+        public const string ImgFolderClose = "folder_close.png";
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";
         public const string ImgGroupAdmin = "group_admin";
