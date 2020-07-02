@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using goFriend.Controls;
 using goFriend.Services;
 using Xamarin.Forms;
 
@@ -121,7 +122,6 @@ namespace goFriend.ViewModels
     {
         public int Id { get; set; }
         public object SelectedObject { get; set; }
-        public double ImageSize { get; set; } = 65;
         public string ImageUrl { get; set; }
         public string OverlappingImageUrl { get; set; }
 

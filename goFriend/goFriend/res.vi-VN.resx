@@ -432,4 +432,13 @@
   <data name="MsgDeleteConfirm" xml:space="preserve">
     <value>Bạn thực sự muốn xóa?</value>
   </data>
+  <data name="ChatNew" xml:space="preserve">
+    <value>Tạo nhóm mới</value>
+  </data>
+  <data name="ChatMessageCreateChat" xml:space="preserve">
+    <value>{0} tạo nhóm vào lúc {1:H:mm}</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>Hệ thống</value>
+  </data>
 </root>

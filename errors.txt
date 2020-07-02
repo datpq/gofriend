@@ -35,6 +35,10 @@
 - Android ABI mismatch. You are deploying an app supporting 'armeabi-v7a;arm64-v8a' ABIs to an incompatible device of ABI 'x86'. You should either create an emulator matching one of your app's ABIs or add 'x86' to the list of ABIs your app builds for.		 	0	
 	- https://georgik.rocks/xamarin-visual-studio-error-adb0020-android-abi-mismatch/
 		Select Android Options, scroll down. In right bottom corner click Advanced button. --> select desired architecture, e.g. x86, x86_x64.
+- Failed to generate Java type for class: due to MAX_PATH: System.IO.DirectoryNotFoundException: Could not find a part of the path
+	--> copy solution to C;\temp to make the path shorter
+- :XamlC error XFC0000: Cannot resolve type "ViewCell"
+	- Close Visual Studio, remove bin, obj directories
 - More than one device connected, please provide
 	- unplug USB to Samsung
 - Nlog

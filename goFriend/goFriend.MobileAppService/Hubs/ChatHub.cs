@@ -11,6 +11,7 @@ using goFriend.Services;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using NLog;
+using Extension = goFriend.DataModel.Extension;
 
 namespace goFriend.MobileAppService.Hubs
 {
@@ -290,6 +291,70 @@ namespace goFriend.MobileAppService.Hubs
             Clients.Client(Context.ConnectionId).SendAsync("echo", user, message + " (echo from server)");
 
             Logger.Debug("END");
+        }
+
+        public async Task CreateChat(Chat chat)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"CreateChat.BEGIN({chat.Name}, OwnerId={chat.OwnerId}, Token={chat.Token}, Members={chat.Members})");
+
+                #region Data Validation
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == chat.OwnerId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    //return Message.MsgUserNotFound;
+                    return;
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(chat.Token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    //return Message.MsgWrongToken;
+                    return;
+                }
+
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                //rearrange members, order by Id
+                var arrMembers = chat.Members.Split(Extension.Sep.ToCharArray());
+                Array.Sort(arrMembers);
+                chat.Members = string.Join(Extension.Sep, arrMembers);
+
+                var sameMemberChats = _dataRepo.GetMany<Chat>(x => x.Members == chat.Members);
+                if (sameMemberChats.Any())
+                {
+                    Logger.Error("Chat already created");
+                }
+                else
+                {
+                    chat.CreatedDate = DateTime.UtcNow;
+                    _dataRepo.Add(chat);
+                    _dataRepo.Commit();
+                }
+
+                Logger.Debug($"New chat created Id={chat.Id}. Refresh cache for all the members");
+                foreach (var u in chat.Members.Split(Extension.Sep.ToCharArray()).Where(x => x.StartsWith('u')))
+                {
+                    var memberId = u.Substring(1);
+                    _cacheService.Remove($".GetChats.{memberId}."); // refresh GetChats
+                }
+                chat.Token = null;
+                await Clients.All.SendAsync(ChatMessageType.CreateChat.ToString(), chat);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("CreateChat.END");
+            }
         }
 
         public override Task OnConnectedAsync()

@@ -41,6 +41,7 @@ namespace goFriend.Services
             //}
             ChatHubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
             ChatHubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), ChatReceiveAttachment);
+            ChatHubConnection.On<Chat>(ChatMessageType.CreateChat.ToString(), ChatReceiveCreateChat);
             ChatHubConnection.Closed += HubConnectionOnClosed;
             ChatHubConnection.Reconnected += HubConnectionOnReconnected;
             Connectivity.ConnectivityChanged += ConnectivityOnConnectivityChanged;
@@ -658,6 +659,59 @@ namespace goFriend.Services
             }
         }
 
+        public async Task<Friend> GetFriendInfo(int otherFriendId, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Friend result = null;
+            try
+            {
+                Logger.Debug($"GetFriendInfo.BEGIN(otherFriendId={otherFriendId}, useCache={useCache})");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetFriendInfo/{App.User.Id}/{otherFriendId}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<Friend>(jsonString.Result);
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    throw new GoException(msg);
+                }
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.TrackError(e);
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetFriendInfo.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         public async Task<IEnumerable<Notification>> GetNotifications(int top = 0, int skip = 0, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
@@ -1065,6 +1119,30 @@ namespace goFriend.Services
             }
         }
 
+        public async Task SendCreateChat(Chat chat)
+        {
+            Logger.Debug($"SendCreateChat.BEGIN(Name={chat.Name}, Members={chat.Members})");
+            try
+            {
+                chat.Token = App.User.Token.ToString();
+                chat.OwnerId = App.User.Id;
+                if (!chat.MembersContain(App.User.Id))
+                {
+                    chat.Members = $"u{App.User.Id}{DataModel.Extension.Sep}{chat.Members}";
+                }
+                Logger.Debug($"chat={JsonConvert.SerializeObject(chat)}");
+                await ChatHubConnection.InvokeAsync<Chat>(ChatMessageType.CreateChat.ToString(), chat);
+            }
+            catch (Exception e)
+            {
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug("SendCreateChat.END");
+            }
+        }
+
         //private void ChatReceivePing()
         //{
         //    var stopWatch = Stopwatch.StartNew();
@@ -1119,6 +1197,28 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"ChatReceiveMessage.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        private void ChatReceiveCreateChat(Chat chat)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"ChatReceiveCreateChat.BEGIN");
+                Logger.Debug($"chat={JsonConvert.SerializeObject(chat)})");
+                if (chat.Members.Split(DataModel.Extension.Sep.ToCharArray()).Any(x => x == $"u{App.User.Id}"))
+                {
+                    Logger.Debug($"New chat for me created. Refresh the list of chat");
+                }
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug($"ChatReceiveCreateChat.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

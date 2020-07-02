@@ -432,4 +432,13 @@
   <data name="MsgDeleteConfirm" xml:space="preserve">
     <value />
   </data>
+  <data name="ChatNew" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChatMessageCreateChat" xml:space="preserve">
+    <value>{0} created the group at {1:H:mm}</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value />
+  </data>
 </root>

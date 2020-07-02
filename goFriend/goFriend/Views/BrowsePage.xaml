@@ -20,13 +20,7 @@
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout Margin="10,0,10,0">
-                <controls:DphFriendSelection x:Name="DphFriendSelection"></controls:DphFriendSelection>
-            </StackLayout>
-            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <StackLayout VerticalOptions="FillAndExpand">
-                <controls:DphListView x:Name="DphListView" Timeout="15" />
-            </StackLayout>
+            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.BigImage}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

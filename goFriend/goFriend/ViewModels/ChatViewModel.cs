@@ -282,9 +282,9 @@ namespace goFriend.ViewModels
                     }
                 }
 
-                if (Messages.Any(x => x.MessageIndex == chatMessage.MessageIndex)) // Modification, Deletion
+                if (Messages.Any(x => x.MessageIndex == chatMessage.MessageIndex && !x.IsSystemMessage)) // Modification, Deletion
                 {
-                    arrIdx = Messages.IndexOf(Messages.Single(x => x.MessageIndex == chatMessage.MessageIndex));
+                    arrIdx = Messages.IndexOf(Messages.Single(x => x.MessageIndex == chatMessage.MessageIndex && !x.IsSystemMessage));
                     if (arrIdx != -1)
                     {
                         Messages[arrIdx] = chatMessage;
@@ -294,7 +294,7 @@ namespace goFriend.ViewModels
                 {
                     Messages.Insert(arrIdx, chatMessage);
                 }
-                if (arrIdx == 0 && ChatListItem != null)
+                if (arrIdx == 0 && ChatListItem != null && !chatMessage.IsSystemMessage)
                 {
                     ChatListItem.IsLastMessageRead = LastMessageVisible && ChatListItem.IsAppearing; //when page is appearing, the last message is read
                     var msg = chatMessage.IsDeleted ? res.ChatMessageIsDeleted

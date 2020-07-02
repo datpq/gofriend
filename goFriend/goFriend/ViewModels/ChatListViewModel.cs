@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using goFriend.DataModel;
 using goFriend.Helpers;
 using goFriend.Services;
 using PCLAppConfig;
@@ -48,6 +49,10 @@ namespace goFriend.ViewModels
                 var myChats = await App.FriendStore.ChatGetChats();
                 foreach (var chat in myChats)
                 {
+                    if (!chat.OwnerId.HasValue)
+                    {
+                        chat.OwnerId = 0;
+                    }
                     if (chat.LogoUrl == null)
                     {
                         chat.LogoUrl = "/logos/group.png";
@@ -63,7 +68,24 @@ namespace goFriend.ViewModels
                     else
                     {
                         Logger.Debug($"Adding new chat {chat.Name}{chat.Id})");
-                        ChatListItems.Add(new ChatListItemViewModel {Chat = chat});
+                        var chatListItemVm = new ChatListItemViewModel {Chat = chat};
+                        if (chat.OwnerId != 0)
+                        {
+                            chat.Owner = await App.FriendStore.GetFriendInfo(chat.OwnerId.Value);
+                        }
+                        ChatListItems.Add(chatListItemVm);
+                        chatListItemVm.ChatViewModel.ReceiveMessage(
+                            new ChatMessage
+                            {
+                                OwnerId = 0,
+                                Chat = chat,
+                                ChatId = chat.Id,
+                                CreatedDate = chat.CreatedDate,
+                                Message = string.Format(res.ChatMessageCreateChat,
+                                    chat.OwnerId == 0 ? res.System : chat.Owner?.FirstName, chat.CreatedDate.ToLocalTime()),
+                                MessageIndex = 0,
+                                MessageType = ChatMessageType.CreateChat
+                            });
                     }
                 }
 

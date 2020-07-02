@@ -114,8 +114,8 @@ namespace goFriend.Views
                                     : string.Empty, LineHeight = 1.3}
                             }
                         },
-                        Button1ImageSource = "deny.png",
-                        Button2ImageSource = "accept.png"
+                        Button1ImageSource = Constants.ImgDeny,
+                        Button2ImageSource = Constants.ImgAccept,
                     });
                     return result;
                 });

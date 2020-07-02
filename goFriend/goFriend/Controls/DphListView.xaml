@@ -23,7 +23,9 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <controls:DphOverlapImage WidthRequest="{Binding ImageSize}" HeightRequest="{Binding ImageSize}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                                    <controls:DphOverlapImage WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type controls:DphListView}}, Path=ImageSize}"
+                                                              HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type controls:DphListView}}, Path=ImageSize}"
+                                                              HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
                                                               Grid.Row="0" Grid.Column="0" Margin="10,5,5,5"
                                                               Source1="{Binding ImageUrl}"
                                                               Source2="{Binding OverlappingImageUrl}">

@@ -37,8 +37,8 @@ namespace goFriend.Controls
         public string SelectedGroupName { get; set; }
 
         //search criteria
-        private ApiGetGroupsModel _selectedGroup;
-        private List<string> _arrFixedCats;
+        public ApiGetGroupsModel SelectedGroup { get; private set; }
+        public List<string> ArrFixedCats { get; private set; }
         private string[] _arrCatValues;
         private bool _isSelectionEventEnabled = true;
 
@@ -54,8 +54,8 @@ namespace goFriend.Controls
             });
             EntryName.ReturnCommand = new Command(() =>
             {
-                if (_selectedGroup == null) return;
-                _onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
+                if (SelectedGroup == null) return;
+                _onSelectionAction?.Invoke(SelectedGroup, EntryName.Text, ArrFixedCats, _arrCatValues);
             });
 
             Refresh();
@@ -109,9 +109,9 @@ namespace goFriend.Controls
             {
                 Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                _selectedGroup = PickerGroups.SelectedItem as ApiGetGroupsModel;
-                if (_selectedGroup == null) return;
-                SelectedGroupName = _selectedGroup.Group.Name;
+                SelectedGroup = PickerGroups.SelectedItem as ApiGetGroupsModel;
+                if (SelectedGroup == null) return;
+                SelectedGroupName = SelectedGroup.Group.Name;
                 var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex).ToList();
                 foreach (var child in rowToRemove)
                 {
@@ -121,14 +121,14 @@ namespace goFriend.Controls
                 {
                     Grid.RowDefinitions.RemoveAt(DynamicRowStartIndex);
                 }
-                var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(_selectedGroup.Group.Id);
-                var arrCats = _selectedGroup.Group.GetCatDescList().ToList();
-                _arrFixedCats = groupFixedCatValues == null ? new List<string>() : groupFixedCatValues.GetCatList().ToList();
+                var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(SelectedGroup.Group.Id);
+                var arrCats = SelectedGroup.Group.GetCatDescList().ToList();
+                ArrFixedCats = groupFixedCatValues == null ? new List<string>() : groupFixedCatValues.GetCatList().ToList();
 
                 if (IsExpandableCategories || IsShowingCategories)
                 {
-                    var arrPickers = new Picker[arrCats.Count - _arrFixedCats.Count];
-                    for (var i = 0; i < arrCats.Count - _arrFixedCats.Count; i++)
+                    var arrPickers = new Picker[arrCats.Count - ArrFixedCats.Count];
+                    for (var i = 0; i < arrCats.Count - ArrFixedCats.Count; i++)
                     {
                         //Logger.Debug($"i={i}");
                         var lbl = new Label
@@ -137,7 +137,7 @@ namespace goFriend.Controls
                             VerticalOptions = LblGroup.VerticalOptions,
                             TextColor = LblName.TextColor,
                             IsVisible = IsShowingCategories,
-                            Text = $"{arrCats[i + _arrFixedCats.Count]}:"
+                            Text = $"{arrCats[i + ArrFixedCats.Count]}:"
                         };
                         Grid.SetColumn(lbl, 0);
                         Grid.SetRow(lbl, i + DynamicRowStartIndex);
@@ -149,12 +149,12 @@ namespace goFriend.Controls
                             //ItemDisplayBinding = new Binding("Display"),
                             ItemDisplayBinding = PickerGroups.ItemDisplayBinding,
                             IsVisible = IsShowingCategories,
-                            Title = $"{res.Select} {arrCats[i + _arrFixedCats.Count]}"
+                            Title = $"{res.Select} {arrCats[i + ArrFixedCats.Count]}"
                         };
                         arrPickers[i] = picker;
                         if (i == 0)
                         {
-                            var groupCatValues = await App.FriendStore.GetGroupCatValues(_selectedGroup.Group.Id);
+                            var groupCatValues = await App.FriendStore.GetGroupCatValues(SelectedGroup.Group.Id);
                             var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
                                 .Concat(groupCatValues.ToList());
                             picker.ItemsSource = itemSourceList.ToList();
@@ -181,7 +181,7 @@ namespace goFriend.Controls
                                 if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
                                 {
                                     var localJ = j;
-                                    var groupCatValues = await App.FriendStore.GetGroupCatValues(_selectedGroup.Group.Id, true, _arrCatValues);
+                                    var groupCatValues = await App.FriendStore.GetGroupCatValues(SelectedGroup.Group.Id, true, _arrCatValues);
                                     var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
                                         .Concat(groupCatValues.ToList());
                                     arrPickers[localJ].ItemsSource = itemSourceList.ToList();
@@ -229,7 +229,7 @@ namespace goFriend.Controls
         private void CmdExpandCategories_OnClicked(object sender, EventArgs e)
         {
             IsShowingCategories = !IsShowingCategories;
-            CmdExpandCategories.ImageSource = IsShowingCategories ? "folder_open.png" : "folder_close.png";
+            CmdExpandCategories.ImageSource = IsShowingCategories ? Constants.ImgFolderOpen : Constants.ImgFolderClose;
             foreach (var child in Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex))
             {
                 child.IsVisible = IsShowingCategories;

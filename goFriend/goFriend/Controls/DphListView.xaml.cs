@@ -11,10 +11,21 @@ namespace goFriend.Controls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DphListView : ContentView
     {
+        public const double BigImage = 65;
+        public const double MediumImage = 50;
+
         private readonly DphListViewModel _dphListViewModel;
         private Action<DphListViewItemModel> _cellOnTapped;
         //private Func<Task<IEnumerable<DphListViewItemModel>>> _getListViewItemsFunc;
         private DateTime _lastRefreshDateTime = DateTime.Today.AddYears(-1); //default value is a very small value
+
+        public static readonly BindableProperty ImageSizeProperty =
+            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphListView), DphListView.BigImage);
+        public double ImageSize
+        {
+            get => (double)GetValue(ImageSizeProperty);
+            set => SetValue(ImageSizeProperty, value);
+        }
 
         public static readonly BindableProperty TimeoutProperty =
             BindableProperty.CreateAttached(nameof(Timeout), typeof(int), typeof(DphListView), 0);

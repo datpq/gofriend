@@ -169,6 +169,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} created the group at {1:H:mm}.
+        /// </summary>
+        public static string ChatMessageCreateChat {
+            get {
+                return ResourceManager.GetString("ChatMessageCreateChat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
         public static string ChatMessageIsDeleted {
@@ -183,6 +192,15 @@ namespace goFriend {
         public static string ChatMessageIsImage {
             get {
                 return ResourceManager.GetString("ChatMessageIsImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ChatNew {
+            get {
+                return ResourceManager.GetString("ChatNew", resourceCulture);
             }
         }
         
@@ -939,6 +957,15 @@ namespace goFriend {
         public static string SubscribeGroup {
             get {
                 return ResourceManager.GetString("SubscribeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string System {
+            get {
+                return ResourceManager.GetString("System", resourceCulture);
             }
         }
         

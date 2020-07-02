@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -50,6 +51,20 @@ namespace goFriend.DataModel
                 default:
                     return (char.ToUpper(str[0]) + str.Substring(1));
             }
+        }
+
+        //public static bool MembersEqual(this Chat chat1, Chat chat2)
+        //{
+        //    var arrMembers1 = chat1.Members.Split(Sep.ToCharArray());
+        //    Array.Sort(arrMembers1);
+        //    var arrMembers2 = chat2.Members.Split(Sep.ToCharArray());
+        //    Array.Sort(arrMembers2);
+        //    return arrMembers1.SequenceEqual(arrMembers2);
+        //}
+
+        public static bool MembersContain(this Chat chat, int memberId)
+        {
+            return $"{Sep}{chat.Members}{Sep}".IndexOf($"{Sep}u{memberId}{Sep}", StringComparison.Ordinal) >= 0;
         }
 
         /// <summary>

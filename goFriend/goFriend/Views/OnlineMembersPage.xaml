@@ -22,7 +22,7 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
-            <controls:DphListView x:Name="DphListView" Timeout="5" />
+            <controls:DphListView x:Name="DphListView" Timeout="5" ImageSize="{Static controls:DphListView.MediumImage}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

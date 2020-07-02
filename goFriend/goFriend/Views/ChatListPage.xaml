@@ -19,9 +19,12 @@
             </On>
         </OnPlatform>
     </ContentPage.BackgroundColor>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="MnuAddNew" Text="{Static local:res.ChatNew}" Order="Secondary" Priority="0" Clicked="MnuAddNew_Clicked" />
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
-            <controls:DphListView x:Name="DphListView" Timeout="5" />
+            <controls:DphListView x:Name="DphListView" Timeout="5" ImageSize="{Static controls:DphListView.MediumImage}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

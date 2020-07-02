@@ -32,7 +32,7 @@
                 <Label Grid.Column="0" Grid.Row="1" Text="{Binding CreatedDate, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="Start" VerticalTextAlignment="End"
                      TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
                 <Image Margin="20,0" Grid.Column="1" Grid.Row="1" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsThumbsUp}" Source="thumbsup.png" />
-                <Frame x:Name="FraMessage"  Grid.Column="1" Grid.Row="1" BackgroundColor="#F0F0F0" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False"
+                <Frame x:Name="FraMessage"  Grid.Column="1" Grid.Row="1" BackgroundColor="{StaticResource ColorChatGray}" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False"
                        IsVisible="{Binding IsThumbsUp, Converter={StaticResource InverseBoolConverter}}">
                     <Label LineBreakMode="WordWrap"
                          FormattedText="{Binding MessageLinkify, Converter={StaticResource HtmlLabelConverter}}"

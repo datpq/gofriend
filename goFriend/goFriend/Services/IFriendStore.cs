@@ -20,6 +20,7 @@ namespace goFriend.Services
         Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useClientCache = true, bool useCache = true);
         Task<Friend> GetProfile(bool useCache = true);
         Task<Friend> GetFriend(int groupId, int otherFriendId, bool useCache = true);
+        Task<Friend> GetFriendInfo(int otherFriendId, bool useCache = true);
         Task<bool> ReadNotification(string notifIds);
         Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight);
         Task<bool> SubscribeGroup(GroupFriend groupFriend);
@@ -31,6 +32,7 @@ namespace goFriend.Services
         Task SendText(ChatMessage chatMessage);
         Task SendAttachment(ChatMessage chatMessage);
         Task<IEnumerable<ChatFriendOnline>> SendPing(int chatId);
+        Task SendCreateChat(Chat chat);
         Task<IEnumerable<ChatMessage>> ChatGetMessages(int chatId, int startMsgIdx, int stopMsgIdx, int pageSize);
         Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true);
     }

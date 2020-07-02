@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Frame
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:helpers="clr-namespace:goFriend.Helpers"
+    xmlns:controls="clr-namespace:goFriend.Controls"
+    xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+    x:Name="chipRoot"
+    x:DataType="controls:Chip"
+    x:Class="goFriend.Controls.Chip"
+    HasShadow="False"
+    CornerRadius="10"
+    VerticalOptions="Center"
+    HorizontalOptions="Center"
+    Padding="5, 3"
+    Margin="0, 0">
+
+    <Frame.Resources>
+        <ResourceDictionary>
+            <helpers:HasValueConverter x:Key="HasValueConverter" />
+        </ResourceDictionary>
+    </Frame.Resources>
+
+    <Frame.GestureRecognizers>
+        <TapGestureRecognizer Tapped="Clicked" />
+    </Frame.GestureRecognizers>
+
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="CommonStates">
+            <VisualState x:Name="Selected">
+                <VisualState.Setters>
+                    <Setter Property="BackgroundColor" Value="{Binding SelectedBackgroundColor, Source={Reference chipRoot}}" />
+                    <Setter Property="HasShadow" Value="{Binding SelectedHasShadow, Source={Reference chipRoot}}" />
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="Unselected">
+                <VisualState.Setters>
+                    <Setter Property="BackgroundColor" Value="{Binding UnselectedBackgroundColor, Source={Reference chipRoot}}" />
+                    <Setter Property="HasShadow" Value="{Binding UnselectedHasShadow, Source={Reference chipRoot}}" />
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+
+    <Frame.Content>
+        <StackLayout
+            BindingContext="{Binding ., Source={Reference chipRoot}}"
+            Orientation="Horizontal"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            x:DataType="controls:Chip">
+
+            <ff:CachedImage IsVisible="{Binding Image, Converter={StaticResource HasValueConverter}}" Source="{Binding Image}"
+                            WidthRequest="20" HeightRequest="20">
+                <ff:CachedImage.Transformations>
+                    <ffTransformations:CircleTransformation/>
+                </ff:CachedImage.Transformations>
+            </ff:CachedImage>
+
+            <Label
+                IsVisible="{Binding Text, Converter={StaticResource HasValueConverter}}"
+                Text="{Binding Text}"
+                d:Text="Chip"
+                FontFamily="{Binding FontFamily}"
+                FontSize="{Binding FontSize}"
+                TextColor="{Binding TextColor}"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                VerticalTextAlignment="Center"
+                HorizontalTextAlignment="Center" />
+
+            <Image
+                IsVisible="{Binding CloseImage, Converter={StaticResource HasValueConverter}}"
+                Source="{Binding CloseImage}"
+                d:IsVisible="False">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="CloseButton_Clicked" />
+                </Image.GestureRecognizers>
+            </Image>
+        </StackLayout>
+    </Frame.Content>
+</Frame>

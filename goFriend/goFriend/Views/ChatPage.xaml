@@ -53,7 +53,7 @@
                    HeightRequest="50" WidthRequest="50"
                    CornerRadius="25"
                    Padding="1"
-                   BackgroundColor="#F0F0F0"
+                   BackgroundColor="{StaticResource ColorChatGray}"
                    IsVisible="{Binding ShowScrollTapUp,Mode=TwoWay}">
                 <StackLayout Spacing="3">
                     <Image Source="ic_scrollup"
@@ -76,7 +76,7 @@
                    HeightRequest="50" WidthRequest="50"
                    CornerRadius="25"
                    Padding="1"
-                   BackgroundColor="#F0F0F0"
+                   BackgroundColor="{StaticResource ColorChatGray}"
                    IsVisible="{Binding ShowScrollTapDown,Mode=TwoWay}">
                 <StackLayout Spacing="3">
                     <Image Source="ic_scrolldown"

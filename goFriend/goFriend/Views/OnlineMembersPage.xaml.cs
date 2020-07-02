@@ -39,7 +39,6 @@ namespace goFriend.Views
                     {
                         Id = x.Friend.Id,
                         SelectedObject = x,
-                        ImageSize = 50,
                         ImageUrl = x.LogoUrl,
                         IsHighlight = x.Time.AddMinutes(Constants.ChatPingFrequence) >= now,
                         //ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100

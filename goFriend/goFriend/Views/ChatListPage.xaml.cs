@@ -46,7 +46,6 @@ namespace goFriend.Views
                 {
                     Id = x.Chat.Id,
                     SelectedObject = x,
-                    ImageSize = 50,
                     ImageUrl = x.LogoUrl,
                     IsHighlight = !x.IsLastMessageRead,
                     FormattedText = x.FormattedText
@@ -65,6 +64,11 @@ namespace goFriend.Views
                 //Logger.Debug($"IsHighlight={item.IsHighlight}, LastMessage={chatListItemVm.LastMessage}, FormattedText={item.FormattedText}");
             }
             //Logger.Debug($"RefreshLastMessage.END");
+        }
+
+        private void MnuAddNew_Clicked(object sender, System.EventArgs e)
+        {
+            Navigation.PushAsync(new ChatNew());
         }
     }
 }
