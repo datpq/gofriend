@@ -20,7 +20,7 @@ namespace goFriend.Services
         Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useClientCache = true, bool useCache = true);
         Task<Friend> GetProfile(bool useCache = true);
         Task<Friend> GetFriend(int groupId, int otherFriendId, bool useCache = true);
-        Task<Friend> GetFriendInfo(int otherFriendId, bool useCache = true);
+        Task<Friend> GetFriendInfo(int otherFriendId, bool useClientCache = true, bool useCache = true);
         Task<bool> ReadNotification(string notifIds);
         Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight);
         Task<bool> SubscribeGroup(GroupFriend groupFriend);

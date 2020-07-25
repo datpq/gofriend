@@ -14,6 +14,14 @@ namespace goFriend.Views
     {
         private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
 
+        private readonly DphOverlapImage _logo = new DphOverlapImage
+        {
+            HorizontalOptions = LayoutOptions.End,
+            WidthRequest = 40,
+            HeightRequest = 40,
+            Margin = new Thickness(0, 5), //for iOS
+        };
+
         public ChatPage(ChatListItemViewModel chatListItem)
         {
             BindingContext = chatListItem.ChatViewModel;
@@ -43,13 +51,7 @@ namespace goFriend.Views
                         FontAttributes = FontAttributes.Bold,
                         VerticalTextAlignment = TextAlignment.Center
                     },
-                    new DphOverlapImage
-                    {
-                        HorizontalOptions = LayoutOptions.End,
-                        WidthRequest = HeightRequest = 40,
-                        Margin = new Thickness(0, 5), //for iOS
-                        Source1 = chatListItem.ChatViewModel.ChatLogoUrl
-                    },
+                    _logo,
                 }
             });
 
@@ -57,6 +59,10 @@ namespace goFriend.Views
             {
                 chatListItem.IsLastMessageRead = chatListItem.IsAppearing = true;
                 await chatListItem.RefreshOnlineStatus();
+                var overlapImageInfo = await chatListItem.Chat.GetOverlapImageInfo();
+                _logo.Source1 = overlapImageInfo.ImageUrl;
+                _logo.Source2 = overlapImageInfo.OverlappingImageUrl;
+                _logo.OverlapType = overlapImageInfo.OverlapType;
             };
             Disappearing += (sender, args) => chatListItem.IsAppearing = false;
         }
@@ -211,6 +217,19 @@ namespace goFriend.Views
         {
             var vm = (ChatViewModel)BindingContext;
             Navigation.PushAsync(new OnlineMembersPage(vm));
+        }
+
+        private void MnuEditChat_OnClicked(object sender, EventArgs e)
+        {
+            var vm = (ChatViewModel)BindingContext;
+            if (vm.ChatListItem.Chat.OwnerId == App.User.Id)
+            {
+                Navigation.PushAsync(new ChatEdit(vm));
+            }
+            else
+            {
+                App.DisplayMsgError(res.MsgNoPermissionChatEdit);
+            }
         }
     }
 }

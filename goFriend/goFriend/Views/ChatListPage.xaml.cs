@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using goFriend.Controls;
+using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -42,14 +44,20 @@ namespace goFriend.Views
             });
             DphListView.LoadItems(async () =>
             {
-                var result = App.ChatListVm.ChatListItems.Select(x => new DphListViewItemModel
-                {
-                    Id = x.Chat.Id,
-                    SelectedObject = x,
-                    ImageUrl = x.LogoUrl,
-                    IsHighlight = !x.IsLastMessageRead,
-                    FormattedText = x.FormattedText
-                });
+                var result = await Task.WhenAll(App.ChatListVm.ChatListItems.Select(async x => {
+                    var item = new DphListViewItemModel
+                    {
+                        Id = x.Chat.Id,
+                        SelectedObject = x,
+                        IsHighlight = !x.IsLastMessageRead,
+                        FormattedText = x.FormattedText
+                    };
+                    var overlapImageInfo = await x.Chat.GetOverlapImageInfo();
+                    item.ImageUrl = overlapImageInfo.ImageUrl;
+                    item.OverlappingImageUrl = overlapImageInfo.OverlappingImageUrl;
+                    item.OverlapType = overlapImageInfo.OverlapType;
+                    return item;
+                }));
                 return result;
             });
         }
@@ -68,7 +76,7 @@ namespace goFriend.Views
 
         private void MnuAddNew_Clicked(object sender, System.EventArgs e)
         {
-            Navigation.PushAsync(new ChatNew());
+            Navigation.PushAsync(new ChatEdit());
         }
     }
 }

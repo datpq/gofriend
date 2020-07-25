@@ -124,6 +124,7 @@ namespace goFriend.ViewModels
         public object SelectedObject { get; set; }
         public string ImageUrl { get; set; }
         public string OverlappingImageUrl { get; set; }
+        public OverlapType OverlapType { get; set; }
 
         private bool _isHighlight = false;
         public bool IsHighlight {

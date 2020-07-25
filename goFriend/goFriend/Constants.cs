@@ -17,6 +17,10 @@
         public const int ChatStartIdxToHideScrollUp = 10;
         public const int ChatPingFrequence = 5; //in minutes
 
+        public const string AzureBackendUrl = "https://gofriend.azurewebsites.net";
+        public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
+        public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
+
         public const string ImgFolderOpen = "folder_open.png";
         public const string ImgFolderClose = "folder_close.png";
         public const string ImgAccountInfo = "account_info.png";

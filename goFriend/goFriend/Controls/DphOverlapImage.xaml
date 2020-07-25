@@ -9,22 +9,22 @@
              x:Class="goFriend.Controls.DphOverlapImage">
     <ContentView.Content>
         <RelativeLayout x:Name="RelativeLayout">
-            <ff:CachedImage x:Name="Image1"
-                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0,Constant=0}"
+            <ff:CachedImage x:Name="Image1">
+                             <!--RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0,Constant=0}"
                              RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=0}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1,Constant=0}"
-                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=1,Constant=0}">
+                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=1,Constant=0}"-->
                 <ff:CachedImage.Transformations>
                     <ffTransformations:CircleTransformation/>
                 </ff:CachedImage.Transformations>
             </ff:CachedImage>
-            <ff:CachedImage x:Name="Image2"
-                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.55,Constant=0}"
+            <ff:CachedImage x:Name="Image2">
+                             <!--RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.55,Constant=0}"
                              RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0.55,Constant=0}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.5,Constant=0}"
-                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0.5,Constant=0}">
+                             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0.5,Constant=0}"-->
                 <ff:CachedImage.Transformations>
-                    <ffTransformations:CircleTransformation/>
+                    <ffTransformations:CircleTransformation BorderSize="20" BorderHexColor="#FFFFFF"/>
                 </ff:CachedImage.Transformations>
             </ff:CachedImage>
         </RelativeLayout>

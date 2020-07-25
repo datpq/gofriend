@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.ViewModels;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
@@ -123,6 +124,51 @@ namespace goFriend
             var stream = assembly.GetManifestResourceStream($"goFriend.{filename}");
 
             return stream;
+        }
+
+        public static async Task<string> GetMemberNames(this Chat chat)
+        {
+            var arrIds = chat.GetMemberIds();
+            var arrNames = new string[arrIds.Length];
+            for (var i = 0; i < arrNames.Length; i++)
+            {
+                var friend = await App.FriendStore.GetFriendInfo(arrIds[i]);
+                arrNames[i] = friend.FirstName;
+            }
+            return string.Join(", ", arrNames);
+        }
+
+        public static async Task<DphListViewItemModel> GetOverlapImageInfo(this Chat chat)
+        {
+            var result = new DphListViewItemModel();
+            if (chat.GetChatType() == ChatType.StandardGroup)
+            {
+                result.ImageUrl = chat.LogoUrl;
+                result.OverlappingImageUrl = null;
+                result.OverlapType = OverlapType.Notification;
+            }
+            else if (chat.GetChatType() == ChatType.Individual)
+            {
+                foreach (var memberId in chat.GetMemberIds())
+                {
+                    if (memberId != App.User.Id)
+                    {
+                        var friend = await App.FriendStore.GetFriendInfo(memberId);
+                        result.ImageUrl = friend.GetImageUrl(FacebookImageType.small);
+                        break;
+                    }
+                }
+                result.OverlappingImageUrl = null;
+                result.OverlapType = OverlapType.Notification;
+            }
+            else if (chat.GetChatType() == ChatType.MixedGroup)
+            {
+                result.ImageUrl = "https://graph.facebook.com/2501980436734541/picture?type=small";
+                result.OverlappingImageUrl = App.User.GetImageUrl(FacebookImageType.small);
+                result.OverlapType = OverlapType.GroupChat;
+            }
+
+            return result;
         }
 
         /*

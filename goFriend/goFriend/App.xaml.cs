@@ -35,6 +35,7 @@ namespace goFriend
         public static IEnumerable<ApiGetGroupsModel> MyGroups;
         public static IEnumerable<ApiGetGroupsModel> AllGroups;
         public static ISimpleAudioPlayer SapChatNewMessage = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
+        public static ISimpleAudioPlayer SapChatNewChat = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
 
         public App()
         {
@@ -51,10 +52,12 @@ namespace goFriend
 
             SapChatNewMessage.Loop = false;
             SapChatNewMessage.Load(Extension.GetStreamFromFile("Audios.chat_newmsg.wav"));
+            SapChatNewChat.Loop = false;
+            SapChatNewChat.Load(Extension.GetStreamFromFile("Audios.chat_newchat.wav"));
 
             VersionTracking.Track();
             Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
-            Logger.Info($"AzureBackendUrl = {ConfigurationManager.AppSettings["AzureBackendUrl112"]}");
+            Logger.Info($"AzureBackendUrl = {Constants.AzureBackendUrlDev}");
             Logger.Debug(Extension.GetDeviceInfo());
             res.Culture = new CultureInfo("vi-VN");
             //res.Culture = new CultureInfo("");
@@ -193,35 +196,31 @@ namespace goFriend
             return tcs.Task;
         }
 
-        public static async Task JoinChats()
+        public static async Task JoinChat(ChatListItemViewModel chatListItemVm)
         {
             try
             {
-                Logger.Debug("JoinChats.BEGIN");
-                foreach (var chatListItemVm in ChatListVm.ChatListItems)
+                Logger.Debug($"JoinChat.BEGIN(Name={chatListItemVm.Name}, Id={chatListItemVm.Chat.Id})");
+                await FriendStore.ChatConnect(new ChatJoinChatModel
                 {
-                    Logger.Debug($"Joining chat {chatListItemVm.Name}({chatListItemVm.Chat.Id})");
-                    await FriendStore.ChatConnect(new ChatJoinChatModel
-                    {
-                        ChatId = chatListItemVm.Chat.Id,
-                        OwnerId = User.Id,
-                        Token = User.Token.ToString()
-                    });
-                    const int startMsgIdx = 999999;
-                    chatListItemVm.ChatViewModel.LastReadMsgIdx = chatListItemVm.ChatViewModel.Messages.Count == 0
-                        ? 0 : chatListItemVm.ChatViewModel.Messages[0].MessageIndex;
-                    var messages = await FriendStore.ChatGetMessages(chatListItemVm.Chat.Id,
-                        startMsgIdx, chatListItemVm.ChatViewModel.LastReadMsgIdx, Constants.ChatMessagePageSize);
-                    messages = messages.OrderBy(x => x.MessageIndex);
-                    foreach (var chatMessage in messages)
-                    {
-                        chatListItemVm.ChatViewModel.ReceiveMessage(chatMessage);
-                    }
-                    if (messages.Count() == Constants.ChatMessagePageSize) //there might be some missing messages not fetched yet
-                    {
-                        chatListItemVm.ChatViewModel.PendingMessageCount =
-                            (messages.Last().MessageIndex - chatListItemVm.ChatViewModel.LastReadMsgIdx).ToString();
-                    }
+                    ChatId = chatListItemVm.Chat.Id,
+                    OwnerId = User.Id,
+                    Token = User.Token.ToString()
+                });
+                const int startMsgIdx = 999999;
+                chatListItemVm.ChatViewModel.LastReadMsgIdx = chatListItemVm.ChatViewModel.Messages.Count == 0
+                    ? 0 : chatListItemVm.ChatViewModel.Messages[0].MessageIndex;
+                var messages = await FriendStore.ChatGetMessages(chatListItemVm.Chat.Id,
+                    startMsgIdx, chatListItemVm.ChatViewModel.LastReadMsgIdx, Constants.ChatMessagePageSize);
+                messages = messages.OrderBy(x => x.MessageIndex);
+                foreach (var chatMessage in messages)
+                {
+                    chatListItemVm.ChatViewModel.ReceiveMessage(chatMessage);
+                }
+                if (messages.Count() == Constants.ChatMessagePageSize) //there might be some missing messages not fetched yet
+                {
+                    chatListItemVm.ChatViewModel.PendingMessageCount =
+                        (messages.Last().MessageIndex - chatListItemVm.ChatViewModel.LastReadMsgIdx).ToString();
                 }
             }
             catch (Exception e)
@@ -230,7 +229,27 @@ namespace goFriend
             }
             finally
             {
-                Logger.Debug("JoinChats.END");
+                Logger.Debug("JoinChat.END");
+            }
+        }
+
+        public static async Task JoinAllChats()
+        {
+            try
+            {
+                Logger.Debug("JoinAllChats.BEGIN");
+                foreach (var chatListItemVm in ChatListVm.ChatListItems)
+                {
+                    await JoinChat(chatListItemVm);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("JoinAllChats.END");
             }
         }
 
@@ -252,7 +271,7 @@ namespace goFriend
 
                         await ChatListVm.RefreshCommandAsyncExec();
 
-                        await JoinChats();
+                        await JoinAllChats();
                     }
                     else
                     {

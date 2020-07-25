@@ -7,9 +7,7 @@
              xmlns:controls="clr-namespace:goFriend.Controls"
              xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
-             x:Name="page"
-             Title="{Static local:res.ChatNew}"
-             x:Class="goFriend.Views.ChatNew">
+             x:Class="goFriend.Views.ChatEdit">
     <ContentPage.Content>
         <StackLayout Orientation="Vertical" Spacing="0">
             <Grid RowSpacing="0" ColumnSpacing="0" x:Name="Grid" Margin="10,5,10,0">
@@ -61,9 +59,9 @@
                     <FlexLayout Wrap="Wrap" x:Name="ChipContainer"/>
                     <!--<forms:WrapLayout x:Name="ChipContainer" Orientation="Horizontal"/>-->
                 </ScrollView>
-                <Label HorizontalOptions="Start" Text="Tên nhóm:" Grid.Row="2" Grid.Column="0"
-                           FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
-                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding Name}" x:Name="TxtName"
+                <Label HorizontalOptions="Start" Text="{Static local:res.GroupName}" Grid.Row="2" Grid.Column="0"
+                       FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
+                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding ChatName}" x:Name="TxtName"
                        HorizontalOptions="FillAndExpand" FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
             </Grid>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" /><!--Grid.Row="1"-->

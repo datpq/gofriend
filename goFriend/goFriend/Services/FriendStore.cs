@@ -25,7 +25,7 @@ namespace goFriend.Services
         private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
         private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
-        private static readonly string BackendUrl = ConfigurationManager.AppSettings["AzureBackendUrl112"];
+        private static readonly string BackendUrl = Constants.AzureBackendUrlDev;
 
         public FriendStore()
         {
@@ -655,17 +655,33 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetFriend.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //Logger.Debug($"GetFriend.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetFriend.END(Name={result?.Name}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
-        public async Task<Friend> GetFriendInfo(int otherFriendId, bool useCache = true)
+        public async Task<Friend> GetFriendInfo(int otherFriendId, bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             Friend result = null;
             try
             {
-                Logger.Debug($"GetFriendInfo.BEGIN(otherFriendId={otherFriendId}, useCache={useCache})");
+                Logger.Debug($"GetFriendInfo.BEGIN(otherFriendId={otherFriendId}, useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
+                var cacheKey = $"{cachePrefix}.{otherFriendId}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as Friend;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -689,6 +705,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -708,7 +725,8 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetFriendInfo.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //Logger.Debug($"GetFriendInfo.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetFriendInfo.END(Name={result?.Name}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -983,14 +1001,14 @@ namespace goFriend.Services
             if (CrossConnectivity.Current.IsConnected)
             {
                 Logger.Debug("Internet available. Rejoining chat...");
-                await App.JoinChats();
+                await App.JoinAllChats();
             }
         }
 
         private Task HubConnectionOnReconnected(string arg)
         {
             Logger.Debug($"OnReconnected(arg={arg})");
-            return App.JoinChats();
+            return App.JoinAllChats();
         }
 
         private Task HubConnectionOnClosed(Exception arg)
@@ -998,7 +1016,7 @@ namespace goFriend.Services
             Logger.Debug($"OnClosed(exception={arg})");
             Logger.Debug("Waiting for 5 seconds before rejoining the chat");
             Task.Delay(TimeSpan.FromSeconds(5));
-            return App.JoinChats();
+            return App.JoinAllChats();
         }
 
         public async Task ChatConnect(ChatJoinChatModel joinChatModel)
@@ -1200,17 +1218,14 @@ namespace goFriend.Services
             }
         }
 
-        private void ChatReceiveCreateChat(Chat chat)
+        private async void ChatReceiveCreateChat(Chat chat)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
                 Logger.Debug($"ChatReceiveCreateChat.BEGIN");
                 Logger.Debug($"chat={JsonConvert.SerializeObject(chat)})");
-                if (chat.Members.Split(DataModel.Extension.Sep.ToCharArray()).Any(x => x == $"u{App.User.Id}"))
-                {
-                    Logger.Debug($"New chat for me created. Refresh the list of chat");
-                }
+                await App.ChatListVm.ReceiveCreateChat(chat);
             }
             catch (Exception e) //Unknown error
             {

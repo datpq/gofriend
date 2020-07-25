@@ -441,4 +441,13 @@
   <data name="System" xml:space="preserve">
     <value>Hệ thống</value>
   </data>
+  <data name="ChatEdit" xml:space="preserve">
+    <value>Thêm bớt thành viên</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Tên nhóm:</value>
+  </data>
+  <data name="MsgNoPermissionChatEdit" xml:space="preserve">
+    <value>Bạn không có quyền thêm bớt thành viên.</value>
+  </data>
 </root>

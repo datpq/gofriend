@@ -65,7 +65,7 @@ namespace goFriend.ViewModels
             {
                 if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
-                    await App.JoinChats();
+                    await App.JoinAllChats();
                 }
                 if (App.FriendStore.ChatHubConnection.State != HubConnectionState.Connected)
                 {

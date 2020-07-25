@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -12,6 +12,13 @@ namespace goFriend.DataModel
         album, // 50 x 50
         large, // 200 x 200
         square // 50 x 50
+    }
+
+    public enum ChatType
+    {
+        StandardGroup,
+        MixedGroup,
+        Individual,
     }
 
     public static class Extension
@@ -61,6 +68,42 @@ namespace goFriend.DataModel
         //    Array.Sort(arrMembers2);
         //    return arrMembers1.SequenceEqual(arrMembers2);
         //}
+
+        public static ChatType GetChatType(this Chat chat)
+        {
+            if (Regex.Match(chat.Members, @"^g\d+$").Success)
+            {
+                return ChatType.StandardGroup;
+            }
+            if (Regex.Match(chat.Members, @"^u\d+,u\d+$").Success)
+            {
+                return ChatType.Individual;
+            }
+            return ChatType.MixedGroup;
+        }
+
+        public static int GetMemberGroupId(this Chat chat)
+        {
+            if (chat.Members.StartsWith("g"))
+            {
+                return int.Parse(chat.Members.Substring(1));
+            }
+            return 0;
+        }
+
+        public static int[] GetMemberIds(this Chat chat)
+        {
+            var arrResults = new List<int>();
+            var arrMembers = chat.Members.Split(Sep.ToCharArray());
+            foreach(var m in arrMembers)
+            {
+                if (m.StartsWith("u"))
+                {
+                    arrResults.Add(int.Parse(m.Substring(1)));
+                }
+            }
+            return arrResults.ToArray();
+        }
 
         public static bool MembersContain(this Chat chat, int memberId)
         {

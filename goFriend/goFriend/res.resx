@@ -441,4 +441,13 @@
   <data name="System" xml:space="preserve">
     <value />
   </data>
+  <data name="ChatEdit" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MsgNoPermissionChatEdit" xml:space="preserve">
+    <value />
+  </data>
 </root>

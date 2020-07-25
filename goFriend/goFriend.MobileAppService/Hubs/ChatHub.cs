@@ -293,12 +293,12 @@ namespace goFriend.MobileAppService.Hubs
             Logger.Debug("END");
         }
 
-        public async Task CreateChat(Chat chat)
+        public void CreateChat(Chat chat)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                Logger.Debug($"CreateChat.BEGIN({chat.Name}, OwnerId={chat.OwnerId}, Token={chat.Token}, Members={chat.Members})");
+                Logger.Debug($"CreateChat.BEGIN(Id={chat.Id}, Name={chat.Name}, OwnerId={chat.OwnerId}, Members={chat.Members}, Token={chat.Token})");
 
                 #region Data Validation
 
@@ -321,31 +321,88 @@ namespace goFriend.MobileAppService.Hubs
 
                 #endregion
 
-                //rearrange members, order by Id
-                var arrMembers = chat.Members.Split(Extension.Sep.ToCharArray());
-                Array.Sort(arrMembers);
-                chat.Members = string.Join(Extension.Sep, arrMembers);
+                //rearrange members, order by Id apart from the first Item which is OwnerId
+                var arrMemberIds = chat.GetMemberIds();
+                var arrOrderedMemberIds = new int[arrMemberIds.Length - 1];
+                Array.Copy(arrMemberIds, 1, arrOrderedMemberIds, 0, arrOrderedMemberIds.Length);
+                Array.Sort(arrOrderedMemberIds);
 
-                var sameMemberChats = _dataRepo.GetMany<Chat>(x => x.Members == chat.Members);
-                if (sameMemberChats.Any())
+                //OwnerId followed by sorted member Ids
+                chat.Members = $"u{arrMemberIds[0]}{Extension.Sep}u{string.Join($"{Extension.Sep}u", arrOrderedMemberIds)}";
+                Logger.Debug($"Members={chat.Members}");
+                chat.Token = null;
+
+                if (chat.Id == 0) // new Chat
                 {
-                    Logger.Error("Chat already created");
+                    if (_dataRepo.GetMany<Chat>(x => x.Members == chat.Members).Any())
+                    {
+                        Logger.Error("Chat already created. Do nothing"); // raise error maybe
+                    }
+                    else
+                    {
+                        chat.CreatedDate = DateTime.UtcNow;
+                        _dataRepo.Add(chat);
+
+                        _dataRepo.Add(
+                            new ChatMessage
+                            {
+                                OwnerId = 0,
+                                Chat = chat,
+                                ChatId = chat.Id,
+                                CreatedDate = chat.CreatedDate,
+                                Message = string.Format(Constants.ResChatMessageCreateChat,
+                                chat.OwnerId == 0 ? Constants.ResSystem : chat.Owner?.FirstName, chat.CreatedDate),
+                                MessageIndex = 1,
+                                MessageType = ChatMessageType.CreateChat
+                            });
+                        var chatType = chat.GetChatType();
+                        if (chatType == ChatType.Individual || chatType == ChatType.MixedGroup)
+                        {
+                            _dataRepo.Add(
+                                new ChatMessage
+                                {
+                                    OwnerId = 0,
+                                    Chat = chat,
+                                    ChatId = chat.Id,
+                                    CreatedDate = chat.CreatedDate,
+                                    Message = GetMemberNames(chat),
+                                    MessageIndex = 2,
+                                    MessageType = ChatMessageType.CreateChat
+                                });
+                        }
+                        _dataRepo.Commit();
+
+                        foreach (var memberId in chat.GetMemberIds())
+                        {
+                            SendCreateChat(chat, memberId);
+                            _cacheService.Remove($".GetChats.{memberId}."); // refresh GetChats
+                        }
+                    }
                 }
                 else
                 {
-                    chat.CreatedDate = DateTime.UtcNow;
-                    _dataRepo.Add(chat);
-                    _dataRepo.Commit();
+                    var oldChat = _dataRepo.Get<Chat>(x => x.Id == chat.Id);
+                    if (oldChat == null)
+                    {
+                        Logger.Error($"Chat not found. (Id={chat.Id})");
+                    }
+                    else
+                    {
+                        var arrOldMemberIds = oldChat.GetMemberIds();
+                        oldChat.Members = chat.Members;
+                        oldChat.Name = chat.Name;
+                        _dataRepo.Commit();
+                        foreach (var memberId in arrMemberIds)
+                        {
+                            SendCreateChat(oldChat, memberId, arrOldMemberIds);
+                            _cacheService.Remove($".GetChats.{memberId}."); // refresh GetChats
+                        }
+                        foreach (var memberId in arrOldMemberIds)
+                        {
+                            _cacheService.Remove($".GetChats.{memberId}."); // refresh GetChats
+                        }
+                    }
                 }
-
-                Logger.Debug($"New chat created Id={chat.Id}. Refresh cache for all the members");
-                foreach (var u in chat.Members.Split(Extension.Sep.ToCharArray()).Where(x => x.StartsWith('u')))
-                {
-                    var memberId = u.Substring(1);
-                    _cacheService.Remove($".GetChats.{memberId}."); // refresh GetChats
-                }
-                chat.Token = null;
-                await Clients.All.SendAsync(ChatMessageType.CreateChat.ToString(), chat);
             }
             catch (Exception e)
             {
@@ -355,6 +412,41 @@ namespace goFriend.MobileAppService.Hubs
             {
                 Logger.Debug("CreateChat.END");
             }
+        }
+
+        private void SendCreateChat(Chat chat, int friendId, int[] oldMemberIds = null)
+        {
+            Logger.Debug($"SendCreateChat.BEGIN(chat={chat.Id}, friendId={friendId})");
+            if (oldMemberIds != null && oldMemberIds.Contains(friendId))
+            {
+                Logger.Debug($"Sending CreateChat to FriendId={friendId}, through the old chat channel Id={chat.Id}");
+                Clients.Group(chat.Id.ToString()).SendAsync(ChatMessageType.CreateChat.ToString(), chat);
+                return;
+            }
+            var existingChat = _dataRepo.GetMany<Chat>(x => !x.Members.StartsWith("g") && x.Id != chat.Id).FirstOrDefault(x => x.MembersContain(friendId));
+            if (existingChat != null)
+            {
+                Logger.Debug($"Sending CreateChat to FriendId={friendId}, through the Inidivial chat channel Id={existingChat.Id}");
+                Clients.Group(existingChat.Id.ToString()).SendAsync(ChatMessageType.CreateChat.ToString(), chat);
+                return;
+            }
+
+            var arrChats = _dataRepo.GetMany<Chat>(x => x.Members.StartsWith("g")).ToList();
+            foreach (var c in arrChats)
+            {
+                var groupFriend = _dataRepo.Get<GroupFriend>(x => x.GroupId == c.GetMemberGroupId()
+                                                                  && x.FriendId == friendId && x.Active);
+                if (groupFriend != null)
+                {
+                    Logger.Debug($"Sending CreateChat to FriendId={friendId}, through the Group chat chanel Id={c.Id}");
+                    Clients.Group(c.Id.ToString()).SendAsync(ChatMessageType.CreateChat.ToString(), chat);
+                    return;
+                }
+            }
+            Logger.Warn($"No channel found that contains FriendId={friendId}. Send to all.");
+            Clients.All.SendAsync(ChatMessageType.CreateChat.ToString(), chat);
+
+            Logger.Debug("SendCreateChat.END");
         }
 
         public override Task OnConnectedAsync()
@@ -374,5 +466,19 @@ namespace goFriend.MobileAppService.Hubs
         private void PrintChatInfo(int chatId = 0)
         {
         }
+
+        private string GetMemberNames(Chat chat)
+        {
+            var arrIds = chat.GetMemberIds();
+            var arrNames = new string[arrIds.Length];
+            for (var i = 0; i < arrNames.Length; i++)
+            {
+                var localI = i;
+                var friend = _dataRepo.Get<Friend>(x => x.Id == arrIds[localI]);
+                arrNames[i] = friend.FirstName;
+            }
+            return string.Join(", ", arrNames);
+        }
+
     }
 }

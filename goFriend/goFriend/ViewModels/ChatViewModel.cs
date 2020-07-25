@@ -188,7 +188,7 @@ namespace goFriend.ViewModels
             SendMessageCommand = new Command(async () => {
                 if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
-                    await App.JoinChats();
+                    await App.JoinAllChats();
                 }
                 if (!IsEnabled)
                 {
@@ -211,7 +211,7 @@ namespace goFriend.ViewModels
             {
                 if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
-                    await App.JoinChats();
+                    await App.JoinAllChats();
                 }
                 if (!IsEnabled)
                 {
@@ -254,7 +254,7 @@ namespace goFriend.ViewModels
                 var arrIdx = 0;
                 for (arrIdx = 0; arrIdx < Messages.Count; arrIdx++)
                 {
-                    if (Messages[arrIdx].MessageIndex >= chatMessage.MessageIndex) continue;
+                    if (Messages[arrIdx].MessageIndex > chatMessage.MessageIndex) continue;
                     lastDateTime = Messages[arrIdx].CreatedDate.Date;
                     break;
                 }

@@ -6,6 +6,7 @@
              xmlns:controls="clr-namespace:goFriend.Controls"
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphListView">
+             <!--x:Name="rootObj"-->
   <ContentView.Content>
       <StackLayout Orientation="Vertical">
             <ListView x:Name="Lv" ItemsSource="{Binding DphListItems}" VerticalOptions="FillAndExpand" HasUnevenRows="true" ItemTapped="Lv_OnItemTapped"
@@ -23,10 +24,12 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
+                                    <!--OverlapType="{Binding OverlapType, Source={x:Reference rootObj}}"-->
                                     <controls:DphOverlapImage WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type controls:DphListView}}, Path=ImageSize}"
                                                               HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type controls:DphListView}}, Path=ImageSize}"
                                                               HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
                                                               Grid.Row="0" Grid.Column="0" Margin="10,5,5,5"
+                                                              OverlapType="{Binding OverlapType}"
                                                               Source1="{Binding ImageUrl}"
                                                               Source2="{Binding OverlappingImageUrl}">
                                     </controls:DphOverlapImage>

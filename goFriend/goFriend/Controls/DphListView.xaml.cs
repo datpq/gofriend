@@ -20,7 +20,7 @@ namespace goFriend.Controls
         private DateTime _lastRefreshDateTime = DateTime.Today.AddYears(-1); //default value is a very small value
 
         public static readonly BindableProperty ImageSizeProperty =
-            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphListView), DphListView.BigImage);
+            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphListView), BigImage);
         public double ImageSize
         {
             get => (double)GetValue(ImageSizeProperty);
@@ -33,6 +33,14 @@ namespace goFriend.Controls
         {
             get => (int)GetValue(TimeoutProperty);
             set => SetValue(TimeoutProperty, value);
+        }
+
+        public static readonly BindableProperty OverlapTypeProperty =
+            BindableProperty.CreateAttached(nameof(OverlapType), typeof(OverlapType), typeof(DphListView), OverlapType.Notification);
+        public OverlapType OverlapType
+        {
+            get => (OverlapType)GetValue(OverlapTypeProperty);
+            set => SetValue(OverlapTypeProperty, value);
         }
 
         public DphListView()
