@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using goFriend.MobileAppService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NLog;
 
-namespace goFriend.MobileAppService.Data
+namespace goFriend.Services.Data
 {
     public class DataRepository : IDataRepository, IDisposable
     {
         private readonly DbContext _dbContext;
         private readonly ICacheService _cacheService;
-        private readonly IOptions<AppSettingsModel> _appSettings;
+        private readonly IOptions<AppSettings> _appSettings;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public DataRepository(DbContext dbContext, ICacheService cacheService, IOptions<AppSettingsModel> appSettings)
+        public DataRepository(DbContext dbContext, ICacheService cacheService, IOptions<AppSettings> appSettings)
         {
             _dbContext = dbContext;
             _cacheService = cacheService;
@@ -50,7 +49,8 @@ namespace goFriend.MobileAppService.Data
                 //var cachePrefix = $"TableCacheTimeout.{typeof(T).Name}";
                 var cacheTimeout = _appSettings.Value.CacheTableTimeout; 
                 Logger.Debug($"Caching new TableCache: {cacheKey}, cacheTimeout={cacheTimeout}");
-                var cacheValue = result.ToList().AsQueryable().SetComparer(StringComparison.CurrentCultureIgnoreCase);//ToList here is very important, force executing SQL to retrieve data
+                //var cacheValue = result.ToList().AsQueryable().SetComparer(StringComparison.CurrentCultureIgnoreCase);//ToList here is very important, force executing SQL to retrieve data
+                var cacheValue = result.ToList().AsQueryable();//ToList here is very important, force executing SQL to retrieve data
                 _cacheService.Set(cacheKey, cacheValue, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return cacheValue;
             }

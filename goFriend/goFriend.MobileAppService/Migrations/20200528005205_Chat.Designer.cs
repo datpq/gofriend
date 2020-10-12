@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
-using goFriend.MobileAppService.Data;
+using goFriend.Services.Data;
 
 namespace goFriend.MobileAppService.Migrations
 {

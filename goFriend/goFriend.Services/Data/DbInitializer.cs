@@ -2,7 +2,7 @@
 using System.Linq;
 using goFriend.DataModel;
 
-namespace goFriend.MobileAppService.Data
+namespace goFriend.Services.Data
 {
     public static class DbInitializer
     {

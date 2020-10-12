@@ -54,7 +54,7 @@ namespace goFriend.Views
         private void Logout()
         {
             Logger.Debug("Logout.BEGIN");
-            App.FaceBookManager.Logout();
+            ((App) Application.Current).FaceBookManager.Logout();
             App.IsUserLoggedIn = false;
             App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;

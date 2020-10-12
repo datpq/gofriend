@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace goFriend.MobileAppService.Data
+namespace goFriend.Services.Data
 {
     public class FriendDbContext : DbContext
     {

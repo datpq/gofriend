@@ -26,9 +26,11 @@ namespace goFriend.Services
         private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
         private static readonly string BackendUrl = Constants.AzureBackendUrlDev;
+        private SignalRService signalR;
 
         public FriendStore()
         {
+            Logger.Debug($"FriendStore.BEGIN");
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
             ChatHubConnection = new HubConnectionBuilder()
                 .WithUrl($"{BackendUrl}/chat")
@@ -45,9 +47,20 @@ namespace goFriend.Services
             ChatHubConnection.Closed += HubConnectionOnClosed;
             ChatHubConnection.Reconnected += HubConnectionOnReconnected;
             Connectivity.ConnectivityChanged += ConnectivityOnConnectivityChanged;
+
+            Logger.Debug($"FriendStore.END");
+
+            signalR = new SignalRService();
+            signalR.Connected += SignalR_ConnectionChanged;
+            signalR.ConnectionFailed += SignalR_ConnectionChanged;
         }
 
-        public HubConnection ChatHubConnection { get; }
+        void SignalR_ConnectionChanged(object sender, bool success, string message)
+        {
+            Logger.Debug($"SignalR_ConnectionChanged(success={success}, message={message}");
+        }
+
+        public HubConnection ChatHubConnection { get; set; }
 
         private static HttpClient GetHttpClient()
         {
@@ -1024,6 +1037,15 @@ namespace goFriend.Services
             var stopWatch = Stopwatch.StartNew();
             try
             {
+                if (!signalR.IsConnected)
+                {
+                    Logger.Debug("NewChatConnect.BEGIN");
+                    await signalR.ConnectAsync();
+                    Logger.Debug("NewChatConnect.JoinChat");
+                    await signalR.SendMessageAsync<string>(joinChatModel.MessageType.ToString(), joinChatModel);
+                    Logger.Debug("NewChatConnect.END");
+                }
+
                 Logger.Debug("ChatConnect.BEGIN");
                 if (ChatHubConnection.State == HubConnectionState.Disconnected)
                 {
@@ -1076,17 +1098,18 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"SendPing.BEGIN(ChatId={chatId})");
-                result = await ChatHubConnection.InvokeAsync<IEnumerable<ChatFriendOnline>>(
-                    ChatMessageType.Ping.ToString(),
-                    new ChatMessage
-                    {
-                        ChatId = chatId,
-                        MessageType = ChatMessageType.Ping,
-                        OwnerId = App.User.Id,
-                        OwnerName = App.User.Name,
-                        Token = App.User.Token.ToString(),
-                        LogoUrl = App.User.GetImageUrl(FacebookImageType.small)
-                    });
+                var chatMessage = new ChatMessage
+                {
+                    ChatId = chatId,
+                    MessageType = ChatMessageType.Ping,
+                    OwnerId = App.User.Id,
+                    OwnerName = App.User.Name,
+                    Token = App.User.Token.ToString(),
+                    LogoUrl = App.User.GetImageUrl(FacebookImageType.small)
+                };
+                //result = await ChatHubConnection.InvokeAsync<IEnumerable<ChatFriendOnline>>(
+                //    ChatMessageType.Ping.ToString(), chatMessage);
+                result = await signalR.SendMessageAsync<IEnumerable<ChatFriendOnline>>(ChatMessageType.Ping.ToString(), chatMessage);
                 App.ChatListVm.ChatListItems.Single(x => x.Chat.Id == chatId).ChatViewModel.UpdateMembers(result);
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 return result;
@@ -1107,7 +1130,8 @@ namespace goFriend.Services
             Logger.Debug($"SendAttachment.BEGIN(ChatId={chatMessage.ChatId}, MessageType={chatMessage.MessageType}, Attachments={chatMessage.Attachments})");
             try
             {
-                await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
+                //await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
+                await signalR.SendMessageAsync<string>(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
             {
@@ -1125,7 +1149,8 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)}");
-                await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
+                await signalR.SendMessageAsync<string>(chatMessage.MessageType.ToString(), chatMessage);
+                //await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
             {

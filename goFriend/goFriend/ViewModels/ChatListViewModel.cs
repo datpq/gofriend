@@ -94,7 +94,9 @@ namespace goFriend.ViewModels
                 //Join chat
                 await App.JoinChat(chatListItemVm);
 
-                await App.ChatListPage.Navigation.PushAsync(new ChatPage(chatListItemVm));
+                if (App.ChatListPage != null) {
+                    await App.ChatListPage.Navigation.PushAsync(new ChatPage(chatListItemVm));
+                }
 
                 //chatListItemVm.ChatViewModel.ReceiveMessage(
                 //    new ChatMessage

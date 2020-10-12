@@ -1,6 +1,6 @@
-﻿namespace goFriend.MobileAppService.Models
+﻿namespace goFriend.Services
 {
-    public class AppSettingsModel
+    public class AppSettings
     {
         public int NotificationFetchingDays { get; set; }
         public int CacheTableTimeout { get; set; }

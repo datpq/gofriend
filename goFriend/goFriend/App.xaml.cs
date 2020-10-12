@@ -24,11 +24,11 @@ namespace goFriend
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
         public static Friend User { get; set; }
-        public static IFacebookManager FaceBookManager = DependencyService.Get<IFacebookManager>();
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        public readonly IFacebookManager FaceBookManager;
+        private static ILogger Logger;
         public static IFriendStore FriendStore;
         public static IStorageService StorageService;
-        public static ChatListViewModel ChatListVm = new ChatListViewModel(); // List of all Chats
+        public static ChatListViewModel ChatListVm; // List of all Chats
         public static ChatListPage ChatListPage = null;
 
         public static Task TaskInitialization;
@@ -49,6 +49,10 @@ namespace goFriend
             {
                 // ignored
             }
+
+            FaceBookManager = DependencyService.Get<IFacebookManager>();
+            Logger = DependencyService.Get<ILogManager>().GetLog();
+            ChatListVm = new ChatListViewModel();
 
             SapChatNewMessage.Loop = false;
             SapChatNewMessage.Load(Extension.GetStreamFromFile("Audios.chat_newmsg.wav"));
@@ -129,8 +133,11 @@ namespace goFriend
         {
             foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
             {
-                chatListItemViewModel.IsAppearing = (bool)chatListItemViewModel.Tag;
-                await chatListItemViewModel.RefreshOnlineStatus();
+                if (chatListItemViewModel.Tag != null)
+                {
+                    chatListItemViewModel.IsAppearing = (bool)chatListItemViewModel.Tag;
+                    await chatListItemViewModel.RefreshOnlineStatus();
+                }
             }
         }
 

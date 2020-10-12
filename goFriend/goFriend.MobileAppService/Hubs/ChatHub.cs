@@ -5,8 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using goFriend.DataModel;
-using goFriend.MobileAppService.Data;
-using goFriend.MobileAppService.Helpers;
+using goFriend.Services.Data;
 using goFriend.Services;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
@@ -29,7 +28,7 @@ namespace goFriend.MobileAppService.Hubs
         {
             _dataRepo = dataRepo;
             _cacheService = cacheService;
-            _storageService = new StorageService(new LoggerImpl(Logger));
+            _storageService = new StorageService(new LoggerNLogImpl(Logger));
             CacheNameSpace = GetType().FullName;
         }
 

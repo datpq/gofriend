@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace goFriend.MobileAppService.Data
+namespace goFriend.Services.Data
 {
     public interface IDataRepository
     {

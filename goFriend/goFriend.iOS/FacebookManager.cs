@@ -36,7 +36,7 @@ namespace goFriend.iOS
                 var fbLoginBtnView = e.NewElement as FacebookLoginButton;
                 var fbLoginBtnCtrl = new LoginButton
                 {
-                    LoginBehavior = LoginBehavior.Browser,
+                    //LoginBehavior = LoginBehavior.Browser,
                     Permissions = fbLoginBtnView?.Permissions
                 };
 

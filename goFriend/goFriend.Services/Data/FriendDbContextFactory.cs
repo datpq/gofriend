@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace goFriend.MobileAppService.Data
+namespace goFriend.Services.Data
 {
     public class FriendDbContextFactory : IDesignTimeDbContextFactory<FriendDbContext>
     {

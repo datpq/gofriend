@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Facebook;
 using goFriend.DataModel;
-using goFriend.MobileAppService.Data;
-using goFriend.MobileAppService.Models;
+using goFriend.Services.Data;
+using goFriend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -22,13 +22,13 @@ namespace goFriend.MobileAppService.Controllers
     [Route("api/[controller]")]
     public class FriendController : Controller
     {
-        private readonly IOptions<AppSettingsModel> _appSettings;
+        private readonly IOptions<AppSettings> _appSettings;
         private readonly IDataRepository _dataRepo;
         private readonly ICacheService _cacheService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected readonly string CacheNameSpace;
 
-        public FriendController(IOptions<AppSettingsModel> appSettings, IDataRepository dataRepo, ICacheService cacheService)
+        public FriendController(IOptions<AppSettings> appSettings, IDataRepository dataRepo, ICacheService cacheService)
         {
             _appSettings = appSettings;
             _dataRepo = dataRepo;

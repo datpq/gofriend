@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using goFriend.DataModel;
-using goFriend.MobileAppService.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using NLog;
 
-namespace goFriend.MobileAppService.Data
+namespace goFriend.Services.Data
 {
     public class CacheService : ICacheService
     {
-        private readonly IOptions<AppSettingsModel> _appSettings;
+        private readonly IOptions<AppSettings> _appSettings;
         private readonly IMemoryCache _memoryCache;
         private readonly Dictionary<string, DateTimeOffset> _cacheKeys = new Dictionary<string, DateTimeOffset>();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public CacheService(IMemoryCache memoryCache, IOptions<AppSettingsModel> appSettings)
+        public CacheService(IMemoryCache memoryCache, IOptions<AppSettings> appSettings)
         {
             _memoryCache = memoryCache;
             _appSettings = appSettings;
@@ -57,7 +56,8 @@ namespace goFriend.MobileAppService.Data
         public void Remove(string key)
         {
             Logger.Debug($"BEGIN(key={key}, count={_cacheKeys.Keys.Count})");
-            foreach (var cacheKey in _cacheKeys.Keys.Where(x => x.Contains(key, StringComparison.CurrentCultureIgnoreCase)).ToList())
+            //foreach (var cacheKey in _cacheKeys.Keys.Where(x => x.Contains(key, StringComparison.CurrentCultureIgnoreCase)).ToList())
+            foreach (var cacheKey in _cacheKeys.Keys.Where(x => x.Contains(key)).ToList())
             {
                 Logger.Debug($"Remove cacheKey={cacheKey}, absoluteExpiration={_cacheKeys[cacheKey]}");
                 _cacheKeys.Remove(cacheKey);

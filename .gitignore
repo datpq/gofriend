@@ -16,3 +16,6 @@ goFriend.Test/
 packages/
 goFriend/goFriend.Services/bin/
 goFriend/goFriend.Services/obj/
+goFriend/goFriend.Functions/bin/
+goFriend/goFriend.Functions/obj/
+goFriend/goFriend.Functions/Properties/PublishProfiles/

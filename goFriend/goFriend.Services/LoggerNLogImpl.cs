@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace goFriend.MobileAppService.Helpers
+namespace goFriend.Services
 {
-    public class LoggerImpl : Services.ILogger
+    public class LoggerNLogImpl : ILogger
     {
         private readonly Logger logger;
 
-        public LoggerImpl(Logger logger)
+        public LoggerNLogImpl(Logger logger)
         {
             this.logger = logger;
         }
