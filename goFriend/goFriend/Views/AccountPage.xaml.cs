@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
@@ -13,7 +14,7 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AccountPage : ContentPage
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public AccountPage()
         {
@@ -38,7 +39,7 @@ namespace goFriend.Views
             CellLogout.Tapped += async (s, e) =>
             {
                 if (!await App.DisplayMsgQuestion(res.MsgLogoutConfirm)) return;
-                Logout();
+                await Logout();
             };
             CellAbout.Tapped += (s, e) => { Navigation.PushAsync(new AboutPage()); };
             //MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
@@ -51,10 +52,11 @@ namespace goFriend.Views
             await Navigation.PushAsync(page);
         }
 
-        private void Logout()
+        private async Task Logout()
         {
             Logger.Debug("Logout.BEGIN");
             ((App) Application.Current).FaceBookManager.Logout();
+            await App.FriendStore.SignalR.StopAsync();
             App.IsUserLoggedIn = false;
             App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
@@ -103,6 +105,7 @@ namespace goFriend.Views
                     TsShells.Add(CellLogout);
                     TsShells.Add(CellAbout);
                     ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
+                    Logger.Debug($"ImgAvatar.Source = {ImgAvatar.Source}");
                     //ImgAvatar.Source = Extension.GetImageSourceFromFile("admin.png"); // normal 100 x 100
                     LblFullName.Text = App.User.Name;
                     LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());

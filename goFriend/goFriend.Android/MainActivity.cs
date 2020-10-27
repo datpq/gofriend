@@ -78,13 +78,21 @@ namespace goFriend.Droid
 
             AppCenter.Start(Constants.AppCenterAppSecretAndroid, typeof(Analytics), typeof(Crashes));
 
-            _logger = DependencyService.Get<ILogManager>().GetLog();
+            InitializeNLog();
 
             //facebook track of profile changing
             FacebookProfileTracker.GetInstance();
 
             LoadApplication(new App());
         }
+
+        private void InitializeNLog()
+        {
+            var assembly = this.GetType().Assembly;
+            var assemblyName = assembly.GetName().Name;
+            new LogService().Initialize(assembly, assemblyName);
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             if (requestCode == RequestLocationId)
@@ -114,6 +122,14 @@ namespace goFriend.Droid
 
         public override void OnBackPressed()
         {
+            if (Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Count == 1)
+            {
+                //Just minimize app when there nothing more to pop up from stack
+                Intent main = new Intent(Intent.ActionMain);
+                main.AddCategory(Intent.CategoryHome);
+                StartActivity(main);
+                return;
+            }
             if (Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed))
             {
                 // Do something if there are some pages in the `PopupStack`

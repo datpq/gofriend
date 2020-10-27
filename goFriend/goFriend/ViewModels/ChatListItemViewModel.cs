@@ -5,14 +5,13 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using goFriend.DataModel;
 using goFriend.Services;
-using Microsoft.AspNetCore.SignalR.Client;
 using Xamarin.Forms;
 
 namespace goFriend.ViewModels
 {
     public class ChatListItemViewModel : INotifyPropertyChanged
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         private Chat _chat;
         public Chat Chat
@@ -63,15 +62,7 @@ namespace goFriend.ViewModels
         {
             if (IsAppearing)
             {
-                if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
-                {
-                    await App.JoinAllChats();
-                }
-                if (App.FriendStore.ChatHubConnection.State != HubConnectionState.Connected)
-                {
-                    //App.DisplayMsgError(res.MsgErrConnection);
-                    return;
-                }
+                await App.FriendStore.SignalR.ConnectAsync();
                 //ping to Chat server to make the user Active
                 if (LastPingTime.AddMinutes(Constants.ChatPingFrequence) < DateTime.Now)
                 {

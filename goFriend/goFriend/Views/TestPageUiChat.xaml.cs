@@ -65,7 +65,7 @@ namespace goFriend.Views
 
     public class TestModel : ChatViewModel
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public TestModel()
         {

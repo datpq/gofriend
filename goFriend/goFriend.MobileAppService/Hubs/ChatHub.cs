@@ -364,7 +364,7 @@ namespace goFriend.MobileAppService.Hubs
                                     Chat = chat,
                                     ChatId = chat.Id,
                                     CreatedDate = chat.CreatedDate,
-                                    Message = GetMemberNames(chat),
+                                    Message = _dataRepo.GetChatMemberNames(chat),
                                     MessageIndex = 2,
                                     MessageType = ChatMessageType.CreateChat
                                 });
@@ -465,19 +465,5 @@ namespace goFriend.MobileAppService.Hubs
         private void PrintChatInfo(int chatId = 0)
         {
         }
-
-        private string GetMemberNames(Chat chat)
-        {
-            var arrIds = chat.GetMemberIds();
-            var arrNames = new string[arrIds.Length];
-            for (var i = 0; i < arrNames.Length; i++)
-            {
-                var localI = i;
-                var friend = _dataRepo.Get<Friend>(x => x.Id == arrIds[localI]);
-                arrNames[i] = friend.FirstName;
-            }
-            return string.Join(", ", arrNames);
-        }
-
     }
 }

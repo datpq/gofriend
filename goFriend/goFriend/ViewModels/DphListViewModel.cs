@@ -14,7 +14,7 @@ namespace goFriend.ViewModels
 {
     public class DphListViewModel : INotifyPropertyChanged
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         private ObservableCollection<DphListViewItemModel> _dphListItems = new ObservableCollection<DphListViewItemModel>();
         public ObservableCollection<DphListViewItemModel> DphListItems

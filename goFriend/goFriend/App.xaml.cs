@@ -51,7 +51,7 @@ namespace goFriend
             }
 
             FaceBookManager = DependencyService.Get<IFacebookManager>();
-            Logger = DependencyService.Get<ILogManager>().GetLog();
+            Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
             ChatListVm = new ChatListViewModel();
 
             SapChatNewMessage.Loop = false;
@@ -80,6 +80,12 @@ namespace goFriend
 
             InitializeComponent();
 
+            IsUserLoggedIn = Settings.IsUserLoggedIn;
+            if (IsUserLoggedIn)
+            {
+                User = Settings.LastUser;
+            }
+
             DependencyService.Register<FriendStore>();
             FriendStore = DependencyService.Get<IFriendStore>();
             //StorageService = NinjectManager.Resolve<IStorageService>();
@@ -88,12 +94,6 @@ namespace goFriend
                 DependencyService.Register<MockDataStore>();
             else
                 DependencyService.Register<AzureDataStore>();
-
-            IsUserLoggedIn = Settings.IsUserLoggedIn;
-            if (IsUserLoggedIn)
-            {
-                User = Settings.LastUser;
-            }
 
             //MainPage = new NavigationPage(new TestPageUiChat { Title = AppInfo.Name })
             //{
@@ -203,17 +203,11 @@ namespace goFriend
             return tcs.Task;
         }
 
-        public static async Task JoinChat(ChatListItemViewModel chatListItemVm)
+        public static async Task RetrieveNewMessages(ChatListItemViewModel chatListItemVm)
         {
             try
             {
-                Logger.Debug($"JoinChat.BEGIN(Name={chatListItemVm.Name}, Id={chatListItemVm.Chat.Id})");
-                await FriendStore.ChatConnect(new ChatJoinChatModel
-                {
-                    ChatId = chatListItemVm.Chat.Id,
-                    OwnerId = User.Id,
-                    Token = User.Token.ToString()
-                });
+                Logger.Debug($"RetrieveNewMessages.BEGIN(Name={chatListItemVm.Name}, Id={chatListItemVm.Chat.Id})");
                 const int startMsgIdx = 999999;
                 chatListItemVm.ChatViewModel.LastReadMsgIdx = chatListItemVm.ChatViewModel.Messages.Count == 0
                     ? 0 : chatListItemVm.ChatViewModel.Messages[0].MessageIndex;
@@ -236,18 +230,18 @@ namespace goFriend
             }
             finally
             {
-                Logger.Debug("JoinChat.END");
+                Logger.Debug("RetrieveNewMessages.END");
             }
         }
 
-        public static async Task JoinAllChats()
+        public static async Task RetrieveAllNewMessages()
         {
             try
             {
-                Logger.Debug("JoinAllChats.BEGIN");
+                Logger.Debug("RetrieveAllNewMessages.BEGIN");
                 foreach (var chatListItemVm in ChatListVm.ChatListItems)
                 {
-                    await JoinChat(chatListItemVm);
+                    await RetrieveNewMessages(chatListItemVm);
                 }
             }
             catch (Exception e)
@@ -256,7 +250,7 @@ namespace goFriend
             }
             finally
             {
-                Logger.Debug("JoinAllChats.END");
+                Logger.Debug("RetrieveAllNewMessages.END");
             }
         }
 
@@ -278,7 +272,8 @@ namespace goFriend
 
                         await ChatListVm.RefreshCommandAsyncExec();
 
-                        await JoinAllChats();
+                        await FriendStore.SignalR.ConnectAsync();
+                        await RetrieveAllNewMessages();
                     }
                     else
                     {

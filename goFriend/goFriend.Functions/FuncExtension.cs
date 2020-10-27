@@ -2,7 +2,7 @@
 
 namespace goFriend.Functions
 {
-    public static class Extension
+    public static class FuncExtension
     {
         public static void ParseSignalRHeaders(this HttpRequest req, out string UserId, out string token)
         {

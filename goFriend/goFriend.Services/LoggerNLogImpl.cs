@@ -26,7 +26,7 @@ namespace goFriend.Services
         public void TrackError(Exception ex, IDictionary<string, string> properties = null)
         {
             //Do not TrackError on server side
-            logger.Error(ex);
+            logger.Error(ex.ToString());
         }
 
         public void Fatal(string text, params object[] args)

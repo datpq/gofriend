@@ -11,7 +11,7 @@ namespace goFriend.Controls
     {
         public const double DefaultDistance = 5;
         public static readonly Position DefaultPosition = new Position(21.022642, 105.814416); // B7 thanh cong, Hanoi
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public static void MoveToRegionToCoverAllPins(this Map map)
         {

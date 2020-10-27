@@ -19,7 +19,7 @@ namespace goFriend.Views
     {
         private AccountPage _accountPage;
         private DphPin _pin;
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private AccountBasicInfosViewModel _viewModel;
         private bool _isMoveToRegionDone;
 

@@ -17,7 +17,7 @@ namespace goFriend.iOS
     [Register("AppDelegate")]
     public class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
-        private ILogger _logger;
+        private ILogger Logger;
 
         //
         // This method is invoked when the application has loaded and is ready to run. In this 
@@ -98,11 +98,19 @@ namespace goFriend.iOS
 
             AppCenter.Start(Constants.AppCenterAppSecretiOS, typeof(Analytics), typeof(Crashes));
 
-            _logger = DependencyService.Get<ILogManager>().GetLog();
-            _logger.Debug("Loading application...");
+            InitializeNLog();
+            Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+            Logger.Debug("Loading application...");
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
+        }
+
+        private void InitializeNLog()
+        {
+            var assembly = GetType().Assembly;
+            var assemblyName = assembly.GetName().Name;
+            new LogService().Initialize(assembly, assemblyName);
         }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)

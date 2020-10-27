@@ -117,10 +117,10 @@ namespace goFriend.Views
         private void CmdOk_OnClicked(object sender, EventArgs e)
         {
             if (ChipContainer.Children.Count <= 1) return;
-            var chat = (Chat) BindingContext;
+            var chatVm = (ChatViewModel) BindingContext;
             var newChat = new Chat
             {
-                Id = chat?.Id ?? 0,
+                Id = chatVm.ChatListItem.Chat?.Id ?? 0,
                 Members = string.Join(",", ChipContainer.Children.Select(x => $"u{((Chip)x).Tag}")),
                 Name = ChipContainer.Children.Count == 2 ? string.Empty : TxtName.Text,
             };

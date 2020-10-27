@@ -15,7 +15,7 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GroupConnectionPage : ContentPage
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private readonly IList<StackLayout> _lstCatEntries = new List<StackLayout>();
         private readonly IList<string> _lstCatEntriesText = new List<string>();
         private IList<string> _arrFixedCatValues;

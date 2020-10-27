@@ -64,11 +64,10 @@ namespace goFriend.Droid
         class MyFacebookCallback : Java.Lang.Object, IFacebookCallback, GraphRequest.IGraphJSONObjectCallback
         {
             FacebookLoginButton view;
-            private readonly ILogger _logger;
+            private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
             public MyFacebookCallback(FacebookLoginButton view)
             {
-                _logger = DependencyService.Get<ILogManager>().GetLog();
                 this.view = view;
             }
 
@@ -80,7 +79,7 @@ namespace goFriend.Droid
 
             public void OnSuccess(Java.Lang.Object result)
             {
-                _logger.Debug("OnSuccess.BEGIN");
+                Logger.Debug("OnSuccess.BEGIN");
                 var accessToken = ((LoginResult) result).AccessToken;
                 view.OnSuccess?.Execute(accessToken.Token);
 
@@ -93,14 +92,14 @@ namespace goFriend.Droid
                 request.ExecuteAsync();
                 */
 
-                _logger.Debug("OnSuccess.END");
+                Logger.Debug("OnSuccess.END");
             }
 
             public void OnCompleted(JSONObject json, GraphResponse response)
             {
                 try
                 {
-                    _logger.Debug("OnCompleted.BEGIN");
+                    Logger.Debug("OnCompleted.BEGIN");
 
                     /* If sending profile from Client
                     var data = json.ToString();
@@ -131,11 +130,11 @@ namespace goFriend.Droid
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e.ToString());
+                    Logger.Error(e.ToString());
                 }
                 finally
                 {
-                    _logger.Debug("OnCompleted.END");
+                    Logger.Debug("OnCompleted.END");
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace goFriend.ViewModels
 {
     public class ChatListViewModel : INotifyPropertyChanged
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         private ObservableCollection<ChatListItemViewModel> _chatListItems = new ObservableCollection<ChatListItemViewModel>();
         public ObservableCollection<ChatListItemViewModel> ChatListItems
@@ -88,11 +89,21 @@ namespace goFriend.ViewModels
                 }
                 ChatListItems.Add(chatListItemVm);
 
-                App.SapChatNewChat.Play();
-                Vibration.Vibrate();
+                var arrLastMsgIdxRetrievedByChatId = Settings.LastMsgIdxRetrievedByChatId;
+                if (arrLastMsgIdxRetrievedByChatId == null)
+                {
+                    Logger.Debug($"Creating Settings.LastMsgIdxRetrievedByChatId");
+                    arrLastMsgIdxRetrievedByChatId = new Dictionary<int, int>();
+                    Settings.LastMsgIdxRetrievedByChatId = arrLastMsgIdxRetrievedByChatId;
+                }
+                if (!arrLastMsgIdxRetrievedByChatId.ContainsKey(chat.Id))
+                {
+                    arrLastMsgIdxRetrievedByChatId.Add(chat.Id, 0);
+                    Settings.LastMsgIdxRetrievedByChatId = arrLastMsgIdxRetrievedByChatId;
 
-                //Join chat
-                await App.JoinChat(chatListItemVm);
+                    App.SapChatNewChat.Play();
+                    Vibration.Vibrate();
+                }
 
                 if (App.ChatListPage != null) {
                     await App.ChatListPage.Navigation.PushAsync(new ChatPage(chatListItemVm));

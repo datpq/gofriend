@@ -16,7 +16,7 @@ namespace goFriend.ViewModels
 {
     public class ChatViewModel : INotifyPropertyChanged
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         private bool _isRefreshing;
         public bool IsRefreshing
@@ -151,7 +151,7 @@ namespace goFriend.ViewModels
             }
         }
 
-        public bool IsEnabled => App.FriendStore.ChatHubConnection.State == HubConnectionState.Connected;
+        public bool IsEnabled => App.FriendStore.SignalR.IsConnected;
         public string Name => App.User.Name;
         public string LogoUrl => App.User.GetImageUrl(FacebookImageType.small);
 
@@ -186,10 +186,7 @@ namespace goFriend.ViewModels
         public ChatViewModel()
         {
             SendMessageCommand = new Command(async () => {
-                if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
-                {
-                    await App.JoinAllChats();
-                }
+                await App.FriendStore.SignalR.ConnectAsync();
                 if (!IsEnabled)
                 {
                     App.DisplayMsgError(res.MsgErrConnection);
@@ -209,10 +206,7 @@ namespace goFriend.ViewModels
             });
             SendAttachmentCommand = (async uploadedFilePath =>
             {
-                if (App.FriendStore.ChatHubConnection.State == HubConnectionState.Disconnected)
-                {
-                    await App.JoinAllChats();
-                }
+                await App.FriendStore.SignalR.ConnectAsync();
                 if (!IsEnabled)
                 {
                     App.DisplayMsgError(res.MsgErrConnection);
@@ -308,10 +302,32 @@ namespace goFriend.ViewModels
                     }
                 }
 
-                if (ChatListItem != null && !ChatListItem.IsAppearing && !chatMessage.IsOwnMessage && !IsMute)
+                //check with the last message retrieved, it's it's newer play a sound and vibration
+                //always save the newer in setting for the next time retrieving messages
+                var arrLastMsgIdxRetrievedByChatId = Settings.LastMsgIdxRetrievedByChatId;
+                if (arrLastMsgIdxRetrievedByChatId == null)
                 {
-                    App.SapChatNewMessage.Play();
-                    Vibration.Vibrate();
+                    Logger.Debug($"Creating Settings.LastMsgIdxRetrievedByChatId");
+                    arrLastMsgIdxRetrievedByChatId = new Dictionary<int, int>();
+                    Settings.LastMsgIdxRetrievedByChatId = arrLastMsgIdxRetrievedByChatId;
+                }
+                if (!arrLastMsgIdxRetrievedByChatId.TryGetValue(chatMessage.ChatId, out int lastMsgIdxRetrieved))
+                {
+                    Logger.Debug($"No last msgidx ever saved for chat {chatMessage.ChatId}. Creating a new one.");
+                    lastMsgIdxRetrieved = 0;
+                }
+                Logger.Debug($"chatId={chatMessage.ChatId}, lastMsgIdxRetrieved={lastMsgIdxRetrieved}");
+                if (lastMsgIdxRetrieved < chatMessage.MessageIndex)
+                {
+                    //Save new value in the setting
+                    arrLastMsgIdxRetrievedByChatId[chatMessage.ChatId] = lastMsgIdxRetrieved = chatMessage.MessageIndex;
+                    Settings.LastMsgIdxRetrievedByChatId = arrLastMsgIdxRetrievedByChatId;
+
+                    if (ChatListItem != null && !ChatListItem.IsAppearing && !chatMessage.IsOwnMessage && !IsMute)
+                    {
+                        App.SapChatNewMessage.Play();
+                        Vibration.Vibrate();
+                    }
                 }
                 Logger.Debug($"Message {chatMessage.Id}, ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex} received. Added at {arrIdx}.");
             }

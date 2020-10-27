@@ -1,18 +1,15 @@
-﻿using goFriend.iOS;
-using Microsoft.AppCenter.Crashes;
+﻿using Microsoft.AppCenter.Crashes;
 using NLog;
 using System;
 using System.Collections.Generic;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(NLogLogger))]
-namespace goFriend.iOS
+namespace goFriend.Services
 {
-    public class NLogLogger : goFriend.Services.ILogger
+    public class LoggerNLogPclImpl : ILogger
     {
         private readonly Logger _log;
 
-        public NLogLogger(Logger log)
+        public LoggerNLogPclImpl(Logger log)
         {
             _log = log;
         }
@@ -37,7 +34,7 @@ namespace goFriend.iOS
         public void TrackError(Exception ex, IDictionary<string, string> properties = null)
         {
             Crashes.TrackError(ex, properties);
-            _log.Error(ex);
+            Error(ex.ToString());
         }
 
         public void Fatal(string text, params object[] args)

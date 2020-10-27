@@ -12,7 +12,7 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NotificationPage : ContentPage
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private List<Notification> _allNotifications = new List<Notification>();
 
         public NotificationPage()

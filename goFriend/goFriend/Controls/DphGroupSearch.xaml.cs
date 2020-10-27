@@ -14,7 +14,7 @@ namespace goFriend.Controls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DphGroupSearch : ContentView
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private SearchViewModel _searchViewModel;
         private Action<string> _selectItemAction;
         private Action _unselectItemAction;

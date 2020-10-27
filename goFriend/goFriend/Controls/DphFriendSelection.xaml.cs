@@ -16,7 +16,7 @@ namespace goFriend.Controls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DphFriendSelection : ContentView
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public static readonly BindableProperty IsShowingCategoriesProperty =
             BindableProperty.CreateAttached(nameof(IsShowingCategories), typeof(bool), typeof(DphFriendSelection), false);

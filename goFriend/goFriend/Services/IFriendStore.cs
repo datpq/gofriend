@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using goFriend.DataModel;
-using Microsoft.AspNetCore.SignalR.Client;
 
 namespace goFriend.Services
 {
@@ -26,9 +25,7 @@ namespace goFriend.Services
         Task<bool> SubscribeGroup(GroupFriend groupFriend);
         Task<Setting> GetSetting(bool useClientCache = true, bool useCache = true);
 
-        HubConnection ChatHubConnection { get; }
-        Task ChatDisconnect();
-        Task ChatConnect(ChatJoinChatModel joinChatModel);
+        SignalRService SignalR { get; }
         Task SendText(ChatMessage chatMessage);
         Task SendAttachment(ChatMessage chatMessage);
         Task<IEnumerable<ChatFriendOnline>> SendPing(int chatId);

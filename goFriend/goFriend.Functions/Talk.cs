@@ -12,9 +12,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using goFriend.DataModel;
 using System.Collections.Generic;
 using System.Linq;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+
+using goFriend.DataModel;
+using goFriend.Services;
+using System.Net.Http;
 
 namespace goFriend.Functions
 {
@@ -22,6 +26,7 @@ namespace goFriend.Functions
     {
         private static readonly Dictionary<int, List<ChatFriendOnline>> OnlineMembers = new Dictionary<int, List<ChatFriendOnline>>();
         private static readonly object LockChatMessage = new object();
+        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.AzureBackendUrlDev}/") };
 
         private readonly IDataRepository _dataRepo;
 
@@ -44,19 +49,24 @@ namespace goFriend.Functions
                 req.ParseSignalRHeaders(out string UserId, out string token);
                 log.LogDebug($"UserId={UserId}, Authorization={token}");
 
-                string json = await new StreamReader(req.Body).ReadToEndAsync();
-                log.LogDebug($"json = {json}");
+                var friendId = int.Parse(UserId);
+                var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId && x.Active).Select(x => x.GroupId).ToList();
+                var arrChatIds = _dataRepo.GetMany<Chat>(x => true).Where(x =>
+                    $"{Extension.Sep}{x.Members}{Extension.Sep}".IndexOf($"{Extension.Sep}u{friendId}{Extension.Sep}", StringComparison.Ordinal) >= 0 ||
+                    myGroups.Any(y => $"{Extension.Sep}{x.Members}{Extension.Sep}".IndexOf($"{Extension.Sep}g{y}{Extension.Sep}", StringComparison.Ordinal) >= 0))
+                    .Select(x => x.Id).ToList();
 
-                var msg = JsonConvert.DeserializeObject<ChatJoinChatModel>(json);
-                var chat = _dataRepo.Get<Chat>(x => x.Id == msg.ChatId);
-
-                await signalRGroupActions.AddAsync(
-                    new SignalRGroupAction
-                    {
-                        UserId = UserId,
-                        GroupName = chat.Id.ToString(),
-                        Action = GroupAction.Add
-                    });
+                arrChatIds.ForEach(async x =>
+                {
+                    log.LogDebug($"Adding user {friendId} to group {x}");
+                    await signalRGroupActions.AddAsync(
+                        new SignalRGroupAction
+                        {
+                            UserId = UserId,
+                            GroupName = x.ToString(),
+                            Action = GroupAction.Add
+                        });
+                });
 
                 return new OkObjectResult(null);
             }
@@ -277,6 +287,174 @@ namespace goFriend.Functions
             finally
             {
                 log.LogDebug($"Attachment.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        private void RemoveCache(string key)
+        {
+            httpClient.GetAsync($"api/Friend/ClearCache/{key}");
+        }
+
+        [FunctionName("CreateChat")]
+        public async Task<IActionResult> CreateChat(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CreateChat")] HttpRequest req,
+            [SignalR(HubName = Constants.SignalRHubName)] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = Constants.SignalRHubName)] IAsyncCollector<SignalRGroupAction> signalRGroupActions,
+            ILogger log)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                log.LogDebug("CreateChat.BEGIN");
+
+                req.ParseSignalRHeaders(out string UserId, out string token);
+                log.LogDebug($"UserId={UserId}, Authorization={token}");
+                var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
+
+                string json = await new StreamReader(req.Body).ReadToEndAsync();
+                log.LogDebug($"json = {json}");
+
+                var chat = JsonConvert.DeserializeObject<Chat>(json);
+                log.LogDebug($"Id={chat.Id}, Name={chat.Name}, OwnerId={chat.OwnerId}, Members={chat.Members}, Token={chat.Token}");
+
+                //rearrange members, order by Id apart from the first Item which is OwnerId
+                var arrMemberIds = chat.GetMemberIds();
+                var arrOrderedMemberIds = new int[arrMemberIds.Length - 1];
+                Array.Copy(arrMemberIds, 1, arrOrderedMemberIds, 0, arrOrderedMemberIds.Length);
+                Array.Sort(arrOrderedMemberIds);
+
+                //OwnerId followed by sorted member Ids
+                chat.Members = $"u{arrMemberIds[0]}{Extension.Sep}u{string.Join($"{Extension.Sep}u", arrOrderedMemberIds)}";
+                log.LogDebug($"Members={chat.Members}");
+                chat.Token = null;
+
+                if (chat.Id == 0) // new Chat
+                {
+                    if (_dataRepo.GetMany<Chat>(x => x.Members == chat.Members).Any())
+                    {
+                        log.LogError("Chat already created. Do nothing"); // raise error maybe
+                    }
+                    else
+                    {
+                        chat.CreatedDate = DateTime.UtcNow;
+                        _dataRepo.Add(chat);
+
+                        _dataRepo.Add(
+                            new ChatMessage
+                            {
+                                OwnerId = 0,
+                                Chat = chat,
+                                ChatId = chat.Id,
+                                CreatedDate = chat.CreatedDate,
+                                Message = string.Format(Constants.ResChatMessageCreateChat,
+                                chat.OwnerId == 0 ? Constants.ResSystem : chat.Owner?.FirstName, chat.CreatedDate),
+                                MessageIndex = 1,
+                                MessageType = ChatMessageType.CreateChat
+                            });
+                        var chatType = chat.GetChatType();
+                        if (chatType == ChatType.Individual || chatType == ChatType.MixedGroup)
+                        {
+                            _dataRepo.Add(
+                                new ChatMessage
+                                {
+                                    OwnerId = 0,
+                                    Chat = chat,
+                                    ChatId = chat.Id,
+                                    CreatedDate = chat.CreatedDate,
+                                    Message = _dataRepo.GetChatMemberNames(chat),
+                                    MessageIndex = 2,
+                                    MessageType = ChatMessageType.CreateChat
+                                });
+                        }
+                        _dataRepo.Commit();
+
+                        foreach (var memberId in chat.GetMemberIds())
+                        {
+                            log.LogDebug($"puting {memberId} to the SignalR group");
+                            await signalRGroupActions.AddAsync(
+                                new SignalRGroupAction
+                                {
+                                    UserId = memberId.ToString(),
+                                    GroupName = chat.Id.ToString(),
+                                    Action = GroupAction.Add
+                                });
+                            log.LogDebug($"sending CreateChat to {memberId}");
+                            await signalRMessages.AddAsync(
+                                new SignalRMessage
+                                {
+                                    Target = ChatMessageType.CreateChat.ToString(),
+                                    UserId = memberId.ToString(),
+                                    //GroupName = chat.Id.ToString(),
+                                    Arguments = new[] { chat }
+                                });
+                            var cacheKey = $".GetChats.{memberId}.";
+                            log.LogDebug($"sending ClearCache to backend: cacheKey={cacheKey}");
+                            RemoveCache(cacheKey); // refresh GetChats
+                        }
+                    }
+                }
+                else
+                {
+                    var oldChat = _dataRepo.Get<Chat>(x => x.Id == chat.Id);
+                    if (oldChat == null)
+                    {
+                        log.LogError($"Chat not found. (Id={chat.Id})");
+                    }
+                    else
+                    {
+                        var arrOldMemberIds = oldChat.GetMemberIds();
+                        oldChat.Members = chat.Members;
+                        oldChat.Name = chat.Name;
+                        _dataRepo.Commit();
+                        foreach (var memberId in arrOldMemberIds.Union(arrMemberIds))
+                        {
+                            if (!arrMemberIds.Contains(memberId)) // removed from chat
+                            {
+                                log.LogDebug($"removing user {memberId} from SignalR group");
+                                await signalRGroupActions.AddAsync(
+                                    new SignalRGroupAction
+                                    {
+                                        UserId = memberId.ToString(),
+                                        GroupName = chat.Id.ToString(),
+                                        Action = GroupAction.Remove
+                                    });
+                            }
+                            else if (!arrOldMemberIds.Contains(memberId))
+                            {
+                                log.LogDebug($"puting user {memberId} to the SignalR group");
+                                await signalRGroupActions.AddAsync(
+                                    new SignalRGroupAction
+                                    {
+                                        UserId = memberId.ToString(),
+                                        GroupName = chat.Id.ToString(),
+                                        Action = GroupAction.Add
+                                    });
+                            }
+                            log.LogDebug($"sending CreateChat to user {memberId}");
+                            await signalRMessages.AddAsync(
+                                new SignalRMessage
+                                {
+                                    Target = ChatMessageType.CreateChat.ToString(),
+                                    UserId = memberId.ToString(),
+                                    //GroupName = chat.Id.ToString(),
+                                    Arguments = new[] { chat }
+                                });
+                            var cacheKey = $".GetChats.{memberId}.";
+                            log.LogDebug($"sending ClearCache to backend: cacheKey={cacheKey}");
+                            RemoveCache(cacheKey); // refresh GetChats
+                        }
+                    }
+                }
+
+                return new OkObjectResult(null);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult("There was an error: " + ex.Message);
+            }
+            finally
+            {
+                log.LogDebug($"CreateChat.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

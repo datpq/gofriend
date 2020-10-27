@@ -10,7 +10,6 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Web;
 using goFriend.DataModel;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Caching.Memory;
 using PCLAppConfig;
 using Plugin.Connectivity;
@@ -21,58 +20,41 @@ namespace goFriend.Services
 {
     public class FriendStore : IFriendStore
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
+        private static readonly string BackendUrl = Constants.AzureBackendUrlDev;
+        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{BackendUrl}/") };
         private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
-        private static readonly string BackendUrl = Constants.AzureBackendUrlDev;
-        private SignalRService signalR;
+        public SignalRService SignalR { get; set;}
 
         public FriendStore()
         {
             Logger.Debug($"FriendStore.BEGIN");
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
-            ChatHubConnection = new HubConnectionBuilder()
-                .WithUrl($"{BackendUrl}/chat")
-                .WithAutomaticReconnect()
-                .Build();
+            //ChatHubConnection = new HubConnectionBuilder()
+            //    .WithUrl($"{BackendUrl}/chat")
+            //    .WithAutomaticReconnect()
+            //    .Build();
             //var allChatMessageTypes = Enum.GetValues(typeof(ChatMessageType)).Cast<ChatMessageType>();
             //foreach (var messageType in new []{ ChatMessageType.JoinChat, ChatMessageType.Text })
             //{
             //    _hubConnection.On<IChatMessage>(messageType.ToString(), ChatReceiveMessage);
             //}
-            ChatHubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), ChatReceiveMessage);
-            ChatHubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), ChatReceiveAttachment);
-            ChatHubConnection.On<Chat>(ChatMessageType.CreateChat.ToString(), ChatReceiveCreateChat);
-            ChatHubConnection.Closed += HubConnectionOnClosed;
-            ChatHubConnection.Reconnected += HubConnectionOnReconnected;
             Connectivity.ConnectivityChanged += ConnectivityOnConnectivityChanged;
 
             Logger.Debug($"FriendStore.END");
 
-            signalR = new SignalRService();
-            signalR.Connected += SignalR_ConnectionChanged;
-            signalR.ConnectionFailed += SignalR_ConnectionChanged;
-        }
-
-        void SignalR_ConnectionChanged(object sender, bool success, string message)
-        {
-            Logger.Debug($"SignalR_ConnectionChanged(success={success}, message={message}");
-        }
-
-        public HubConnection ChatHubConnection { get; set; }
-
-        private static HttpClient GetHttpClient()
-        {
-            return new HttpClient { BaseAddress = new Uri($"{BackendUrl}/") };
+            SignalR = new SignalRService();
+            SignalR.ConnectAsync();
         }
 
         private static HttpClient GetSecuredHttpClient()
         {
-            var client = GetHttpClient();
-            client.DefaultRequestHeaders.Add("token", App.User.Token.ToString());
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Add("token", App.User.Token.ToString());
             //Logger.Debug($"id={App.User.Id}, token={App.User.Token}");
-            return client;
+            return httpClient;
         }
 
         private static void Validate()
@@ -102,12 +84,12 @@ namespace goFriend.Services
 
                 //if (thirdPartyToken == null) return null;
 
-                var client = GetHttpClient();
-                //client.DefaultRequestHeaders.Add("thirdPartyToken", thirdPartyToken);
-                client.DefaultRequestHeaders.Add("deviceInfo", deviceInfo);
+                httpClient.DefaultRequestHeaders.Clear();
+                //httpClient.DefaultRequestHeaders.Add("thirdPartyToken", thirdPartyToken);
+                httpClient.DefaultRequestHeaders.Add("deviceInfo", deviceInfo);
 
                 var serializedObject = JsonConvert.SerializeObject(friend);
-                var response = await client.PutAsync($"api/Friend/LoginWithThirdParty", new StringContent(serializedObject, Encoding.UTF8, "application/json"));
+                var response = await httpClient.PutAsync($"api/Friend/LoginWithThirdParty", new StringContent(serializedObject, Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
                     result = await response.Content.ReadAsAsync<Friend>();
@@ -144,12 +126,12 @@ namespace goFriend.Services
 
                 if (authToken == null) return null;
 
-                var client = GetHttpClient();
-                client.DefaultRequestHeaders.Add("authToken", authToken);
-                client.DefaultRequestHeaders.Add("deviceInfo", deviceInfo);
-                client.DefaultRequestHeaders.Add("info", info);
+                httpClient.DefaultRequestHeaders.Clear();
+                httpClient.DefaultRequestHeaders.Add("authToken", authToken);
+                httpClient.DefaultRequestHeaders.Add("deviceInfo", deviceInfo);
+                httpClient.DefaultRequestHeaders.Add("info", info);
 
-                var response = await client.GetAsync($"api/Friend/LoginWithFacebook");
+                var response = await httpClient.GetAsync($"api/Friend/LoginWithFacebook");
                 if (response.IsSuccessStatusCode)
                 {
                     result = await response.Content.ReadAsAsync<Friend>();
@@ -1014,80 +996,7 @@ namespace goFriend.Services
             if (CrossConnectivity.Current.IsConnected)
             {
                 Logger.Debug("Internet available. Rejoining chat...");
-                await App.JoinAllChats();
-            }
-        }
-
-        private Task HubConnectionOnReconnected(string arg)
-        {
-            Logger.Debug($"OnReconnected(arg={arg})");
-            return App.JoinAllChats();
-        }
-
-        private Task HubConnectionOnClosed(Exception arg)
-        {
-            Logger.Debug($"OnClosed(exception={arg})");
-            Logger.Debug("Waiting for 5 seconds before rejoining the chat");
-            Task.Delay(TimeSpan.FromSeconds(5));
-            return App.JoinAllChats();
-        }
-
-        public async Task ChatConnect(ChatJoinChatModel joinChatModel)
-        {
-            var stopWatch = Stopwatch.StartNew();
-            try
-            {
-                if (!signalR.IsConnected)
-                {
-                    Logger.Debug("NewChatConnect.BEGIN");
-                    await signalR.ConnectAsync();
-                    Logger.Debug("NewChatConnect.JoinChat");
-                    await signalR.SendMessageAsync<string>(joinChatModel.MessageType.ToString(), joinChatModel);
-                    Logger.Debug("NewChatConnect.END");
-                }
-
-                Logger.Debug("ChatConnect.BEGIN");
-                if (ChatHubConnection.State == HubConnectionState.Disconnected)
-                {
-                    Logger.Debug("starting connection...");
-                    await ChatHubConnection.StartAsync();
-                }
-
-                Logger.Debug($"joining chats... HubConnectionState={ChatHubConnection.State}");
-                if (ChatHubConnection.State == HubConnectionState.Connected)
-                {
-                    await ChatHubConnection.InvokeAsync<ChatJoinChatModel>(joinChatModel.MessageType.ToString(), joinChatModel);
-                }
-                else
-                {
-                    Logger.Warn("Hub not connected yet. Wait for automatic connection to be completed.");
-                }
-            }
-            catch (Exception e) //Unknown error
-            {
-                Logger.TrackError(e);
-            }
-            finally
-            {
-                Logger.Debug($"ChatConnect.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
-            }
-        }
-
-        public async Task ChatDisconnect()
-        {
-            var stopWatch = Stopwatch.StartNew();
-            try
-            {
-                Logger.Debug("ChatDisconnect.BEGIN");
-                await ChatHubConnection.StopAsync();
-            }
-            catch (Exception e) //Unknown error
-            {
-                Logger.TrackError(e);
-            }
-            finally
-            {
-                Logger.Debug($"ChatDisconnect.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                await SignalR.ConnectAsync();
             }
         }
 
@@ -1109,7 +1018,7 @@ namespace goFriend.Services
                 };
                 //result = await ChatHubConnection.InvokeAsync<IEnumerable<ChatFriendOnline>>(
                 //    ChatMessageType.Ping.ToString(), chatMessage);
-                result = await signalR.SendMessageAsync<IEnumerable<ChatFriendOnline>>(ChatMessageType.Ping.ToString(), chatMessage);
+                result = await SignalR.SendMessageAsync<IEnumerable<ChatFriendOnline>>(ChatMessageType.Ping.ToString(), chatMessage);
                 App.ChatListVm.ChatListItems.Single(x => x.Chat.Id == chatId).ChatViewModel.UpdateMembers(result);
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
                 return result;
@@ -1131,7 +1040,7 @@ namespace goFriend.Services
             try
             {
                 //await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
-                await signalR.SendMessageAsync<string>(chatMessage.MessageType.ToString(), chatMessage);
+                await SignalR.SendMessageAsync<string>(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
             {
@@ -1149,7 +1058,7 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)}");
-                await signalR.SendMessageAsync<string>(chatMessage.MessageType.ToString(), chatMessage);
+                await SignalR.SendMessageAsync<string>(chatMessage.MessageType.ToString(), chatMessage);
                 //await ChatHubConnection.InvokeAsync<ChatMessage>(chatMessage.MessageType.ToString(), chatMessage);
             }
             catch (Exception e)
@@ -1174,7 +1083,8 @@ namespace goFriend.Services
                     chat.Members = $"u{App.User.Id}{DataModel.Extension.Sep}{chat.Members}";
                 }
                 Logger.Debug($"chat={JsonConvert.SerializeObject(chat)}");
-                await ChatHubConnection.InvokeAsync<Chat>(ChatMessageType.CreateChat.ToString(), chat);
+                //await ChatHubConnection.InvokeAsync<Chat>(ChatMessageType.CreateChat.ToString(), chat);
+                await SignalR.SendMessageAsync<string>(ChatMessageType.CreateChat.ToString(), chat);
             }
             catch (Exception e)
             {
@@ -1183,82 +1093,6 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug("SendCreateChat.END");
-            }
-        }
-
-        //private void ChatReceivePing()
-        //{
-        //    var stopWatch = Stopwatch.StartNew();
-        //    try
-        //    {
-        //        Logger.Debug($"ChatReceivePing.BEGIN()");
-        //        //Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)})");
-        //    }
-        //    catch (Exception e) //Unknown error
-        //    {
-        //        Logger.Error(e.ToString());
-        //    }
-        //    finally
-        //    {
-        //        Logger.Debug($"ChatReceivePing.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
-        //    }
-        //}
-
-        private void ChatReceiveAttachment(ChatMessage chatMessage)
-        {
-            Logger.Debug($"ChatReceiveAttachment.BEGIN(MessageType={chatMessage.MessageType})");
-            ChatReceiveMessage(chatMessage);
-            Logger.Debug($"ChatReceiveAttachment.END");
-        }
-
-        private void ChatReceiveMessage(ChatMessage chatMessage)
-        {
-            var stopWatch = Stopwatch.StartNew();
-            try
-            {
-                Logger.Debug($"ChatReceiveMessage.BEGIN(MessageType={chatMessage.MessageType})");
-                Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)})");
-                switch (chatMessage.MessageType)
-                {
-                    case ChatMessageType.Text:
-                    case ChatMessageType.Attachment:
-                        if (App.ChatListVm.ChatListItems.Any(x => x.Chat.Id == chatMessage.ChatId))
-                        {
-                            Logger.Debug("Chat found. Message added.");
-                            App.ChatListVm.ChatListItems.Single(x => x.Chat.Id == chatMessage.ChatId).ChatViewModel.ReceiveMessage(chatMessage);
-                        }
-                        break;
-                    default:
-                        Logger.Error("Type of message not supported.");
-                        break;
-                }
-            }
-            catch (Exception e) //Unknown error
-            {
-                Logger.TrackError(e);
-            }
-            finally
-            {
-                Logger.Debug($"ChatReceiveMessage.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
-            }
-        }
-
-        private async void ChatReceiveCreateChat(Chat chat)
-        {
-            var stopWatch = Stopwatch.StartNew();
-            try
-            {
-                Logger.Debug($"ChatReceiveCreateChat.BEGIN");
-                Logger.Debug($"chat={JsonConvert.SerializeObject(chat)})");
-                await App.ChatListVm.ReceiveCreateChat(chat);
-            }
-            catch (Exception e) //Unknown error
-            {
-                Logger.TrackError(e);
-            }
-            finally
-            {
-                Logger.Debug($"ChatReceiveCreateChat.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

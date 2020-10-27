@@ -13,7 +13,7 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SearchPage : ContentPage
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         private readonly SearchViewModel _searchViewModel;
         private readonly Action<string> _setSelectedItemAction;

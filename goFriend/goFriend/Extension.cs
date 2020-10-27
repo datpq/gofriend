@@ -14,7 +14,7 @@ namespace goFriend
 {
     public static class Extension
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public static string GetSpentTime(this DateTime dateTime)
         {

@@ -13,7 +13,7 @@ namespace goFriend.Controls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DphOverlapImage : ContentView
     {
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public static readonly BindableProperty Source1Property =
             BindableProperty.CreateAttached(nameof(Source1), typeof(string), typeof(DphOverlapImage),

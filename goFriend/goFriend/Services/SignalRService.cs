@@ -15,21 +15,16 @@ namespace goFriend.Services
 {
     public class SignalRService
     {
-        readonly HttpClient client;
-        private static readonly ILogger Logger = DependencyService.Get<ILogManager>().GetLog();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        private readonly HttpClient httpClient;
+        private HubConnection hubConnection;
 
-        public delegate void MessageReceivedHandler(object sender, ChatMessage message);
-        public delegate void ConnectionHandler(object sender, bool successful, string message);
-
-        public event MessageReceivedHandler OnChatReceiveMessageHandler;
-        public event ConnectionHandler Connected;
-        public event ConnectionHandler ConnectionFailed;
         public bool IsConnected { get; private set; }
         public bool IsBusy { get; private set; }
 
         public SignalRService()
         {
-            client = new HttpClient();
+            httpClient = new HttpClient();
         }
 
         private HttpRequestMessage BuildRequest(string msgType, object msgContent = null)
@@ -67,7 +62,7 @@ namespace goFriend.Services
             return request;
         }
 
-        public async Task<TResult> SendMessageAsync<TResult>(string msgType, object msgContent)
+        public async Task<TResult> SendMessageAsync<TResult>(string msgType, object msgContent = null)
         {
             var stopWatch = Stopwatch.StartNew();
             TResult result = default;
@@ -79,7 +74,7 @@ namespace goFriend.Services
                 var request = BuildRequest(msgType, msgContent);
 
                 //var result = await client.PostAsync($"{Constants.HostName}/api/talk", content);
-                var responseMessage = await client.SendAsync(request);
+                var responseMessage = await httpClient.SendAsync(request);
                 var resultJson = await responseMessage.Content.ReadAsStringAsync();
                 Logger.Debug($"resultJson={resultJson}");
 
@@ -99,20 +94,72 @@ namespace goFriend.Services
             }
         }
 
+        public async Task StopAsync()
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"StopAsync.BEGIN");
+
+                if (hubConnection != null)
+                {
+                    Logger.Debug($"Disconnecting...");
+                    hubConnection.Reconnected -= HubConnectionOnReconnected;
+                    hubConnection.Closed -= HubConnectionOnClosed;
+                    await hubConnection.StopAsync();
+                    hubConnection = null;
+                }
+                else
+                {
+                    Logger.Debug($"hubConnection null");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug($"StopAsync.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         public async Task ConnectAsync()
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
                 Logger.Debug($"ConnectAsync.BEGIN");
+
+                if (!App.IsUserLoggedIn || App.User == null)
+                {
+                    Logger.Debug("User is not logged in.");
+                    return;
+                }
+                if (hubConnection != null)
+                {
+                    Logger.Debug($"hubConnection.State = {hubConnection.State}");
+                    if (hubConnection.State == HubConnectionState.Connected)
+                    {
+                        Logger.Debug("Hub connected. Do nothing.");
+                        return;
+                    }
+                    else if (hubConnection.State == HubConnectionState.Connecting || hubConnection.State == HubConnectionState.Reconnecting)
+                    {
+                        Logger.Debug("Connecting to the Hub. Wait for automatic connection to be completed");
+                        return;
+                    }
+                }
                 IsBusy = true;
                 var request = BuildRequest("negotiate");
 
-                var responseMessage = await client.SendAsync(request);
+                var responseMessage = await httpClient.SendAsync(request);
                 string negotiateJson = await responseMessage.Content.ReadAsStringAsync();
+                Logger.Debug($"negotiateJson={negotiateJson}");
                 var negotiate = JsonConvert.DeserializeObject<NegotiateInfo>(negotiateJson);
 
-                HubConnection connection = new HubConnectionBuilder()
+                hubConnection = new HubConnectionBuilder()
                     .AddNewtonsoftJsonProtocol()
                     .WithUrl(negotiate.Url, options =>
                     {
@@ -120,21 +167,22 @@ namespace goFriend.Services
                     })
                     .Build();
 
-                connection.Closed += Connection_Closed;
-                connection.On<ChatMessage>(ChatMessageType.Text.ToString(), OnChatReceiveMessage);
-                connection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), OnChatReceiveAttachment);
-                await connection.StartAsync();
+                hubConnection.Reconnected += HubConnectionOnReconnected;
+                hubConnection.Closed += HubConnectionOnClosed;
+                hubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), OnChatReceiveMessage);
+                hubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), OnChatReceiveAttachment);
+                hubConnection.On<Chat>(ChatMessageType.CreateChat.ToString(), OnChatReceiveCreateChat);
+                await hubConnection.StartAsync();
 
                 IsConnected = true;
                 IsBusy = false;
-
-                Connected?.Invoke(this, true, "Connection successful.");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                ConnectionFailed?.Invoke(this, false, ex.Message);
                 IsConnected = false;
                 IsBusy = false;
+                Logger.Error(e.ToString());
+                Logger.TrackError(e);
             }
             finally
             {
@@ -142,12 +190,43 @@ namespace goFriend.Services
             }
         }
 
-        Task Connection_Closed(Exception arg)
+        private Task HubConnectionOnReconnected(string arg)
         {
-            ConnectionFailed?.Invoke(this, false, arg.Message);
+            Logger.Debug($"HubConnectionOnReconnected(arg={arg})");
+            //return App.JoinAllChats();
+            return Task.CompletedTask;
+        }
+
+        private Task HubConnectionOnClosed(Exception arg)
+        {
             IsConnected = false;
             IsBusy = false;
+            Logger.Debug($"OnClosed(exception={arg})");
+            Logger.Debug("Waiting for 5 seconds before rejoining the chat");
+            Task.Delay(TimeSpan.FromSeconds(5));
+            ConnectAsync();
             return Task.CompletedTask;
+        }
+
+        private async Task OnChatReceiveCreateChat(Chat chat)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"OnChatReceiveCreateChat.BEGIN");
+
+                Logger.Debug($"chat={JsonConvert.SerializeObject(chat)})");
+                await App.ChatListVm.ReceiveCreateChat(chat);
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug($"OnChatReceiveCreateChat.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
         }
 
         private void OnChatReceiveAttachment(ChatMessage chatMessage)
@@ -163,8 +242,6 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"OnChatReceiveMessage.BEGIN(MessageType={chatMessage.MessageType})");
-
-                OnChatReceiveMessageHandler?.Invoke(this, chatMessage);
 
                 Logger.Debug($"chatMessage={JsonConvert.SerializeObject(chatMessage)})");
                 switch (chatMessage.MessageType)
@@ -184,6 +261,7 @@ namespace goFriend.Services
             }
             catch (Exception e) //Unknown error
             {
+                Logger.Error(e.ToString());
                 Logger.TrackError(e);
             }
             finally
