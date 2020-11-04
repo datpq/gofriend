@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using goFriend.DataModel;
 using goFriend.Services;
-using Microsoft.AspNetCore.SignalR.Client;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
@@ -169,6 +168,9 @@ namespace goFriend.ViewModels
 
         public ImageSource SendImage => string.IsNullOrWhiteSpace(Message) ? Constants.ImgThumbsUp : Constants.ImgSend;
 
+        // Messages is in descending order
+        // [0] is the last message with max MessageIndex
+        // [count - 1] is the first message with MessageIndex = 0
         private ObservableCollection<ChatMessage> _messages = new ObservableCollection<ChatMessage>();
         public ObservableCollection<ChatMessage> Messages
         {
@@ -246,12 +248,17 @@ namespace goFriend.ViewModels
 
                 var lastDateTime = new DateTime(2000, 1, 1);
                 var arrIdx = 0;
+                // Messages[0] is the first message received.
+                // Searching from 0 until the message that have MessageIndex greater than the one of current message
+                // example Messages index = 1, 2, 3, ..., 10, 15, 16, ... 100...
+                // Receive 14 --> arrIdx will return 10
                 for (arrIdx = 0; arrIdx < Messages.Count; arrIdx++)
                 {
                     if (Messages[arrIdx].MessageIndex > chatMessage.MessageIndex) continue;
                     lastDateTime = Messages[arrIdx].CreatedDate.Date;
                     break;
                 }
+                Logger.Debug($"arrIdx={arrIdx}, Messages.Count={Messages.Count}");
 
                 if (lastDateTime < chatMessage.CreatedDate.Date)
                 {
@@ -261,6 +268,7 @@ namespace goFriend.ViewModels
                     {
                         arrIdx--;
                         Messages[arrIdx].MessageIndex = chatMessage.MessageIndex;
+                        Logger.Debug($"arrIdx={arrIdx}");
                     }
                     else
                     {
@@ -347,7 +355,7 @@ namespace goFriend.ViewModels
             var idx = msgListIdx + 1;
             while (idx < Messages.Count)
             {
-                if (Messages[idx].MessageType.IsShowableMessage())
+                if (Messages[idx].MessageType.IsRealShowableMessage())
                 {
                     result = Messages[idx];
                     //Logger.Debug($"GetPreviousMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
@@ -364,7 +372,7 @@ namespace goFriend.ViewModels
             var idx = msgListIdx - 1;
             while (idx >= 0)
             {
-                if (Messages[idx].MessageType.IsShowableMessage())
+                if (Messages[idx].MessageType.IsRealShowableMessage())
                 {
                     result = Messages[idx];
                     //Logger.Debug($"GetNextMessage.result(msgListIdx={idx}, MessageIndex={result.MessageIndex})");
@@ -377,7 +385,7 @@ namespace goFriend.ViewModels
 
         async void OnMessageAppearing(ChatMessage message)
         {
-            if (!message.MessageType.IsShowableMessage()) return;
+            if (!message.MessageType.IsRealShowableMessage()) return;
             try
             {
                 var listIdx = Messages.IndexOf(message);
@@ -385,7 +393,7 @@ namespace goFriend.ViewModels
 
                 //go up the list find the previous message
                 var previousMessage = GetPreviousMessage(listIdx);
-                if ((previousMessage == null && message.MessageIndex != 1) ||
+                if ((previousMessage == null && message.MessageIndex > 3) || // The first 2 messages are CreateChat messages
                     (previousMessage != null && previousMessage.MessageIndex + 1 != message.MessageIndex))
                 {
                     Logger.Debug("There is some missing messages up the list");
@@ -447,7 +455,7 @@ namespace goFriend.ViewModels
         void OnMessageDisappearing(ChatMessage message)
         {
             Logger.Debug("OnMessageDisappearing.BEGIN");
-            if (!message.MessageType.IsShowableMessage()) return;
+            if (!message.MessageType.IsRealShowableMessage()) return;
             var listIdx = Messages.IndexOf(message);
             if (listIdx <= 6)
             {

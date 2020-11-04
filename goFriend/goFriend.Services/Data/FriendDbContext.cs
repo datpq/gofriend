@@ -44,7 +44,7 @@ namespace goFriend.Services.Data
             modelBuilder.Entity<Chat>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<ChatMessage>().ToTable("ChatMessage");
             modelBuilder.Entity<ChatMessage>().Property(x => x.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<ChatMessage>().HasKey(x => new { x.ChatId, Index = x.MessageIndex });
+            modelBuilder.Entity<ChatMessage>().HasKey(x => new { x.ChatId, x.MessageIndex });
             modelBuilder.Entity<ChatMessage>()
                 .HasOne(x => x.Chat)
                 .WithMany(x => x.ChatMessages)

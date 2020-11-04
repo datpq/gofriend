@@ -49,7 +49,7 @@ namespace goFriend.Views
                     {
                         Id = x.Chat.Id,
                         SelectedObject = x,
-                        IsHighlight = !x.IsLastMessageRead,
+                        HighLightColor = !x.IsLastMessageRead ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.Default,
                         FormattedText = x.FormattedText
                     };
                     var overlapImageInfo = await x.Chat.GetOverlapImageInfo();
@@ -67,7 +67,7 @@ namespace goFriend.Views
             //Logger.Debug($"RefreshLastMessage.BEGIN(ChatId={chatListItemVm.Chat.Id})");
             var item = ((DphListViewModel)DphListView.BindingContext).DphListItems.SingleOrDefault(x => x.Id == chatListItemVm.Chat.Id);
             if (item != null) {
-                item.IsHighlight = !chatListItemVm.IsLastMessageRead;
+                item.HighLightColor = !chatListItemVm.IsLastMessageRead ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.Default;
                 item.FormattedText = chatListItemVm.FormattedText;
                 //Logger.Debug($"IsHighlight={item.IsHighlight}, LastMessage={chatListItemVm.LastMessage}, FormattedText={item.FormattedText}");
             }

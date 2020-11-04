@@ -120,7 +120,7 @@ namespace goFriend.Views
             var chatVm = (ChatViewModel) BindingContext;
             var newChat = new Chat
             {
-                Id = chatVm.ChatListItem.Chat?.Id ?? 0,
+                Id = chatVm?.ChatListItem?.Chat?.Id ?? 0,
                 Members = string.Join(",", ChipContainer.Children.Select(x => $"u{((Chip)x).Tag}")),
                 Name = ChipContainer.Children.Count == 2 ? string.Empty : TxtName.Text,
             };

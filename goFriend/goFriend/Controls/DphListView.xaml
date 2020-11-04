@@ -38,8 +38,8 @@
                                     <!--Style="{DynamicResource ListItemDetailTextStyle}"-->
                                     <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Padding="10">
                                         <BoxView Grid.Column="2" CornerRadius="7" HeightRequest="14" WidthRequest="14"
-                                         IsVisible="{Binding IsHighlight}"
-                                         Color="{StaticResource ColorPrimaryLight}" HorizontalOptions="Center" VerticalOptions="Center" />
+                                         IsVisible="{Binding HighLightVisible}"
+                                         Color="{Binding HighLightColor}" HorizontalOptions="Center" VerticalOptions="Center" />
                                         <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button1Radius}" HorizontalOptions="Center" VerticalOptions="Center"
                                                 WidthRequest="{Binding Button1Width}" HeightRequest="{Binding Button1Height}"
                                                 ImageSource="{Binding Button1ImageSource}"

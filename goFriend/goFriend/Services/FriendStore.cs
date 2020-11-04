@@ -46,7 +46,6 @@ namespace goFriend.Services
             Logger.Debug($"FriendStore.END");
 
             SignalR = new SignalRService();
-            SignalR.ConnectAsync();
         }
 
         private static HttpClient GetSecuredHttpClient()

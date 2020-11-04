@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace goFriend.Services
 {
@@ -27,7 +26,7 @@ namespace goFriend.Services
             httpClient = new HttpClient();
         }
 
-        private HttpRequestMessage BuildRequest(string msgType, object msgContent = null)
+        private HttpRequestMessage BuildRequest(string msgType, HttpMethod method, object msgContent = null)
         {
             HttpRequestMessage request;
             if (msgContent == null)
@@ -35,7 +34,7 @@ namespace goFriend.Services
                 request = new HttpRequestMessage
                 {
                     RequestUri = new Uri($"{Constants.ChatFuncUrl}/api/{msgType}"),
-                    Method = HttpMethod.Get,
+                    Method = method,
                     Headers = {
                         { "x-ms-client-principal-id", App.User.Id.ToString() },
                         { "Authorization", App.User.Token.ToString()}
@@ -50,7 +49,7 @@ namespace goFriend.Services
                 request = new HttpRequestMessage
                 {
                     RequestUri = new Uri($"{Constants.ChatFuncUrl}/api/{msgType}"),
-                    Method = HttpMethod.Post,
+                    Method = method,
                     Headers = {
                         { "x-ms-client-principal-id", App.User.Id.ToString() },
                         { "Authorization", App.User.Token.ToString()}
@@ -71,7 +70,7 @@ namespace goFriend.Services
                 Logger.Debug($"SendMessageAsync.BEGIN(msgType={msgType})");
                 IsBusy = true;
 
-                var request = BuildRequest(msgType, msgContent);
+                var request = BuildRequest(msgType, HttpMethod.Post, msgContent);
 
                 //var result = await client.PostAsync($"{Constants.HostName}/api/talk", content);
                 var responseMessage = await httpClient.SendAsync(request);
@@ -152,7 +151,7 @@ namespace goFriend.Services
                     }
                 }
                 IsBusy = true;
-                var request = BuildRequest("negotiate");
+                var request = BuildRequest("negotiate", HttpMethod.Get);
 
                 var responseMessage = await httpClient.SendAsync(request);
                 string negotiateJson = await responseMessage.Content.ReadAsStringAsync();
@@ -176,6 +175,9 @@ namespace goFriend.Services
 
                 IsConnected = true;
                 IsBusy = false;
+
+                Logger.Debug("Connected. Sending join chat...");
+                _ = SendMessageAsync<string>(ChatMessageType.JoinChat.ToString());
             }
             catch (Exception e)
             {
@@ -197,15 +199,14 @@ namespace goFriend.Services
             return Task.CompletedTask;
         }
 
-        private Task HubConnectionOnClosed(Exception arg)
+        private async Task HubConnectionOnClosed(Exception arg)
         {
             IsConnected = false;
             IsBusy = false;
             Logger.Debug($"OnClosed(exception={arg})");
             Logger.Debug("Waiting for 5 seconds before rejoining the chat");
-            Task.Delay(TimeSpan.FromSeconds(5));
-            ConnectAsync();
-            return Task.CompletedTask;
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            await ConnectAsync();
         }
 
         private async Task OnChatReceiveCreateChat(Chat chat)

@@ -20,14 +20,12 @@ namespace goFriend.ViewModels
             set
             {
                 _chat = value;
-                if (ChatViewModel == null)
+                ChatViewModel = new ChatViewModel
                 {
-                    ChatViewModel = new ChatViewModel
-                    {
-                        ChatListItem = this
-                    };
-                }
+                    ChatListItem = this
+                };
                 OnPropertyChanged(nameof(Chat));
+                OnPropertyChanged(nameof(Name));
                 OnPropertyChanged(nameof(FormattedText));
             }
         }

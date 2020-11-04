@@ -91,7 +91,7 @@ namespace goFriend.Views
                 while (idx < vm.Messages.Count)
                 {
                     var message = vm.Messages[idx];
-                    if (!message.MessageType.IsShowableMessage())
+                    if (!message.MessageType.IsRealShowableMessage())
                     {
                         idx++;
                         continue;
@@ -117,7 +117,7 @@ namespace goFriend.Views
 
                     //go up the list find the previous message
                     var previousMessage = vm.GetPreviousMessage(idx);
-                    if ((previousMessage == null && message.MessageIndex != 1) ||
+                    if ((previousMessage == null && message.MessageIndex > 3) || // The first 2 messages are CreateChat messages
                         (previousMessage != null && previousMessage.MessageIndex + 1 != message.MessageIndex))
                     {
                         if (fetchCount >= Constants.ChatMaxPagesFetched)

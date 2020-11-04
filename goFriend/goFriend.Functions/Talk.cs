@@ -1,4 +1,4 @@
-using goFriend.Services.Data;
+﻿using goFriend.Services.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -19,13 +19,14 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using goFriend.DataModel;
 using goFriend.Services;
 using System.Net.Http;
+using System.Collections.Concurrent;
 
 namespace goFriend.Functions
 {
     public class Talk
     {
-        private static readonly Dictionary<int, List<ChatFriendOnline>> OnlineMembers = new Dictionary<int, List<ChatFriendOnline>>();
-        private static readonly object LockChatMessage = new object();
+        private static readonly ConcurrentDictionary<int, List<ChatFriendOnline>> OnlineMembers = new ConcurrentDictionary<int, List<ChatFriendOnline>>();
+        private static readonly ConcurrentDictionary<int, object> LockChatMessageByChatId = new ConcurrentDictionary<int, object>();
         private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.AzureBackendUrlDev}/") };
 
         private readonly IDataRepository _dataRepo;
@@ -56,7 +57,7 @@ namespace goFriend.Functions
                     myGroups.Any(y => $"{Extension.Sep}{x.Members}{Extension.Sep}".IndexOf($"{Extension.Sep}g{y}{Extension.Sep}", StringComparison.Ordinal) >= 0))
                     .Select(x => x.Id).ToList();
 
-                arrChatIds.ForEach(async x =>
+                await Task.WhenAll(arrChatIds.Select(async x =>
                 {
                     log.LogDebug($"Adding user {friendId} to group {x}");
                     await signalRGroupActions.AddAsync(
@@ -66,13 +67,14 @@ namespace goFriend.Functions
                             GroupName = x.ToString(),
                             Action = GroupAction.Add
                         });
-                });
+                }));
 
                 return new OkObjectResult(null);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult("There was an error: " + ex.Message);
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
             }
             finally
             {
@@ -98,11 +100,7 @@ namespace goFriend.Functions
 
                 var msg = JsonConvert.DeserializeObject<ChatMessage>(json);
 
-                if (!OnlineMembers.TryGetValue(msg.ChatId, out List<ChatFriendOnline> result))
-                {
-                    result = new List<ChatFriendOnline>();
-                    OnlineMembers.Add(msg.ChatId, result);
-                }
+                var result = OnlineMembers.GetOrAdd(msg.ChatId, new List<ChatFriendOnline>());
 
                 var friendOnline = result.SingleOrDefault(x => x.Friend.Id == msg.OwnerId);
                 if (friendOnline != null)
@@ -125,9 +123,10 @@ namespace goFriend.Functions
 
                 return new OkObjectResult(result);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult("There was an error: " + ex.Message);
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
             }
             finally
             {
@@ -148,7 +147,6 @@ namespace goFriend.Functions
 
                 req.ParseSignalRHeaders(out string UserId, out string token);
                 log.LogDebug($"UserId={UserId}, Authorization={token}");
-                var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
 
                 string json = await new StreamReader(req.Body).ReadToEndAsync();
                 log.LogDebug($"json = {json}");
@@ -156,6 +154,13 @@ namespace goFriend.Functions
                 var msg = JsonConvert.DeserializeObject<ChatMessage>(json);
                 log.LogDebug($"MessageType={msg.MessageType}, OwnerId={msg.OwnerId}, Token={msg.Token}");
                 log.LogDebug($"ChatId={msg.ChatId}, Message={msg.Message}, MessageIndex={msg.MessageIndex}");
+
+                //Check if user has been kicked out and try to send more message
+                var chat = _dataRepo.Get<Chat>(x => x.Id == msg.ChatId);
+                if (chat == null || !chat.MembersContain(int.Parse(UserId))) {
+                    log.LogWarning($"Chat {msg.ChatId} not found or user {UserId} is not a member");
+                    return new OkObjectResult(null);
+                }
 
                 msg.ModifiedDate = DateTime.UtcNow;
                 if (msg.MessageIndex > 0) //Modification, Deletion
@@ -175,27 +180,13 @@ namespace goFriend.Functions
                 }
                 else // New message
                 {
-                    msg.CreatedDate = DateTime.UtcNow;
-                    lock (LockChatMessage)
-                    {
-                        var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == msg.ChatId);
-                        if (allChatMessages.Any())
-                        {
-                            msg.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
-                        }
-                        else
-                        {
-                            msg.MessageIndex = 1;
-                        }
-
-                        log.LogDebug("Saving to database");
-                        _dataRepo.Add(msg);
-                        _dataRepo.Commit();
-                    }
+                    AddNewMessage(log, msg);
+                    _dataRepo.Commit();
                 }
 
                 log.LogDebug($"Sending message to the group {msg.ChatId}");
                 msg.Token = null;
+                var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
                 msg.OwnerName = friend.Name;
                 msg.OwnerFirstName = friend.FirstName;
 
@@ -209,9 +200,10 @@ namespace goFriend.Functions
 
                 return new OkObjectResult(null);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult("There was an error: " + ex.Message);
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
             }
             finally
             {
@@ -232,7 +224,6 @@ namespace goFriend.Functions
 
                 req.ParseSignalRHeaders(out string UserId, out string token);
                 log.LogDebug($"UserId={UserId}, Authorization={token}");
-                var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
 
                 string json = await new StreamReader(req.Body).ReadToEndAsync();
                 log.LogDebug($"json = {json}");
@@ -241,32 +232,27 @@ namespace goFriend.Functions
                 log.LogDebug($"MessageType={msg.MessageType}, OwnerId={msg.OwnerId}, Token={msg.Token}");
                 log.LogDebug($"ChatId={msg.ChatId}, Message={msg.Message}, MessageIndex={msg.MessageIndex}");
 
-                msg.CreatedDate = msg.ModifiedDate = DateTime.UtcNow;
-                lock (LockChatMessage)
+                //Check if user has been kicked out and try to send more message
+                var chat = _dataRepo.Get<Chat>(x => x.Id == msg.ChatId);
+                if (chat == null || !chat.MembersContain(int.Parse(UserId)))
                 {
-                    var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == msg.ChatId);
-                    if (allChatMessages.Any())
-                    {
-                        msg.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
-                    }
-                    else
-                    {
-                        msg.MessageIndex = 1;
-                    }
-
-                    log.LogDebug("Saving to database");
-                    _dataRepo.Add(msg);
-                    _dataRepo.Commit();
+                    log.LogWarning($"Chat {msg.ChatId} not found or user {UserId} is not a member");
+                    return new OkObjectResult(null);
                 }
+
+                AddNewMessage(log, msg);
+                _dataRepo.Commit();
+
                 var newAttachments = $"{msg.ChatId}/{msg.MessageIndex:D8}_{msg.OwnerId}{Path.GetExtension(msg.Attachments)}";
                 log.LogDebug($"renaming {msg.Attachments} to {newAttachments}");
-                var storageService = new Services.StorageService(new Services.LoggerMicrosoftImpl(log));
+                var storageService = new StorageService(new LoggerMicrosoftImpl(log));
                 storageService.Rename(msg.Attachments, newAttachments);
                 msg.Attachments = newAttachments;
                 _dataRepo.Commit();
 
                 log.LogDebug($"Sending message to the group {msg.ChatId}");
                 msg.Token = null;
+                var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
                 msg.OwnerName = friend.Name;
                 msg.OwnerFirstName = friend.FirstName;
 
@@ -280,9 +266,10 @@ namespace goFriend.Functions
 
                 return new OkObjectResult(null);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult("There was an error: " + ex.Message);
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
             }
             finally
             {
@@ -309,7 +296,7 @@ namespace goFriend.Functions
 
                 req.ParseSignalRHeaders(out string UserId, out string token);
                 log.LogDebug($"UserId={UserId}, Authorization={token}");
-                var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
+                //var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
 
                 string json = await new StreamReader(req.Body).ReadToEndAsync();
                 log.LogDebug($"json = {json}");
@@ -339,6 +326,7 @@ namespace goFriend.Functions
                         chat.CreatedDate = DateTime.UtcNow;
                         _dataRepo.Add(chat);
 
+                        //first message is: who created chat
                         _dataRepo.Add(
                             new ChatMessage
                             {
@@ -354,6 +342,7 @@ namespace goFriend.Functions
                         var chatType = chat.GetChatType();
                         if (chatType == ChatType.Individual || chatType == ChatType.MixedGroup)
                         {
+                            //second message is: members for the chat
                             _dataRepo.Add(
                                 new ChatMessage
                                 {
@@ -405,31 +394,60 @@ namespace goFriend.Functions
                         var arrOldMemberIds = oldChat.GetMemberIds();
                         oldChat.Members = chat.Members;
                         oldChat.Name = chat.Name;
+
+                        var arrRemovingUsers = arrOldMemberIds.Except(arrMemberIds).ToArray();
+                        foreach(var memberId in arrRemovingUsers)
+                        {
+                            log.LogDebug($"removing user {memberId} from SignalR group");
+                            await signalRGroupActions.AddAsync(
+                                new SignalRGroupAction
+                                {
+                                    UserId = memberId.ToString(),
+                                    GroupName = chat.Id.ToString(),
+                                    Action = GroupAction.Remove
+                                });
+                        }
+                        if (arrRemovingUsers.Length > 0)
+                        {
+                            // Message removing users from chat group
+                            AddNewMessage(log, 
+                                new ChatMessage
+                                {
+                                    OwnerId = 0,
+                                    ChatId = chat.Id,
+                                    Message = $"Loại: {_dataRepo.GetMemberNames(arrRemovingUsers)}",
+                                    MessageType = ChatMessageType.CreateChat
+                                });
+                        }
+
+                        var arrAddingUsers = arrMemberIds.Except(arrOldMemberIds).ToArray();
+                        foreach(var memberId in arrAddingUsers)
+                        {
+                            log.LogDebug($"puting user {memberId} to the SignalR group");
+                            await signalRGroupActions.AddAsync(
+                                new SignalRGroupAction
+                                {
+                                    UserId = memberId.ToString(),
+                                    GroupName = chat.Id.ToString(),
+                                    Action = GroupAction.Add
+                                });
+                        }
+                        if (arrAddingUsers.Length > 0)
+                        {
+                            // Message adding users to the chat group
+                            AddNewMessage(log,
+                                new ChatMessage
+                                {
+                                    OwnerId = 0,
+                                    ChatId = chat.Id,
+                                    Message = $"Thêm: {_dataRepo.GetMemberNames(arrAddingUsers)}",
+                                    MessageType = ChatMessageType.CreateChat
+                                });
+                        }
                         _dataRepo.Commit();
+
                         foreach (var memberId in arrOldMemberIds.Union(arrMemberIds))
                         {
-                            if (!arrMemberIds.Contains(memberId)) // removed from chat
-                            {
-                                log.LogDebug($"removing user {memberId} from SignalR group");
-                                await signalRGroupActions.AddAsync(
-                                    new SignalRGroupAction
-                                    {
-                                        UserId = memberId.ToString(),
-                                        GroupName = chat.Id.ToString(),
-                                        Action = GroupAction.Remove
-                                    });
-                            }
-                            else if (!arrOldMemberIds.Contains(memberId))
-                            {
-                                log.LogDebug($"puting user {memberId} to the SignalR group");
-                                await signalRGroupActions.AddAsync(
-                                    new SignalRGroupAction
-                                    {
-                                        UserId = memberId.ToString(),
-                                        GroupName = chat.Id.ToString(),
-                                        Action = GroupAction.Add
-                                    });
-                            }
                             log.LogDebug($"sending CreateChat to user {memberId}");
                             await signalRMessages.AddAsync(
                                 new SignalRMessage
@@ -442,19 +460,59 @@ namespace goFriend.Functions
                             var cacheKey = $".GetChats.{memberId}.";
                             log.LogDebug($"sending ClearCache to backend: cacheKey={cacheKey}");
                             RemoveCache(cacheKey); // refresh GetChats
+                            //No Cache for GetMessages implemented for now, just do in case
+                            cacheKey = $".GetMessages.{memberId}.";
+                            log.LogDebug($"sending ClearCache to backend: cacheKey={cacheKey}");
+                            RemoveCache(cacheKey); // refresh GetMessages
                         }
                     }
                 }
 
                 return new OkObjectResult(null);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult("There was an error: " + ex.Message);
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
             }
             finally
             {
                 log.LogDebug($"CreateChat.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        private void AddNewMessage(ILogger log, ChatMessage msg)
+        {
+            try
+            {
+                log.LogDebug($"AddNewMessage.BEGIN(ChatId={msg.ChatId}, MessageType={msg.MessageType}, MessageIndex={msg.MessageIndex}, Message={msg.Message})");
+                msg.CreatedDate = msg.ModifiedDate = DateTime.UtcNow;
+                msg.Chat = null;
+                var lockObj = LockChatMessageByChatId.GetOrAdd(msg.ChatId, new object());
+                lock (lockObj)
+                {
+                    var allChatMessages = _dataRepo.GetMany<ChatMessage>(x => x.ChatId == msg.ChatId);
+                    if (allChatMessages.Any())
+                    {
+                        msg.MessageIndex = allChatMessages.Max(x => x.MessageIndex) + 1;
+                    }
+                    else
+                    {
+                        msg.MessageIndex = 1;
+                    }
+                    log.LogDebug($"MessageIndex={msg.MessageIndex}, Id={msg.Id})");
+
+                    _dataRepo.Add(msg);
+                }
+            }
+            catch(Exception e)
+            {
+                log.LogError(e.Message);
+                throw;
+            }
+            finally
+            {
+                log.LogDebug($"AddNewMessage.END");
             }
         }
 
@@ -518,9 +576,10 @@ namespace goFriend.Functions
                 // or with a program such as Postman
                 return new OkObjectResult($"Hello {name}, your message was '{text}'");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult("There was an error: " + ex.Message);
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
             }
             finally
             {

@@ -126,13 +126,17 @@ namespace goFriend.ViewModels
         public string OverlappingImageUrl { get; set; }
         public OverlapType OverlapType { get; set; }
 
-        private bool _isHighlight = false;
-        public bool IsHighlight {
-            get => _isHighlight;
+        public bool HighLightVisible {
+            get => _highLightColor != Color.Default;
+        }
+
+        private Color _highLightColor;
+        public Color HighLightColor {
+            get => _highLightColor;
             set
             {
-                _isHighlight = value;
-                OnPropertyChanged(nameof(IsHighlight));
+                _highLightColor = value;
+                OnPropertyChanged(nameof(HighLightColor));
             }
         }
         private FormattedString _formattedText;

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace goFriend.Services
 {
@@ -12,6 +11,7 @@ namespace goFriend.Services
         {
             services.AddDbContext<FriendDbContext>(options =>
                 options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
+            //.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
 
             if (initData)
             {

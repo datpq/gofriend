@@ -18,6 +18,10 @@
 	install manually in the .csproj file
 - System.MissingMethodException: Method 'Xamarin.Auth.Authenticator.GetUI' not found
 	Turn linker on for SDK assemblies only. Android project
+- The instance of entity type 'Chat' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked.
+When attaching existing entities, ensure that only one entity instance with a given key value is attached.
+Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+	- Due to cascade insert (be sure that when you insert an object, set the inner member to null (example: insert ChatMessage set the Chat property to null to avoid cascade insert)
 - working with facebook
 	- Xamarin.Facebook.Android, Xamarin.Facebook.iOS nuget package
     - https://evgenyzborovsky.com/2018/03/09/using-native-facebook-login-button-in-xamarin-forms/
@@ -54,12 +58,24 @@
 	</manifest>
 	https://apps.admob.com/v2/apps/2612776501/settings
 - Test on iOS
+	- Image, CachedImage is not working with ImageSource is Url from internet:
+		- if that happens to only real iPhone --> test with simulator --> if it works nothing to do
+		- other solution is to: use ImageSourceConverter to download image first, and set imagesource from stream
+			<Image Source="{Binding ImageUrl, Converter={StaticResource ImageSourceConverter}}" />
+	- build command:
+		msbuild goFriend.sln /p:ServerAddress=192.168.1.162 /p:ServerUser=dat /p:Platform=iPhoneSimulator /p:ServerPassword=dat1
 	- Install VMware Workstation 15 Player
 	- Install macOS Mojave 10.14 on VMware workstation on Windows https://www.intoguide.com/install-macos-mojave-vmware-windows/
 	- Pair to Mac https://docs.microsoft.com/en-us/xamarin/ios/get-started/installation/windows/connecting-to-mac/
 		- %LOCALAPPDATA%\Xamarin\Logs\16.0
 		- A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
 			- disconnect from VPN
+		- An unexpected error occurred while checking the SSH configuration of 'MacbookAir_Clemence' username
+			- Install Visual Studio for Mac (config Apple Developer Accounts
+			- Install XCode (Preferences/Accounts, Window/Devices and Simulators)
+		- An unexpected error occurred while checking the SSH configuration of 'MacbookAir_Clemence' Private key is encrypted but passphrase is empty.
+			- remove id_rsa, id_rsa.pub, passphrase.key in %LOCALAPPDATA%\Xamarin\MonoTouch
+			
 	- connect Iphone to VMWare:
 		shut down the VMWare and do like https://stackoverflow.com/questions/36139020/macos-on-vmware-doesnt-recognize-ios-device
 			Set the USB compatibility to be 2.0 instead of 3.0
@@ -124,6 +140,9 @@
 		- remove the binding in ToolbarItem
 	- error XARDF7024: System.IO.IOException: The directory is not empty.
 		- Clean the project
+	- Visual Studio for Mac
+		- Could not AOT the assembly for (no parameterless constructor defined )
+			- project properties -->  Go to Build iOS, and at the bottom of the page, add " --interpreter " in the section Additional mtouch arguments
 
 - deployment Android:
 	Client Id: 776768637540-2b3m878t1edv69b5s66sqcb1jm0dggrq.apps.googleusercontent.com
@@ -244,6 +263,10 @@ at least in my case this was the issue
 	- Deploy on IIS (with binding www.gofriend.com, gofriend.azurewebsites.net)
 	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)
 	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
+
+- Azure functions:
+	- Functions runtime: 3
+	
 
 - Deployment on Google Play
 	- modify version in: C:\Users\dat\source\repos\goFriend\goFriend\goFriend.Android\Properties\AndroidManifest.xml

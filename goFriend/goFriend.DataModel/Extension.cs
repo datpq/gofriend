@@ -28,15 +28,17 @@ namespace goFriend.DataModel
         public const string ParamOtherFriendId = "OtherFriendId";
         public const string ParamIsActive = "IsActive";
         public const string Sep = ",";
+        public static ChatMessageType[] RealShowableMessageTypes =
+            new[] { ChatMessageType.Text, ChatMessageType.Attachment, ChatMessageType.CreateChat };
 
         public static string ToStringStandardFormat(this TimeSpan ts)
         {
             return $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
         }
 
-        public static bool IsShowableMessage(this ChatMessageType chatMessageType)
+        public static bool IsRealShowableMessage(this ChatMessageType chatMessageType)
         {
-            return chatMessageType == ChatMessageType.Text || chatMessageType == ChatMessageType.Attachment;
+            return Array.IndexOf(RealShowableMessageTypes, chatMessageType) > -1;
         }
 
         public static string TruncateAtWord(this string input, int length)
@@ -79,6 +81,7 @@ namespace goFriend.DataModel
             {
                 return ChatType.Individual;
             }
+            //if (Regex.Match(chat.Members, @"^([ug]\d+)(,[ug]\d+)*$").Success)
             return ChatType.MixedGroup;
         }
 

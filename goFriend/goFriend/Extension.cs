@@ -163,8 +163,24 @@ namespace goFriend
             }
             else if (chat.GetChatType() == ChatType.MixedGroup)
             {
-                result.ImageUrl = "https://graph.facebook.com/2501980436734541/picture?type=small";
-                result.OverlappingImageUrl = App.User.GetImageUrl(FacebookImageType.small);
+                var firstImageDone = false;
+                foreach (var memberId in chat.GetMemberIds())
+                {
+                    if (memberId != App.User.Id)
+                    {
+                        var friend = await App.FriendStore.GetFriendInfo(memberId);
+                        var imageUrl = friend.GetImageUrl(FacebookImageType.small);
+                        if (!firstImageDone)
+                        {
+                            result.ImageUrl = imageUrl;
+                            firstImageDone = true;
+                        } else
+                        {
+                            result.OverlappingImageUrl = imageUrl;
+                            break;
+                        }
+                    }
+                }
                 result.OverlapType = OverlapType.GroupChat;
             }
 

@@ -40,7 +40,9 @@ namespace goFriend.Views
                         Id = x.Friend.Id,
                         SelectedObject = x,
                         ImageUrl = x.LogoUrl,
-                        IsHighlight = x.Time.AddMinutes(Constants.ChatPingFrequence) >= now,
+                        HighLightColor = x.Time.AddMinutes(Constants.ChatPingFrequence) >= now
+                            ? (Color)Application.Current.Resources["ColorPrimaryLight"]
+                            : x.Time > DateTime.MinValue ? Color.LightGray : Color.Default,
                         //ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                         FormattedText = new FormattedString
                         {
@@ -50,7 +52,7 @@ namespace goFriend.Views
                                     FontSize = (double)Application.Current.Resources["LblFontSize"], LineHeight = 1.2},
                                 new Span {Text = Environment.NewLine},
                                 new Span {Text = x.Time.AddMinutes(
-                                    Constants.ChatPingFrequence) >= now ? res.Online :
+                                    Constants.ChatPingFrequence) >= now ? res.Online : x.Time == DateTime.MinValue ? string.Empty :
                                     string.Format(res.OnlineEarlier, x.Time.GetSpentTime()), LineHeight = 1.2}
                             }
                         }
