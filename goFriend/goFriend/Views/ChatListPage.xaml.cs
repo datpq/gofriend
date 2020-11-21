@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using goFriend.Controls;
 using goFriend.DataModel;
@@ -44,7 +45,9 @@ namespace goFriend.Views
             });
             DphListView.LoadItems(async () =>
             {
-                var result = await Task.WhenAll(App.ChatListVm.ChatListItems.Select(async x => {
+                var result = await Task.WhenAll(App.ChatListVm.ChatListItems
+                    .OrderByDescending(x => x.ChatViewModel.Messages.Count > 0 ? x.ChatViewModel.Messages[0].CreatedDate : DateTime.MinValue)
+                    .ThenBy(x => x.Name).Select(async x => {
                     var item = new DphListViewItemModel
                     {
                         Id = x.Chat.Id,
@@ -69,6 +72,7 @@ namespace goFriend.Views
             if (item != null) {
                 item.HighLightColor = !chatListItemVm.IsLastMessageRead ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.Default;
                 item.FormattedText = chatListItemVm.FormattedText;
+                Refresh();
                 //Logger.Debug($"IsHighlight={item.IsHighlight}, LastMessage={chatListItemVm.LastMessage}, FormattedText={item.FormattedText}");
             }
             //Logger.Debug($"RefreshLastMessage.END");
@@ -77,6 +81,11 @@ namespace goFriend.Views
         private void MnuAddNew_Clicked(object sender, System.EventArgs e)
         {
             Navigation.PushAsync(new ChatEdit());
+        }
+
+        public void Refresh()
+        {
+            DphListView.Refresh(true);
         }
     }
 }

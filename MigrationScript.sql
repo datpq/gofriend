@@ -42,6 +42,9 @@ BEGIN
     SET @cnt = @cnt + 1;
 END;
 
+delete ChatMessage where ChatId in (8)
+delete Chat where Id in (8)
+
 INSERT INTO Groups VALUES('OMCC', 'Ottawa Math and Chess Club', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, getdate(), getdate(), NULL, NULL)
 
 ALTER TABLE GroupFriends ADD CreatedDate datetime2 null, ModifiedDate datetime2 null;

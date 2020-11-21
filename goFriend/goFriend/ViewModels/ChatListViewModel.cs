@@ -62,6 +62,7 @@ namespace goFriend.ViewModels
                 {
                     Logger.Debug($"User is kicked out from the chat {chat.Id}");
                     ChatListItems.Remove(ChatListItems.FirstOrDefault(x => x.Chat.Id == chat.Id));
+                    App.ChatListPage?.Refresh();
                     return;
                 }
             }
@@ -175,6 +176,9 @@ namespace goFriend.ViewModels
                 //        });
                 //}
             }
+
+            App.ChatListPage?.Refresh();
+
             Logger.Debug("ReceiveCreateChat.END");
         }
 

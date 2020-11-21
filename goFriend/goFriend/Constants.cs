@@ -1,6 +1,6 @@
 ﻿namespace goFriend
 {
-    public class Constants
+    public static class Constants
     {
         public const string MsgProfile = "MsgProfile";
         public const string MsgProfileExt = "MsgProfileExt";
