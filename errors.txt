@@ -270,7 +270,8 @@ at least in my case this was the issue
             }
 
 - Nlog configuration for .NET Core
-	https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-2
+	- https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-2
+	- if action:${aspnet-mvc-action}|ip:${aspnet-request-ip} is not shown --> CreateHostBuilder(args).UseNLog().Build().Run();
 - Connect from Samsung to local machine:
 	- Deploy on IIS (with binding www.gofriend.com, gofriend.azurewebsites.net)
 	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)

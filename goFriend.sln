@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend.Services", "goFrie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "goFriend.Functions", "goFriend\goFriend.Functions\goFriend.Functions.csproj", "{B2ABF5FE-A56E-4F4C-8794-F2A4D0144B2B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "goFriend.WebApi", "goFriend\goFriend.WebApi\goFriend.WebApi.csproj", "{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,22 @@ Global
 		{B2ABF5FE-A56E-4F4C-8794-F2A4D0144B2B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{B2ABF5FE-A56E-4F4C-8794-F2A4D0144B2B}.Release|x64.ActiveCfg = Release|Any CPU
 		{B2ABF5FE-A56E-4F4C-8794-F2A4D0144B2B}.Release|x64.Build.0 = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Debug|x64.Build.0 = Debug|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|iPhone.Build.0 = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|x64.ActiveCfg = Release|Any CPU
+		{C01A24D5-62C8-4BF7-83A4-CE5EFE18B1D6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

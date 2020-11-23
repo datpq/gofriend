@@ -16,9 +16,9 @@ namespace goFriend.Services.Data
         private readonly Dictionary<string, DateTimeOffset> _cacheKeys = new Dictionary<string, DateTimeOffset>();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public CacheService(IMemoryCache memoryCache, IOptions<AppSettings> appSettings)
+        public CacheService(IOptions<AppSettings> appSettings)
         {
-            _memoryCache = memoryCache;
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
             _appSettings = appSettings;
         }
 
