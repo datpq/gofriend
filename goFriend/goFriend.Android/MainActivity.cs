@@ -14,14 +14,18 @@ using goFriend.Services;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using goFriend.Views;
 
 namespace goFriend.Droid
 {
-    [Activity(Label = "@string/app_label", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "@string/app_label", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, LaunchMode = LaunchMode.SingleTop)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static ICallbackManager CallbackManager;
-        private ILogger _logger;
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        private Intent _startServiceIntent;
+        private Intent _stopServiceIntent;
+        private bool _isServiceStarted = false;
 
         const int RequestLocationId = 0;
 
@@ -52,7 +56,7 @@ namespace goFriend.Droid
         {
             AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
             {
-                _logger.Error(args.Exception.ToString());
+                Logger.Error(args.Exception.ToString());
             };
 
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -84,6 +88,69 @@ namespace goFriend.Droid
             FacebookProfileTracker.GetInstance();
 
             LoadApplication(new App());
+
+            Logger.Debug("Preparing ForegroundService...");
+            OnNewIntent(this.Intent);
+            if (savedInstanceState != null)
+            {
+                _isServiceStarted = savedInstanceState.GetBoolean(Constants.SERVICE_STARTED_KEY, false);
+            }
+
+            _startServiceIntent = new Intent(this, typeof(LocationService));
+            _startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
+
+            _stopServiceIntent = new Intent(this, typeof(LocationService));
+            _stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
+
+            if (!_isServiceStarted) {
+                Logger.Debug("Service's not started. Starting now...");
+                StartService(_startServiceIntent);
+                _isServiceStarted = true;
+            }
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            if (intent == null)
+            {
+                return;
+            }
+
+            var bundle = intent.Extras;
+            if (bundle != null)
+            {
+                if (bundle.ContainsKey(Constants.SERVICE_STARTED_KEY))
+                {
+                    _isServiceStarted = true;
+                }
+            }
+
+            switch(intent.Action)
+            {
+                case Constants.ACTION_GOTO_MAP:
+                    App.Current.MainPage.Navigation.PushAsync(new MapPage());
+                    break;
+                case Constants.ACTION_GOTO_CHAT:
+                    App.Current.MainPage.Navigation.PushAsync(new ChatListPage());
+                    break;
+                case Constants.ACTION_GOTO_HOME:
+                default:
+                    break;
+            }
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            outState.PutBoolean(Constants.SERVICE_STARTED_KEY, _isServiceStarted);
+            base.OnSaveInstanceState(outState);
+        }
+
+        protected override void OnDestroy()
+        {
+            //Log.Info(TAG, "Activity is being destroyed; stop the service.");
+
+            //StopService(startServiceIntent);
+            base.OnDestroy();
         }
 
         private void InitializeNLog()

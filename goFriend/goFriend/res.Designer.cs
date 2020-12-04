@@ -295,6 +295,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        public static string Exit {
+            get {
+                return ResourceManager.GetString("Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Female.
         /// </summary>
         public static string Female {
@@ -471,6 +480,15 @@ namespace goFriend {
         public static string Modify {
             get {
                 return ResourceManager.GetString("Modify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} more messages.
+        /// </summary>
+        public static string MoreMessages {
+            get {
+                return ResourceManager.GetString("MoreMessages", resourceCulture);
             }
         }
         
@@ -853,6 +871,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        public static string Pause {
+            get {
+                return ResourceManager.GetString("Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        public static string Play {
+            get {
+                return ResourceManager.GetString("Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Privacy Policy.
         /// </summary>
         public static string PrivacyPolicy {
@@ -984,6 +1020,24 @@ namespace goFriend {
         public static string SubscribeGroup {
             get {
                 return ResourceManager.GetString("SubscribeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string SvcBackground {
+            get {
+                return ResourceManager.GetString("SvcBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string SvcBackgroundContentText {
+            get {
+                return ResourceManager.GetString("SvcBackgroundContentText", resourceCulture);
             }
         }
         

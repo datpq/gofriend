@@ -10,7 +10,7 @@ namespace goFriend.Services
         public static void ConfigureServices(IServiceCollection services, string connectionString, bool initData = false)
         {
             services.AddDbContext<FriendDbContext>(options =>
-                options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
+                options.UseSqlServer(connectionString, x => x.UseNetTopologySuite().MigrationsAssembly("goFriend.WebApi")));
             //.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
 
             if (initData)

@@ -450,4 +450,22 @@
   <data name="MsgNoPermissionChatEdit" xml:space="preserve">
     <value>Bạn không có quyền thêm bớt thành viên.</value>
   </data>
+  <data name="SvcBackground" xml:space="preserve">
+    <value>Chế độ nền</value>
+  </data>
+  <data name="SvcBackgroundContentText" xml:space="preserve">
+    <value>Chế độ nền cập nhật vị trí của bạn, cho phép bạn xem bản đồ trực tuyến và nhận tin khi có bạn bè xuất hiện trên bản đồ trực tuyến.</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Thoát</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Tạm dừng</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Kích hoạt</value>
+  </data>
+  <data name="MoreMessages" xml:space="preserve">
+    <value>{0} tin nữa</value>
+  </data>
 </root>

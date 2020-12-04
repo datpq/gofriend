@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Acr.UserDialogs">
-      <Version>7.1.0.466</Version>
+      <Version>7.1.0.468</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>4.0.0</Version>
@@ -133,7 +133,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtensionAndroid.cs" />
     <Compile Include="FacebookManager.cs" />
+    <Compile Include="LocationService.cs" />
     <Compile Include="MediaService.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Renderers\AndroidLongPressedEffect.cs" />
@@ -356,4 +358,9 @@
     <AndroidResource Include="Resources\drawable\search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties TriggeredFromHotReload="False" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

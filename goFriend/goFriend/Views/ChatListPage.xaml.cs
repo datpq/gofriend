@@ -18,6 +18,11 @@ namespace goFriend.Views
         public ChatListPage()
         {
             InitializeComponent();
+
+            App.NotificationChatInboxLinesById.Clear();
+            App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveCreateChat);
+            App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
+
             BindingContext = App.ChatListVm;
             App.ChatListPage = this;
 

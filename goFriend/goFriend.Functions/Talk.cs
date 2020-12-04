@@ -157,7 +157,7 @@ namespace goFriend.Functions
 
                 //Check if user has been kicked out and try to send more message
                 var chat = _dataRepo.Get<Chat>(x => x.Id == msg.ChatId);
-                if (chat == null || !chat.MembersContain(int.Parse(UserId))) {
+                if (chat == null || (chat.GetChatType() == ChatType.Individual && !chat.MembersContain(int.Parse(UserId)))) {
                     log.LogWarning($"Chat {msg.ChatId} not found or user {UserId} is not a member");
                     return new OkObjectResult(null);
                 }
@@ -234,7 +234,7 @@ namespace goFriend.Functions
 
                 //Check if user has been kicked out and try to send more message
                 var chat = _dataRepo.Get<Chat>(x => x.Id == msg.ChatId);
-                if (chat == null || !chat.MembersContain(int.Parse(UserId)))
+                if (chat == null || (chat.GetChatType() == ChatType.Individual && !chat.MembersContain(int.Parse(UserId))))
                 {
                     log.LogWarning($"Chat {msg.ChatId} not found or user {UserId} is not a member");
                     return new OkObjectResult(null);

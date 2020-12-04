@@ -16,7 +16,8 @@ namespace goFriend.Services.Data
             var configuration = builder.Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<FriendDbContext>();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("GoFriendConnection"), x => x.UseNetTopologySuite());
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("GoFriendConnection"),
+                x => x.UseNetTopologySuite().MigrationsAssembly("goFriend.WebApi"));
 
             return new FriendDbContext(optionsBuilder.Options);
         }

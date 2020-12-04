@@ -16,6 +16,9 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Plugin.SimpleAudioPlayer;
 using Device = Xamarin.Forms.Device;
+using goFriend.Models;
+using Point = NetTopologySuite.Geometries.Point;
+using Xamarin.Forms.GoogleMaps;
 
 namespace goFriend
 {
@@ -24,7 +27,10 @@ namespace goFriend
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
         public static Friend User { get; set; }
+        public static Position LastPosition { get; set; }
         public readonly IFacebookManager FaceBookManager;
+        public static INotificationService NotificationService;
+        public static Dictionary<int, List<string[]>> NotificationChatInboxLinesById = new Dictionary<int, List<string[]>>();
         private static ILogger Logger;
         public static IFriendStore FriendStore;
         public static IStorageService StorageService;
@@ -51,6 +57,7 @@ namespace goFriend
             }
 
             FaceBookManager = DependencyService.Get<IFacebookManager>();
+            //NotificationService = DependencyService.Get<INotificationService>();
             Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
             ChatListVm = new ChatListViewModel();
 
@@ -317,6 +324,74 @@ namespace goFriend
                 }
             });
             TaskInitialization.Start();
+        }
+
+        public static async Task<ServiceNotification> RunService()
+        {
+            ServiceNotification result = null;
+            try
+            {
+                Logger.Debug($"RunService.BEGIN");
+                if (IsUserLoggedIn && User != null && Settings.IsTracing)
+                {
+                    Logger.Debug("Getting location from PCL...");
+                    var newPosition = await ((Point)null).GetPosition(); // get current position if possible
+                    if (newPosition != null)
+                    {
+                        if (LastPosition == null)
+                        {
+                            LastPosition = newPosition;
+                            Logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
+                            result = new ServiceNotification
+                            {
+                                ContentTitle = "Hanoi9194",
+                                ContentText = null,
+                                SummaryText = null,
+                                LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
+                                NotificationType = Models.NotificationType.AppearOnMap,
+                                InboxLines = new List<string[]>(
+                                    new [] {
+                                        new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
+                                        new [] {"Catherine Pham", "xuất hiện" },
+                                        new [] {"Thang Pham", "xuất hiện" } })
+                            };
+                        }
+                        else
+                        {
+                            var distance = Location.CalculateDistance(LastPosition.Latitude, LastPosition.Longitude,
+                                newPosition.Latitude, newPosition.Longitude, DistanceUnits.Kilometers);
+                            if (distance >= Constants.MOVING_DISTANCE_THRESHOLD)
+                            {
+                                LastPosition = newPosition;
+                                Logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
+                                result = new ServiceNotification
+                                {
+                                    ContentTitle = "Hanoi9194",
+                                    ContentText = null,
+                                    SummaryText = null,
+                                    LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
+                                    NotificationType = Models.NotificationType.AppearOnMap,
+                                    InboxLines = new List<string[]>(
+                                        new[] {
+                                        new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
+                                        new [] {"Catherine Pham", "xuất hiện" },
+                                        new [] {"Thang Pham", "xuất hiện" } })
+                                };
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                return result;
+            }
+            finally
+            {
+                Logger.Debug("RunService.END");
+            }
         }
     }
 }

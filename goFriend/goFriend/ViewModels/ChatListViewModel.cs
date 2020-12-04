@@ -97,8 +97,6 @@ namespace goFriend.ViewModels
                     chat.Owner = await App.FriendStore.GetFriendInfo(chat.OwnerId.Value);
                 }
                 ChatListItems.Add(chatListItemVm);
-                //if user is added to an existing chat --> retrieve the history of the chat
-                await App.RetrieveNewMessages(chatListItemVm);
 
                 var arrLastMsgIdxRetrievedByChatId = Settings.LastMsgIdxRetrievedByChatId;
                 if (arrLastMsgIdxRetrievedByChatId == null)
@@ -114,7 +112,19 @@ namespace goFriend.ViewModels
 
                     App.SapChatNewChat.Play();
                     Vibration.Vibrate();
+                    App.NotificationService?.SendNotification(
+                        new Models.ServiceNotification
+                        {
+                            ContentTitle = chat.Owner?.Name,
+                            ContentText = $"{res.ChatNew}: {await chat.GetMemberNames()}",
+                            SummaryText = null,
+                            LargeIconUrl = chat.Owner?.GetImageUrl(),
+                            NotificationType = Models.NotificationType.ChatReceiveCreateChat,
+                        });
                 }
+
+                //if user is added to an existing chat --> retrieve the history of the chat
+                await App.RetrieveNewMessages(chatListItemVm);
 
                 if (App.ChatListPage != null) {
                     var trigger = new TaskCompletionSource<object>();

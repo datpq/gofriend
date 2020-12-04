@@ -20,6 +20,12 @@ namespace goFriend
             set => AppSettings.AddOrUpdateValue(nameof(IsUserLoggedIn), value);
         }
 
+        public static bool IsTracing
+        {
+            get => AppSettings.GetValueOrDefault(nameof(IsTracing), true);
+            set => AppSettings.AddOrUpdateValue(nameof(IsTracing), value);
+        }
+
         public static Friend LastUser
         {
             get

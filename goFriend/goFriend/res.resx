@@ -450,4 +450,22 @@
   <data name="MsgNoPermissionChatEdit" xml:space="preserve">
     <value />
   </data>
+  <data name="SvcBackground" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SvcBackgroundContentText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="MoreMessages" xml:space="preserve">
+    <value>{0} more messages</value>
+  </data>
 </root>

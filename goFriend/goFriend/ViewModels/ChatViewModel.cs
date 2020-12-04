@@ -335,6 +335,26 @@ namespace goFriend.ViewModels
                     {
                         App.SapChatNewMessage.Play();
                         Vibration.Vibrate();
+
+                        if (!chatMessage.IsSystemMessage) {
+                            if (!App.NotificationChatInboxLinesById.TryGetValue(chatMessage.ChatId, out List<string[]> inputLines))
+                            {
+                                inputLines = new List<string[]>();
+                                App.NotificationChatInboxLinesById.Add(chatMessage.ChatId, inputLines);
+                            }
+                            inputLines.Add(new[] { chatMessage.OwnerFirstName, chatMessage.IsThumbsUp ? "👍" : chatMessage.Message });
+
+                            App.NotificationService?.SendNotification(
+                                new Models.ServiceNotification
+                                {
+                                    ContentTitle = chatMessage.Chat.Name,
+                                    ContentText = null,
+                                    SummaryText = null,
+                                    LargeIconUrl = chatMessage.Chat.GetChatType() == ChatType.Individual ? chatMessage.LogoUrl : chatMessage.Chat.LogoUrl,
+                                    NotificationType = Models.NotificationType.ChatReceiveMessage,
+                                    InboxLines = inputLines
+                                });
+                        }
                     }
                 }
                 Logger.Debug($"Message {chatMessage.Id}, ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex} received. Added at {arrIdx}.");

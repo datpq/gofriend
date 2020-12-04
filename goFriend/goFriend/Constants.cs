@@ -42,5 +42,20 @@
 
         public const string AppCenterAppSecretiOS = "f2c053eb-a08d-4c4d-8d54-c63711322c18";
         public const string AppCenterAppSecretAndroid = "56010775-c4f6-46f9-9de5-a13a547d22c2";
+
+        //Service
+        public const double MOVING_DISTANCE_THRESHOLD = 0.010; // km
+        public const int SERVICE_RUNNING_NOTIFICATION_ID = 12976;
+        public const int NOTIFICATION_MAX_MESSAGES = 10;
+        public const string SERVICE_STARTED_KEY = "service_key_started";
+        public const string SERVICE_BROADCAST_MESSAGE_KEY = "service_key_broadcast_message";
+        public const string NOTIFICATION_BROADCAST_ACTION = "GoFriend.Notification.Action";
+
+        public const string ACTION_START_SERVICE = "GoFriend.action.START_SERVICE";
+        public const string ACTION_STOP_SERVICE = "GoFriend.action.STOP_SERVICE";
+        public const string ACTION_STARTSTOP_TRACING = "GoFriend.action.STOP_TRACING";
+        public const string ACTION_GOTO_HOME = "GoFriend.action.GOTO_HOME";
+        public const string ACTION_GOTO_MAP = "GoFriend.action.GOTO_MAP";
+        public const string ACTION_GOTO_CHAT = "GoFriend.action.GOTO_CHAT";
     }
 }
