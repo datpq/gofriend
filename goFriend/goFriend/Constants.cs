@@ -23,6 +23,16 @@
         public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
         public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
 
+        public const string ROUTE_HOME = "Home";
+        public const string ROUTE_HOME_GROUPCONNECTION = "//Home/GroupConnection";
+        public const string ROUTE_HOME_MAPONLINE = "//Home/MapOnline";
+        public const string ROUTE_HOME_ADMIN = "//Home/Admin";
+        public const string ROUTE_HOME_ABOUT = "//Home/About";
+        public const string ROUTE_BROWSE = "Browse";
+        public const string ROUTE_MAP = "Map";
+        public const string ROUTE_CHAT = "Chat";
+        public const string ROUTE_NOTIFICATION = "Notification";
+
         public const string ImgFolderOpen = "folder_open.png";
         public const string ImgFolderClose = "folder_close.png";
         public const string ImgAccountInfo = "account_info.png";
@@ -46,16 +56,16 @@
         //Service
         public const double MOVING_DISTANCE_THRESHOLD = 0.010; // km
         public const int SERVICE_RUNNING_NOTIFICATION_ID = 12976;
-        public const int NOTIFICATION_MAX_MESSAGES = 10;
-        public const string SERVICE_STARTED_KEY = "service_key_started";
-        public const string SERVICE_BROADCAST_MESSAGE_KEY = "service_key_broadcast_message";
+        public const string SERVICE_STARTED_KEY = "service_started";
+        public const string SERVICE_EXTRAID_KEY = "service_extraid";
+        public const string SERVICE_BROADCAST_MESSAGE_KEY = "service_broadcast_message";
         public const string NOTIFICATION_BROADCAST_ACTION = "GoFriend.Notification.Action";
 
         public const string ACTION_START_SERVICE = "GoFriend.action.START_SERVICE";
         public const string ACTION_STOP_SERVICE = "GoFriend.action.STOP_SERVICE";
         public const string ACTION_STARTSTOP_TRACING = "GoFriend.action.STOP_TRACING";
         public const string ACTION_GOTO_HOME = "GoFriend.action.GOTO_HOME";
-        public const string ACTION_GOTO_MAP = "GoFriend.action.GOTO_MAP";
+        public const string ACTION_GOTO_MAPONLINE = "GoFriend.action.GOTO_MAPONLINE";
         public const string ACTION_GOTO_CHAT = "GoFriend.action.GOTO_CHAT";
     }
 }

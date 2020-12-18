@@ -457,6 +457,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Map offline.
+        /// </summary>
+        public static string MapOffline {
+            get {
+                return ResourceManager.GetString("MapOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to members.
         /// </summary>
         public static string members {
@@ -648,6 +657,15 @@ namespace goFriend {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string MsgNoGooglePlayServiceWarning {
+            get {
+                return ResourceManager.GetString("MsgNoGooglePlayServiceWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string MsgNoGpsWarning {
             get {
                 return ResourceManager.GetString("MsgNoGpsWarning", resourceCulture);
@@ -660,6 +678,15 @@ namespace goFriend {
         public static string MsgNoGroupWarning {
             get {
                 return ResourceManager.GetString("MsgNoGroupWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgNoLocationServiceWarning {
+            get {
+                return ResourceManager.GetString("MsgNoLocationServiceWarning", resourceCulture);
             }
         }
         
@@ -1038,6 +1065,15 @@ namespace goFriend {
         public static string SvcBackgroundContentText {
             get {
                 return ResourceManager.GetString("SvcBackgroundContentText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string SvcBackgroundDesc {
+            get {
+                return ResourceManager.GetString("SvcBackgroundDesc", resourceCulture);
             }
         }
         

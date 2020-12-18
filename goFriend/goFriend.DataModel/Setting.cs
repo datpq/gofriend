@@ -16,5 +16,6 @@ namespace goFriend.DataModel
 
         public bool LocationSwitch { get; set; }
         public bool DefaultShowLocation { get; set; }
+        public int ServiceSleepTimeout { get; set; }
     }
 }

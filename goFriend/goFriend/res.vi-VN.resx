@@ -451,10 +451,10 @@
     <value>Bạn không có quyền thêm bớt thành viên.</value>
   </data>
   <data name="SvcBackground" xml:space="preserve">
-    <value>Chế độ nền</value>
+    <value>Bạn bè xung quanh</value>
   </data>
   <data name="SvcBackgroundContentText" xml:space="preserve">
-    <value>Chế độ nền cập nhật vị trí của bạn, cho phép bạn xem bản đồ trực tuyến và nhận tin khi có bạn bè xuất hiện trên bản đồ trực tuyến.</value>
+    <value>Bạn bè xung quanh cho phép bạn xem bản đồ trực tuyến trong phạm vi {0} xung quanh bạn và nhận tin nhắn khi có bạn bè xuất hiện trong phạm vi này.</value>
   </data>
   <data name="Exit" xml:space="preserve">
     <value>Thoát</value>
@@ -467,5 +467,17 @@
   </data>
   <data name="MoreMessages" xml:space="preserve">
     <value>{0} tin nữa</value>
+  </data>
+  <data name="MsgNoGooglePlayServiceWarning" xml:space="preserve">
+    <value>Máy của bạn chưa cài Google Play Service. Hãy cài nó trước để định vị hoạt động được tốt.</value>
+  </data>
+  <data name="MapOffline" xml:space="preserve">
+    <value>Bản đồ offline</value>
+  </data>
+  <data name="SvcBackgroundDesc" xml:space="preserve">
+    <value>Xem bạn bè xung quanh qua bản đồ trực tuyến</value>
+  </data>
+  <data name="MsgNoLocationServiceWarning" xml:space="preserve">
+    <value>Muốn xem bạn bè xung quanh, bạn cần chia sẻ vị trí của bạn trước tiên. Hãy kích hoạt Bạn bè xung quanh nhé.</value>
   </data>
 </root>

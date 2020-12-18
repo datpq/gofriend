@@ -421,6 +421,47 @@ namespace goFriend.WebApi.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("SaveLocation")]
+        public IActionResult SaveLocation([FromBody] FriendLocation friendLocation)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            Logger.Debug($"BEGIN(FriendId={friendLocation.FriendId}, Latitude={friendLocation.Location?.Y}, Longitude={friendLocation.Location?.X})");
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    Logger.Warn(Message.MsgInvalidState.Msg);
+                    return BadRequest(Message.MsgInvalidState);
+                }
+                var result = _dataRepo.Get<FriendLocation>(x => x.FriendId == friendLocation.FriendId);
+                if (result == null)
+                {
+                    Logger.Debug("New FriendLocation recorded.");
+                    result = friendLocation;
+                    _dataRepo.Add(result);
+                }
+                else
+                {
+                    result.Location = friendLocation.Location;
+                }
+                result.ModifiedDate = DateTime.Now;
+
+                _dataRepo.Commit();
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         [HttpGet]
         [Route("GetGroupCatValues/{friendId}/{groupId}/{useCache}")]
         public ActionResult<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues([FromHeader] string token, [FromRoute] int friendId,

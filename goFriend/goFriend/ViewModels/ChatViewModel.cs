@@ -344,7 +344,7 @@ namespace goFriend.ViewModels
                             }
                             inputLines.Add(new[] { chatMessage.OwnerFirstName, chatMessage.IsThumbsUp ? "👍" : chatMessage.Message });
 
-                            App.NotificationService?.SendNotification(
+                            App.LocationService.SendNotification(
                                 new Models.ServiceNotification
                                 {
                                     ContentTitle = chatMessage.Chat.Name,
@@ -352,6 +352,7 @@ namespace goFriend.ViewModels
                                     SummaryText = null,
                                     LargeIconUrl = chatMessage.Chat.GetChatType() == ChatType.Individual ? chatMessage.LogoUrl : chatMessage.Chat.LogoUrl,
                                     NotificationType = Models.NotificationType.ChatReceiveMessage,
+                                    ExtraId = chatMessage.ChatId,
                                     InboxLines = inputLines
                                 });
                         }

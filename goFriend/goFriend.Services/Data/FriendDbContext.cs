@@ -49,6 +49,13 @@ namespace goFriend.Services.Data
                 .HasOne(x => x.Chat)
                 .WithMany(x => x.ChatMessages)
                 .HasForeignKey(x => x.ChatId);
+            modelBuilder.Entity<FriendLocation>().ToTable("FriendLocations");
+            modelBuilder.Entity<FriendLocation>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<FriendLocation>().HasKey(x => new { x.FriendId });
+            modelBuilder.Entity<FriendLocation>()
+                .HasOne(x => x.Friend)
+                .WithOne(x => x.FriendLocation)
+                .HasForeignKey<FriendLocation>(x => x.FriendId);
         }
 
         public DbSet<Friend> Friends { get; set; }
@@ -60,6 +67,7 @@ namespace goFriend.Services.Data
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<FriendLocation> FriendLocations { get; set; }
         //public DbSet<NotifNewSubscriptionRequest> NotifNewSubscriptionRequests { get; set; }
         //public DbSet<NotifSubscriptionApproved> NotifSubscriptionApproveds { get; set; }
     }

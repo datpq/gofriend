@@ -44,7 +44,7 @@ namespace goFriend.ViewModels
 
         public async Task ReceiveCreateChat(Chat chat)
         {
-            Logger.Debug($"ReceiveCreateChat.BEGIN(GetChatType={chat.GetChatType()})");
+            Logger.Debug($"ReceiveCreateChat.BEGIN(Id={chat.Id}, GetChatType={chat.GetChatType()})");
             if (!chat.OwnerId.HasValue)
             {
                 chat.OwnerId = 0;
@@ -112,13 +112,14 @@ namespace goFriend.ViewModels
 
                     App.SapChatNewChat.Play();
                     Vibration.Vibrate();
-                    App.NotificationService?.SendNotification(
+                    App.LocationService.SendNotification(
                         new Models.ServiceNotification
                         {
                             ContentTitle = chat.Owner?.Name,
                             ContentText = $"{res.ChatNew}: {await chat.GetMemberNames()}",
                             SummaryText = null,
                             LargeIconUrl = chat.Owner?.GetImageUrl(),
+                            ExtraId = chat.Id,
                             NotificationType = Models.NotificationType.ChatReceiveCreateChat,
                         });
                 }
@@ -126,7 +127,7 @@ namespace goFriend.ViewModels
                 //if user is added to an existing chat --> retrieve the history of the chat
                 await App.RetrieveNewMessages(chatListItemVm);
 
-                if (App.ChatListPage != null) {
+                if (App.ChatListPage != null && !App.IsInitializing) {
                     var trigger = new TaskCompletionSource<object>();
 
                     Device.BeginInvokeOnMainThread(async () =>
@@ -196,7 +197,7 @@ namespace goFriend.ViewModels
         {
             try
             {
-                Logger.Debug("RefreshCommand.BEGIN");
+                Logger.Debug("RefreshCommandAsyncExec.BEGIN");
 
                 IsRefreshing = true;
 
@@ -219,7 +220,7 @@ namespace goFriend.ViewModels
             finally
             {
                 IsRefreshing = false;
-                Logger.Debug("RefreshCommand.END");
+                Logger.Debug("RefreshCommandAsyncExec.END");
             }
         }
 

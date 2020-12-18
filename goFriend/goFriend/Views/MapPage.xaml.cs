@@ -21,8 +21,6 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
-            App.NotificationService.CancelNotification(Models.NotificationType.AppearOnMap);
-
             var minClusterSize = int.Parse(ConfigurationManager.AppSettings["MinimumClusterSize"]);
             Map.ClusterOptions.Buckets[0] = minClusterSize;
             Map.ClusterOptions.SetMinimumClusterSize(minClusterSize);

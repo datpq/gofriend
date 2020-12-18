@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:goFriend"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             Title="{Static local:res.SvcBackground}"
+             x:Class="goFriend.Views.MapOnline">
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
+            </On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout Margin="10,0,10,0">
+                <controls:DphFriendSelection x:Name="DphFriendSelection" IsShowingCategories="False" IsExpandableCategories="False"/>
+            </StackLayout>
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <Label x:Name="LabelLocationServiceRunning" Text="{Static local:res.MsgNoLocationServiceWarning}" Margin="20" IsVisible="False"
+                   VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
+                   TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
+            <controls:DphMap x:Name="Map" MyLocationEnabled="True" IsVisible="False" />
+            <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" HorizontalOptions="Center" Visual="Material">
+                <Button x:Name="CmdPlay"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimaryLight}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
+                        Text="{x:Static local:res.Play}"
+                        Clicked="CmdPlay_Clicked"/>
+                <Button x:Name="CmdPause"
+                        CornerRadius="{StaticResource BtnCornerRadius}"
+                        BackgroundColor="{StaticResource ColorPrimaryLight}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
+                        Text="{x:Static local:res.Pause}"
+                        Clicked="CmdPause_Clicked"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

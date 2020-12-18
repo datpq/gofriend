@@ -468,4 +468,16 @@
   <data name="MoreMessages" xml:space="preserve">
     <value>{0} more messages</value>
   </data>
+  <data name="MsgNoGooglePlayServiceWarning" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MapOffline" xml:space="preserve">
+    <value>Map offline</value>
+  </data>
+  <data name="SvcBackgroundDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MsgNoLocationServiceWarning" xml:space="preserve">
+    <value />
+  </data>
 </root>

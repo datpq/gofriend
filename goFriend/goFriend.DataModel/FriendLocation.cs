@@ -12,6 +12,11 @@ namespace goFriend.DataModel
         [Key]
         public int Id { get; set; }
 
+        public int FriendId { get; set; }
+
+        [JsonIgnore]
+        public Friend Friend { get; set; }
+
         [Column(TypeName = "GEOMETRY")]
         [JsonConverter(typeof(GeoPointConverter))]
         public Point Location { get; set; }

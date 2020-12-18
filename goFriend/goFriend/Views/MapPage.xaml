@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
-             Title="{Static local:res.Map}"
+             Title="{Static local:res.MapOffline}"
              x:Class="goFriend.Views.MapPage">
     <ContentPage.Content>
         <StackLayout>

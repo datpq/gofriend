@@ -154,6 +154,32 @@ namespace goFriend.Services
             }
         }
 
+        public async Task<bool> SaveLocation(FriendLocation friendLocation)
+        {
+            Logger.Debug($"SaveLocation.BEGIN");
+
+            Validate();
+
+            var serializedFriendLocation = JsonConvert.SerializeObject(friendLocation);
+
+            var client = GetSecuredHttpClient();
+            var response = await client.PutAsync($"api/Friend/SaveLocation", new StringContent(serializedFriendLocation, Encoding.UTF8, "application/json"));
+
+            var result = false;
+            if (response.IsSuccessStatusCode)
+            {
+                result = true;
+            }
+            else
+            {
+                var msg = await response.Content.ReadAsAsync<Message>();
+                Logger.Error($"Error: {msg}");
+            }
+
+            Logger.Debug($"SaveLocation.END({result})");
+            return result;
+        }
+
         public async Task<bool> SaveBasicInfo(Friend friend)
         {
             Logger.Debug($"SaveBasicInfo.BEGIN({friend})");
@@ -543,7 +569,7 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetGroups.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetGroups.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -665,14 +691,14 @@ namespace goFriend.Services
                 var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
                 var cacheKey = $"{cachePrefix}.{otherFriendId}.";
-                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+                //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
                 {
                     result = _memoryCache.Get(cacheKey) as Friend;
                     if (result != null)
                     {
-                        Logger.Debug("Cache found. Return value in cache.");
+                        //Logger.Debug("Cache found. Return value in cache.");
                         return result;
                     }
                 }

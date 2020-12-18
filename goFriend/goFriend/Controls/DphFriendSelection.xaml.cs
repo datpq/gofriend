@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
-using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -45,6 +44,8 @@ namespace goFriend.Controls
         public DphFriendSelection()
         {
             InitializeComponent();
+
+            BindingContext = this;
 
             PickerGroups.Title = $"{res.Select} {res.Groups}";
             LblGroup.Text = $"{res.Groups}:";
@@ -97,7 +98,7 @@ namespace goFriend.Controls
                 if (myGroups.Count == 0)
                 {
                     App.DisplayMsgInfo(res.MsgNoGroupWarning);
-                    Navigation.PushAsync(new GroupConnectionPage());
+                    Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -163,38 +164,49 @@ namespace goFriend.Controls
                         picker.SelectedIndexChanged += async (o, args) =>
                         {
                             if (!_isSelectionEventEnabled) return;;
-                            _isSelectionEventEnabled = false; // Do not fire selection event of the picker children
-                            UserDialogs.Instance.ShowLoading(res.Processing);
-                            //Logger.Debug($"localI={localI}");
-                            var arrCatValuesLen = localI + 1;
-                            if (picker.SelectedIndex <= 0) arrCatValuesLen = localI; //nothing or first element selected
-                            _arrCatValues = new string[arrCatValuesLen];
-                            for (var k = 0; k < _arrCatValues.Length; k++)
+                            try
                             {
-                                //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
-                                _arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
+                                _isSelectionEventEnabled = false; // Do not fire selection event of the picker children
+                                UserDialogs.Instance.ShowLoading(res.Processing);
+                                //Logger.Debug($"localI={localI}");
+                                var arrCatValuesLen = localI + 1;
+                                if (picker.SelectedIndex <= 0) arrCatValuesLen = localI; //nothing or first element selected
+                                _arrCatValues = new string[arrCatValuesLen];
+                                for (var k = 0; k < _arrCatValues.Length; k++)
+                                {
+                                    //Logger.Debug($"arrPickers[{k}].SelectedItem={arrPickers[k].SelectedItem}");
+                                    _arrCatValues[k] = (arrPickers[k].SelectedItem as ApiGetGroupCatValuesModel)?.CatValue;
+                                }
+                                Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(_arrCatValues)}");
+                                for (var j = localI + 1; j < arrPickers.Length; j++)
+                                {
+                                    //Logger.Debug($"j={j}");
+                                    if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
+                                    {
+                                        var localJ = j;
+                                        var groupCatValues = await App.FriendStore.GetGroupCatValues(SelectedGroup.Group.Id, true, _arrCatValues);
+                                        var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
+                                            .Concat(groupCatValues.ToList());
+                                        arrPickers[localJ].ItemsSource = itemSourceList.ToList();
+                                    }
+                                    else
+                                    {
+                                        arrPickers[j].ItemsSource = null;
+                                    }
+                                }
+                                UserDialogs.Instance.HideLoading();
+                                EntryName.ReturnCommand.Execute(null);
+                                _isSelectionEventEnabled = true; // Restore the initial value
+                                //_onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
                             }
-                            Logger.Debug($"arrCatValues={JsonConvert.SerializeObject(_arrCatValues)}");
-                            for (var j = localI + 1; j < arrPickers.Length; j++)
+                            catch(Exception ex)
                             {
-                                //Logger.Debug($"j={j}");
-                                if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
-                                {
-                                    var localJ = j;
-                                    var groupCatValues = await App.FriendStore.GetGroupCatValues(SelectedGroup.Group.Id, true, _arrCatValues);
-                                    var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
-                                        .Concat(groupCatValues.ToList());
-                                    arrPickers[localJ].ItemsSource = itemSourceList.ToList();
-                                }
-                                else
-                                {
-                                    arrPickers[j].ItemsSource = null;
-                                }
+                                Logger.Error(ex.ToString());
                             }
-                            UserDialogs.Instance.HideLoading();
-                            EntryName.ReturnCommand.Execute(null);
-                            _isSelectionEventEnabled = true; // Restore the initial value
-                            //_onSelectionAction?.Invoke(_selectedGroup, EntryName.Text, _arrFixedCats, _arrCatValues);
+                            finally
+                            {
+                                UserDialogs.Instance.HideLoading();
+                            }
                         };
                         Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                         Grid.SetColumn(picker, 1);
@@ -215,6 +227,7 @@ namespace goFriend.Controls
             }
             finally
             {
+                UserDialogs.Instance.HideLoading();
                 Logger.Debug("PickerGroups_OnSelectedIndexChanged.END");
             }
         }

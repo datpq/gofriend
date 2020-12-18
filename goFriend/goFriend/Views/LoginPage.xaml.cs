@@ -27,9 +27,15 @@ namespace goFriend.Views
                 App.IsUserLoggedIn = true;
                 Settings.IsUserLoggedIn = App.IsUserLoggedIn;
                 await Navigation.PopAsync();
-                UserDialogs.Instance.ShowLoading(res.Processing);
-                App.User = await App.FriendStore.LoginWithFacebook(authToken, Extension.GetDeviceInfo());
-                UserDialogs.Instance.HideLoading();
+                try
+                {
+                    UserDialogs.Instance.ShowLoading(res.Processing);
+                    App.User = await App.FriendStore.LoginWithFacebook(authToken, Extension.GetDeviceInfo());
+                }
+                finally
+                {
+                    UserDialogs.Instance.HideLoading();
+                }
                 Settings.LastUser = App.User;
                 App.Initialize(); //redo the initialization background task
                 App.Current.MainPage = new AppShell();
@@ -64,9 +70,15 @@ namespace goFriend.Views
                     ThirdPartyLogin = ThirdPartyLogin.Apple,
                     Info = Extension.GetVersionTrackingInfo()
                 };
-                UserDialogs.Instance.ShowLoading(res.Processing);
-                App.User = await App.FriendStore.LoginWithThirdParty(friend, Extension.GetDeviceInfo());
-                UserDialogs.Instance.HideLoading();
+                try
+                {
+                    UserDialogs.Instance.ShowLoading(res.Processing);
+                    App.User = await App.FriendStore.LoginWithThirdParty(friend, Extension.GetDeviceInfo());
+                }
+                finally
+                {
+                    UserDialogs.Instance.HideLoading();
+                }
                 if (App.User != null)
                 {
                     Logger.Debug("Apple logged-in with success");

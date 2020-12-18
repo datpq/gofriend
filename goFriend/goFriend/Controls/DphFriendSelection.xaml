@@ -30,7 +30,7 @@
                           </DataTrigger>
                       </Button.Triggers>
                   </Button>
-                    <Label x:Name="LblGroup" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" TextColor="{StaticResource ColorPrimary}"/>
+                  <Label x:Name="LblGroup" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" TextColor="{StaticResource ColorPrimary}"/>
               </StackLayout>
               <StackLayout Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                   <Picker x:Name="PickerGroups" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand"
@@ -40,9 +40,9 @@
                           ImageSource="refresh.png" HorizontalOptions="End" WidthRequest="20"/>
               </StackLayout>
               <Label x:Name="LblName" Grid.Row="1" Grid.Column="0" Text="{Static local:res.SearchByName}"
-                     FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center"/>
+                     FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" IsVisible="{Binding IsExpandableCategories}"/>
               <Entry x:Name="EntryName" Grid.Row="1" Grid.Column="1" FontSize="{StaticResource LblDetailFontSize}"
-                     ClearButtonVisibility="WhileEditing">
+                     ClearButtonVisibility="WhileEditing" IsVisible="{Binding IsExpandableCategories}">
                   <Entry.Behaviors>
                       <controls:BehaviorTextChangedEntry />
                   </Entry.Behaviors>

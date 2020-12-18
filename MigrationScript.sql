@@ -11,6 +11,7 @@ select * from GroupPredefinedCategory;
 select * from CacheConfiguration;
 select * from Notification;
 select * from settings order by [order];
+SELECT Id, FriendId, ModifiedDate, location.STY as Lat, location.STX as Lon from FriendLocationsHistory order by Id
 
 drop table GroupFixedCatValues;
 drop table GroupFriends;

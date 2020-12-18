@@ -59,12 +59,23 @@ namespace goFriend.ViewModels
             {
                 return new Command(async () =>
                 {
-                    Logger.Debug("RefreshCommand.BEGIN");
-                    _allItemsFetched = false;
-                    CurrentPage = 0; //reset to page 0
-                    DphListItems.Clear();
-                    await FetchItems();
-                    Logger.Debug("RefreshCommand.END");
+                    if (App.IsInitializing) return;
+                    try
+                    {
+                        Logger.Debug("RefreshCommand.BEGIN");
+                        _allItemsFetched = false;
+                        CurrentPage = 0; //reset to page 0
+                        DphListItems.Clear();
+                        await FetchItems();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e.ToString());
+                    }
+                    finally
+                    {
+                        Logger.Debug("RefreshCommand.END");
+                    }
                 });
             }
         }
@@ -72,29 +83,49 @@ namespace goFriend.ViewModels
         public async void FetchMoreItems()
         {
             if (_allItemsFetched) return;
-            Logger.Debug("FetchMoreItems.BEGIN");
-            CurrentPage++;
-            await FetchItems();
-            Logger.Debug("FetchMoreItems.END");
+            try
+            {
+                Logger.Debug("FetchMoreItems.BEGIN");
+                CurrentPage++;
+                await FetchItems();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                Logger.Debug("FetchMoreItems.END");
+            }
         }
 
         private async Task FetchItems()
         {
-            IsRefreshing = true;
-            var result = await GetListViewItemsFunc();
-            if (result == null || PageSize == 0 || result.Count() < PageSize)
+            try
             {
-                _allItemsFetched = true;
-            }
-            if (result != null)
-            {
-                foreach (var item in result.Where(x => DphListItems.All(y => y.Id != x.Id)))
+                IsRefreshing = true;
+                var result = await GetListViewItemsFunc();
+                if (result == null || PageSize == 0 || result.Count() < PageSize)
                 {
-                    DphListItems.Add(item);
+                    _allItemsFetched = true;
                 }
-                Logger.Debug($"{result.Count()} item(s) fetched.");
+                if (result != null)
+                {
+                    foreach (var item in result.Where(x => DphListItems.All(y => y.Id != x.Id)))
+                    {
+                        DphListItems.Add(item);
+                    }
+                    Logger.Debug($"{result.Count()} item(s) fetched.");
+                }
             }
-            IsRefreshing = false;
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+            finally
+            {
+                IsRefreshing = false;
+            }
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,

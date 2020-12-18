@@ -9,8 +9,8 @@
 - java.lang.ClassNotFoundException: bolts.AppLinks base.OnCreate(bundle);
 	[assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 	[assembly: MetaData("com.facebook.sdk.ApplicationName", Value = "@string/app_name")]
-	maybe typo in @string/... @String/...
 - Unhandled Exception: Xamarin.Facebook.FacebookException: <Timeout exceeded getting exception details> occurred
+	maybe typo in @string/... @String/...
 	rerun again
 - java.security.SignatureException: private key algorithm is not compatible with signature algorithm
 	genkey with -keyalg RSA
@@ -20,6 +20,8 @@
 	install manually in the .csproj file
 - System.MissingMethodException: Method 'Xamarin.Auth.Authenticator.GetUI' not found
 	Turn linker on for SDK assemblies only. Android project
+- System.ArgumentOutOfRangeException: Specified argument was out of the range of valid values.
+	Do not refresh listview or OnItemAppearing when App is initializing (observable collection items are being added)
 - The instance of entity type 'Chat' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked.
 When attaching existing entities, ensure that only one entity instance with a given key value is attached.
 Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
@@ -43,6 +45,8 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 		Select Android Options, scroll down. In right bottom corner click Advanced button. --> select desired architecture, e.g. x86, x86_x64.
 - Failed to generate Java type for class: due to MAX_PATH: System.IO.DirectoryNotFoundException: Could not find a part of the path
 	--> copy solution to C;\temp to make the path shorter
+- Specified cast is not valid
+	--> Do not install GooglePlayServices.Base, ...
 - The type or namespace name 'System' could not be found
 	- Unload/Reload project Android
 - :XamlC error XFC0000: Cannot resolve type "ViewCell"
@@ -319,8 +323,11 @@ at least in my case this was the issue
 		- Missing required icon file. The bundle does not contain
 			- open info.plist by code, save it with WF end lines
 	- launching crash --> Link Framework SDKs Only
+	- Why ? is at the beginning in the chat dialog:
+		- problem of referencing library. See the PerformanceCounter problem
 	- Failed to resolve "System.Diagnostics.PerformanceCounter" reference from
 		- Update Nuget AppCenter
+		- Separate library (goFriend.Services) do not have the same library referenced in both client and server so that many libraries like EF, .net core, ... is redundan in Client side
 	- Screen shot:
 		6.5 --> iPhone 11 Pro Max --> Bao Anh Bao Linh
 		5.5 --> iPhone 8 Plus
@@ -333,6 +340,7 @@ The term “Add-Migration” is not recognized
 	--> Restart VS
 Change Start up prokect to goFriendMobileAppService
 Add-Migration InitialCreate
+Update-Database
 Update-Database Chat
 Remove-Migration
 Update-Database InitialCreate

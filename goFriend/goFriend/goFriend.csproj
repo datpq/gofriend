@@ -35,15 +35,17 @@
     <EmbeddedResource Include="Images\notif_UpdateSubscriptionRequest.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.468" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.470" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.7.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.0.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="3.1.10" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.10" />
+    <PackageReference Include="NLog" Version="4.7.6" />
     <PackageReference Include="PCLAppConfig" Version="1.0.1" />
-    <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.7">
+    <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.9">
     </PackageReference>
     <PackageReference Include="Xam.Plugin.Connectivity" Version="4.0.0.190-beta" />
     <PackageReference Include="Xam.Plugin.DeviceInfo" Version="4.1.1" />
@@ -64,7 +66,6 @@
   <ItemGroup>
     <ProjectReference Include="..\goFriend.AppleSignIn\goFriend.AppleSignIn.csproj" />
     <ProjectReference Include="..\goFriend.DataModel\goFriend.DataModel.csproj" />
-    <ProjectReference Include="..\goFriend.Services\goFriend.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Caching.Abstractions">
@@ -91,6 +92,9 @@
     </Compile>
     <Compile Update="Views\ChatIncomingViewCell.xaml.cs">
       <DependentUpon>ChatIncomingViewCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MapOnlinePage.xaml.cs">
+      <DependentUpon>MapOnlinePage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\NotificationPage.xaml.cs">
       <DependentUpon>NotificationPage.xaml</DependentUpon>
@@ -162,6 +166,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\GroupConnectionPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\MapOnlinePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MapPage.xaml">

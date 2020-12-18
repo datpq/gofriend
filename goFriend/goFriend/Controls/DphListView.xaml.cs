@@ -104,7 +104,7 @@ namespace goFriend.Controls
 
         private void Lv_OnItemAppearing(object sender, ItemVisibilityEventArgs e)
         {
-            if (_dphListViewModel.IsRefreshing || _dphListViewModel.DphListItems.Count == 0) return;
+            if (_dphListViewModel.IsRefreshing || _dphListViewModel.DphListItems.Count == 0 || App.IsInitializing) return;
             if (((DphListViewItemModel) e.Item).Id == _dphListViewModel.DphListItems[_dphListViewModel.DphListItems.Count - 1].Id)
             {
                 _dphListViewModel.FetchMoreItems();

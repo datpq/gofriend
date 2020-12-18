@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using goFriend.Controls;
-using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
 using Xamarin.Forms;
@@ -20,8 +19,8 @@ namespace goFriend.Views
             InitializeComponent();
 
             App.NotificationChatInboxLinesById.Clear();
-            App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveCreateChat);
-            App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
+            App.LocationService.CancelNotification(Models.NotificationType.ChatReceiveCreateChat);
+            App.LocationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
 
             BindingContext = App.ChatListVm;
             App.ChatListPage = this;
@@ -35,7 +34,7 @@ namespace goFriend.Views
                 if (!App.MyGroups.Any())
                 {
                     App.DisplayMsgInfo(res.MsgNoGroupWarning);
-                    Navigation.PushAsync(new GroupConnectionPage());
+                    Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
 

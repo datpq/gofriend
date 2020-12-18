@@ -61,7 +61,6 @@ namespace goFriend.Views
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(selectedGroup.Group.Id);
                 var arrFixedCats = groupFixedCatValues?.GetCatList().ToList() ?? new List<string>();
 
-                UserDialogs.Instance.HideLoading();
                 DphListView.Initialize(async(selectedItem) =>
                     {
                         var selectedGroupFriend = (GroupFriend) selectedItem.SelectedObject;
@@ -127,6 +126,7 @@ namespace goFriend.Views
             }
             finally
             {
+                UserDialogs.Instance.HideLoading();
                 Logger.Debug("PickerGroups_OnSelectedIndexChanged.END");
             }
         }

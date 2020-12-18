@@ -30,8 +30,9 @@ namespace goFriend.Views
             BindingContext = new AccountViewModel();
 
             CellBasicInfo.Tapped += CellBasicInfo_Tapped;
-            CellGroups.Tapped += (s, e) => { Navigation.PushAsync(new GroupConnectionPage()); };
-            CellAdmin.Tapped += (s, e) => { Navigation.PushAsync(new AdminPage()); };
+            CellGroups.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION); };
+            CellFriendsAround.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_MAPONLINE); };
+            CellAdmin.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_ADMIN); };
             CellLogin.Tapped += (s, e) =>
             {
                 Navigation.PushAsync(new LoginPage());
@@ -41,7 +42,7 @@ namespace goFriend.Views
                 if (!await App.DisplayMsgQuestion(res.MsgLogoutConfirm)) return;
                 await Logout();
             };
-            CellAbout.Tapped += (s, e) => { Navigation.PushAsync(new AboutPage()); };
+            CellAbout.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_ABOUT); };
             //MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
         }
 
@@ -102,6 +103,7 @@ namespace goFriend.Views
                         TsShells.Add(CellGroups);
                     //}
 
+                    TsShells.Add(CellFriendsAround);
                     TsShells.Add(CellLogout);
                     TsShells.Add(CellAbout);
                     ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
@@ -124,7 +126,7 @@ namespace goFriend.Views
                         //{
                         if (!App.MyGroups.Any(x => x.GroupFriend.Active)) {
                             App.DisplayMsgInfo(res.MsgNoGroupWarning);
-                            await Navigation.PushAsync(new GroupConnectionPage());
+                            await Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
                         }
                         else if (App.User.Location == null && App.User.ShowLocation == true)
                         {

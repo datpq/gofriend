@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using goFriend.Views;
+using Xamarin.Forms;
 
 namespace goFriend
 {
@@ -7,6 +8,12 @@ namespace goFriend
         public AppShell()
         {
             InitializeComponent();
+
+            Routing.RegisterRoute(Constants.ROUTE_HOME_GROUPCONNECTION, typeof(GroupConnectionPage));
+            Routing.RegisterRoute(Constants.ROUTE_HOME_MAPONLINE, typeof(MapOnline));
+            Routing.RegisterRoute(Constants.ROUTE_HOME_ADMIN, typeof(AdminPage));
+            Routing.RegisterRoute(Constants.ROUTE_HOME_ABOUT, typeof(AboutPage));
+
             //TabAdmin.Icon = Extension.GetImageSourceFromFile("admin.png");
             //TabAdmin.Icon = Extension.GetImageUrl("admin.png");
             //TabNotification.Appearing += (sender, args) => TabNotification.Icon = "tab_notification_selected.png";

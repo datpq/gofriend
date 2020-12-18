@@ -53,7 +53,7 @@ namespace goFriend.Controls
         private static void OnOverlapTypeChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var obj = (DphOverlapImage)bindable;
-            Logger.Debug($"OnOverlapTypeChanged");
+            //Logger.Debug($"OnOverlapTypeChanged");
             obj.RefreshLayout();
         }
 

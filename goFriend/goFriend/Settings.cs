@@ -22,7 +22,7 @@ namespace goFriend
 
         public static bool IsTracing
         {
-            get => AppSettings.GetValueOrDefault(nameof(IsTracing), true);
+            get => AppSettings.GetValueOrDefault(nameof(IsTracing), false);
             set => AppSettings.AddOrUpdateValue(nameof(IsTracing), value);
         }
 

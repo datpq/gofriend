@@ -82,6 +82,8 @@ namespace goFriend.DataModel
 
         [JsonIgnore]
         public ICollection<GroupFriend> GroupFriends { get; set; }
+        [JsonIgnore]
+        public FriendLocation FriendLocation { get; set; }
 
         public override string ToString()
         {

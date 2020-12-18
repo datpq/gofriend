@@ -1,13 +1,17 @@
 ﻿using goFriend.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace goFriend.Services
 {
-    public interface INotificationService
+    public interface ILocationService
     {
-        void StartService();
-        void PauseService();
-        void StopService();
+        Task Start();
+        Task Pause();
+        Task Stop();
+        bool IsRunning();
         void SendNotification(ServiceNotification serviceNotification);
         void CancelNotification(NotificationType? notificationType = null);
+        event EventHandler StateChanged;
     }
 }

@@ -104,9 +104,16 @@ namespace goFriend.Views
 
         public async Task Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
         {
-            UserDialogs.Instance.ShowLoading(res.Processing);
-            var otherFriend = await App.FriendStore.GetFriend(group.Id, groupFriend.FriendId);
-            UserDialogs.Instance.HideLoading();
+            Friend otherFriend = null;
+            try
+            {
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                otherFriend = await App.FriendStore.GetFriend(group.Id, groupFriend.FriendId);
+            }
+            finally
+            {
+                UserDialogs.Instance.HideLoading();
+            }
 
             BindingContext = _viewModel = new AccountBasicInfosViewModel
             {

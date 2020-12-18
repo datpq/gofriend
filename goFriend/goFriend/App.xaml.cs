@@ -29,8 +29,9 @@ namespace goFriend
         public static Friend User { get; set; }
         public static Position LastPosition { get; set; }
         public readonly IFacebookManager FaceBookManager;
-        public static INotificationService NotificationService;
+        public static ILocationService LocationService;
         public static Dictionary<int, List<string[]>> NotificationChatInboxLinesById = new Dictionary<int, List<string[]>>();
+        public static bool IsInitializing = false;
         private static ILogger Logger;
         public static IFriendStore FriendStore;
         public static IStorageService StorageService;
@@ -57,7 +58,7 @@ namespace goFriend
             }
 
             FaceBookManager = DependencyService.Get<IFacebookManager>();
-            //NotificationService = DependencyService.Get<INotificationService>();
+            LocationService = DependencyService.Get<ILocationService>();
             Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
             ChatListVm = new ChatListViewModel();
 
@@ -268,6 +269,7 @@ namespace goFriend
                 try
                 {
                     Logger.Debug("TaskInitialization.BEGIN");
+                    IsInitializing = true;
                     if (IsUserLoggedIn && User != null)
                     {
                         MyGroups = FriendStore.GetMyGroups().Result;
@@ -280,7 +282,7 @@ namespace goFriend
                         await ChatListVm.RefreshCommandAsyncExec();
 
                         await FriendStore.SignalR.ConnectAsync();
-                        await RetrieveAllNewMessages();
+                        //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
                     }
                     else
                     {
@@ -320,28 +322,58 @@ namespace goFriend
                 }
                 finally
                 {
+                    IsInitializing = false;
                     Logger.Debug("TaskInitialization.END");
                 }
             });
             TaskInitialization.Start();
         }
 
-        public static async Task<ServiceNotification> RunService()
+        public static async Task ReceiveLocationUpdate(double latitude, double longitude)
         {
-            ServiceNotification result = null;
             try
             {
-                Logger.Debug($"RunService.BEGIN");
-                if (IsUserLoggedIn && User != null && Settings.IsTracing)
+                Logger.Debug($"ReceiveLocationUpdate.BEGIN");
+                if (IsUserLoggedIn && User != null)
                 {
-                    Logger.Debug("Getting location from PCL...");
-                    var newPosition = await ((Point)null).GetPosition(); // get current position if possible
-                    if (newPosition != null)
+                    //var newPosition = await ((Point)null).GetPosition();
+                    ServiceNotification result = null;
+                    if (LastPosition == default)
                     {
-                        if (LastPosition == null)
+                        LastPosition = new Position(latitude, longitude);
+                        Logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
+                        await FriendStore.SaveLocation(new FriendLocation()
                         {
-                            LastPosition = newPosition;
-                            Logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
+                            FriendId = App.User.Id,
+                            Location = new Point(LastPosition.Longitude, LastPosition.Latitude)
+                        });
+                        result = new ServiceNotification
+                        {
+                            ContentTitle = "Hanoi9194",
+                            ContentText = null,
+                            SummaryText = null,
+                            LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
+                            NotificationType = Models.NotificationType.AppearOnMap,
+                            InboxLines = new List<string[]>(
+                                new[] {
+                                        new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
+                                        new [] {"Catherine Pham", "xuất hiện" },
+                                        new [] {"Thang Pham", "xuất hiện" } })
+                        };
+                    }
+                    else
+                    {
+                        var distance = Location.CalculateDistance(LastPosition.Latitude, LastPosition.Longitude,
+                            latitude, longitude, DistanceUnits.Kilometers);
+                        if (distance >= Constants.MOVING_DISTANCE_THRESHOLD)
+                        {
+                            LastPosition = new Position(latitude, longitude);
+                            Logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
+                            await FriendStore.SaveLocation(new FriendLocation()
+                            {
+                                FriendId = App.User.Id,
+                                Location = new Point(LastPosition.Longitude, LastPosition.Latitude)
+                            });
                             result = new ServiceNotification
                             {
                                 ContentTitle = "Hanoi9194",
@@ -350,47 +382,50 @@ namespace goFriend
                                 LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
                                 NotificationType = Models.NotificationType.AppearOnMap,
                                 InboxLines = new List<string[]>(
-                                    new [] {
+                                    new[] {
                                         new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
                                         new [] {"Catherine Pham", "xuất hiện" },
                                         new [] {"Thang Pham", "xuất hiện" } })
                             };
                         }
-                        else
-                        {
-                            var distance = Location.CalculateDistance(LastPosition.Latitude, LastPosition.Longitude,
-                                newPosition.Latitude, newPosition.Longitude, DistanceUnits.Kilometers);
-                            if (distance >= Constants.MOVING_DISTANCE_THRESHOLD)
-                            {
-                                LastPosition = newPosition;
-                                Logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
-                                result = new ServiceNotification
-                                {
-                                    ContentTitle = "Hanoi9194",
-                                    ContentText = null,
-                                    SummaryText = null,
-                                    LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
-                                    NotificationType = Models.NotificationType.AppearOnMap,
-                                    InboxLines = new List<string[]>(
-                                        new[] {
-                                        new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
-                                        new [] {"Catherine Pham", "xuất hiện" },
-                                        new [] {"Thang Pham", "xuất hiện" } })
-                                };
-                            }
-                        }
+                    }
+                    if (result != null)
+                    {
+                        LocationService.SendNotification(result);
                     }
                 }
-                return result;
             }
             catch (Exception e)
             {
                 Logger.Error(e.ToString());
-                return result;
             }
             finally
             {
-                Logger.Debug("RunService.END");
+                Logger.Debug("ReceiveLocationUpdate.END");
+            }
+        }
+
+        public static async Task DoNotificationAction(string action, int extraId)
+        {
+            switch (action)
+            {
+                case Constants.ACTION_GOTO_CHAT:
+                    var chatListItemVm = App.ChatListVm.ChatListItems.SingleOrDefault(x => x.Chat.Id == extraId);
+                    if (chatListItemVm != null && ChatListPage != null)
+                    {
+                        var trigger = new TaskCompletionSource<object>();
+
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await App.ChatListPage.Navigation.PushAsync(new ChatPage(chatListItemVm)).ConfigureAwait(false);
+                            trigger.SetResult(null);
+                        });
+
+                        await trigger.Task.ConfigureAwait(false);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

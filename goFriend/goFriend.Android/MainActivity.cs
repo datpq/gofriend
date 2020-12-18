@@ -14,7 +14,6 @@ using goFriend.Services;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using goFriend.Views;
 
 namespace goFriend.Droid
 {
@@ -23,9 +22,12 @@ namespace goFriend.Droid
     {
         public static ICallbackManager CallbackManager;
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
-        private Intent _startServiceIntent;
-        private Intent _stopServiceIntent;
-        private bool _isServiceStarted = false;
+        public Intent StartServiceIntent { get; set; }
+        private Intent StopServiceIntent { get; set; }
+        public bool IsServiceStarted { get; set; } = false;
+
+        static readonly int RC_LAST_LOCATION_PERMISSION_CHECK = 1000;
+        static readonly int RC_LOCATION_UPDATES_PERMISSION_CHECK = 1100;
 
         const int RequestLocationId = 0;
 
@@ -69,7 +71,7 @@ namespace goFriend.Droid
 
             //FacebookSdk.SdkInitialize(ApplicationContext);
 
-            Rg.Plugins.Popup.Popup.Init(this, savedInstanceState);
+            Rg.Plugins.Popup.Popup.Init(this);
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
@@ -93,25 +95,28 @@ namespace goFriend.Droid
             OnNewIntent(this.Intent);
             if (savedInstanceState != null)
             {
-                _isServiceStarted = savedInstanceState.GetBoolean(Constants.SERVICE_STARTED_KEY, false);
+                IsServiceStarted = savedInstanceState.GetBoolean(Constants.SERVICE_STARTED_KEY, false);
             }
 
-            _startServiceIntent = new Intent(this, typeof(LocationService));
-            _startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
+            StartServiceIntent = new Intent(this, typeof(LocationForegroundService));
+            StartServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
 
-            _stopServiceIntent = new Intent(this, typeof(LocationService));
-            _stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
+            StopServiceIntent = new Intent(this, typeof(LocationForegroundService));
+            StopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
 
-            if (!_isServiceStarted) {
-                Logger.Debug("Service's not started. Starting now...");
-                StartService(_startServiceIntent);
-                _isServiceStarted = true;
-            }
+            Droid.LocationService.MainActivity = this;
+
+            //if (!_isServiceStarted)
+            //{
+            //    Logger.Debug("Service's not started. Starting now...");
+            //    StartService(_startServiceIntent);
+            //    _isServiceStarted = true;
+            //}
         }
 
-        protected override void OnNewIntent(Intent intent)
+        protected async override void OnNewIntent(Intent intent)
         {
-            if (intent == null)
+            if (intent == null || intent.Action == null)
             {
                 return;
             }
@@ -121,27 +126,30 @@ namespace goFriend.Droid
             {
                 if (bundle.ContainsKey(Constants.SERVICE_STARTED_KEY))
                 {
-                    _isServiceStarted = true;
+                    IsServiceStarted = true;
                 }
             }
 
             switch(intent.Action)
             {
-                case Constants.ACTION_GOTO_MAP:
-                    App.Current.MainPage.Navigation.PushAsync(new MapPage());
+                case Constants.ACTION_GOTO_MAPONLINE:
+                    await Shell.Current.GoToAsync($"{Constants.ROUTE_HOME_MAPONLINE}");
                     break;
                 case Constants.ACTION_GOTO_CHAT:
-                    App.Current.MainPage.Navigation.PushAsync(new ChatListPage());
+                    await Shell.Current.GoToAsync($"//{Constants.ROUTE_CHAT}");
+                    var chatId = bundle.GetInt(Constants.SERVICE_EXTRAID_KEY);
+                    await App.DoNotificationAction(intent.Action, chatId);
                     break;
                 case Constants.ACTION_GOTO_HOME:
                 default:
+                    await Shell.Current.GoToAsync($"//{Constants.ROUTE_HOME}");
                     break;
             }
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            outState.PutBoolean(Constants.SERVICE_STARTED_KEY, _isServiceStarted);
+            outState.PutBoolean(Constants.SERVICE_STARTED_KEY, IsServiceStarted);
             base.OnSaveInstanceState(outState);
         }
 
@@ -162,14 +170,22 @@ namespace goFriend.Droid
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
-            if (requestCode == RequestLocationId)
+            if (requestCode == RC_LAST_LOCATION_PERMISSION_CHECK || requestCode == RC_LOCATION_UPDATES_PERMISSION_CHECK)
             {
                 if ((grantResults.Length == 1) && (grantResults[0] == (int) Permission.Granted))
                 {
-                    // Permissions granted - display a message.
+                    if (requestCode == RC_LAST_LOCATION_PERMISSION_CHECK)
+                    {
+                        //await GetLastLocationFromDevice();
+                    }
+                    else
+                    {
+                        //RequestLocationUpdates
+                    }
                 }
                 else
                 {
+                    App.DisplayMsgInfo(res.MsgNoGpsWarning);
                 }
             }
             else

@@ -10,6 +10,7 @@ namespace goFriend.Models
         public string LargeIconUrl { get; set; }
         public NotificationType NotificationType { get; set; }
         public List<string[]>InboxLines  {get; set;}
+        public int ExtraId { get; set; }
     }
 
     public enum NotificationType
