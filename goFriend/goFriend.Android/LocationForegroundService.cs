@@ -23,13 +23,14 @@ namespace goFriend.Droid
         public NotificationManager NotificationManager { get; set; }
         private int ServiceSleepTimeout = 10000;
 
+        private static LocationForegroundService _serviceUniqueInstance = null;
+        public static LocationForegroundService GetInstance() { return _serviceUniqueInstance; }
+
         //Fused Location Provider
         private bool _isGooglePlayServicesInstalled;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private LocationCallback _locationCallback;
         private LocationRequest _locationRequest;
-
-        const string CacheBitmapPrefix = "CacheBitmap.";
 
         public override void OnCreate()
         {
@@ -83,9 +84,10 @@ namespace goFriend.Droid
             else if (intent.Action.Equals(Constants.ACTION_STARTSTOP_TRACING))
             {
                 App.LocationService.Pause();
+                App.LocationService.RefreshStatus();
             }
 
-            Droid.LocationService.LocationForegroundService = this;
+            _serviceUniqueInstance = this;
             Droid.LocationService.StandByWhenStart.Set();
 
             Logger.Debug($"OnStartCommand.END");
@@ -113,7 +115,7 @@ namespace goFriend.Droid
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
 
-            Droid.LocationService.LocationForegroundService = null;
+            _serviceUniqueInstance = null;
             _isStarted = false;
             Logger.Debug("OnDestroy. Service is destroyed");
             base.OnDestroy();
@@ -153,14 +155,12 @@ namespace goFriend.Droid
                     return;
                 }
 
-                var contentText = string.Format(res.SvcBackgroundContentText, "100m");
                 //Register a foreground service
                 var builder = new Notification.Builder(this)
                     .SetColor(new Color(ContextCompat.GetColor(this, Resource.Color.colorPrimary)))
                     .SetContentTitle(res.SvcBackground)
                     //.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis() / 1000)
                     //.SetShowWhen(true)
-                    .SetContentText(contentText)
                     .SetSmallIcon(Resource.Drawable.hn9194_25)
                     .SetLargeIcon(BitmapFactory.DecodeResource(Resources, Resource.Drawable.hn9194_25))
                     .SetContentIntent(BuildIntentToShowMainActivity(Constants.ACTION_GOTO_HOME))
@@ -168,15 +168,17 @@ namespace goFriend.Droid
                     .AddAction(BuildStartStopTracingAction())
                     .AddAction(BuildStopServiceAction());
 
-                // Using the Big Text style:
-                var textStyle = new Notification.BigTextStyle();
+                Droid.NotificationService.BuildNotificationStyle(builder,
+                    Views.MapOnlinePage.GetMapOnlineStatus(), res.SvcBackgroundContentText);
+                //// Using the Big Text style:
+                //var textStyle = new Notification.BigTextStyle();
 
-                // Use the text in the edit box at the top of the screen.
-                textStyle.BigText(contentText);
-                //textStyle.SetSummaryText("The summary text goes here.");
+                //// Use the text in the edit box at the top of the screen.
+                //textStyle.BigText(contentText);
+                ////textStyle.SetSummaryText("The summary text goes here.");
 
-                // Plug this style into the builder:
-                builder.SetStyle(textStyle);
+                //// Plug this style into the builder:
+                //builder.SetStyle(textStyle);
 
                 var notification = builder.Build();
 
@@ -279,7 +281,7 @@ namespace goFriend.Droid
             var startStopTracingPendingIntent = PendingIntent.GetService(this, 0, startStopTracingIntent, 0);
 
             var builder = new Notification.Action.Builder(
-                Droid.LocationService.IsTracing ? Resource.Drawable.folder_open : Resource.Drawable.folder_close,
+                Droid.LocationService.IsTracing ? Android.Resource.Drawable.IcMediaPause : Android.Resource.Drawable.IcMediaPlay,
                 Droid.LocationService.IsTracing ? res.Pause : res.Play, startStopTracingPendingIntent);
 
             return builder.Build();
@@ -297,10 +299,9 @@ namespace goFriend.Droid
             var stopServicePendingIntent = PendingIntent.GetService(this, 0, stopServiceIntent, 0);
 
             var builder = new Notification.Action.Builder(
-                Android.Resource.Drawable.IcMediaPause, res.Exit, stopServicePendingIntent);
+                Android.Resource.Drawable.IcDelete, res.Exit, stopServicePendingIntent);
 
             return builder.Build();
         }
-
     }
 }

@@ -11,6 +11,28 @@ namespace goFriend.Models
         public NotificationType NotificationType { get; set; }
         public List<string[]>InboxLines  {get; set;}
         public int ExtraId { get; set; }
+
+        public string GetContentBody()
+        {
+            switch (NotificationType)
+            {
+                case NotificationType.AppearOnMap:
+                case NotificationType.ChatReceiveMessage:
+                    var contentBody = string.Empty;
+                    foreach (var inboxLine in InboxLines)
+                    {
+                        contentBody = $"{contentBody}\n{inboxLine[0]}: {inboxLine[1]}";
+                    }
+                    if (InboxLines.Count > 0)
+                    {
+                        contentBody = contentBody.Substring(1);
+                    }
+                    return contentBody;
+                case NotificationType.ChatReceiveCreateChat:
+                default:
+                    return ContentText;
+            } 
+        }
     }
 
     public enum NotificationType

@@ -19,25 +19,32 @@
                   <ColumnDefinition Width="*" />
               </Grid.ColumnDefinitions>
               <StackLayout Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                  <Button BackgroundColor="Transparent" x:Name="CmdExpandCategories" Clicked="CmdExpandCategories_OnClicked"
-                          ImageSource="{Static local:Constants.ImgFolderClose}" HorizontalOptions="Start" WidthRequest="18" IsVisible="{Binding IsExpandableCategories}">
-                      <Button.Triggers>
-                          <DataTrigger TargetType="Button" Binding="{Binding IsShowingCategories}" Value="true">
-                              <Setter Property="ImageSource" Value="{Static local:Constants.ImgFolderOpen}"></Setter>
-                          </DataTrigger>
-                          <DataTrigger TargetType="Button" Binding="{Binding IsShowingCategories}" Value="false">
-                              <Setter Property="ImageSource" Value="{Static local:Constants.ImgFolderClose}"></Setter>
-                          </DataTrigger>
-                      </Button.Triggers>
-                  </Button>
+                  <ImageButton x:Name="CmdCategoriesClose" Clicked="CmdCategories_OnClicked" WidthRequest="9"
+                               BackgroundColor="Transparent" IsVisible="{Binding IsExpandableCategories}">
+                      <ImageButton.Source>
+                          <FontImageSource Glyph="{StaticResource IconFolderClose}" Color="{StaticResource ColorPrimary}"
+                                           FontFamily="{StaticResource IconFontFamily}" />
+                      </ImageButton.Source>
+                  </ImageButton>
+                  <ImageButton x:Name="CmdCategoriesOpen" Clicked="CmdCategories_OnClicked" WidthRequest="9"
+                               BackgroundColor="Transparent" IsVisible="False">
+                      <ImageButton.Source>
+                          <FontImageSource Glyph="{StaticResource IconFolderOpen}" Color="{StaticResource ColorPrimary}"
+                                           FontFamily="{StaticResource IconFontFamily}" />
+                      </ImageButton.Source>
+                  </ImageButton>
                   <Label x:Name="LblGroup" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" TextColor="{StaticResource ColorPrimary}"/>
               </StackLayout>
               <StackLayout Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                   <Picker x:Name="PickerGroups" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand"
                           SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
                           ItemDisplayBinding="{Binding Display}" HeightRequest="40" />
-                  <Button BackgroundColor="Transparent" x:Name="CmdRefresh" Clicked="CmdRefresh_OnClicked"
-                          ImageSource="refresh.png" HorizontalOptions="End" WidthRequest="20"/>
+                  <ImageButton Clicked="CmdRefresh_OnClicked" BackgroundColor="Transparent" IsVisible="{Binding IsShowingRefresh}">
+                      <ImageButton.Source>
+                          <FontImageSource Glyph="{StaticResource IconRefresh}" Color="LightGray"
+                                           FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
+                      </ImageButton.Source>
+                  </ImageButton>
               </StackLayout>
               <Label x:Name="LblName" Grid.Row="1" Grid.Column="0" Text="{Static local:res.SearchByName}"
                      FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" IsVisible="{Binding IsExpandableCategories}"/>

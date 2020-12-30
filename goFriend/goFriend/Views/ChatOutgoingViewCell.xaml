@@ -21,7 +21,12 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
-                <Image HorizontalOptions="StartAndExpand" IsVisible="{Binding IsThumbsUp}" Source="{Static local:Constants.ImgThumbsUp}" />
+                <Image HorizontalOptions="StartAndExpand" IsVisible="{Binding IsThumbsUp}">
+                    <Image.Source>
+                        <FontImageSource Glyph="{Static local:Constants.IconThumbsUp}" Color="{StaticResource ColorPrimary}"
+                                         FontFamily="{StaticResource IconFontFamily}" />
+                    </Image.Source>
+                </Image>
                 <Frame BackgroundColor="{StaticResource ColorPrimary}" CornerRadius="20" HorizontalOptions="StartAndExpand" Padding="10" HasShadow="False"
                        IsVisible="{Binding IsThumbsUp, Converter={StaticResource InverseBoolConverter}}"
                        x:Name="FraMessage">

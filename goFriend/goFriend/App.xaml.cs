@@ -19,6 +19,7 @@ using Device = Xamarin.Forms.Device;
 using goFriend.Models;
 using Point = NetTopologySuite.Geometries.Point;
 using Xamarin.Forms.GoogleMaps;
+using Xamarin.Forms.Internals;
 
 namespace goFriend
 {
@@ -30,9 +31,10 @@ namespace goFriend
         public static Position LastPosition { get; set; }
         public readonly IFacebookManager FaceBookManager;
         public static ILocationService LocationService;
+        public static INotificationService NotificationService;
         public static Dictionary<int, List<string[]>> NotificationChatInboxLinesById = new Dictionary<int, List<string[]>>();
-        public static bool IsInitializing = false;
-        private static ILogger Logger;
+        public static bool IsInitializing;
+        private static ILogger _logger;
         public static IFriendStore FriendStore;
         public static IStorageService StorageService;
         public static ChatListViewModel ChatListVm; // List of all Chats
@@ -59,7 +61,8 @@ namespace goFriend
 
             FaceBookManager = DependencyService.Get<IFacebookManager>();
             LocationService = DependencyService.Get<ILocationService>();
-            Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+            NotificationService = DependencyService.Get<INotificationService>();
+            _logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
             ChatListVm = new ChatListViewModel();
 
             SapChatNewMessage.Loop = false;
@@ -68,9 +71,9 @@ namespace goFriend
             SapChatNewChat.Load(Extension.GetStreamFromFile("Audios.chat_newchat.wav"));
 
             VersionTracking.Track();
-            Logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
-            Logger.Info($"AzureBackendUrl = {Constants.AzureBackendUrlDev}");
-            Logger.Debug(Extension.GetDeviceInfo());
+            _logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
+            _logger.Info($"AzureBackendUrl = {Constants.AzureBackendUrlDev}");
+            _logger.Debug(Extension.GetDeviceInfo());
             res.Culture = new CultureInfo("vi-VN");
             //res.Culture = new CultureInfo("");
             //Thread.CurrentThread.CurrentCulture = res.Culture;
@@ -78,9 +81,9 @@ namespace goFriend
 
             AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
                 var ex = (Exception)args.ExceptionObject;
-                Logger.Error("UnhandledException exception");
+                _logger.Error("UnhandledException exception");
                 AppCenter.SetUserId(User?.Id.ToString());
-                Logger.TrackError(ex, new Dictionary<string, string> {
+                _logger.TrackError(ex, new Dictionary<string, string> {
                     { "FriendId", User?.Id.ToString() },
                     { "Comment", Extension.GetDeviceInfo() }
                 });
@@ -97,7 +100,7 @@ namespace goFriend
             DependencyService.Register<FriendStore>();
             FriendStore = DependencyService.Get<IFriendStore>();
             //StorageService = NinjectManager.Resolve<IStorageService>();
-            StorageService = new StorageService(Logger, DependencyService.Get<IMediaService>());
+            StorageService = new StorageService(_logger, DependencyService.Get<IMediaService>());
             if (UseMockDataStore)
                 DependencyService.Register<MockDataStore>();
             else
@@ -175,7 +178,7 @@ namespace goFriend
             var groupFriend = await App.FriendStore.GetGroupFriend(groupId, friendId);
             if (groupFriend == null)
             {
-                Logger.Warn($"Friend {friendId} is not found in the Group {groupId}");
+                _logger.Warn($"Friend {friendId} is not found in the Group {groupId}");
                 return;
             }
             var groupFixedCatValues =
@@ -215,17 +218,14 @@ namespace goFriend
         {
             try
             {
-                Logger.Debug($"RetrieveNewMessages.BEGIN(Name={chatListItemVm.Name}, Id={chatListItemVm.Chat.Id})");
+                _logger.Debug($"RetrieveNewMessages.BEGIN(Name={chatListItemVm.Name}, Id={chatListItemVm.Chat.Id})");
                 const int startMsgIdx = 999999;
                 chatListItemVm.ChatViewModel.LastReadMsgIdx = chatListItemVm.ChatViewModel.Messages.Count == 0
                     ? 0 : chatListItemVm.ChatViewModel.Messages[0].MessageIndex;
                 var messages = await FriendStore.ChatGetMessages(chatListItemVm.Chat.Id,
                     startMsgIdx, chatListItemVm.ChatViewModel.LastReadMsgIdx, Constants.ChatMessagePageSize);
                 messages = messages.OrderBy(x => x.MessageIndex);
-                foreach (var chatMessage in messages)
-                {
-                    chatListItemVm.ChatViewModel.ReceiveMessage(chatMessage);
-                }
+                messages.ForEach(x => chatListItemVm.ChatViewModel.ReceiveMessage(x));
                 if (messages.Count() == Constants.ChatMessagePageSize) //there might be some missing messages not fetched yet
                 {
                     chatListItemVm.ChatViewModel.PendingMessageCount =
@@ -234,11 +234,11 @@ namespace goFriend
             }
             catch (Exception e)
             {
-                Logger.Error(e.ToString());
+                _logger.Error(e.ToString());
             }
             finally
             {
-                Logger.Debug("RetrieveNewMessages.END");
+                _logger.Debug("RetrieveNewMessages.END");
             }
         }
 
@@ -246,7 +246,7 @@ namespace goFriend
         {
             try
             {
-                Logger.Debug("RetrieveAllNewMessages.BEGIN");
+                _logger.Debug("RetrieveAllNewMessages.BEGIN");
                 foreach (var chatListItemVm in ChatListVm.ChatListItems)
                 {
                     await RetrieveNewMessages(chatListItemVm);
@@ -254,11 +254,11 @@ namespace goFriend
             }
             catch (Exception e)
             {
-                Logger.Error(e.ToString());
+                _logger.Error(e.ToString());
             }
             finally
             {
-                Logger.Debug("RetrieveAllNewMessages.END");
+                _logger.Debug("RetrieveAllNewMessages.END");
             }
         }
 
@@ -268,14 +268,14 @@ namespace goFriend
             {
                 try
                 {
-                    Logger.Debug("TaskInitialization.BEGIN");
+                    _logger.Debug("TaskInitialization.BEGIN");
                     IsInitializing = true;
                     if (IsUserLoggedIn && User != null)
                     {
                         MyGroups = FriendStore.GetMyGroups().Result;
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
-                            Logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
+                            _logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
                             await FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
                         }
 
@@ -286,7 +286,7 @@ namespace goFriend
                     }
                     else
                     {
-                        Logger.Debug("User is null or not logged in");
+                        _logger.Debug("User is null or not logged in");
                     }
                 }
                 catch (AggregateException e)
@@ -295,7 +295,7 @@ namespace goFriend
                     {
                         if (x is GoException goe)
                         {
-                            Logger.Error(goe.ToString());
+                            _logger.Error(goe.ToString());
                             switch (goe.Msg.Code)
                             {
                                 case MessageCode.UserTokenError:
@@ -311,19 +311,19 @@ namespace goFriend
                             return true;
                         }
 
-                        Logger.Error(x.ToString());
+                        _logger.Error(x.ToString());
                         return true;
                         //return false; // Let anything else stop the application.
                     });
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e.ToString());
+                    _logger.Error(e.ToString());
                 }
                 finally
                 {
                     IsInitializing = false;
-                    Logger.Debug("TaskInitialization.END");
+                    _logger.Debug("TaskInitialization.END");
                 }
             });
             TaskInitialization.Start();
@@ -333,7 +333,7 @@ namespace goFriend
         {
             try
             {
-                Logger.Debug($"ReceiveLocationUpdate.BEGIN");
+                _logger.Debug($"ReceiveLocationUpdate.BEGIN");
                 if (IsUserLoggedIn && User != null)
                 {
                     //var newPosition = await ((Point)null).GetPosition();
@@ -341,7 +341,7 @@ namespace goFriend
                     if (LastPosition == default)
                     {
                         LastPosition = new Position(latitude, longitude);
-                        Logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
+                        _logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
                         await FriendStore.SaveLocation(new FriendLocation()
                         {
                             FriendId = App.User.Id,
@@ -368,7 +368,7 @@ namespace goFriend
                         if (distance >= Constants.MOVING_DISTANCE_THRESHOLD)
                         {
                             LastPosition = new Position(latitude, longitude);
-                            Logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
+                            _logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
                             await FriendStore.SaveLocation(new FriendLocation()
                             {
                                 FriendId = App.User.Id,
@@ -391,17 +391,17 @@ namespace goFriend
                     }
                     if (result != null)
                     {
-                        LocationService.SendNotification(result);
+                        NotificationService.SendNotification(result);
                     }
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e.ToString());
+                _logger.Error(e.ToString());
             }
             finally
             {
-                Logger.Debug("ReceiveLocationUpdate.END");
+                _logger.Debug("ReceiveLocationUpdate.END");
             }
         }
 
@@ -423,8 +423,6 @@ namespace goFriend
 
                         await trigger.Task.ConfigureAwait(false);
                     }
-                    break;
-                default:
                     break;
             }
         }

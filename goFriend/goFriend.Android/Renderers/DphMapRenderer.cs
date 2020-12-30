@@ -111,9 +111,12 @@ namespace goFriend.Droid.Renderers
             markerOptions.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
             markerOptions.SetTitle(pin.Label);
             markerOptions.SetSnippet(pin.Address);
-            markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(
-                    dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
-                    dphPin?.UserRight == UserType.Pending ? Resource.Drawable.pin_Pending : Resource.Drawable.pin_Normal));
+            var pinIcon = dphPin?.UserRight == UserType.Admin ? ExtensionAndroid.ICON_PIN_ADMIN :
+                dphPin?.UserRight == UserType.Pending ? ExtensionAndroid.ICON_PIN_PENDING : ExtensionAndroid.ICON_PIN_NORMAL;
+            markerOptions.SetIcon(BitmapDescriptorFactory.FromBitmap(pinIcon));
+            //markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(
+            //        dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
+            //        dphPin?.UserRight == UserType.Pending ? Resource.Drawable.pin_Pending : Resource.Drawable.pin_Normal));
             markerOptions.Draggable(pin.IsDraggable);
         }
 
@@ -250,9 +253,12 @@ namespace goFriend.Droid.Renderers
         {
             var dphPin = pin.Tag as DphPin;
             clusteredMarker.InfoWindowAnchorY = 0;
-            clusteredMarker.Icon = BitmapDescriptorFactory.FromResource(
-                dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
-                dphPin?.UserRight == UserType.Pending ? Resource.Drawable.pin_Pending : Resource.Drawable.pin_Normal);
+            var pinIcon = dphPin?.UserRight == UserType.Admin ? ExtensionAndroid.ICON_PIN_ADMIN :
+                dphPin?.UserRight == UserType.Pending ? ExtensionAndroid.ICON_PIN_PENDING : ExtensionAndroid.ICON_PIN_NORMAL;
+            clusteredMarker.Icon = BitmapDescriptorFactory.FromBitmap(pinIcon);
+            //clusteredMarker.Icon = BitmapDescriptorFactory.FromResource(
+            //    dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
+            //    dphPin?.UserRight == UserType.Pending ? Resource.Drawable.pin_Pending : Resource.Drawable.pin_Normal);
             _mapMarkerPins.Add(clusteredMarker.Id, dphPin);
         }
 

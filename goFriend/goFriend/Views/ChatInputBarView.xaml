@@ -15,14 +15,26 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <ImageButton x:Name="BtnShowAttachments" Grid.Column="0" Source="{Static local:Constants.ImgFolderClose}" Clicked="BtnShowAttachments_OnClicked"  BackgroundColor="White"
-                     VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="0,0,0,7" HeightRequest="30" WidthRequest="25"/>
-        <ImageButton x:Name="BtnCamera" Grid.Column="0" Source="{Static local:Constants.ImgCamera}" Clicked="BtnCamera_OnClicked" BackgroundColor="White"
-                     VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="5,0,5,8" HeightRequest="30"/>
-        <ImageButton x:Name="BtnPhoto" Grid.Column="1" Source="{Static local:Constants.ImgPhoto}" Clicked="BtnPhoto_OnClicked" BackgroundColor="White"
-                     VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="5,0,5,8" HeightRequest="30"/>
+        <ImageButton x:Name="BtnShowAttachments" Margin="0" Grid.Column="0" Clicked="BtnShowAttachments_OnClicked" BackgroundColor="White">
+            <ImageButton.Source>
+                <FontImageSource Glyph="{StaticResource IconFolderClose}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="26" />
+            </ImageButton.Source>
+        </ImageButton>
+        <ImageButton x:Name="BtnCamera" Margin="5,0,5,0" Grid.Column="0" Clicked="BtnCamera_OnClicked" BackgroundColor="White">
+            <ImageButton.Source>
+                <FontImageSource Glyph="{StaticResource IconCamera}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="26" />
+            </ImageButton.Source>
+        </ImageButton>
+        <ImageButton x:Name="BtnPhoto" Margin="5,0,5,0"  Grid.Column="1" Clicked="BtnPhoto_OnClicked" BackgroundColor="White">
+            <ImageButton.Source>
+                <FontImageSource Glyph="{StaticResource IconPhoto}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="26" />
+            </ImageButton.Source>
+        </ImageButton>
         <Frame Grid.Column="2" CornerRadius="20" BackgroundColor="#F3F3F3" HorizontalOptions="FillAndExpand" Padding="10,0" HasShadow="False"
                Margin="5,0,0,0">
             <controls:ExtendedEditorControl x:Name="ChatTextInput" BackgroundColor="#F3F3F3"
@@ -31,11 +43,11 @@
                 TextColor="{StaticResource ColorLabel}" PlaceholderColor="Gray" Placeholder="{Static local:res.TypeMsgHere}"
                 Text="{Binding Message}"/>
         </Frame>
-        <Image Grid.Column="3" Source="{Binding SendImage}"
-               VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="0,0,0,8" HeightRequest="30">
-            <Image.GestureRecognizers>
-                <TapGestureRecognizer Tapped="ImgSend_OnTapped" NumberOfTapsRequired="1" />
-            </Image.GestureRecognizers>
-        </Image>
+        <ImageButton Margin="5,0,5,0" Grid.Column="3" Clicked="BtnSend_OnClicked" BackgroundColor="White">
+            <ImageButton.Source>
+                <FontImageSource Glyph="{Binding SendIcon}" Color="{StaticResource ColorPrimaryLight}"
+                                 FontFamily="{StaticResource IconFontFamily}" Size="26" />
+            </ImageButton.Source>
+        </ImageButton>
     </Grid>
 </ContentView>

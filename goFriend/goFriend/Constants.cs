@@ -25,36 +25,34 @@
 
         public const string ROUTE_HOME = "Home";
         public const string ROUTE_HOME_GROUPCONNECTION = "//Home/GroupConnection";
-        public const string ROUTE_HOME_MAPONLINE = "//Home/MapOnline";
+        public const string ROUTE_HOME_MAP = "//Home/Map";
         public const string ROUTE_HOME_ADMIN = "//Home/Admin";
         public const string ROUTE_HOME_ABOUT = "//Home/About";
         public const string ROUTE_BROWSE = "Browse";
-        public const string ROUTE_MAP = "Map";
+        public const string ROUTE_MAPONLINE = "MapOnline";
         public const string ROUTE_CHAT = "Chat";
         public const string ROUTE_NOTIFICATION = "Notification";
 
-        public const string ImgFolderOpen = "folder_open.png";
-        public const string ImgFolderClose = "folder_close.png";
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";
         public const string ImgGroupAdmin = "group_admin";
         public const string ImgCopy = "copy.png";
         public const string ImgDelete = "delete.png";
-        public const string ImgSend = "send.png";
-        public const string ImgThumbsUp = "thumbsup.png";
         public const string ImgMute = "mute.png";
         public const string ImgUnMute = "unmute.png";
-        public const string ImgPhoto = "photo.png";
-        public const string ImgCamera = "camera.png";
         public const string ImgSearch = "search.png";
         public const string ImgAccept = "accept.png";
         public const string ImgDeny = "deny.png";
+
+        public const string IconSend = "\uF1D8";
+        public const string IconThumbsUp = "\uF164";
 
         public const string AppCenterAppSecretiOS = "f2c053eb-a08d-4c4d-8d54-c63711322c18";
         public const string AppCenterAppSecretAndroid = "56010775-c4f6-46f9-9de5-a13a547d22c2";
 
         //Service
         public const double MOVING_DISTANCE_THRESHOLD = 0.010; // km
+        public const double MAPONLINE_DEFAULT_RADIUS = 0.2; // km (200m)
         public const int SERVICE_RUNNING_NOTIFICATION_ID = 12976;
         public const string SERVICE_STARTED_KEY = "service_started";
         public const string SERVICE_EXTRAID_KEY = "service_extraid";

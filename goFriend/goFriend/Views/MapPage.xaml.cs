@@ -46,7 +46,9 @@ namespace goFriend.Views
                                 SubTitle1 = $"{res.Groups} {selectedGroup.Group.Name}",
                                 SubTitle2 = groupFriend.GetCatValueDisplay(arrFixedCats.Count),
                                 IconUrl = groupFriend.Friend.GetImageUrl(),
-                                UserRight = new[] { 4, 5 }.Contains(groupFriend.FriendId) ? UserType.Normal : groupFriend.UserRight,
+                                UserRight = Constants.SuperUserIds.Contains(groupFriend.FriendId) ? UserType.Pending :
+                                groupFriend.UserRight == UserType.Normal ? UserType.Pending : groupFriend.UserRight, // all normal users have Pending (offline) icon
+                                //UserRight = Constants.SuperUserIds.Contains(groupFriend.FriendId) ? UserType.Normal : groupFriend.UserRight,
                                 IsDraggable = false,
                                 Type = PinType.Place
                             };

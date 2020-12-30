@@ -466,6 +466,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MapOfflineDesc {
+            get {
+                return ResourceManager.GetString("MapOfflineDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to members.
         /// </summary>
         public static string members {
@@ -930,6 +939,42 @@ namespace goFriend {
         public static string Processing {
             get {
                 return ResourceManager.GetString("Processing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string Radius {
+            get {
+                return ResourceManager.GetString("Radius", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string RadiusKM {
+            get {
+                return ResourceManager.GetString("RadiusKM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string RadiusM {
+            get {
+                return ResourceManager.GetString("RadiusM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string RadiusNoLimit {
+            get {
+                return ResourceManager.GetString("RadiusNoLimit", resourceCulture);
             }
         }
         

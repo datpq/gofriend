@@ -454,7 +454,7 @@
     <value>Bạn bè xung quanh</value>
   </data>
   <data name="SvcBackgroundContentText" xml:space="preserve">
-    <value>Bạn bè xung quanh cho phép bạn xem bản đồ trực tuyến trong phạm vi {0} xung quanh bạn và nhận tin nhắn khi có bạn bè xuất hiện trong phạm vi này.</value>
+    <value>Chức năng Bạn bè xung quanh cho phép bạn xem bản đồ trực tuyến trong phạm vi bạn chọn và nhận tin nhắn khi có bạn bè xuất hiện trong phạm vi này.</value>
   </data>
   <data name="Exit" xml:space="preserve">
     <value>Thoát</value>
@@ -472,12 +472,27 @@
     <value>Máy của bạn chưa cài Google Play Service. Hãy cài nó trước để định vị hoạt động được tốt.</value>
   </data>
   <data name="MapOffline" xml:space="preserve">
-    <value>Bản đồ offline</value>
+    <value>Bản đồ ngoại tuyến</value>
   </data>
   <data name="SvcBackgroundDesc" xml:space="preserve">
     <value>Xem bạn bè xung quanh qua bản đồ trực tuyến</value>
   </data>
   <data name="MsgNoLocationServiceWarning" xml:space="preserve">
-    <value>Muốn xem bạn bè xung quanh, bạn cần chia sẻ vị trí của bạn trước tiên. Hãy kích hoạt Bạn bè xung quanh nhé.</value>
+    <value>Chức năng Bạn bè xung quanh chưa được kích hoạt cho nhóm này. Khi kích hoạt chức năng này, bạn cũng đồng thời đồng ý chia sẻ vị trí của mình cho các thành viên trong nhóm trong phạm vi bạn chọn. Chỉ những thành viên trong phạm vi này và cùng kích hoạt chức năng này mới nhận được tín hiệu của bạn. Hãy kích hoạt bằng cách ấn vào nút </value>
+  </data>
+  <data name="Radius" xml:space="preserve">
+    <value>Phạm vi</value>
+  </data>
+  <data name="RadiusKM" xml:space="preserve">
+    <value>kilômét</value>
+  </data>
+  <data name="RadiusM" xml:space="preserve">
+    <value>mét</value>
+  </data>
+  <data name="RadiusNoLimit" xml:space="preserve">
+    <value>Không hạn chế</value>
+  </data>
+  <data name="MapOfflineDesc" xml:space="preserve">
+    <value>Bản đồ vị trí đăng ký của bạn bè</value>
   </data>
 </root>

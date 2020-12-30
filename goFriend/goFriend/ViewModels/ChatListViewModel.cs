@@ -112,7 +112,7 @@ namespace goFriend.ViewModels
 
                     App.SapChatNewChat.Play();
                     Vibration.Vibrate();
-                    App.LocationService.SendNotification(
+                    App.NotificationService.SendNotification(
                         new Models.ServiceNotification
                         {
                             ContentTitle = chat.Owner?.Name,

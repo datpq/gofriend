@@ -15,11 +15,25 @@
         <Color x:Key="ColorChatGray">#F0F0F0</Color>
         <Color x:Key="ColorListViewSelectedItem">#E5E5E5</Color>
         <x:Int32 x:Key="BtnCornerRadius">20</x:Int32>
+        <x:Double x:Key="IconSize">22</x:Double>
         <x:Double x:Key="LblFontSize">17</x:Double>
         <x:Double x:Key="LblSectionFontSize">14</x:Double>
         <x:Double x:Key="LblDetailFontSize">13</x:Double>
         <x:Double x:Key="LblMicroFontSize">10</x:Double>
         <helpers:HtmlLabelConverter x:Key="HtmlLabelConverter" />
         <helpers:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <OnPlatform x:TypeArguments="x:String"
+                    x:Key="IconFontFamily">
+            <On Platform="iOS" Value="Font Awesome 5 Free" />
+            <On Platform="Android" Value="fa-solid-900.ttf#Font Awesome 5 Free" />
+        </OnPlatform>
+        <x:String x:Key="IconPlay">&#xF04B;</x:String>
+        <x:String x:Key="IconStop">&#xF04D;</x:String>
+        <x:String x:Key="IconRefresh">&#xF2F1;</x:String>
+        <x:String x:Key="IconCamera">&#xF030;</x:String>
+        <x:String x:Key="IconPhoto">&#xF03E;</x:String>
+        <x:String x:Key="IconSend">&#xF1D8;</x:String>
+        <x:String x:Key="IconFolderOpen">&#xF107;</x:String>
+        <x:String x:Key="IconFolderClose">&#xF105;</x:String>
     </Application.Resources>
 </Application>

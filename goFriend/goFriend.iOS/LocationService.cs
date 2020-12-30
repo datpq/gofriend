@@ -1,5 +1,4 @@
 ﻿using CoreLocation;
-using goFriend.Models;
 using goFriend.Services;
 using goFriend.iOS;
 using System;
@@ -41,16 +40,6 @@ namespace goFriend.iOS
             }
         }
 
-        public void CancelNotification(NotificationType? notificationType = null)
-        {
-            return;
-        }
-
-        public void SendNotification(ServiceNotification serviceNotification)
-        {
-            return;
-        }
-
         public bool IsRunning()
         {
             return _isRunning;
@@ -68,7 +57,7 @@ namespace goFriend.iOS
                 {
 
                     //set the desired accuracy, in meters
-                    LocationManager.DesiredAccuracy = 5;
+                    LocationManager.DesiredAccuracy = 1;
 
                     LocationManager.LocationsUpdated += LocationManager_LocationsUpdated;
 
@@ -91,8 +80,12 @@ namespace goFriend.iOS
         private async void LocationManager_LocationsUpdated(object sender, CLLocationsUpdatedEventArgs e)
         {
             var location = e.Locations[e.Locations.Length - 1];
-            //LocationUpdated(this, new LocationUpdatedEventArgs(e.Locations[e.Locations.Length - 1]));
-            await App.ReceiveLocationUpdate(location.Coordinate.Latitude, location.Coordinate.Longitude);
+            Logger.Debug($"LocationManager_LocationsUpdated Latitude: {location.Coordinate.Latitude}, Longitude: {location.Coordinate.Longitude}");
+            if (_isRunning)
+            {
+                //LocationUpdated(this, new LocationUpdatedEventArgs(e.Locations[e.Locations.Length - 1]));
+                await App.ReceiveLocationUpdate(location.Coordinate.Latitude, location.Coordinate.Longitude);
+            }
         }
 
         public Task Stop()

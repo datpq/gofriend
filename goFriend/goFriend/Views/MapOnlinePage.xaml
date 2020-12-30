@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.SvcBackground}"
-             x:Class="goFriend.Views.MapOnline">
+             x:Class="goFriend.Views.MapOnlinePage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android, WinPhone">
@@ -20,26 +20,46 @@
     </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout Margin="10,0,10,0">
-                <controls:DphFriendSelection x:Name="DphFriendSelection" IsShowingCategories="False" IsExpandableCategories="False"/>
+            <controls:DphFriendSelection x:Name="DphFriendSelection" Margin="10,0,10,0"
+                                         IsShowingCategories="False" IsExpandableCategories="False"
+                                         IsShowingRefresh="False"  HorizontalOptions="FillAndExpand"/>
+            <StackLayout Orientation="Horizontal" Margin="10,0,10,0">
+                <Label x:Name="LblRadius" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" TextColor="{StaticResource ColorPrimary}"/>
+                <Picker x:Name="PickerRadius" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand" HeightRequest="35"
+                        SelectedIndexChanged="PickerRadius_SelectedIndexChanged" ItemsSource="{Binding Items}" ItemDisplayBinding="{Binding Display}"/>
+                <ImageButton x:Name="ImgPlay" Clicked="CmdPlay_Clicked" IsVisible="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="{StaticResource IconPlay}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
+                    </ImageButton.Source>
+                </ImageButton>
+                <ImageButton x:Name="ImgRefresh" Clicked="CmdPause_Clicked" IsVisible="{Binding IsRunning, FallbackValue='False'}">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="{StaticResource IconRefresh}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
+                    </ImageButton.Source>
+                </ImageButton>
+                <ImageButton x:Name="ImgStop" Clicked="CmdPause_Clicked" IsVisible="{Binding IsRunning, FallbackValue='False'}">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="{StaticResource IconStop}" Color="DarkRed"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
+                    </ImageButton.Source>
+                </ImageButton>
             </StackLayout>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-            <Label x:Name="LabelLocationServiceRunning" Text="{Static local:res.MsgNoLocationServiceWarning}" Margin="20" IsVisible="False"
-                   VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
-                   TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
-            <controls:DphMap x:Name="Map" MyLocationEnabled="True" IsVisible="False" />
-            <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" HorizontalOptions="Center" Visual="Material">
-                <Button x:Name="CmdPlay"
-                        CornerRadius="{StaticResource BtnCornerRadius}"
-                        BackgroundColor="{StaticResource ColorPrimaryLight}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
-                        Text="{x:Static local:res.Play}"
-                        Clicked="CmdPlay_Clicked"/>
-                <Button x:Name="CmdPause"
-                        CornerRadius="{StaticResource BtnCornerRadius}"
-                        BackgroundColor="{StaticResource ColorPrimaryLight}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
-                        Text="{x:Static local:res.Pause}"
-                        Clicked="CmdPause_Clicked"/>
-            </StackLayout>
+            <Label x:Name="LabelLocationServiceRunning" FontSize="{StaticResource LblFontSize}" Margin="20"
+                   VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" IsVisible="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Static local:res.MsgNoLocationServiceWarning}"
+                              TextColor="{StaticResource ColorLabelDetail}" />
+                        <Span Text="{StaticResource IconPlay}"
+                              TextColor="{StaticResource ColorPrimaryLight}"
+                              FontFamily="{StaticResource IconFontFamily}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <controls:DphMap x:Name="Map" MyLocationEnabled="True" IsVisible="{Binding IsRunning}" VerticalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

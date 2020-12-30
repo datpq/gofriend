@@ -14,6 +14,7 @@ using goFriend.Services;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Color = Android.Graphics.Color;
 
 namespace goFriend.Droid
 {
@@ -28,6 +29,7 @@ namespace goFriend.Droid
 
         static readonly int RC_LAST_LOCATION_PERMISSION_CHECK = 1000;
         static readonly int RC_LOCATION_UPDATES_PERMISSION_CHECK = 1100;
+        public static Color COLOR_PRIMARY;
 
         const int RequestLocationId = 0;
 
@@ -52,6 +54,14 @@ namespace goFriend.Droid
                     // Permissions already granted - display a message.
                 }
             }
+        }
+
+        private void InitializeColors()
+        {
+            Android.Util.TypedValue a = new Android.Util.TypedValue();
+            Theme.ResolveAttribute(Android.Resource.Attribute.ColorPrimary, a, true);
+            var colorPrimarya = ApplicationContext.GetDrawable(a.ResourceId);
+            COLOR_PRIMARY = ((Android.Graphics.Drawables.ColorDrawable)colorPrimarya).Color;
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -106,6 +116,8 @@ namespace goFriend.Droid
 
             Droid.LocationService.MainActivity = this;
 
+            InitializeColors();
+
             //if (!_isServiceStarted)
             //{
             //    Logger.Debug("Service's not started. Starting now...");
@@ -133,7 +145,7 @@ namespace goFriend.Droid
             switch(intent.Action)
             {
                 case Constants.ACTION_GOTO_MAPONLINE:
-                    await Shell.Current.GoToAsync($"{Constants.ROUTE_HOME_MAPONLINE}");
+                    await Shell.Current.GoToAsync($"//{Constants.ROUTE_MAPONLINE}");
                     break;
                 case Constants.ACTION_GOTO_CHAT:
                     await Shell.Current.GoToAsync($"//{Constants.ROUTE_CHAT}");

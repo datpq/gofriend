@@ -45,6 +45,8 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 		Select Android Options, scroll down. In right bottom corner click Advanced button. --> select desired architecture, e.g. x86, x86_x64.
 - Failed to generate Java type for class: due to MAX_PATH: System.IO.DirectoryNotFoundException: Could not find a part of the path
 	--> copy solution to C;\temp to make the path shorter
+- goFriend\goFriend.iOS\goFriend.iOS.csproj: The application which this project type is based on was not found. Please try this link for further information: http://go.microsoft.com/fwlink/?LinkID=299083&projecttype=FEACFBD2-3405-455C-9665-78FE426C6842
+	- update Visual Studio
 - Specified cast is not valid
 	--> Do not install GooglePlayServices.Base, ...
 - The type or namespace name 'System' could not be found

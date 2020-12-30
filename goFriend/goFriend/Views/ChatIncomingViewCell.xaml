@@ -6,6 +6,7 @@
              xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              xmlns:helpers="clr-namespace:goFriend.Helpers;assembly=goFriend"
+             xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Views.ChatIncomingViewCell">
   <ViewCell.View>
@@ -31,7 +32,12 @@
                      FontSize="{StaticResource LblDetailFontSize}" TextColor="{StaticResource ColorLabelDetail}" />
                 <Label Grid.Column="0" Grid.Row="1" Text="{Binding CreatedDate, StringFormat='{0:HH:mm}'}" Margin="0,0,0,13" HorizontalTextAlignment="Start" VerticalTextAlignment="End"
                      TextColor="{StaticResource ColorLabelDetail}"  FontSize="{StaticResource LblMicroFontSize}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-                <Image Margin="20,0" Grid.Column="1" Grid.Row="1" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsThumbsUp}" Source="thumbsup.png" />
+                <Image Grid.Column="1" Grid.Row="1" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsThumbsUp}">
+                    <Image.Source>
+                        <FontImageSource Glyph="{Static local:Constants.IconThumbsUp}" Color="{StaticResource ColorPrimary}"
+                                         FontFamily="{StaticResource IconFontFamily}" />
+                    </Image.Source>
+                </Image>
                 <Frame x:Name="FraMessage"  Grid.Column="1" Grid.Row="1" BackgroundColor="{StaticResource ColorChatGray}" CornerRadius="20" HorizontalOptions="EndAndExpand" Padding="10" HasShadow="False"
                        IsVisible="{Binding IsThumbsUp, Converter={StaticResource InverseBoolConverter}}">
                     <Label LineBreakMode="WordWrap"

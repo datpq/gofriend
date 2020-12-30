@@ -4,7 +4,6 @@ using Foundation;
 using goFriend.Services;
 using Xamarin.Forms;
 using UIKit;
-using Xamarin.Forms.GoogleMaps.iOS;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;

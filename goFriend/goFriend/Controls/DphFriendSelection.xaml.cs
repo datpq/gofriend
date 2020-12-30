@@ -33,6 +33,14 @@ namespace goFriend.Controls
             set => SetValue(IsExpandableCategoriesProperty, value);
         }
 
+        public static readonly BindableProperty IsShowingRefreshProperty =
+            BindableProperty.CreateAttached(nameof(IsShowingRefresh), typeof(bool), typeof(DphFriendSelection), true);
+        public bool IsShowingRefresh
+        {
+            get => (bool)GetValue(IsShowingRefreshProperty);
+            set => SetValue(IsShowingRefreshProperty, value);
+        }
+
         public string SelectedGroupName { get; set; }
 
         //search criteria
@@ -51,7 +59,7 @@ namespace goFriend.Controls
             LblGroup.Text = $"{res.Groups}:";
             LblGroup.GestureRecognizers.Add(new TapGestureRecognizer
             {
-                Command = new Command(() => CmdExpandCategories_OnClicked(null, null))
+                Command = new Command(() => CmdCategories_OnClicked(null, null))
             });
             EntryName.ReturnCommand = new Command(() =>
             {
@@ -239,14 +247,16 @@ namespace goFriend.Controls
             Refresh();
         }
 
-        private void CmdExpandCategories_OnClicked(object sender, EventArgs e)
+        private void CmdCategories_OnClicked(object sender, EventArgs e)
         {
+            if (!IsExpandableCategories) return;
             IsShowingCategories = !IsShowingCategories;
-            CmdExpandCategories.ImageSource = IsShowingCategories ? Constants.ImgFolderOpen : Constants.ImgFolderClose;
             foreach (var child in Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex))
             {
                 child.IsVisible = IsShowingCategories;
             }
+            CmdCategoriesOpen.IsVisible = IsShowingCategories;
+            CmdCategoriesClose.IsVisible = !IsShowingCategories;
         }
     }
 }

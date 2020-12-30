@@ -480,4 +480,19 @@
   <data name="MsgNoLocationServiceWarning" xml:space="preserve">
     <value />
   </data>
+  <data name="Radius" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadiusKM" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadiusM" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadiusNoLimit" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MapOfflineDesc" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -19,8 +19,8 @@ namespace goFriend.Views
             InitializeComponent();
 
             App.NotificationChatInboxLinesById.Clear();
-            App.LocationService.CancelNotification(Models.NotificationType.ChatReceiveCreateChat);
-            App.LocationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
+            App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveCreateChat);
+            App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
 
             BindingContext = App.ChatListVm;
             App.ChatListPage = this;

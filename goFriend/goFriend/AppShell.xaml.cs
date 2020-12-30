@@ -10,7 +10,7 @@ namespace goFriend
             InitializeComponent();
 
             Routing.RegisterRoute(Constants.ROUTE_HOME_GROUPCONNECTION, typeof(GroupConnectionPage));
-            Routing.RegisterRoute(Constants.ROUTE_HOME_MAPONLINE, typeof(MapOnline));
+            Routing.RegisterRoute(Constants.ROUTE_HOME_MAP, typeof(MapPage));
             Routing.RegisterRoute(Constants.ROUTE_HOME_ADMIN, typeof(AdminPage));
             Routing.RegisterRoute(Constants.ROUTE_HOME_ABOUT, typeof(AboutPage));
 

@@ -31,7 +31,7 @@ namespace goFriend.Views
 
             CellBasicInfo.Tapped += CellBasicInfo_Tapped;
             CellGroups.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION); };
-            CellFriendsAround.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_MAPONLINE); };
+            CellMap.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_MAP); };
             CellAdmin.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_ADMIN); };
             CellLogin.Tapped += (s, e) =>
             {
@@ -103,7 +103,7 @@ namespace goFriend.Views
                         TsShells.Add(CellGroups);
                     //}
 
-                    TsShells.Add(CellFriendsAround);
+                    TsShells.Add(CellMap);
                     TsShells.Add(CellLogout);
                     TsShells.Add(CellAbout);
                     ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100

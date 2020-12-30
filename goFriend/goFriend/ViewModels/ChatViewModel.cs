@@ -162,11 +162,11 @@ namespace goFriend.ViewModels
             {
                 _message = value;
                 OnPropertyChanged(nameof(Message));
-                OnPropertyChanged(nameof(SendImage));
+                OnPropertyChanged(nameof(SendIcon));
             }
         }
 
-        public ImageSource SendImage => string.IsNullOrWhiteSpace(Message) ? Constants.ImgThumbsUp : Constants.ImgSend;
+        public string SendIcon => string.IsNullOrWhiteSpace(Message) ? Constants.IconThumbsUp : Constants.IconSend;
 
         // Messages is in descending order
         // [0] is the last message with max MessageIndex
@@ -344,7 +344,7 @@ namespace goFriend.ViewModels
                             }
                             inputLines.Add(new[] { chatMessage.OwnerFirstName, chatMessage.IsThumbsUp ? "👍" : chatMessage.Message });
 
-                            App.LocationService.SendNotification(
+                            App.NotificationService.SendNotification(
                                 new Models.ServiceNotification
                                 {
                                     ContentTitle = chatMessage.Chat.Name,

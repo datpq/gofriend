@@ -16,7 +16,7 @@ namespace goFriend.Views
             ChatTextInput_OnUnfocused(null, null);
         }
 
-        private void ImgSend_OnTapped(object sender, EventArgs e)
+        private void BtnSend_OnClicked(object sender, EventArgs e)
         {
             var chatViewModel = BindingContext as ChatViewModel;
             if (!string.IsNullOrWhiteSpace(chatViewModel?.Message))
