@@ -6,6 +6,7 @@ using CoreLocation;
 using FFImageLoading;
 using FFImageLoading.Transformations;
 using goFriend.Controls;
+using goFriend.DataModel;
 using goFriend.iOS.Renderers;
 using Google.Maps;
 using NLog;
@@ -139,7 +140,9 @@ namespace goFriend.iOS.Renderers
             marker.Position = new CLLocationCoordinate2D(pin.Position.Latitude, pin.Position.Longitude);
             marker.Title = pin.Label;
             marker.Snippet = pin.Address;
-            marker.Icon = UIImage.FromFile($"pin_{dphPin?.UserRight}.png");
+            //marker.Icon = UIImage.FromFile($"pin_{dphPin?.UserRight}.png");
+            marker.Icon = dphPin?.UserRight == UserType.Admin ? ExtensionIOS.ICON_PIN_ADMIN :
+                dphPin?.UserRight == UserType.Pending ? ExtensionIOS.ICON_PIN_PENDING : ExtensionIOS.ICON_PIN_NORMAL;
             marker.Draggable = pin.IsDraggable;
         }
     }
@@ -265,7 +268,9 @@ namespace goFriend.iOS.Renderers
             marker.Snippet = pin.Address;
             //marker.InfoWindowAnchor = new CGPoint(marker.InfoWindowAnchor.X, 0.2);
             marker.InfoWindowAnchor = new CGPoint(marker.InfoWindowAnchor.X, 0);
-            marker.Icon = UIImage.FromFile($"pin_{dphPin?.UserRight}.png");
+            //marker.Icon = UIImage.FromFile($"pin_{dphPin?.UserRight}.png");
+            marker.Icon = dphPin?.UserRight == UserType.Admin ? ExtensionIOS.ICON_PIN_ADMIN :
+                dphPin?.UserRight == UserType.Pending ? ExtensionIOS.ICON_PIN_PENDING : ExtensionIOS.ICON_PIN_NORMAL;
             marker.Draggable = pin.IsDraggable;
         }
     }

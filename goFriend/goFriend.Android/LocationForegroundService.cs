@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Support.V4.Content;
 using goFriend.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Color = Android.Graphics.Color;
 
@@ -83,6 +84,22 @@ namespace goFriend.Droid
             }
             else if (intent.Action.Equals(Constants.ACTION_STARTSTOP_TRACING))
             {
+                if (Droid.LocationService.IsTracing) // Paused
+                {
+                    Views.MapOnlinePage.MapOnlineInfo.ToList().ForEach(x => {
+                        x.Value.IsRunningSaved = x.Value.IsRunning;
+                        x.Value.RadiusSaved = x.Value.Radius;
+                        x.Value.IsRunning = false;
+                    });
+                }
+                else //Play
+                {
+                    Views.MapOnlinePage.MapOnlineInfo.Where(x => x.Value.IsRunningSaved).ToList().ForEach(x => {
+                        x.Value.IsRunning = x.Value.IsRunningSaved;
+                        x.Value.Radius = x.Value.RadiusSaved;
+                        x.Value.IsRunningSaved = false;
+                    });
+                }
                 App.LocationService.Pause();
                 App.LocationService.RefreshStatus();
             }

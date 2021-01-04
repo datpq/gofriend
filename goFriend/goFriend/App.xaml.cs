@@ -29,6 +29,7 @@ namespace goFriend
         public static bool IsUserLoggedIn { get; set; }
         public static Friend User { get; set; }
         public static Position LastPosition { get; set; }
+        public static string LastSharingInfo { get; set; }
         public readonly IFacebookManager FaceBookManager;
         public static ILocationService LocationService;
         public static INotificationService NotificationService;
@@ -342,11 +343,9 @@ namespace goFriend
                     {
                         LastPosition = new Position(latitude, longitude);
                         _logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
-                        await FriendStore.SaveLocation(new FriendLocation()
-                        {
-                            FriendId = App.User.Id,
-                            Location = new Point(LastPosition.Longitude, LastPosition.Latitude)
-                        });
+
+                        await FriendStore.SendLocation();
+
                         result = new ServiceNotification
                         {
                             ContentTitle = "Hanoi9194",
@@ -360,6 +359,14 @@ namespace goFriend
                                         new [] {"Catherine Pham", "xuất hiện" },
                                         new [] {"Thang Pham", "xuất hiện" } })
                         };
+                        NotificationService.SendNotification(result);
+                    }
+                    else if (App.LastSharingInfo != MapOnlinePage.GetSharingInfo())
+                    {
+                        LastPosition = new Position(latitude, longitude);
+                        _logger.Debug($"SharingInfo changed. Sending location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
+
+                        await FriendStore.SendLocation();
                     }
                     else
                     {
@@ -369,29 +376,9 @@ namespace goFriend
                         {
                             LastPosition = new Position(latitude, longitude);
                             _logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
-                            await FriendStore.SaveLocation(new FriendLocation()
-                            {
-                                FriendId = App.User.Id,
-                                Location = new Point(LastPosition.Longitude, LastPosition.Latitude)
-                            });
-                            result = new ServiceNotification
-                            {
-                                ContentTitle = "Hanoi9194",
-                                ContentText = null,
-                                SummaryText = null,
-                                LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
-                                NotificationType = Models.NotificationType.AppearOnMap,
-                                InboxLines = new List<string[]>(
-                                    new[] {
-                                        new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
-                                        new [] {"Catherine Pham", "xuất hiện" },
-                                        new [] {"Thang Pham", "xuất hiện" } })
-                            };
+
+                            await FriendStore.SendLocation();
                         }
-                    }
-                    if (result != null)
-                    {
-                        NotificationService.SendNotification(result);
                     }
                 }
             }

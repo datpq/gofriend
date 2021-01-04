@@ -18,10 +18,6 @@
     <None Remove="Images\apple.jpg" />
     <None Remove="Images\default_female.jpg" />
     <None Remove="Images\default_male.jpg" />
-    <None Remove="Images\notif_NewSubscriptionRequest.png" />
-    <None Remove="Images\notif_SubscriptionApproved.png" />
-    <None Remove="Images\notif_SubscriptionRejected.png" />
-    <None Remove="Images\notif_UpdateSubscriptionRequest.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Audios\chat_newchat.wav" />
@@ -29,10 +25,6 @@
     <EmbeddedResource Include="Images\apple.jpg" />
     <EmbeddedResource Include="Images\default_female.jpg" />
     <EmbeddedResource Include="Images\default_male.jpg" />
-    <EmbeddedResource Include="Images\notif_NewSubscriptionRequest.png" />
-    <EmbeddedResource Include="Images\notif_SubscriptionApproved.png" />
-    <EmbeddedResource Include="Images\notif_SubscriptionRejected.png" />
-    <EmbeddedResource Include="Images\notif_UpdateSubscriptionRequest.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Acr.UserDialogs" Version="7.1.0.470" />
@@ -51,13 +43,14 @@
     <PackageReference Include="Xam.Plugin.DeviceInfo" Version="4.1.1" />
     <PackageReference Include="Xam.Plugin.Media" Version="5.0.1" />
     <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.4.0" />
+    <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.10.0" />
     <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1687" />  
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1821" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Xamarin.Forms.GoogleMaps" Version="3.3.0" />
     <PackageReference Include="Xamarin.Forms.GoogleMaps.Clustering" Version="1.1.0" />

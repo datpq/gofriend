@@ -63,7 +63,8 @@ namespace goFriend.Views
                     Id = x.Id,
                     ImageUrl = DataModel.Extension.GetImageUrlByFacebookId(
                         (x.NotificationObject as GroupSubscriptionNotifBase)?.FacebookId, FacebookImageType.small), // normal 100 x 100
-                    OverlappingImageUrl = DataModel.Extension.GetImageUrl((x.NotificationObject as GroupSubscriptionNotifBase)?.ImageFile),
+                    //OverlappingImageUrl = DataModel.Extension.GetImageUrl((x.NotificationObject as GroupSubscriptionNotifBase)?.ImageFile),
+                    OverlappingImageUrl = (x.NotificationObject as GroupSubscriptionNotifBase).GetOverlapImageFromSubscription(),
                     FormattedText = x.GetNotificationMessage(App.User.Id)
                 });
                 return result;

@@ -3,13 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
              xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphOverlapImage">
     <ContentView.Content>
         <RelativeLayout x:Name="RelativeLayout">
-            <ff:CachedImage x:Name="Image1">
+            <ff:CachedImage x:Name="CachedImage1">
                              <!--RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0,Constant=0}"
                              RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0,Constant=0}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1,Constant=0}"
@@ -18,7 +19,7 @@
                     <ffTransformations:CircleTransformation/>
                 </ff:CachedImage.Transformations>
             </ff:CachedImage>
-            <ff:CachedImage x:Name="Image2">
+            <ff:CachedImage x:Name="CachedImage2">
                              <!--RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.55,Constant=0}"
                              RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=0.55,Constant=0}"
                              RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=0.5,Constant=0}"
@@ -27,6 +28,16 @@
                     <ffTransformations:CircleTransformation BorderSize="20" BorderHexColor="#FFFFFF"/>
                 </ff:CachedImage.Transformations>
             </ff:CachedImage>
+            <controls:CircleImage x:Name="Image1" Aspect="AspectFill">
+                <controls:CircleImage.Source>
+                    <FontImageSource x:Name="FontImageSource1" FontFamily="{StaticResource IoniconsFontFamily}" />
+                </controls:CircleImage.Source>
+            </controls:CircleImage>
+            <controls:CircleImage x:Name="Image2" Aspect="AspectFill">
+                <controls:CircleImage.Source>
+                    <FontImageSource x:Name="FontImageSource2" FontFamily="{StaticResource IoniconsFontFamily}" />
+                </controls:CircleImage.Source>
+            </controls:CircleImage>
         </RelativeLayout>
     </ContentView.Content>
 </ContentView>

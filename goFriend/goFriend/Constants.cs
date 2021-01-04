@@ -44,6 +44,11 @@
         public const string ImgAccept = "accept.png";
         public const string ImgDeny = "deny.png";
 
+        public const string IconAccept = "\uF16D";
+        public const string IconRefuse = "\uF2BB";
+        public const string IconAddPerson = "\uF211";
+        public const string IconUpdateInfo = "\uF339";
+
         public const string IconSend = "\uF1D8";
         public const string IconThumbsUp = "\uF164";
 

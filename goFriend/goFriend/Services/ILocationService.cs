@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace goFriend.Services
 {
@@ -10,6 +9,5 @@ namespace goFriend.Services
         void Stop();
         void RefreshStatus();
         bool IsRunning();
-        event EventHandler StateChanged;
     }
 }

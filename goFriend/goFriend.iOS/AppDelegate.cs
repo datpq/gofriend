@@ -7,6 +7,8 @@ using UIKit;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using UserNotifications;
+using ImageCircle.Forms.Plugin.iOS;
 
 namespace goFriend.iOS
 {
@@ -89,6 +91,7 @@ namespace goFriend.iOS
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Forms.Init();
             FormsMaterial.Init();
+            ImageCircleRenderer.Init();
 
             Xamarin.FormsGoogleMaps.Init("AIzaSyAxU0F02kSfdb8oVeFoFWKwK619RK5HkqU");
             CachedImageRenderer.Init();
@@ -96,6 +99,9 @@ namespace goFriend.iOS
             CachedImageRenderer.InitImageSourceHandler(); ;
 
             AppCenter.Start(Constants.AppCenterAppSecretiOS, typeof(Analytics), typeof(Crashes));
+
+            // set a delegate to handle incoming notifications
+            UNUserNotificationCenter.Current.Delegate = new iOSNotificationReceiver();
 
             InitializeNLog();
             Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());

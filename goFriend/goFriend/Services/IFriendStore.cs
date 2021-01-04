@@ -8,7 +8,6 @@ namespace goFriend.Services
     {
         Task<Friend> LoginWithThirdParty(Friend friend, string deviceInfo);
         Task<Friend> LoginWithFacebook(string authToken, string deviceInfo);
-        Task<bool> SaveLocation(FriendLocation friendLocation);
         Task<bool> SaveBasicInfo(Friend friend);
         Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useCache = true);
         Task<IEnumerable<Notification>> GetNotifications(int top = 0, int skip = 0, bool useCache = true);
@@ -31,6 +30,7 @@ namespace goFriend.Services
         Task SendAttachment(ChatMessage chatMessage);
         Task<IEnumerable<ChatFriendOnline>> SendPing(int chatId);
         Task SendCreateChat(Chat chat);
+        Task SendLocation();
         Task<IEnumerable<ChatMessage>> ChatGetMessages(int chatId, int startMsgIdx, int stopMsgIdx, int pageSize);
         Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true);
     }

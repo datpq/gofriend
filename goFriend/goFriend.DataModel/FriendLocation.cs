@@ -21,6 +21,8 @@ namespace goFriend.DataModel
         [JsonConverter(typeof(GeoPointConverter))]
         public Point Location { get; set; }
 
+        [Column(TypeName = "VARCHAR(400)")]
+        public string SharingInfo { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }
 }

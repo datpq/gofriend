@@ -1,6 +1,7 @@
 ﻿using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
+using goFriend.Helpers;
 using goFriend.Services;
 using goFriend.ViewModels;
 using System;
@@ -17,20 +18,25 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapOnlinePage : ContentPage
     {
+        private const int COMMAND_DISABLING_TIMEOUT = 1; // in minutes
+
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         public static readonly Dictionary<int, MapOnlineViewModel> MapOnlineInfo = new Dictionary<int, MapOnlineViewModel>();
-        private bool _firingRadiusSelectedIndexChanged = true;
+        private static readonly Dictionary<int, List<DphPin>> MapOnlinePins = new Dictionary<int, List<DphPin>>();
+        private readonly DphTimer _timer;
 
         public MapOnlinePage()
         {
             InitializeComponent();
-            ImgPlay.BackgroundColor = ImgStop.BackgroundColor = ImgRefresh.BackgroundColor = BackgroundColor;
+            _timer = new DphTimer(() => ((MapOnlineViewModel)BindingContext).DisabledExpiredTime = DateTime.MinValue);
+            CmdPlay.BackgroundColor = CmdStop.BackgroundColor = CmdRefresh.BackgroundColor = BackgroundColor;
             PickerRadius.Title = $"{res.Select} {res.Radius}";
             LblRadius.Text = $"{res.Radius}:";
 
             DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupName;
-            DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
+            DphFriendSelection.Initialize(async (selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
+                _timer.Stop();
                 Settings.LastMapPageGroupName = selectedGroup.Group.Name;
                 if (!MapOnlineInfo.ContainsKey(selectedGroup.Group.Id))
                 {
@@ -42,57 +48,26 @@ namespace goFriend.Views
                     });
                 }
                 BindingContext = MapOnlineInfo[selectedGroup.Group.Id];
-                RefreshRadiusDisplay();
+                var vm = MapOnlineInfo[selectedGroup.Group.Id];
+                if (!vm.IsEnabled) //start timer to make it Enabled after some time
+                {
+                    _timer.StartingTime = vm.DisabledExpiredTime;
+                    _timer.Start();
+                }
+                if (vm.IsRunning)
+                {
+                    await RecenterMap();
+                }
             });
 
             App.NotificationService.CancelNotification(Models.NotificationType.AppearOnMap);
-
-            App.LocationService.StateChanged += LocationService_StateChanged;
-        }
-
-        ~MapOnlinePage()
-        {
-            App.LocationService.StateChanged -= LocationService_StateChanged;
-        }
-
-        private async void RefreshRadiusDisplay()
-        {
-            _firingRadiusSelectedIndexChanged = false;
-            var viewModel = (MapOnlineViewModel)BindingContext;
-            for (var i = 0; i < PickerRadius.Items.Count; i++)
-            {
-                if (PickerRadius.Items[i].Equals(viewModel.RadiusDisplay))
-                {
-                    PickerRadius.SelectedIndex = i;
-                    break;
-                }
-            }
-            if (PickerRadius.SelectedIndex < 0 && PickerRadius.Items.Count > 0)
-            {
-                Logger.Error("Something went wrong here. Radius not found. Select the first one");
-                PickerRadius.SelectedIndex = 0;
-            }
-            if (viewModel.IsRunning)
-            {
-                App.LocationService.RefreshStatus();
-                await RecenterMap();
-            }
-            _firingRadiusSelectedIndexChanged = true;
-        }
-
-        private static void LocationService_StateChanged(object sender, System.EventArgs e)
-        {
-            if (!App.LocationService.IsRunning())
-            {
-                MapOnlineInfo.Where(x => x.Value.IsRunning).ToList().ForEach(x => x.Value.IsRunning = false);
-            }
         }
 
         private async Task RecenterMap()
         {
             try
             {
-                var viewModel = (MapOnlineViewModel)BindingContext;
+                var vm = (MapOnlineViewModel)BindingContext;
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(Constants.GeolocationRequestTimeout));
                 var location = await Geolocation.GetLocationAsync(request);
@@ -107,10 +82,10 @@ namespace goFriend.Views
                 {
                     Position = new Position(location.Latitude, location.Longitude),
                     Title = App.User.Name,
-                    SubTitle1 = $"{res.Groups} {viewModel.Group.Name}",
-                    SubTitle2 = viewModel.GroupFriend.GetCatValueDisplay(viewModel.FixedCatsCount),
+                    SubTitle1 = $"{res.Groups} {vm.Group.Name}",
+                    SubTitle2 = vm.GroupFriend.GetCatValueDisplay(vm.FixedCatsCount),
                     IconUrl = App.User.GetImageUrl(),
-                    UserRight = Constants.SuperUserIds.Contains(App.User.Id) ? UserType.Normal : viewModel.GroupFriend.UserRight,
+                    UserRight = Constants.SuperUserIds.Contains(App.User.Id) ? UserType.Normal : vm.GroupFriend.UserRight,
                     //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                     IsDraggable = false,
                     Type = PinType.Place
@@ -122,7 +97,7 @@ namespace goFriend.Views
 
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(
                     new Position(pin.Position.Latitude, pin.Position.Longitude),
-                    Distance.FromKilometers(viewModel.Radius == 0 ? 10 : viewModel.Radius * 2)));
+                    Distance.FromKilometers(vm.Radius == 0 ? 10 : vm.Radius * 2)));
             }
             catch (Exception e)
             {
@@ -134,22 +109,26 @@ namespace goFriend.Views
             }
         }
 
-        private async void CmdPlay_Clicked(object sender, System.EventArgs e)
+        private async void CmdPlay_Clicked(object sender, EventArgs e)
         {
-            var viewModel = (MapOnlineViewModel)BindingContext;
-            viewModel.IsRunning = !viewModel.IsRunning;
+            var vm = (MapOnlineViewModel)BindingContext;
+            vm.IsRunning = !vm.IsRunning;
             if (!App.LocationService.IsRunning())
             {
                 App.LocationService.Start();
             }
             App.LocationService.RefreshStatus();
+            vm.DisabledExpiredTime = DateTime.Now.AddMinutes(COMMAND_DISABLING_TIMEOUT);
+            _timer.StartingTime = vm.DisabledExpiredTime;
+            _timer.Start();
             await RecenterMap();
         }
 
-        private void CmdPause_Clicked(object sender, System.EventArgs e)
+        private void CmdStop_Clicked(object sender, EventArgs e)
         {
-            var viewModel = (MapOnlineViewModel)BindingContext;
-            viewModel.IsRunning = !viewModel.IsRunning;
+            var vm = (MapOnlineViewModel)BindingContext;
+            vm.IsRunning = !vm.IsRunning;
+            vm.Items.ToList().ForEach(x => x.OnlineFriends = 0);
             if (MapOnlineInfo.All(x => !x.Value.IsRunning))
             {
                 if (App.LocationService.IsRunning())
@@ -158,29 +137,58 @@ namespace goFriend.Views
                 }
             }
             App.LocationService.RefreshStatus();
+            vm.DisabledExpiredTime = DateTime.Now.AddMinutes(COMMAND_DISABLING_TIMEOUT);
+            _timer.StartingTime = vm.DisabledExpiredTime;
+            _timer.Start();
         }
 
-        private async void PickerRadius_SelectedIndexChanged(object sender, System.EventArgs e)
+        private async void PickerRadius_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_firingRadiusSelectedIndexChanged) return;
             if (!(PickerRadius.SelectedItem is RadiusItemModel selectedRadius)) return;
-            var viewModel = (MapOnlineViewModel)BindingContext;
+            var vm = (MapOnlineViewModel)BindingContext;
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (viewModel.Radius != selectedRadius.Radius)
+            if (vm.Radius != selectedRadius.Radius)
             {
-                viewModel.Radius = selectedRadius.Radius;
-            }
-            if  (viewModel.IsRunning)
-            {
-                App.LocationService.RefreshStatus();
-                await RecenterMap();
+                vm.Radius = selectedRadius.Radius;
+                if (vm.IsRunning)
+                {
+                    vm.DisabledExpiredTime = DateTime.Now.AddMinutes(COMMAND_DISABLING_TIMEOUT);
+                    _timer.StartingTime = vm.DisabledExpiredTime;
+                    _timer.Start();
+                    App.LocationService.RefreshStatus();
+                    await RecenterMap();
+                }
             }
         }
 
         public static List<string[]> GetMapOnlineStatus()
         {
             return MapOnlineInfo.Where(x => x.Value.IsRunning).Select(
-                x => new[] { x.Value.Group.Name, x.Value.RadiusDisplay }).ToList();
+                x => new[] { x.Value.Group.Name, x.Value.RadiusSelectedItem.Display }).ToList();
+        }
+
+        public static string GetSharingInfo()
+        {
+            return MapOnlineInfo.Where(x => x.Value.IsRunning)
+                .Select(x => $"{x.Key}{DataModel.Extension.SepSub}{x.Value.Radius}")
+                .Aggregate((i, j) => $"{i}{DataModel.Extension.SepSub}{j}");
+        }
+
+        public static void ReceiveLocation(FriendLocation friendLocation)
+        {
+            if (friendLocation.SharingInfo == null) return;
+            friendLocation.ModifiedDate = DateTime.Now;
+            friendLocation.SharingInfo.Split(DataModel.Extension.SepMain).ToList().ForEach(x =>
+            {
+                var groupId = int.Parse(x.Split(DataModel.Extension.SepSub)[0]);
+                if (!MapOnlinePins.ContainsKey(groupId))
+                {
+                }
+            });
+        }
+
+        private void CmdRefresh_Clicked(object sender, EventArgs e)
+        {
         }
     }
 }

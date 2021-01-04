@@ -217,6 +217,8 @@ Xcode will now load new provisioning profile.
 - error MT1006: Could not install the application on the device 'KISA007': AMDeviceSecureInstallApplicationBundle returned: 0xe8000087 (kAMDIncorrectArchitectureError).
 	- restart iphone, mac
 	- Build and Deploy again
+- Could not install the application .. on the device 'iPhone': Your code signing/provisioning profiles are not correctly configured. Probably you have an entitlement not supported by your current provisioning profile, or your device is not part of the current provisioning profile. Please check the iOS Device Log for details (error: 0xe8008016).		 	0	
+
 - Could not decompress the native framework '*' from '*'. Please review the build log for more information from the native 'zip' command.
 	- go to mac computer and remove cache directory: /User/dat/Library/Caches/Xamarin/mtbs/builds/goFriend.iOS/a14...
 - Error: System.IO.FileNotFoundException: /Users/.../obj/iPhone/Release/actool/bundle/AppIcon20x20@2x.png does not exist

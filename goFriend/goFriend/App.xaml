@@ -22,10 +22,16 @@
         <x:Double x:Key="LblMicroFontSize">10</x:Double>
         <helpers:HtmlLabelConverter x:Key="HtmlLabelConverter" />
         <helpers:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <helpers:BoolToPercentConverter x:Key="IsEnabledOpacityConverter" True="1" False="0.4" />
         <OnPlatform x:TypeArguments="x:String"
                     x:Key="IconFontFamily">
             <On Platform="iOS" Value="Font Awesome 5 Free" />
             <On Platform="Android" Value="fa-solid-900.ttf#Font Awesome 5 Free" />
+        </OnPlatform>
+        <OnPlatform x:TypeArguments="x:String"
+                    x:Key="IoniconsFontFamily">
+            <On Platform="iOS" Value="Ionicons" />
+            <On Platform="Android" Value="ionicons.ttf#Ionicons" />
         </OnPlatform>
         <x:String x:Key="IconPlay">&#xF04B;</x:String>
         <x:String x:Key="IconStop">&#xF04D;</x:String>

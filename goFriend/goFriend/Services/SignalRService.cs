@@ -170,6 +170,7 @@ namespace goFriend.Services
                 hubConnection.Closed += HubConnectionOnClosed;
                 hubConnection.On<ChatMessage>(ChatMessageType.Text.ToString(), OnChatReceiveMessage);
                 hubConnection.On<ChatMessage>(ChatMessageType.Attachment.ToString(), OnChatReceiveAttachment);
+                hubConnection.On<FriendLocation>(ChatMessageType.Location.ToString(), OnReceiveLocation);
                 hubConnection.On<Chat>(ChatMessageType.CreateChat.ToString(), OnChatReceiveCreateChat);
                 await hubConnection.StartAsync();
 
@@ -268,6 +269,25 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"OnChatReceiveMessage.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        private void OnReceiveLocation(FriendLocation friendLocation)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"OnReceiveLocation.BEGIN(FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo})");
+                Views.MapOnlinePage.ReceiveLocation(friendLocation);
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.Error(e.ToString());
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug($"OnReceiveLocation.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
     }

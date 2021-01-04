@@ -15,6 +15,8 @@ using PCLAppConfig;
 using Plugin.Connectivity;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using goFriend.Views;
+using Point = NetTopologySuite.Geometries.Point;
 
 namespace goFriend.Services
 {
@@ -152,32 +154,6 @@ namespace goFriend.Services
             {
                 Logger.Debug($"LoginWithFacebook.END({result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
-        }
-
-        public async Task<bool> SaveLocation(FriendLocation friendLocation)
-        {
-            Logger.Debug($"SaveLocation.BEGIN");
-
-            Validate();
-
-            var serializedFriendLocation = JsonConvert.SerializeObject(friendLocation);
-
-            var client = GetSecuredHttpClient();
-            var response = await client.PutAsync($"api/Friend/SaveLocation", new StringContent(serializedFriendLocation, Encoding.UTF8, "application/json"));
-
-            var result = false;
-            if (response.IsSuccessStatusCode)
-            {
-                result = true;
-            }
-            else
-            {
-                var msg = await response.Content.ReadAsAsync<Message>();
-                Logger.Error($"Error: {msg}");
-            }
-
-            Logger.Debug($"SaveLocation.END({result})");
-            return result;
         }
 
         public async Task<bool> SaveBasicInfo(Friend friend)
@@ -1118,6 +1094,31 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug("SendCreateChat.END");
+            }
+        }
+
+        public async Task SendLocation()
+        {
+            Logger.Debug($"SendLocation.BEGIN");
+            try
+            {
+                var friendLocation = new FriendLocation()
+                {
+                    FriendId = App.User.Id,
+                    Location = new Point(App.LastPosition.Longitude, App.LastPosition.Latitude),
+                    SharingInfo = MapOnlinePage.GetSharingInfo()
+                };
+                Logger.Debug($"SharingInfo={friendLocation.SharingInfo}");
+                App.LastSharingInfo = friendLocation.SharingInfo;
+                await SignalR.SendMessageAsync<string>(ChatMessageType.Location.ToString(), friendLocation);
+            }
+            catch (Exception e)
+            {
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug("SendLocation.END");
             }
         }
 

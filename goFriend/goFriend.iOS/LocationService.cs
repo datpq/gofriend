@@ -5,6 +5,7 @@ using System;
 using UIKit;
 using Xamarin.Forms;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 [assembly: Dependency(typeof(LocationService))]
 namespace goFriend.iOS
@@ -45,7 +46,7 @@ namespace goFriend.iOS
             return _isRunning;
         }
 
-        public Task Start()
+        public void Start()
         {
             try
             {
@@ -74,7 +75,6 @@ namespace goFriend.iOS
             {
                 Logger.Debug($"Start.END");
             }
-            return Task.CompletedTask;
         }
 
         private async void LocationManager_LocationsUpdated(object sender, CLLocationsUpdatedEventArgs e)
@@ -88,7 +88,7 @@ namespace goFriend.iOS
             }
         }
 
-        public Task Stop()
+        public void Stop()
         {
             try
             {
@@ -106,19 +106,22 @@ namespace goFriend.iOS
             {
                 Logger.Debug($"Stop.END");
             }
-            return Task.CompletedTask;
         }
 
-        public Task Pause()
+        public void Pause()
         {
             if (!_isRunning)
             {
-                return Start();
+                Start();
             }
             else
             {
-                return Stop();
+                Stop();
             }
+        }
+
+        public void RefreshStatus()
+        {
         }
     }
 }

@@ -138,6 +138,22 @@ namespace goFriend
             return string.Join(", ", arrNames);
         }
 
+        public static string GetOverlapImageFromSubscription(this GroupSubscriptionNotifBase subscriptionNotifBase)
+        {
+            switch (subscriptionNotifBase.Type)
+            {
+                case NotificationType.SubscriptionApproved:
+                    return $"{Constants.IconAccept}{DataModel.Extension.Sep}#61A830";
+                case NotificationType.SubscriptionRejected:
+                    return $"{Constants.IconRefuse}{DataModel.Extension.Sep}#FF0000";
+                case NotificationType.NewSubscriptionRequest:
+                    return $"{Constants.IconAddPerson}{DataModel.Extension.Sep}#61A830";
+                case NotificationType.UpdateSubscriptionRequest:
+                    return $"{Constants.IconUpdateInfo}{DataModel.Extension.Sep}#61A830";
+            }
+            return null;
+        }
+
         public static async Task<DphListViewItemModel> GetOverlapImageInfo(this Chat chat)
         {
             var result = new DphListViewItemModel();

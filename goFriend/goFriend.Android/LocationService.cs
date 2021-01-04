@@ -1,7 +1,7 @@
 ﻿using goFriend.Droid;
 using goFriend.Services;
 using Nito.AsyncEx;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -21,8 +21,6 @@ namespace goFriend.Droid
             Logger.Debug($"LocationService creating instance...");
         }
 
-        public event EventHandler StateChanged;
-
         private async Task Start(bool startOrPause)
         {
             Logger.Debug($"Start.BEGIN(startOrPause={startOrPause})");
@@ -38,7 +36,6 @@ namespace goFriend.Droid
             {
                 IsTracing = startOrPause;
                 await LocationForegroundService.GetInstance().StartForegroundService();
-                StateChanged?.Invoke(this, null);
             }
             else
             {
@@ -72,7 +69,7 @@ namespace goFriend.Droid
                 await LocationForegroundService.GetInstance().StopForegroundService();
                 MainActivity.IsServiceStarted = false;
                 IsTracing = false;
-                StateChanged?.Invoke(this, null);
+                Views.MapOnlinePage.MapOnlineInfo.Where(x => x.Value.IsRunning).ToList().ForEach(x => x.Value.IsRunning = false);
             }
             else
             {

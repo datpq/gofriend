@@ -41,13 +41,53 @@ namespace goFriend.Controls
         private static void OnSource1Changed(BindableObject bindable, object oldValue, object newValue)
         {
             var obj = (DphOverlapImage)bindable;
-            obj.Image1.Source = (string)newValue;
+            if (newValue == null)
+            {
+                obj.CachedImage1.IsVisible = obj.Image1.IsVisible = false;
+                return;
+            }
+            var sourceValue = (string)newValue;
+            obj.CachedImage1.IsVisible = sourceValue.Contains("//");
+            obj.Image1.IsVisible = !obj.CachedImage1.IsVisible;
+            //if image from an URL (http, https, resource)
+            if (obj.CachedImage1.IsVisible)
+            {
+                obj.CachedImage1.Source = sourceValue;
+            }
+            else // if Image is a character from a Font
+            {
+                var sourceIconChar = sourceValue.Split(DataModel.Extension.Sep)[0];
+                var sourceColor = sourceValue.Split(DataModel.Extension.Sep)[1];
+                obj.Image1.BackgroundColor = Color.Transparent;
+                obj.Image1.FillColor = Color.FromHex(sourceColor);
+                obj.FontImageSource1.Glyph = sourceIconChar;
+            }
         }
 
         private static void OnSource2Changed(BindableObject bindable, object oldValue, object newValue)
         {
             var obj = (DphOverlapImage)bindable;
-            obj.Image2.Source = (string)newValue;
+            if (newValue == null)
+            {
+                obj.CachedImage2.IsVisible = obj.Image2.IsVisible = false;
+                return;
+            }
+            var sourceValue = (string)newValue;
+            obj.CachedImage2.IsVisible = sourceValue.Contains("//");
+            obj.Image2.IsVisible = !obj.CachedImage2.IsVisible;
+            //if image from an URL (http, https, resource)
+            if (obj.CachedImage2.IsVisible)
+            {
+                obj.CachedImage2.Source = sourceValue;
+            }
+            else // if Image is a character from a Font
+            {
+                var sourceIconChar = sourceValue.Split(DataModel.Extension.Sep)[0];
+                var sourceColor = sourceValue.Split(DataModel.Extension.Sep)[1];
+                obj.Image2.BackgroundColor = Color.Transparent;
+                obj.Image2.FillColor = Color.FromHex(sourceColor);
+                obj.FontImageSource2.Glyph = sourceIconChar;
+            }
         }
 
         private static void OnOverlapTypeChanged(BindableObject bindable, object oldValue, object newValue)
@@ -129,7 +169,7 @@ namespace goFriend.Controls
                     Source1XConstraintFactor = Source1YConstraintFactor = 0;
                     Source1SizeConstraintFactor = 1;
                     Source2XConstraintFactor = Source2YConstraintFactor = 0.55;
-                    Source2SizeConstraintFactor = 0.5;
+                    Source2SizeConstraintFactor = 0.42;
                     break;
                 case OverlapType.GroupChat:
                     Source1XConstraintFactor = 0.25;
@@ -148,8 +188,18 @@ namespace goFriend.Controls
                 Constraint.RelativeToParent(p => Source1YConstraintFactor * p.Height),
                 Constraint.RelativeToParent(p => Source1SizeConstraintFactor * p.Width),
                 Constraint.RelativeToParent(p => Source1SizeConstraintFactor * p.Height));
+            RelativeLayout.Children.Add(CachedImage1,
+                Constraint.RelativeToParent(p => Source1XConstraintFactor * p.Width),
+                Constraint.RelativeToParent(p => Source1YConstraintFactor * p.Height),
+                Constraint.RelativeToParent(p => Source1SizeConstraintFactor * p.Width),
+                Constraint.RelativeToParent(p => Source1SizeConstraintFactor * p.Height));
 
             RelativeLayout.Children.Add(Image2,
+                Constraint.RelativeToParent(p => Source2XConstraintFactor * p.Width),
+                Constraint.RelativeToParent(p => Source2YConstraintFactor * p.Height),
+                Constraint.RelativeToParent(p => Source2SizeConstraintFactor * p.Width),
+                Constraint.RelativeToParent(p => Source2SizeConstraintFactor * p.Height));
+            RelativeLayout.Children.Add(CachedImage2,
                 Constraint.RelativeToParent(p => Source2XConstraintFactor * p.Width),
                 Constraint.RelativeToParent(p => Source2YConstraintFactor * p.Height),
                 Constraint.RelativeToParent(p => Source2SizeConstraintFactor * p.Width),

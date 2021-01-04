@@ -481,6 +481,79 @@ namespace goFriend.Functions
             }
         }
 
+        [FunctionName("Location")]
+        public async Task<IActionResult> Location(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Location")] HttpRequest req,
+            [SignalR(HubName = Constants.SignalRHubName)] IAsyncCollector<SignalRMessage> signalRMessages,
+            ILogger log)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                log.LogDebug("Location.BEGIN");
+
+                req.ParseSignalRHeaders(out string UserId, out string token);
+                log.LogDebug($"UserId={UserId}, Authorization={token}");
+
+                string json = await new StreamReader(req.Body).ReadToEndAsync();
+                log.LogDebug($"json = {json}");
+
+                var friendLocation = JsonConvert.DeserializeObject<FriendLocation>(json);
+                log.LogDebug($"FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo}");
+
+                var result = _dataRepo.Get<FriendLocation>(x => x.FriendId == friendLocation.FriendId);
+                if (result == null)
+                {
+                    log.LogDebug("New FriendLocation recorded.");
+                    result = friendLocation;
+                    _dataRepo.Add(result);
+                }
+                else
+                {
+                    result.Location = friendLocation.Location;
+                    result.SharingInfo = friendLocation.SharingInfo;
+                }
+                result.ModifiedDate = DateTime.UtcNow;
+
+                _dataRepo.Commit();
+
+                if (friendLocation.SharingInfo != null)
+                {
+                    friendLocation.SharingInfo.Split(Extension.SepMain).ToList().ForEach(async x =>
+                    {
+                        var groupId = int.Parse(x.Split(Extension.SepSub)[0]);
+                        //var radius = double.Parse(x.Split(Extension.SepSub)[1]);
+                        log.LogDebug($"Sending to the group {groupId}(SharingInfo={x})");
+
+                        await signalRMessages.AddAsync(
+                            new SignalRMessage
+                            {
+                                Target = ChatMessageType.Location.ToString(),
+                                GroupName = groupId.ToString(),
+                                Arguments = new[] {
+                                    new FriendLocation {
+                                        FriendId = friendLocation.FriendId,
+                                        Location = friendLocation.Location,
+                                        SharingInfo = x
+                                    }
+                                }
+                            });
+                    });
+                }
+
+                return new OkObjectResult(null);
+            }
+            catch (Exception e)
+            {
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
+            }
+            finally
+            {
+                log.LogDebug($"Location.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         private void AddNewMessage(ILogger log, ChatMessage msg)
         {
             try

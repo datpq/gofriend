@@ -26,20 +26,24 @@
             <StackLayout Orientation="Horizontal" Margin="10,0,10,0">
                 <Label x:Name="LblRadius" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" TextColor="{StaticResource ColorPrimary}"/>
                 <Picker x:Name="PickerRadius" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand" HeightRequest="35"
-                        SelectedIndexChanged="PickerRadius_SelectedIndexChanged" ItemsSource="{Binding Items}" ItemDisplayBinding="{Binding Display}"/>
-                <ImageButton x:Name="ImgPlay" Clicked="CmdPlay_Clicked" IsVisible="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}">
+                        SelectedIndexChanged="PickerRadius_SelectedIndexChanged" ItemsSource="{Binding Items}" IsEnabled="{Binding IsEnabled}"
+                        ItemDisplayBinding="{Binding DisplayWithSummary}" SelectedItem="{Binding Path=RadiusSelectedItem, Mode=TwoWay}"/>
+                <ImageButton x:Name="CmdPlay" Clicked="CmdPlay_Clicked" IsVisible="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"
+                             IsEnabled="{Binding IsEnabled}" Opacity="{Binding IsEnabled, Converter={StaticResource IsEnabledOpacityConverter}}">
                     <ImageButton.Source>
                         <FontImageSource Glyph="{StaticResource IconPlay}" Color="{StaticResource ColorPrimaryLight}"
                                          FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
                     </ImageButton.Source>
                 </ImageButton>
-                <ImageButton x:Name="ImgRefresh" Clicked="CmdPause_Clicked" IsVisible="{Binding IsRunning, FallbackValue='False'}">
+                <ImageButton x:Name="CmdRefresh" Clicked="CmdRefresh_Clicked" IsVisible="{Binding IsRunning, FallbackValue='False'}"
+                             IsEnabled="{Binding IsEnabled}" Opacity="{Binding IsEnabled, Converter={StaticResource IsEnabledOpacityConverter}}">
                     <ImageButton.Source>
                         <FontImageSource Glyph="{StaticResource IconRefresh}" Color="{StaticResource ColorPrimaryLight}"
                                          FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
                     </ImageButton.Source>
                 </ImageButton>
-                <ImageButton x:Name="ImgStop" Clicked="CmdPause_Clicked" IsVisible="{Binding IsRunning, FallbackValue='False'}">
+                <ImageButton x:Name="CmdStop" Clicked="CmdStop_Clicked" IsVisible="{Binding IsRunning, FallbackValue='False'}"
+                             IsEnabled="{Binding IsEnabled}" Opacity="{Binding IsEnabled, Converter={StaticResource IsEnabledOpacityConverter}}">
                     <ImageButton.Source>
                         <FontImageSource Glyph="{StaticResource IconStop}" Color="DarkRed"
                                          FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />

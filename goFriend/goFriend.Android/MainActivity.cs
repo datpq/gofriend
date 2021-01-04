@@ -15,6 +15,7 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Color = Android.Graphics.Color;
+using ImageCircle.Forms.Plugin.Droid;
 
 namespace goFriend.Droid
 {
@@ -87,6 +88,7 @@ namespace goFriend.Droid
             Forms.Init(this, savedInstanceState);
             FormsMaterial.Init(this, savedInstanceState);
             UserDialogs.Init(this);
+            ImageCircleRenderer.Init();
 
             Xamarin.FormsGoogleMaps.Init(this, savedInstanceState);
             CachedImageRenderer.Init(true);

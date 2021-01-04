@@ -28,6 +28,8 @@ namespace goFriend.DataModel
         public const string ParamOtherFriendId = "OtherFriendId";
         public const string ParamIsActive = "IsActive";
         public const string Sep = ",";
+        public const string SepMain = ";";
+        public const string SepSub = ":";
         public static ChatMessageType[] RealShowableMessageTypes =
             new[] { ChatMessageType.Text, ChatMessageType.Attachment, ChatMessageType.CreateChat };
 
