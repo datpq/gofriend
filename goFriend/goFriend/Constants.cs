@@ -1,14 +1,23 @@
-﻿namespace goFriend
+﻿using goFriend.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace goFriend
 {
     public static class Constants
     {
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+
         public const string MsgProfile = "MsgProfile";
         public const string MsgProfileExt = "MsgProfileExt";
         public const string MsgLocationChanged = "MsgLocationChanged";
         public const string MsgLogout = "MsgLogout";
+        public const int ListViewPageSize = 10;
+        public const int MinimumClusterSize = 20;
         public const int SearchCommandDelayTime = 1000; // in milliseconds
         public const int GeolocationRequestTimeout = 5; // in seconds
-        public static readonly int[] SuperUserIds = {4, 5};
+        public static int[] SuperUserIds = {4, 5};
         public const int ChatMessagePageSize = 10; // number of message in a page (bundle)
         public const int ChatMaxPagesFetched = 5; // maximum number of fetching when there are unread messages to scroll
         public const int ChatMaxPendingMsg = 50;
@@ -22,6 +31,10 @@
         public const string AzureBackendUrl = "https://gofriend.azurewebsites.net";
         public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
         public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
+        public static string HomePageUrl = "http://gofriend.azurewebsites.net";
+
+        public const string CacheTimeoutPrefix = "CacheTimeout.";
+        private static Dictionary<string, int> CacheTimeoutDict = new Dictionary<string, int>();
 
         public const string ROUTE_HOME = "Home";
         public const string ROUTE_HOME_GROUPCONNECTION = "//Home/GroupConnection";
@@ -56,8 +69,15 @@
         public const string AppCenterAppSecretAndroid = "56010775-c4f6-46f9-9de5-a13a547d22c2";
 
         //Service
-        public const double MOVING_DISTANCE_THRESHOLD = 0.010; // km
-        public const double MAPONLINE_DEFAULT_RADIUS = 0.2; // km (200m)
+        public static int LOCATIONSERVICE_UPDATE_INTERVAL = 30; // in seconds
+        public static double LOCATIONSERVICE_DISTANCE_THRESHOLD = 10; // meter
+        public static double MAPONLINE_DEFAULT_RADIUS = 0.2; // km (200m)
+        public static int MAPONLINE_ACTIVE_TIMEOUT = 10; // in minutes
+        public static int MAPONLINE_ONLINE_TIMEOUT = 30; // in minutes
+        public static int MAPONLINE_OFFLINE_TIMEOUT = 30; // in minutes
+        public static int MAPONLINE_REFRESH_INTERVAL = 10; // in seconds
+        public static int MAPONLINE_COMMAND_DISABLED_TIMEOUT = 60; // in seconds
+        public static double[] MAPONLINE_RADIUS_LIST = { 0.2, 0.5, 1, 10, 0 };
         public const int SERVICE_RUNNING_NOTIFICATION_ID = 12976;
         public const string SERVICE_STARTED_KEY = "service_started";
         public const string SERVICE_EXTRAID_KEY = "service_extraid";
@@ -70,5 +90,74 @@
         public const string ACTION_GOTO_HOME = "GoFriend.action.GOTO_HOME";
         public const string ACTION_GOTO_MAPONLINE = "GoFriend.action.GOTO_MAPONLINE";
         public const string ACTION_GOTO_CHAT = "GoFriend.action.GOTO_CHAT";
+
+        public static async Task InitializeConfiguration()
+        {
+            Logger.Debug("InitializeConfiguration.BEGIN");
+            var configurations = await App.FriendStore.GetConfigurations();
+            configurations.ToList().ForEach(x =>
+            {
+                Logger.Debug($"Key={x.Key}, Value={x.Value}");
+                switch(x.Key)
+                {
+                    case "MAPONLINE_ACTIVE_TIMEOUT":
+                        MAPONLINE_ACTIVE_TIMEOUT = int.Parse(x.Value);
+                        break;
+                    case "MAPONLINE_ONLINE_TIMEOUT":
+                        MAPONLINE_ONLINE_TIMEOUT = int.Parse(x.Value);
+                        break;
+                    case "MAPONLINE_OFFLINE_TIMEOUT":
+                        MAPONLINE_OFFLINE_TIMEOUT = int.Parse(x.Value);
+                        break;
+                    case "SuperUserIds":
+                        SuperUserIds = x.Value.Split(";").Where(
+                            x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
+                        break;
+                    case "MAPONLINE_DEFAULT_RADIUS":
+                        MAPONLINE_DEFAULT_RADIUS = double.Parse(x.Value);
+                        break;
+                    case "MAPONLINE_COMMAND_DISABLED_TIMEOUT":
+                        MAPONLINE_COMMAND_DISABLED_TIMEOUT = int.Parse(x.Value);
+                        break;
+                    case "MAPONLINE_REFRESH_INTERVAL":
+                        MAPONLINE_REFRESH_INTERVAL = int.Parse(x.Value);
+                        break;
+                    case "MAPONLINE_RADIUS_LIST":
+                        MAPONLINE_RADIUS_LIST = x.Value.Split(";").Where(
+                            x => !string.IsNullOrEmpty(x)).Select(x => double.Parse(x)).ToArray();
+                        break;
+                    case "LOCATIONSERVICE_UPDATE_INTERVAL":
+                        LOCATIONSERVICE_UPDATE_INTERVAL = int.Parse(x.Value);
+                        break;
+                    case "LOCATIONSERVICE_DISTANCE_THRESHOLD":
+                        LOCATIONSERVICE_DISTANCE_THRESHOLD = double.Parse(x.Value);
+                        break;
+                    case "HomePageUrl":
+                        HomePageUrl = x.Value;
+                        break;
+                    default:
+                        if (x.Key.StartsWith(CacheTimeoutPrefix))
+                        {
+                            CacheTimeoutDict.Add(x.Key, int.Parse(x.Value));
+                        }
+                        else
+                        {
+                            Logger.Warn("Key not managed.");
+                        }
+                        break;
+                }
+            });
+            Logger.Debug("InitializeConfiguration.END");
+        }
+
+        public static int GetCacheTimeout(string cacheKey)
+        {
+            if (!CacheTimeoutDict.ContainsKey(cacheKey))
+            {
+                Logger.Warn($"Cache key not found: {cacheKey}. Use default value");
+                return 180;
+            }
+            return CacheTimeoutDict[cacheKey];
+        }
     }
 }

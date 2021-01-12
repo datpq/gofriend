@@ -9,7 +9,6 @@ using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.ViewModels;
 using goFriend.Views;
-using PCLAppConfig;
 using Xamarin.Essentials;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -18,7 +17,6 @@ using Plugin.SimpleAudioPlayer;
 using Device = Xamarin.Forms.Device;
 using goFriend.Models;
 using Point = NetTopologySuite.Geometries.Point;
-using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Internals;
 
 namespace goFriend
@@ -28,8 +26,6 @@ namespace goFriend
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
         public static Friend User { get; set; }
-        public static Position LastPosition { get; set; }
-        public static string LastSharingInfo { get; set; }
         public readonly IFacebookManager FaceBookManager;
         public static ILocationService LocationService;
         public static INotificationService NotificationService;
@@ -39,7 +35,6 @@ namespace goFriend
         public static IFriendStore FriendStore;
         public static IStorageService StorageService;
         public static ChatListViewModel ChatListVm; // List of all Chats
-        public static ChatListPage ChatListPage = null;
 
         public static Task TaskInitialization;
         public static IEnumerable<ApiGetGroupsModel> MyGroups;
@@ -50,16 +45,6 @@ namespace goFriend
         public App()
         {
             //NinjectManager.Wire(new ApplicationModule());
-            try
-            {
-                //ConfigurationManager initialization
-                ConfigurationManager.Initialise(Extension.GetStreamFromFile("App.config"));
-            }
-            catch
-            {
-                // ignored
-            }
-
             FaceBookManager = DependencyService.Get<IFacebookManager>();
             LocationService = DependencyService.Get<ILocationService>();
             NotificationService = DependencyService.Get<INotificationService>();
@@ -273,7 +258,8 @@ namespace goFriend
                     IsInitializing = true;
                     if (IsUserLoggedIn && User != null)
                     {
-                        MyGroups = FriendStore.GetMyGroups().Result;
+                        await Constants.InitializeConfiguration();
+                        MyGroups = await FriendStore.GetMyGroups();
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
                             _logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
@@ -339,45 +325,20 @@ namespace goFriend
                 {
                     //var newPosition = await ((Point)null).GetPosition();
                     ServiceNotification result = null;
-                    if (LastPosition == default)
+                    if (MapOnlinePage.MyLocation == null || MapOnlinePage.MyLocation.IsRefreshNeeded()
+                        || MapOnlinePage.MyLocation.SharingInfo != MapOnlinePage.GetSharingInfo())
                     {
-                        LastPosition = new Position(latitude, longitude);
-                        _logger.Debug($"First time getting location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
-
-                        await FriendStore.SendLocation();
-
-                        result = new ServiceNotification
-                        {
-                            ContentTitle = "Hanoi9194",
-                            ContentText = null,
-                            SummaryText = null,
-                            LargeIconUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png",
-                            NotificationType = Models.NotificationType.AppearOnMap,
-                            InboxLines = new List<string[]>(
-                                new[] {
-                                        new [] {"Bảo Anh Bảo Linh", "xuất hiện" },
-                                        new [] {"Catherine Pham", "xuất hiện" },
-                                        new [] {"Thang Pham", "xuất hiện" } })
-                        };
-                        NotificationService.SendNotification(result);
-                    }
-                    else if (App.LastSharingInfo != MapOnlinePage.GetSharingInfo())
-                    {
-                        LastPosition = new Position(latitude, longitude);
-                        _logger.Debug($"SharingInfo changed. Sending location: Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}");
-
-                        await FriendStore.SendLocation();
+                        _logger.Debug($"Current location={MapOnlinePage.MyLocation?.Location}. Sending new location...");
+                        await FriendStore.SendLocation(latitude, longitude);
                     }
                     else
                     {
-                        var distance = Location.CalculateDistance(LastPosition.Latitude, LastPosition.Longitude,
-                            latitude, longitude, DistanceUnits.Kilometers);
-                        if (distance >= Constants.MOVING_DISTANCE_THRESHOLD)
+                        var distance = Location.CalculateDistance(MapOnlinePage.MyLocation.Location.Y,
+                            MapOnlinePage.MyLocation.Location.X, latitude, longitude, DistanceUnits.Kilometers);
+                        if (distance >= Constants.LOCATIONSERVICE_DISTANCE_THRESHOLD / 1000)
                         {
-                            LastPosition = new Position(latitude, longitude);
-                            _logger.Debug($"New Location. Longitude={LastPosition.Longitude}, Latitude={LastPosition.Latitude}, distance={distance}");
-
-                            await FriendStore.SendLocation();
+                            _logger.Debug($"New Location. Longitude={longitude}, Latitude={latitude}, distance={distance}");
+                            await FriendStore.SendLocation(latitude, longitude);
                         }
                     }
                 }
@@ -398,13 +359,13 @@ namespace goFriend
             {
                 case Constants.ACTION_GOTO_CHAT:
                     var chatListItemVm = App.ChatListVm.ChatListItems.SingleOrDefault(x => x.Chat.Id == extraId);
-                    if (chatListItemVm != null && ChatListPage != null)
+                    if (chatListItemVm != null && ChatListPage.Instance != null)
                     {
                         var trigger = new TaskCompletionSource<object>();
 
                         Device.BeginInvokeOnMainThread(async () =>
                         {
-                            await App.ChatListPage.Navigation.PushAsync(new ChatPage(chatListItemVm)).ConfigureAwait(false);
+                            await ChatListPage.Instance.Navigation.PushAsync(new ChatPage(chatListItemVm)).ConfigureAwait(false);
                             trigger.SetResult(null);
                         });
 

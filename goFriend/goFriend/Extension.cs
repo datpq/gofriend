@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using goFriend.Controls;
@@ -201,6 +202,34 @@ namespace goFriend
             }
 
             return result;
+        }
+
+        public static bool IsOnlineActive(this FriendLocation friendLocation)
+        {
+            return friendLocation.ModifiedDate.Value.AddMinutes(Constants.MAPONLINE_ACTIVE_TIMEOUT) >= DateTime.Now;
+        }
+        public static bool IsOnlineInactive(this FriendLocation friendLocation)
+        {
+            return friendLocation.ModifiedDate.Value.AddMinutes(Constants.MAPONLINE_ACTIVE_TIMEOUT) < DateTime.Now
+                && friendLocation.ModifiedDate.Value.AddMinutes(Constants.MAPONLINE_ONLINE_TIMEOUT) >= DateTime.Now;
+        }
+        public static bool IsOnline(this FriendLocation friendLocation)
+        {
+            return friendLocation.ModifiedDate.Value.AddMinutes(Constants.MAPONLINE_ONLINE_TIMEOUT) >= DateTime.Now;
+        }
+        public static bool IsOffline(this FriendLocation friendLocation)
+        {
+            return friendLocation.ModifiedDate.Value.AddMinutes(Constants.MAPONLINE_ONLINE_TIMEOUT) < DateTime.Now;
+        }
+        public static bool IsRefreshNeeded(this FriendLocation friendLocation)
+        {
+            //if Online Active Timeout is 10 minutes, at the end of 9 minutes, new location need to be sent
+            return friendLocation.ModifiedDate.Value.AddMinutes(Constants.MAPONLINE_ACTIVE_TIMEOUT - 1) < DateTime.Now;
+        }
+
+        public static bool IsSuperUser(this int friendId)
+        {
+            return Constants.SuperUserIds.Contains(friendId);
         }
 
         /*

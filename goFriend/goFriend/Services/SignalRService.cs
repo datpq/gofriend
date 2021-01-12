@@ -63,8 +63,14 @@ namespace goFriend.Services
 
         public async Task<TResult> SendMessageAsync<TResult>(string msgType, object msgContent = null)
         {
-            var stopWatch = Stopwatch.StartNew();
             TResult result = default;
+            if (!App.IsUserLoggedIn || App.User == null
+                || (hubConnection != null && hubConnection.State != HubConnectionState.Connected))
+            {
+                //Logger.Debug("User is not logged in or internet is disconnected.");
+                return result;
+            }
+            var stopWatch = Stopwatch.StartNew();
             try
             {
                 Logger.Debug($"SendMessageAsync.BEGIN(msgType={msgType})");
@@ -278,7 +284,7 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"OnReceiveLocation.BEGIN(FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo})");
-                Views.MapOnlinePage.ReceiveLocation(friendLocation);
+                Views.MapOnlinePage.Instance.ReceiveLocation(friendLocation);
             }
             catch (Exception e) //Unknown error
             {

@@ -106,6 +106,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string AppearOnline {
+            get {
+                return ResourceManager.GetString("AppearOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to asked to join the group.
         /// </summary>
         public static string AskedToJoinGroup {
@@ -1110,15 +1119,6 @@ namespace goFriend {
         public static string SvcBackgroundContentText {
             get {
                 return ResourceManager.GetString("SvcBackgroundContentText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string SvcBackgroundDesc {
-            get {
-                return ResourceManager.GetString("SvcBackgroundDesc", resourceCulture);
             }
         }
         

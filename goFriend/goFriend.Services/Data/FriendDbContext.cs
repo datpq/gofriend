@@ -35,6 +35,8 @@ namespace goFriend.Services.Data
             modelBuilder.Entity<GroupPredefinedCategory>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<CacheConfiguration>().ToTable("CacheConfiguration");
             modelBuilder.Entity<CacheConfiguration>().Property(x => x.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Configuration>().ToTable("Configuration");
+            modelBuilder.Entity<Configuration>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Notification>().ToTable("Notification");
             modelBuilder.Entity<Notification>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Notification>().Property(x => x.Type)
@@ -63,6 +65,7 @@ namespace goFriend.Services.Data
         public DbSet<GroupFriend> GroupFriends { get; set; }
         public DbSet<GroupFixedCatValues> GroupFixedCatValues { get; set; }
         public DbSet<CacheConfiguration> CacheConfigurations { get; set; }
+        public DbSet<Configuration> Configurations { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Chat> Chats { get; set; }

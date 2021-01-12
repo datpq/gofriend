@@ -27,9 +27,9 @@ namespace goFriend.DataModel
         public const string ParamCategory = "Cat";
         public const string ParamOtherFriendId = "OtherFriendId";
         public const string ParamIsActive = "IsActive";
-        public const string Sep = ",";
-        public const string SepMain = ";";
-        public const string SepSub = ":";
+        public const char Sep = ',';
+        public const char SepMain = ';';
+        public const char SepSub = ':';
         public static ChatMessageType[] RealShowableMessageTypes =
             new[] { ChatMessageType.Text, ChatMessageType.Attachment, ChatMessageType.CreateChat };
 
@@ -99,7 +99,7 @@ namespace goFriend.DataModel
         public static int[] GetMemberIds(this Chat chat)
         {
             var arrResults = new List<int>();
-            var arrMembers = chat.Members.Split(Sep.ToCharArray());
+            var arrMembers = chat.Members.Split(Sep);
             foreach(var m in arrMembers)
             {
                 if (m.StartsWith("u"))

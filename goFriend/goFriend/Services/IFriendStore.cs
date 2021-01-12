@@ -15,7 +15,7 @@ namespace goFriend.Services
         Task<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues(int groupId, bool useCache = true, params string[] arrCatValues);
         Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive = true, int top = 0, int skip = 0,
             bool useCache = true, string searchText = null, params string[] arrCatValues);
-        Task<GroupFriend> GetGroupFriend(int groupId, int otherFriendId, bool useCache = true);
+        Task<GroupFriend> GetGroupFriend(int groupId, int otherFriendId, bool useClientCache = true, bool useCache = true);
         Task<GroupFixedCatValues> GetGroupFixedCatValues(int groupId, bool useClientCache = true, bool useCache = true);
         Task<Friend> GetProfile(bool useCache = true);
         Task<Friend> GetFriend(int groupId, int otherFriendId, bool useCache = true);
@@ -24,13 +24,14 @@ namespace goFriend.Services
         Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight);
         Task<bool> SubscribeGroup(GroupFriend groupFriend);
         Task<Setting> GetSetting(bool useClientCache = true, bool useCache = true);
+        Task<IEnumerable<Configuration>> GetConfigurations(bool useClientCache = true, bool useCache = true);
 
         SignalRService SignalR { get; }
         Task SendText(ChatMessage chatMessage);
         Task SendAttachment(ChatMessage chatMessage);
         Task<IEnumerable<ChatFriendOnline>> SendPing(int chatId);
         Task SendCreateChat(Chat chat);
-        Task SendLocation();
+        Task SendLocation(double latitude, double longitude);
         Task<IEnumerable<ChatMessage>> ChatGetMessages(int chatId, int startMsgIdx, int stopMsgIdx, int pageSize);
         Task<IEnumerable<Chat>> ChatGetChats(bool useCache = true);
     }

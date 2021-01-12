@@ -58,6 +58,8 @@ namespace goFriend.Views
             Logger.Debug("Logout.BEGIN");
             ((App) Application.Current).FaceBookManager.Logout();
             await App.FriendStore.SignalR.StopAsync();
+            App.LocationService.Stop();
+            App.NotificationService.CancelNotification();
             App.IsUserLoggedIn = false;
             App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;

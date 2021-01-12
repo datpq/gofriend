@@ -71,25 +71,17 @@ namespace goFriend.Droid
                 IsTracing = false;
                 Views.MapOnlinePage.MapOnlineInfo.Where(x => x.Value.IsRunning).ToList().ForEach(x => x.Value.IsRunning = false);
             }
-            else
-            {
-                Logger.Error("Stopping but LocationForegroundService is null");
-            }
             Logger.Debug("Stop.END");
         }
 
         public async void RefreshStatus()
         {
-            Logger.Debug($"UpdateStatus.BEGIN");
+            Logger.Debug($"RefreshStatus.BEGIN");
             if (MainActivity.IsServiceStarted && LocationForegroundService.GetInstance() != null)
             {
                 await LocationForegroundService.GetInstance().StartForegroundService();
             }
-            else
-            {
-                Logger.Error("Service not started or LocationForegroundService is null");
-            }
-            Logger.Debug("UpdateStatus.END");
+            Logger.Debug("RefreshStatus.END");
         }
 
         public bool IsRunning()

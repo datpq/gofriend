@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
-using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
@@ -21,9 +19,8 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
-            var minClusterSize = int.Parse(ConfigurationManager.AppSettings["MinimumClusterSize"]);
-            Map.ClusterOptions.Buckets[0] = minClusterSize;
-            Map.ClusterOptions.SetMinimumClusterSize(minClusterSize);
+            Map.ClusterOptions.Buckets[0] = Constants.MinimumClusterSize;
+            Map.ClusterOptions.SetMinimumClusterSize(Constants.MinimumClusterSize);
 
             DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupName;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
@@ -46,7 +43,7 @@ namespace goFriend.Views
                                 SubTitle1 = $"{res.Groups} {selectedGroup.Group.Name}",
                                 SubTitle2 = groupFriend.GetCatValueDisplay(arrFixedCats.Count),
                                 IconUrl = groupFriend.Friend.GetImageUrl(),
-                                UserRight = Constants.SuperUserIds.Contains(groupFriend.FriendId) ? UserType.Pending :
+                                UserRight = groupFriend.FriendId.IsSuperUser() ? UserType.Pending :
                                 groupFriend.UserRight == UserType.Normal ? UserType.Pending : groupFriend.UserRight, // all normal users have Pending (offline) icon
                                 //UserRight = Constants.SuperUserIds.Contains(groupFriend.FriendId) ? UserType.Normal : groupFriend.UserRight,
                                 IsDraggable = false,

@@ -22,7 +22,6 @@ namespace goFriend.Droid
         private Handler _handler;
         private Action _runnable;
         public NotificationManager NotificationManager { get; set; }
-        private int ServiceSleepTimeout = 10000;
 
         private static LocationForegroundService _serviceUniqueInstance = null;
         public static LocationForegroundService GetInstance() { return _serviceUniqueInstance; }
@@ -53,8 +52,8 @@ namespace goFriend.Droid
                 //    Android.Support.V4.Content.LocalBroadcastManager.GetInstance(this).SendBroadcast(i);
                 //    SendNotification(serviceNotification);
                 //}
-                Logger.Debug($"Waiting for {ServiceSleepTimeout / 1000} seconds...");
-                _handler.PostDelayed(_runnable, ServiceSleepTimeout);
+                Logger.Debug($"Waiting for {Constants.LOCATIONSERVICE_UPDATE_INTERVAL} seconds...");
+                _handler.PostDelayed(_runnable, Constants.LOCATIONSERVICE_UPDATE_INTERVAL * 1000);
             });
 
             Logger.Info($"OnCreate.END");
@@ -180,7 +179,7 @@ namespace goFriend.Droid
                     //.SetShowWhen(true)
                     .SetSmallIcon(Resource.Drawable.hn9194_25)
                     .SetLargeIcon(BitmapFactory.DecodeResource(Resources, Resource.Drawable.hn9194_25))
-                    .SetContentIntent(BuildIntentToShowMainActivity(Constants.ACTION_GOTO_HOME))
+                    .SetContentIntent(BuildIntentToShowMainActivity(Constants.ACTION_GOTO_MAPONLINE))
                     .SetOngoing(true)
                     .AddAction(BuildStartStopTracingAction())
                     .AddAction(BuildStopServiceAction());
@@ -204,11 +203,6 @@ namespace goFriend.Droid
 
                 _isStarted = true;
 
-                var setting = await App.FriendStore.GetSetting();
-                ServiceSleepTimeout = setting == null ? 0 : setting.ServiceSleepTimeout;
-                if (ServiceSleepTimeout == 0) ServiceSleepTimeout = 30000;
-                Logger.Debug($"ServiceSleepTimeout={ServiceSleepTimeout}");
-
                 //Fused Location Provider RequestLocationUpdates
                 if (Droid.LocationService.IsTracing)
                 {
@@ -217,8 +211,8 @@ namespace goFriend.Droid
                     {
                         _locationRequest = new LocationRequest()
                                           .SetPriority(LocationRequest.PriorityHighAccuracy)
-                                          .SetInterval(ServiceSleepTimeout)
-                                          .SetFastestInterval(ServiceSleepTimeout);
+                                          .SetInterval(Constants.LOCATIONSERVICE_UPDATE_INTERVAL*1000)
+                                          .SetFastestInterval(Constants.LOCATIONSERVICE_UPDATE_INTERVAL*1000);
                         _locationCallback = new FusedLocationProviderCallback();
 
                         _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);

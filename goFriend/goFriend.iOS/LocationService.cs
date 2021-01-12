@@ -4,8 +4,9 @@ using goFriend.iOS;
 using System;
 using UIKit;
 using Xamarin.Forms;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using Xamarin.Essentials;
+using goFriend.Models;
+using goFriend.Views;
 
 [assembly: Dependency(typeof(LocationService))]
 namespace goFriend.iOS
@@ -64,7 +65,6 @@ namespace goFriend.iOS
 
                     LocationManager.StartUpdatingLocation();
                     _isRunning = true;
-                    StateChanged?.Invoke(this, null);
                 }
             }
             catch (Exception e)
@@ -96,7 +96,6 @@ namespace goFriend.iOS
                 LocationManager.StopUpdatingLocation();
                 LocationManager.LocationsUpdated -= LocationManager_LocationsUpdated;
                 _isRunning = false;
-                StateChanged?.Invoke(this, null);
             }
             catch (Exception e)
             {
@@ -122,6 +121,15 @@ namespace goFriend.iOS
 
         public void RefreshStatus()
         {
+            var result = new ServiceNotification
+            {
+                ContentTitle = res.SvcBackground,
+                ContentText = res.SvcBackgroundContentText,
+                SummaryText = null,
+                NotificationType = NotificationType.FriendsAroundStatusChanged,
+                InboxLines = MapOnlinePage.GetMapOnlineStatus()
+            };
+            App.NotificationService.SendNotification(result);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.Views;
 using Xamarin.Forms;
 
 namespace goFriend.ViewModels
@@ -91,7 +92,7 @@ namespace goFriend.ViewModels
                 _lastMessage = value;
                 OnPropertyChanged(nameof(LastMessage));
                 OnPropertyChanged(nameof(FormattedText));
-                App.ChatListPage?.RefreshLastMessage(this);
+                ChatListPage.Instance?.RefreshLastMessage(this);
             }
         }
 

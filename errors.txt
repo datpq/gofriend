@@ -68,6 +68,10 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 	</manifest>
 	https://apps.admob.com/v2/apps/2612776501/settings
 - Test on iOS
+	- USB connection problem with iPhone (iPhone oscillates connecting and disconnecting rapidly)
+		BOOTING IN SAFE MODE SOLVED IT. Boot in safe mode (hold down shift key immediately you power the macbook).
+		To confirm that you are in safe mode (safe mode should be written in red at the top right corner of the login screen).
+		Login, plug in your iphone and the problem is solved
 	- Image, CachedImage is not working with ImageSource is Url from internet:
 		- if that happens to only real iPhone --> test with simulator --> if it works nothing to do
 		- other solution is to: use ImageSourceConverter to download image first, and set imagesource from stream

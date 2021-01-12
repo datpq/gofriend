@@ -10,7 +10,6 @@ using goFriend.DataModel;
 using goFriend.Helpers;
 using goFriend.Services;
 using goFriend.Views;
-using PCLAppConfig;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -53,7 +52,7 @@ namespace goFriend.ViewModels
             {
                 chat.LogoUrl = "/logos/group.png";
             }
-            chat.LogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}{chat.LogoUrl}";
+            chat.LogoUrl = $"{Constants.HomePageUrl}{chat.LogoUrl}";
 
             if (chat.GetChatType() == ChatType.MixedGroup || chat.GetChatType() == ChatType.Individual)
             {
@@ -62,7 +61,7 @@ namespace goFriend.ViewModels
                 {
                     Logger.Debug($"User is kicked out from the chat {chat.Id}");
                     ChatListItems.Remove(ChatListItems.FirstOrDefault(x => x.Chat.Id == chat.Id));
-                    App.ChatListPage?.Refresh();
+                    ChatListPage.Instance?.Refresh();
                     return;
                 }
             }
@@ -127,12 +126,12 @@ namespace goFriend.ViewModels
                 //if user is added to an existing chat --> retrieve the history of the chat
                 await App.RetrieveNewMessages(chatListItemVm);
 
-                if (App.ChatListPage != null && !App.IsInitializing) {
+                if (ChatListPage.Instance != null && !App.IsInitializing) {
                     var trigger = new TaskCompletionSource<object>();
 
                     Device.BeginInvokeOnMainThread(async () =>
                     {
-                        await App.ChatListPage.Navigation.PushAsync(new ChatPage(chatListItemVm)).ConfigureAwait(false);
+                        await ChatListPage.Instance.Navigation.PushAsync(new ChatPage(chatListItemVm)).ConfigureAwait(false);
                         trigger.SetResult(null);
                     });
 
@@ -188,7 +187,7 @@ namespace goFriend.ViewModels
                 //}
             }
 
-            App.ChatListPage?.Refresh();
+            ChatListPage.Instance?.Refresh();
 
             Logger.Debug("ReceiveCreateChat.END");
         }

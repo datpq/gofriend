@@ -474,9 +474,6 @@
   <data name="MapOffline" xml:space="preserve">
     <value>Bản đồ ngoại tuyến</value>
   </data>
-  <data name="SvcBackgroundDesc" xml:space="preserve">
-    <value>Xem bạn bè xung quanh qua bản đồ trực tuyến</value>
-  </data>
   <data name="MsgNoLocationServiceWarning" xml:space="preserve">
     <value>Chức năng Bạn bè xung quanh chưa được kích hoạt cho nhóm này. Khi kích hoạt chức năng này, bạn cũng đồng thời đồng ý chia sẻ vị trí của mình cho các thành viên trong nhóm trong phạm vi bạn chọn. Chỉ những thành viên trong phạm vi này và cùng kích hoạt chức năng này mới nhận được tín hiệu của bạn. Hãy kích hoạt bằng cách ấn vào nút </value>
   </data>
@@ -494,5 +491,8 @@
   </data>
   <data name="MapOfflineDesc" xml:space="preserve">
     <value>Bản đồ vị trí đăng ký của bạn bè</value>
+  </data>
+  <data name="AppearOnline" xml:space="preserve">
+    <value>xuất hiện</value>
   </data>
 </root>

@@ -2,7 +2,6 @@
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
-using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -246,7 +245,7 @@ namespace goFriend.Views
             }
 
             ChatName = "A0-K26DHTH";
-            ChatLogoUrl = $"{ConfigurationManager.AppSettings["HomePageUrl"]}/logos/g12.png";
+            ChatLogoUrl = $"{Constants.HomePageUrl}/logos/g12.png";
 
             LastReadMsgIdx = 5;
             PendingMessageCount = 115.ToString();

@@ -1,5 +1,4 @@
-﻿using Foundation;
-using goFriend.iOS;
+﻿using goFriend.iOS;
 using goFriend.Models;
 using goFriend.Services;
 using UserNotifications;

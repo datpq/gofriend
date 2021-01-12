@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text.RegularExpressions;
 using goFriend.DataModel;
@@ -13,7 +13,7 @@ namespace goFriend.Services.Data
     {
         private readonly IOptions<AppSettings> _appSettings;
         private readonly IMemoryCache _memoryCache;
-        private readonly Dictionary<string, DateTimeOffset> _cacheKeys = new Dictionary<string, DateTimeOffset>();
+        private readonly ConcurrentDictionary<string, DateTimeOffset> _cacheKeys = new ConcurrentDictionary<string, DateTimeOffset>();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public CacheService(IOptions<AppSettings> appSettings)
@@ -60,7 +60,7 @@ namespace goFriend.Services.Data
             foreach (var cacheKey in _cacheKeys.Keys.Where(x => x.Contains(key)).ToList())
             {
                 Logger.Debug($"Remove cacheKey={cacheKey}, absoluteExpiration={_cacheKeys[cacheKey]}");
-                _cacheKeys.Remove(cacheKey);
+                _cacheKeys.TryRemove(cacheKey, out DateTimeOffset outValue);
                 _memoryCache.Remove(cacheKey);
             }
             Logger.Debug($"END(count={_cacheKeys.Keys.Count})");

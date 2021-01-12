@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 using System.Web;
 using goFriend.DataModel;
 using Microsoft.Extensions.Caching.Memory;
-using PCLAppConfig;
 using Plugin.Connectivity;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -26,7 +25,6 @@ namespace goFriend.Services
         private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
         private static readonly string BackendUrl = Constants.AzureBackendUrlDev;
         private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{BackendUrl}/") };
-        private const string CacheTimeoutPrefix = "CacheTimeout.";
         private readonly IMemoryCache _memoryCache;
         public SignalRService SignalR { get; set;}
 
@@ -191,8 +189,8 @@ namespace goFriend.Services
             {
                 Logger.Debug($"GetGroupFixedCatValues.BEGIN(groupId={groupId}, useClientCache={useClientCache}, useCache={useCache})");
 
-                var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
-                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
                 var cacheKey = $"{cachePrefix}.{groupId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
@@ -316,13 +314,28 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<GroupFriend> GetGroupFriend(int groupId, int otherFriendId, bool useCache = true)
+        public async Task<GroupFriend> GetGroupFriend(int groupId, int otherFriendId, bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             GroupFriend result = null;
             try
             {
-                Logger.Debug($"GetGroupFriend.BEGIN(groupId={groupId}, otherFriendId={otherFriendId}, useCache={useCache})");
+                Logger.Debug($"GetGroupFriend.BEGIN(groupId={groupId}, otherFriendId={otherFriendId}, useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{groupId}.{otherFriendId}.";
+                //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as GroupFriend;
+                    if (result != null)
+                    {
+                        //Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -348,6 +361,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -367,7 +381,8 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetGroupFriend.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //{JsonConvert.SerializeObject(result)}
+                Logger.Debug($"GetGroupFriend.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -664,8 +679,8 @@ namespace goFriend.Services
             {
                 Logger.Debug($"GetFriendInfo.BEGIN(otherFriendId={otherFriendId}, useClientCache={useClientCache}, useCache={useCache})");
 
-                var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
-                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
                 var cacheKey = $"{cachePrefix}.{otherFriendId}.";
                 //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
@@ -928,8 +943,8 @@ namespace goFriend.Services
             {
                 Logger.Debug($"GetSetting.BEGIN(useClientCache={useClientCache}, useCache={useCache})");
 
-                var cachePrefix = $"{CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
-                var cacheTimeout = int.Parse(ConfigurationManager.AppSettings[cachePrefix]);
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
                 var cacheKey = $"{cachePrefix}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
@@ -986,6 +1001,77 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"GetSetting.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<IEnumerable<Configuration>> GetConfigurations(bool useClientCache = true, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<Configuration> result = null;
+            try
+            {
+                Logger.Debug($"GetConfigurations.BEGIN(useClientCache={useClientCache}, useCache ={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as IEnumerable<Configuration>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetConfigurations/{App.User.Id}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<Configuration>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.TrackError(e);
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetConfigurations.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -1097,19 +1183,18 @@ namespace goFriend.Services
             }
         }
 
-        public async Task SendLocation()
+        public async Task SendLocation(double latitude, double longitude)
         {
-            Logger.Debug($"SendLocation.BEGIN");
+            var sharingInfo = MapOnlinePage.GetSharingInfo();
+            Logger.Debug($"SendLocation.BEGIN(latitude={latitude}, longitude={longitude}, sharingInfo={sharingInfo})");
             try
             {
                 var friendLocation = new FriendLocation()
                 {
                     FriendId = App.User.Id,
-                    Location = new Point(App.LastPosition.Longitude, App.LastPosition.Latitude),
-                    SharingInfo = MapOnlinePage.GetSharingInfo()
+                    Location = new Point(longitude, latitude),
+                    SharingInfo = sharingInfo
                 };
-                Logger.Debug($"SharingInfo={friendLocation.SharingInfo}");
-                App.LastSharingInfo = friendLocation.SharingInfo;
                 await SignalR.SendMessageAsync<string>(ChatMessageType.Location.ToString(), friendLocation);
             }
             catch (Exception e)

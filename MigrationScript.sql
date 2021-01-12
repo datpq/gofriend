@@ -27,6 +27,14 @@ drop table Settings;
 
 select * from Friends where Info like '%1.2.5%' or Info like '%1.2.3%'
 
+Insert Into Configuration([Key], [Value], Enabled, Comment) Values('MAPONLINE_ACTIVE_TIMEOUT', '2', 1, 'in minute')
+Insert Into Configuration([Key], [Value], Enabled, Comment) Values('MAPONLINE_ONLINE_TIMEOUT', '4', 1, 'in minute')
+Insert Into Configuration([Key], [Value], Enabled, Comment) Values('MAPONLINE_RADIUS_LIST', '0.2;0.5;1;10;50;0', 1, 'list in km')
+Insert Into Configuration([Key], [Value], Enabled) Values('SuperUserIds', '', 1)
+Insert Into Configuration([Key], [Value], Enabled, Comment) Values('LOCATIONSERVICE_UPDATE_INTERVAL', '15', 1, 'in second')
+update Configuration set [Value] = '2' WHERE [Key] = 'MAPONLINE_ACTIVE_TIMEOUT'
+update Configuration set [Value] = '5' WHERE [Key] = 'MAPONLINE_ONLINE_TIMEOUT'
+
 INSERT INTO ChatMessage(ChatId, MessageIndex, MessageType, OwnerId, [Message], CreatedDate, ModifiedDate, Reads, IsDeleted)
 select ChatId, MessageIndex, MessageType, OwnerId, [Message], [Time], [Time], Reads, 0 FROM ChatMessage_;
 

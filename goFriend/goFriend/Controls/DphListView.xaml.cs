@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using goFriend.ViewModels;
-using PCLAppConfig;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -48,7 +47,7 @@ namespace goFriend.Controls
             InitializeComponent();
             BindingContext = _dphListViewModel = new DphListViewModel
             {
-                PageSize = int.Parse(ConfigurationManager.AppSettings["ListViewPageSize"])
+                PageSize = Constants.ListViewPageSize
             };
         }
 

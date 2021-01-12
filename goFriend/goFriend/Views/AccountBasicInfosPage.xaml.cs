@@ -191,7 +191,7 @@ namespace goFriend.Views
                 SubTitle1 = $"{res.Groups} {_viewModel.Group.Name}",
                 SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
                 IconUrl = _viewModel.ImageUrl,
-                UserRight = Constants.SuperUserIds.Contains(_viewModel.GroupFriend.FriendId) ? UserType.Normal : _viewModel.GroupFriend.UserRight,
+                UserRight = _viewModel.GroupFriend.FriendId.IsSuperUser() ? UserType.Normal : _viewModel.GroupFriend.UserRight,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place

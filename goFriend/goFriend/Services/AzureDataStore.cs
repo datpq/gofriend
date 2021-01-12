@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
 using goFriend.Models;
-using PCLAppConfig;
 
 namespace goFriend.Services
 {

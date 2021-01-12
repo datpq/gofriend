@@ -27,6 +27,7 @@ namespace goFriend.Droid
         {
             var foregroundService = LocationForegroundService.GetInstance();
             if (serviceNotification == null || foregroundService  == null) return;
+            if (serviceNotification.NotificationType == NotificationType.FriendsAroundStatusChanged) return;
 
             Logger.Debug($"SendNotification.BEGIN(NotificationType={serviceNotification.NotificationType})");
             var builder = new Notification.Builder(foregroundService)
@@ -116,10 +117,6 @@ namespace goFriend.Droid
                 {
                     foregroundService.NotificationManager.CancelAll();
                 }
-            }
-            else
-            {
-                Logger.Error("Canceling notification but LocationForegroundService is null");
             }
         }
 

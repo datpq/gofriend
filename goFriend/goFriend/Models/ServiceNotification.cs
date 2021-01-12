@@ -16,8 +16,10 @@ namespace goFriend.Models
         {
             switch (NotificationType)
             {
+                case NotificationType.FriendsAroundStatusChanged:
                 case NotificationType.AppearOnMap:
                 case NotificationType.ChatReceiveMessage:
+                    if (InboxLines.Count == 0) return ContentText;
                     var contentBody = string.Empty;
                     foreach (var inboxLine in InboxLines)
                     {
@@ -39,6 +41,7 @@ namespace goFriend.Models
     {
         ChatReceiveMessage = 1,
         ChatReceiveCreateChat,
-        AppearOnMap
+        AppearOnMap,
+        FriendsAroundStatusChanged
     }
 }

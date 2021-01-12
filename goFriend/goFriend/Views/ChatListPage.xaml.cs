@@ -13,6 +13,7 @@ namespace goFriend.Views
     public partial class ChatListPage : ContentPage
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        public static ChatListPage Instance;
 
         public ChatListPage()
         {
@@ -23,7 +24,7 @@ namespace goFriend.Views
             App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
 
             BindingContext = App.ChatListVm;
-            App.ChatListPage = this;
+            Instance = this;
 
             Task.Run(() =>
             {
