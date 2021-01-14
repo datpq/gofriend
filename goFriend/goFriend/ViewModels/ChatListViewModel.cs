@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using goFriend.DataModel;
 using goFriend.Helpers;
 using goFriend.Services;
@@ -18,6 +19,7 @@ namespace goFriend.ViewModels
     public class ChatListViewModel : INotifyPropertyChanged
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        public ICommand CommandAddNew { get; set; }
 
         private ObservableCollection<ChatListItemViewModel> _chatListItems = new ObservableCollection<ChatListItemViewModel>();
         public ObservableCollection<ChatListItemViewModel> ChatListItems

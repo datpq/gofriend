@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace goFriend
 {
@@ -57,13 +58,25 @@ namespace goFriend
         public const string ImgAccept = "accept.png";
         public const string ImgDeny = "deny.png";
 
+        //DphOverlapImage.xaml ionicons.ttf#Ionicons
         public const string IconAccept = "\uF16D";
         public const string IconRefuse = "\uF2BB";
         public const string IconAddPerson = "\uF211";
         public const string IconUpdateInfo = "\uF339";
 
+        public static string IconFontFamily = Device.RuntimePlatform == Device.Android ?
+            "fa-solid-900.ttf#Font Awesome 5 Free" : "Font Awesome 5 Free";
+        public static string IoniconsFontFamily = Device.RuntimePlatform == Device.Android ?
+            "ionicons.ttf#Ionicons" : "Ionicons";
+        //ChatInputBarView.xaml fa-solid-900.ttf#Font Awesome 5 Free
         public const string IconSend = "\uF1D8";
         public const string IconThumbsUp = "\uF164";
+        public static ImageSource IconMnuMore = new FontImageSource
+        {
+            Glyph = "\uF142",
+            Size = 18,
+            FontFamily = IconFontFamily
+        };
 
         public const string AppCenterAppSecretiOS = "f2c053eb-a08d-4c4d-8d54-c63711322c18";
         public const string AppCenterAppSecretAndroid = "56010775-c4f6-46f9-9de5-a13a547d22c2";
@@ -138,7 +151,8 @@ namespace goFriend
                     default:
                         if (x.Key.StartsWith(CacheTimeoutPrefix))
                         {
-                            CacheTimeoutDict.Add(x.Key, int.Parse(x.Value));
+                            //CacheTimeoutDict.Add(x.Key, int.Parse(x.Value));
+                            CacheTimeoutDict[x.Key] = int.Parse(x.Value);
                         }
                         else
                         {

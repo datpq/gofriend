@@ -23,6 +23,7 @@ namespace goFriend.Views
             App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveCreateChat);
             App.NotificationService.CancelNotification(Models.NotificationType.ChatReceiveMessage);
 
+            App.ChatListVm.CommandAddNew = new Command(() => MnuAddNew_Clicked(null, null));
             BindingContext = App.ChatListVm;
             Instance = this;
 

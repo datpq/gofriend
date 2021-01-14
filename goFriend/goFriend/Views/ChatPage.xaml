@@ -18,10 +18,10 @@
         </StackLayout>
     </NavigationPage.TitleView>-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="MnuMembers" Order="Secondary" Priority="0" Clicked="MnuMembers_OnClicked" />
-        <ToolbarItem x:Name="MnuMute" Order="Secondary" Priority="1" Clicked="MnuMute_OnClicked"/>
-        <ToolbarItem x:Name="MnuEditChat" Order="Secondary" Priority="2" Clicked="MnuEditChat_OnClicked"
-                     Text="{Static local:res.ChatEdit}"/>
+        <ToolbarItem x:Name="MnuMembers" Order="Secondary" Priority="0" Command="{Binding CommandMembers}"/> <!--Clicked="MnuMembers_OnClicked"-->
+        <ToolbarItem x:Name="MnuMute" Order="Secondary" Priority="1" Command="{Binding CommandMute}"/> <!--Clicked="MnuMute_OnClicked"-->
+        <ToolbarItem x:Name="MnuEdit" Order="Secondary" Priority="2" Command="{Binding CommandEdit}"
+                     Text="{Static local:res.ChatEdit}"/> <!--Clicked="MnuEdit_OnClicked"-->
         <!--<ToolbarItem Order="Primary" Priority="0"
                      IconImageSource="{Binding ChatLogoUrl}"/>-->
     </ContentPage.ToolbarItems>

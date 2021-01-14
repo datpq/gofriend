@@ -107,6 +107,7 @@
     <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
     <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Renderers\iOSLongPressedEffect.cs" />
+    <Compile Include="Renderers\RightToolbarMenuCustomRenderer.cs" />
     <Compile Include="Services\AppleSignInServiceiOS.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
@@ -278,15 +279,6 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_chat.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\pin_Admin.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\pin_Normal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\pin_Pending.png" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ic_scrolldown.png" />

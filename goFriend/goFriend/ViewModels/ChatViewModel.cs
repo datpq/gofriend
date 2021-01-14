@@ -16,6 +16,9 @@ namespace goFriend.ViewModels
     public class ChatViewModel : INotifyPropertyChanged
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        public ICommand CommandMembers { get; set; }
+        public ICommand CommandMute { get; set; }
+        public ICommand CommandEdit { get; set; }
 
         private bool _isRefreshing;
         public bool IsRefreshing

@@ -24,6 +24,9 @@ namespace goFriend.Views
 
         public ChatPage(ChatListItemViewModel chatListItem)
         {
+            chatListItem.ChatViewModel.CommandMembers = new Command(() => MnuMembers_OnClicked(null, null));
+            chatListItem.ChatViewModel.CommandMute = new Command(() => MnuMute_OnClicked(null, null));
+            chatListItem.ChatViewModel.CommandEdit = new Command(() => MnuEdit_OnClicked(null, null));
             BindingContext = chatListItem.ChatViewModel;
 
             InitializeComponent();
@@ -219,7 +222,7 @@ namespace goFriend.Views
             Navigation.PushAsync(new OnlineMembersPage(vm));
         }
 
-        private void MnuEditChat_OnClicked(object sender, EventArgs e)
+        private void MnuEdit_OnClicked(object sender, EventArgs e)
         {
             var vm = (ChatViewModel)BindingContext;
             if (vm.ChatListItem.Chat.OwnerId == App.User.Id)

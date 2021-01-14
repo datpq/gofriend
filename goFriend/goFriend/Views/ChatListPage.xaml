@@ -20,7 +20,7 @@
         </OnPlatform>
     </ContentPage.BackgroundColor>
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="MnuAddNew" Text="{Static local:res.ChatNew}" Order="Secondary" Priority="0" Clicked="MnuAddNew_Clicked" />
+        <ToolbarItem x:Name="MnuAddNew" Text="{Static local:res.ChatNew}" Order="Secondary" Priority="0" Command="{Binding CommandAddNew}"/> <!--Clicked="MnuAddNew_Clicked"-->
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand">
