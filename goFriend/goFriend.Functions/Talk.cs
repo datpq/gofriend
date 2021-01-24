@@ -27,7 +27,7 @@ namespace goFriend.Functions
     {
         private static readonly ConcurrentDictionary<int, List<ChatFriendOnline>> OnlineMembers = new ConcurrentDictionary<int, List<ChatFriendOnline>>();
         private static readonly ConcurrentDictionary<int, object> LockChatMessageByChatId = new ConcurrentDictionary<int, object>();
-        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.AzureBackendUrlDev}/") };
+        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.AzureBackendUrl}/") };
 
         private readonly IDataRepository _dataRepo;
 
@@ -519,22 +519,26 @@ namespace goFriend.Functions
 
                 if (friendLocation.SharingInfo != null)
                 {
+                    //var arrGroupIds = friendLocation.SharingInfo.Split(Extension.SepMain).Select(x => x.Split(Extension.SepSub)[0]).ToList();
+                    //var arrChatIds = _dataRepo.GetMany<Chat>(
+                    //    x => arrGroupIds.Any(y => x.Members == $"g{y}")).Select(x => x.Id).ToList();
                     friendLocation.SharingInfo.Split(Extension.SepMain).ToList().ForEach(async x =>
                     {
                         var groupId = int.Parse(x.Split(Extension.SepSub)[0]);
                         //var radius = double.Parse(x.Split(Extension.SepSub)[1]);
-                        log.LogDebug($"Sending to the group {groupId}(SharingInfo={x})");
+                        var chat = _dataRepo.Get<Chat>(x => x.Members == $"g{groupId}", true);
+                        log.LogDebug($"Sending to the group {groupId} (SharingInfo={friendLocation.SharingInfo}, chatId={chat.Id}, chatName={chat.Name})");
 
                         await signalRMessages.AddAsync(
                             new SignalRMessage
                             {
                                 Target = ChatMessageType.Location.ToString(),
-                                GroupName = groupId.ToString(),
+                                GroupName = chat.Id.ToString(),
                                 Arguments = new[] {
                                     new FriendLocation {
                                         FriendId = friendLocation.FriendId,
                                         Location = friendLocation.Location,
-                                        SharingInfo = x
+                                        SharingInfo = friendLocation.SharingInfo
                                     }
                                 }
                             });

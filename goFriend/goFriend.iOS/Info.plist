@@ -84,17 +84,17 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Thư viện ảnh được dùng khi bạn muốn gửi ảnh cho bạn bè.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.0</string>
+	<string>2.0</string>
 	<key>CFBundleVersion</key>
-	<string>20</string>
+	<string>21</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-	  <string>fa-solid-900.ttf</string>
-	  <string>ionicons.ttf</string>
+		<string>fa-solid-900.ttf</string>
+		<string>ionicons.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -23,8 +23,8 @@
         <ToolbarItem x:Name="MnuAddNew" Text="{Static local:res.ChatNew}" Order="Secondary" Priority="0" Command="{Binding CommandAddNew}"/> <!--Clicked="MnuAddNew_Clicked"-->
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout VerticalOptions="FillAndExpand">
-            <controls:DphListView x:Name="DphListView" Timeout="5" ImageSize="{Static controls:DphListView.MediumImage}"/>
+        <StackLayout>
+            <controls:DphListView x:Name="DphListView" Timeout="5" ImageSize="{Static controls:DphListView.MediumImage}" VerticalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

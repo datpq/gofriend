@@ -41,17 +41,24 @@ namespace goFriend.Droid
             try
             {
                 var cacheKey = $"{CacheBitmapPrefix}{serviceNotification.LargeIconUrl}.";
-                var circleLargeIcon = _memoryCache.Get(cacheKey) as Bitmap;
-                if (circleLargeIcon == null)
+                var largeIcon = _memoryCache.Get(cacheKey) as Bitmap;
+                if (largeIcon == null)
                 {
                     Logger.Debug($"First time getting url: {serviceNotification.LargeIconUrl}");
-                    var largeIcon = ExtensionAndroid.GetImageBitmapFromUrl(serviceNotification.LargeIconUrl);
-                    circleLargeIcon = largeIcon.CreateRoundedBitmap(/*10*/);
+                    if (serviceNotification.LargeIconUrl.Contains("//"))
+                    {
+                        var largeIconFromUrl = ExtensionAndroid.GetImageBitmapFromUrl(serviceNotification.LargeIconUrl);
+                        largeIcon = largeIconFromUrl.CreateRoundedBitmap(/*10*/);
+                    } else
+                    {
+                        largeIcon = ExtensionAndroid.CreateTextBitmap(serviceNotification.LargeIconUrl, MainActivity.COLOR_PRIMARY, fontSize:32);
+                        //largeIcon = largeIcon.CreateRoundedBitmap(/*10*/);
+                    }
                     Logger.Debug($"CreateRoundedBitmap done.");
-                    _memoryCache.Set(cacheKey, circleLargeIcon, DateTimeOffset.Now.AddDays(1));
+                    _memoryCache.Set(cacheKey, largeIcon, DateTimeOffset.Now.AddDays(1));
                 }
 
-                builder.SetLargeIcon(circleLargeIcon);
+                builder.SetLargeIcon(largeIcon);
                 //builder.SetLargeIcon(BitmapFactory.DecodeResource(Resources, Resource.Drawable.hn9194_25));
             }
             catch (Exception e)

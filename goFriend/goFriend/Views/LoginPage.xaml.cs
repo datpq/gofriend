@@ -37,7 +37,7 @@ namespace goFriend.Views
                     UserDialogs.Instance.HideLoading();
                 }
                 Settings.LastUser = App.User;
-                App.Initialize(); //redo the initialization background task
+                App.Initialize(true); //redo the initialization background task
                 App.Current.MainPage = new AppShell();
             });
             BtnFacebook.OnError = new Command<string>(err => App.DisplayMsgError($"Authentication failed: { err }"));
@@ -86,7 +86,7 @@ namespace goFriend.Views
                     Settings.IsUserLoggedIn = App.IsUserLoggedIn;
                     await Navigation.PopAsync();
                     Settings.LastUser = App.User;
-                    App.Initialize(); //redo the initialization background task
+                    App.Initialize(true); //redo the initialization background task
                     App.Current.MainPage = new AppShell();
                 }
                 else

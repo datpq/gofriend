@@ -900,8 +900,6 @@ namespace goFriend.WebApi.Controllers
                     x => Regex.Match($"{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}",
                         x.Rule, RegexOptions.IgnoreCase).Success, x => x.Order, true);
 
-                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
-
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
@@ -918,7 +916,8 @@ namespace goFriend.WebApi.Controllers
             }
             finally
             {
-                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"result={JsonConvert.SerializeObject(result?.Value)}");
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 

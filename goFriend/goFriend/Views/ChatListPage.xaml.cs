@@ -27,18 +27,13 @@ namespace goFriend.Views
             BindingContext = App.ChatListVm;
             Instance = this;
 
-            Task.Run(() =>
-            {
-                App.TaskInitialization.Wait();
-                //Task.Delay(5000).Wait();
-            }).ContinueWith(task =>
-            {
+            App.TaskInitialization.Wait();
                 if (!App.MyGroups.Any())
                 {
                     App.DisplayMsgInfo(res.MsgNoGroupWarning);
-                    Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
+                    //Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
+                    Navigation.PushAsync(new GroupConnectionPage());
                 }
-            }, TaskScheduler.FromCurrentSynchronizationContext());
 
             Appearing += (sender, args) =>
             {

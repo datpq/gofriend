@@ -130,7 +130,7 @@ namespace goFriend.Droid
 
         protected async override void OnNewIntent(Intent intent)
         {
-            if (intent == null || intent.Action == null)
+            if (intent == null || intent.Action == null || !App.IsUserLoggedIn || App.User == null)
             {
                 return;
             }

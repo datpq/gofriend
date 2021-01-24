@@ -44,7 +44,6 @@ namespace goFriend.Controls
                     getSearchItemsFunc(text).ContinueWith(task =>
                     {
                         Sb.IsEnabled = true;
-                        Sb.Focus();
                         var searchResults = task.Result.ToList();
                         searchResults.OrderByDescending(x => x.ItemType).ThenBy(x => x.Text).ForEach(x =>
                         {

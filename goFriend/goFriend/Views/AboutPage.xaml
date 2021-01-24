@@ -55,7 +55,7 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="Chương trình được viết bởi DPH, một thành viên của nhóm" />
+                                <Span Text="Chương trình được viết bởi Dat Pham, một thành viên của nhóm" />
                                 <Span Text=" " />
                                 <Span Text="Hanoi9194" FontAttributes="Bold" />
                                 <Span Text="." />

@@ -1,4 +1,5 @@
-﻿using goFriend.iOS;
+﻿using Foundation;
+using goFriend.iOS;
 using goFriend.Models;
 using goFriend.Services;
 using UserNotifications;
@@ -9,9 +10,6 @@ namespace goFriend.iOS
 {
     public class NotificationService : INotificationService
     {
-        public const string SERVICE_ACTION_KEY = "service_action";
-        public const string SERVICE_EXTRAID_KEY = "service_extraid";
-
         private bool _hasNotificationsPermission = false;
         private ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
@@ -47,13 +45,8 @@ namespace goFriend.iOS
                 Title = serviceNotification.ContentTitle,
                 Subtitle = string.Empty,
                 Body = serviceNotification.GetContentBody(),
-                //UserInfo = NSDictionary.FromObjectsAndKeys(
-                //    new NSObject[] {
-                //        new NSString(serviceNotification.NotificationType.ToString()),
-                //        new NSString(serviceNotification.ExtraId.ToString())},
-                //    new NSObject[] {
-                //        new NSString(SERVICE_ACTION_KEY),
-                //        new NSString(SERVICE_EXTRAID_KEY)}),
+                UserInfo = NSDictionary.FromObjectAndKey(new NSString(
+                    serviceNotification.ExtraId.ToString()), new NSString(Constants.SERVICE_EXTRAID_KEY)),
                 Badge = 1
             };
 

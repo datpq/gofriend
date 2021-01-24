@@ -103,7 +103,8 @@ namespace goFriend.ViewModels
         {
             try
             {
-                IsRefreshing = true;
+                //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                if (Device.RuntimePlatform == Device.Android) IsRefreshing = true;
                 var result = await GetListViewItemsFunc();
                 if (result == null || PageSize == 0 || result.Count() < PageSize)
                 {
@@ -124,7 +125,8 @@ namespace goFriend.ViewModels
             }
             finally
             {
-                IsRefreshing = false;
+                //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                if (Device.RuntimePlatform == Device.Android) IsRefreshing = false;
             }
         }
 

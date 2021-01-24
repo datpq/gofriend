@@ -33,9 +33,9 @@ namespace goFriend.WebApi
             Services.Startup.ConfigureServices(services, Configuration.GetConnectionString("GoFriendConnection"));
 
             //SignalR
-            var azureSignalRConnectionString = Configuration.GetSection("AppSettings")["AzureSignalRConnectionString"];
+            //var azureSignalRConnectionString = Configuration.GetSection("AppSettings")["AzureSignalRConnectionString"];
             //Logger.Debug($"azureSignalRConnectionString = {azureSignalRConnectionString}");
-            services.AddSignalR().AddAzureSignalR(azureSignalRConnectionString);
+            //services.AddSignalR().AddAzureSignalR(azureSignalRConnectionString);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,10 +58,10 @@ namespace goFriend.WebApi
             });
 
             app.UseFileServer();
-            app.UseAzureSignalR(routes =>
-            {
-                routes.MapHub<ChatHub>("/chat");
-            });
+            //app.UseAzureSignalR(routes =>
+            //{
+            //    routes.MapHub<ChatHub>("/chat");
+            //});
         }
     }
 }

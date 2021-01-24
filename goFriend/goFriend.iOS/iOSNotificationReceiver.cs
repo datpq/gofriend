@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using goFriend.Models;
 using goFriend.Services;
 using System;
 using UserNotifications;
@@ -39,20 +40,27 @@ namespace goFriend.iOS
 
         public override async void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
-            if (!response.IsDefaultAction) return;
-
-            // Take action based on Action ID
-            switch (response.ActionIdentifier)
+            if (!response.IsDefaultAction || !App.IsUserLoggedIn || App.User == null)
             {
-                case Constants.ACTION_GOTO_MAPONLINE:
+                completionHandler();
+                return;
+            }
+
+            var notificationType = Enum.Parse<NotificationType>(response.Notification.Request.Identifier);
+            switch (notificationType)
+            {
+                case NotificationType.AppearOnMap:
                     await Shell.Current.GoToAsync($"//{Constants.ROUTE_MAPONLINE}");
                     break;
-                case Constants.ACTION_GOTO_CHAT:
+                case NotificationType.ChatReceiveCreateChat:
+                case NotificationType.ChatReceiveMessage:
                     await Shell.Current.GoToAsync($"//{Constants.ROUTE_CHAT}");
-                    //var chatId = bundle.GetInt(Constants.SERVICE_EXTRAID_KEY);
-                    //await App.DoNotificationAction(intent.Action, chatId);
+                    if (response.Notification.Request.Content.UserInfo.TryGetValue(
+                        new NSString(Constants.SERVICE_EXTRAID_KEY), out NSObject chatIdObj))
+                    {
+                        await App.DoNotificationAction(Constants.ACTION_GOTO_CHAT, int.Parse(chatIdObj.ToString()));
+                    }
                     break;
-                case Constants.ACTION_GOTO_HOME:
                 default:
                     await Shell.Current.GoToAsync($"//{Constants.ROUTE_HOME}");
                     break;

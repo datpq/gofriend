@@ -68,9 +68,7 @@ namespace goFriend.ViewModels
                     x.OnlineFriends = x.FriendLocations.Count;
                 }); // Include yourself in OnlineFriends
 
-                //Refresh GUI
-                Items.FireEventCollectionChanged();
-                OnPropertyChanged(nameof(RadiusSelectedItem));
+                RefreshOnlineFriendsGui();
             }
         }
         public List<DphPin> GetPins()
@@ -143,6 +141,13 @@ namespace goFriend.ViewModels
         //public string RadiusDisplay => Items.Single(x => x.Radius == Radius).Display;
         //public string RadiusDisplayWithSummary => Items.Single(x => x.Radius == Radius).DisplayWithSummary;
         public RadiusItemModel RadiusSelectedItem => Items.Single(x => x.Radius == Radius);
+
+        public void RefreshOnlineFriendsGui()
+        {
+            //Refresh GUI
+            Items.FireEventCollectionChanged();
+            OnPropertyChanged(nameof(RadiusSelectedItem));
+        }
 
         public DphObservableCollection<RadiusItemModel> Items { get; } = new DphObservableCollection<RadiusItemModel>
             (Constants.MAPONLINE_RADIUS_LIST.Select(x => new RadiusItemModel { Radius = x }));

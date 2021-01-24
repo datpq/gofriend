@@ -21,8 +21,8 @@
         <ToolbarItem Order="Primary" Priority="0" x:Name="MnuMembers"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout VerticalOptions="FillAndExpand">
-            <controls:DphListView x:Name="DphListView" Timeout="5" ImageSize="{Static controls:DphListView.MediumImage}"/>
+        <StackLayout>
+            <controls:DphListView x:Name="DphListView" Timeout="5" ImageSize="{Static controls:DphListView.MediumImage}" VerticalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -27,6 +27,7 @@ drop table Settings;
 
 select * from Friends where Info like '%1.2.5%' or Info like '%1.2.3%'
 
+UPDATE CONFIGURATION SET Enabled = 0 WHERE NOT [KEY] LIKE 'CacheTimeout.%'
 Insert Into Configuration([Key], [Value], Enabled, Comment) Values('MAPONLINE_ACTIVE_TIMEOUT', '2', 1, 'in minute')
 Insert Into Configuration([Key], [Value], Enabled, Comment) Values('MAPONLINE_ONLINE_TIMEOUT', '4', 1, 'in minute')
 Insert Into Configuration([Key], [Value], Enabled, Comment) Values('MAPONLINE_RADIUS_LIST', '0.2;0.5;1;10;50;0', 1, 'list in km')

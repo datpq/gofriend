@@ -50,7 +50,12 @@
                         </OnPlatform>
                     </SearchBar.BackgroundColor>
                 </SearchBar>
-                <Button x:Name="CmdOk" Text="OK" WidthRequest="45" Grid.Column="1" Clicked="Button_OnClicked" IsVisible="{Binding AcceptNotFoundValue}"/>
+                <ImageButton x:Name="CmdOk" Margin="0,0,5,0" Grid.Column="1" Clicked="CmdOk_Clicked"  IsVisible="{Binding AcceptNotFoundValue}">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="{Static local:Constants.IconOK}" Color="{StaticResource ColorPrimaryLight}"
+                                 FontFamily="{StaticResource IconFontFamily}" Size="26" />
+                    </ImageButton.Source>
+                </ImageButton>
             </Grid>
             <ListView x:Name="LvResults" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
                       ItemTapped="LvResults_OnItemTapped">

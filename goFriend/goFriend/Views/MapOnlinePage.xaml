@@ -22,7 +22,7 @@
         <StackLayout>
             <controls:DphFriendSelection x:Name="DphFriendSelection" Margin="10,0,10,0"
                                          IsShowingCategories="False" IsExpandableCategories="False"
-                                         IsShowingRefresh="False"  HorizontalOptions="FillAndExpand"/>
+                                         IsShowingRefresh="True"  HorizontalOptions="FillAndExpand"/>
             <StackLayout Orientation="Horizontal" Margin="10,0,10,0">
                 <Label x:Name="LblRadius" FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" TextColor="{StaticResource ColorPrimary}"/>
                 <Picker x:Name="PickerRadius" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand" HeightRequest="35"
@@ -56,7 +56,7 @@
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-            <controls:DphMap x:Name="Map" MyLocationEnabled="True" IsVisible="{Binding IsRunning}" VerticalOptions="FillAndExpand"/>
+            <controls:DphMap x:Name="Map" MyLocationEnabled="True" IsVisible="{Binding IsRunning, FallbackValue='False'}" VerticalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

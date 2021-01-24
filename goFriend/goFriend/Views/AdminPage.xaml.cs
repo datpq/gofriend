@@ -25,12 +25,7 @@ namespace goFriend.Views
 
             UserDialogs.Instance.ShowLoading(res.Processing);
             //can not await TaskInitialization because we are in a constructor, and not in an async method.
-            Task.Run(() =>
-            {
-                App.TaskInitialization.Wait();
-                //Task.Delay(5000).Wait();
-            }).ContinueWith(task =>
-            {
+            App.TaskInitialization.Wait();
                 PickerGroups.ItemsSource = App.MyGroups.Where(x => x.GroupFriend.UserRight >= UserType.Admin).OrderBy(x => x.Group.Name).ToList();
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
                 for (var i = 0; i < PickerGroups.Items.Count; i++)
@@ -46,7 +41,6 @@ namespace goFriend.Views
                     PickerGroups.SelectedIndex = 0;
                 }
                 Appearing += (sender, args) => DphListView.Refresh();
-            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private async void PickerGroups_OnSelectedIndexChanged(object sender, EventArgs e)

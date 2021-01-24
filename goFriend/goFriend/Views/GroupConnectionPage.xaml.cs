@@ -20,39 +20,10 @@ namespace goFriend.Views
         private readonly IList<string> _lstCatEntriesText = new List<string>();
         private IList<string> _arrFixedCatValues;
         private Group _selectedGroup;
-        private bool resetWhenAppearing = true;
 
         public GroupConnectionPage()
         {
             InitializeComponent();
-
-            if (Device.RuntimePlatform == Device.Android)
-            {
-                Appearing += (sender, args) =>
-                {
-                    //for (var i = 0; i < _lstCatEntries.Count; i++)
-                    //{
-                    //    var entry = (Entry)_lstCatEntries[i].Children[0];
-                    //    entry.Text = _lstCatEntriesText[i];
-                    //}
-                    if (resetWhenAppearing)
-                    {
-                        DphGroupSearch.Reset();
-                    }
-                    else
-                    {
-                        resetWhenAppearing = true;
-                    }
-                };
-            }
-
-            //Disappearing += (sender, args) =>
-            //{
-            //Reset the form because of an unexpected behavior
-            //(all categories got the value of the last category, don't know why?)
-            //Ex: Chuyen DHTH, Toan A --> Toan A, Toan A
-            //DphGroupSearch.Reset();
-            //};
 
             DphGroupSearch.Initialize(async (searchText) =>
             {
@@ -107,11 +78,7 @@ namespace goFriend.Views
 
                 if (string.IsNullOrEmpty(groupName)) return;
 
-                //Logger.Debug("Before Wait");
-                //App.TaskInitialization.Wait(); // Do not use await here. that will block this thread but return the control to the parent thread
-                await App.TaskInitialization; // await will block this thread but return the control to the parent thread, so the processing dialog can be seen.
-                //Logger.Debug($"MyGroups={JsonConvert.SerializeObject(App.MyGroups)}");
-                //Logger.Debug($"After Wait: {App.MyGroups?.Count()}");
+                await App.TaskInitialization; // use await whenever possible because that doesn't block UI thread
 
                 var selectedApiGroup = App.MyGroups?.SingleOrDefault(x => x.Group.Name == groupName);
                 if (selectedApiGroup == null)
@@ -190,14 +157,10 @@ namespace goFriend.Views
                         entry.IsEnabled = string.IsNullOrEmpty(entry.Text);
                         var button = new ImageButton
                         {
-                            Source = Constants.ImgSearch,
+                            Source = Constants.IconSearch,
                             BackgroundColor = BackgroundColor,
-                            Aspect = Aspect.AspectFit,
-                            WidthRequest = 32,
-                            HeightRequest = 32,
+                            Margin = new Thickness(5, 0),
                             IsEnabled = entry.IsEnabled,
-                            VerticalOptions = LayoutOptions.Center,
-                            HorizontalOptions = LayoutOptions.End,
                         };
                         // IsEnabled doesn't work with Command, but work properly with Clicked event.
                         button.Clicked += (s, e) =>
@@ -224,7 +187,6 @@ namespace goFriend.Views
                                     return searchResult;
                                 }, selectedValue =>
                                 {
-                                    resetWhenAppearing = false;
                                     entry.Text = selectedValue;
                                     CmdSubscribe.Focus();
                                 }/*, entry.Text*/));
@@ -304,7 +266,7 @@ namespace goFriend.Views
                 if (result)
                 {
                     App.DisplayMsgInfo(res.MsgSubscriptionSuccessful);
-                    App.Initialize();
+                    App.Initialize(false);
 
                     SelectItemAction(_selectedGroup.Name);
                 }

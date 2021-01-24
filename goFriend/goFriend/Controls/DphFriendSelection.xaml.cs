@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -81,12 +82,7 @@ namespace goFriend.Controls
             Logger.Debug("Refresh.BEGIN");
             UserDialogs.Instance.ShowLoading(res.Processing);
             //can not await TaskInitialization because we are in a constructor, and not in an async method.
-            Task.Run(() =>
-            {
-                App.TaskInitialization.Wait();
-                //Task.Delay(5000).Wait();
-            }).ContinueWith(task =>
-            {
+            App.TaskInitialization.Wait();
                 var myGroups = App.MyGroups == null ? new List<ApiGetGroupsModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
                 PickerGroups.ItemsSource = new ObservableCollection<ApiGetGroupsModel>(myGroups);
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
@@ -107,8 +103,8 @@ namespace goFriend.Controls
                 {
                     App.DisplayMsgInfo(res.MsgNoGroupWarning);
                     Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
+                    //Navigation.PushAsync(new GroupConnectionPage());
                 }
-            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private const int DynamicRowStartIndex = 2;
@@ -242,7 +238,7 @@ namespace goFriend.Controls
 
         private void CmdRefresh_OnClicked(object sender, EventArgs e)
         {
-            App.Initialize();
+            App.Initialize(false);
 
             Refresh();
         }

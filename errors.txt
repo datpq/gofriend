@@ -36,6 +36,8 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 	- Copy the SHA1 value to your clip board like this
 		CD:A1:EA:A3:5C:5C:68:FB:FA:0A:6B:E5:5A:72:64:DD:26:8D:44:84 and open http://tomeko.net/online_tools/hex_to_base64.php
 	- get the generated hash " ********************= " and copy the key hash to the facebook app
+- Back Button: press back button does not return to the previous page
+	- problem of Xamarin.Forms --> Upgrade or downgrade it. Or use Navigation.PushAsync instead of Shell.Current.GoToAsync
 - Sign in with Facebook error: in development mode --> add facebok user as a test user of GoFriend
 - Samsung does not show up in Visual Studio
 	- Find and Usb cable that make telephone show up in Device Manager/Portable devices
@@ -136,6 +138,8 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 		- Update Xamarin.Forms to pre2 release
 	- Updating Nuget caused Exception Unhandled: System.TypeLoadException
 		Downgrade xamarin.forms and xamarin.forms.maps to v4.1.0.778454
+	- Xamarin forms list view unnecessarily scrolling to top when load more command is executed
+		- if (Device.RuntimePlatform == Device.Android) set IsRefreshing only for Android
 	- Splash screen take ever (LoadingApplication take ever)
 		- Remove all breakpoints in App.xaml.cs
 	- Resolved pending breakpoint at (Breakpoints not being hit Xamarin PCL project, only in iOS specific code)
@@ -154,6 +158,10 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 		- do not imlement interface
 	- Unable to remove directory "obj\iPhone\Release\". Could not find a part of the path 'FacebookSDK.strings'.	goFriend.iOS			
 		- switch to debug mode
+	- Nav Stack consistency error at Xamarin.Forms.ShellSection
+		upgrade or downgrade xamarin.forms
+	- MSBuild:UpdateDesignTimeXaml code generator crashed
+		restart Visual Studio
 	- cannot access a disposed object xamarin forms ios
 		- remove the binding in ToolbarItem
 	- error XARDF7024: System.IO.IOException: The directory is not empty.
@@ -272,6 +280,9 @@ at least in my case this was the issue
 	dotnet gofriend.mobileappservice.dll --> to show error
 	if error come from connection string which is not well configured in json file:
 		go to App Services\gofriend - Application settings (Classic), set the ASPNETCORE_ENVIRONMENT = Staging (appsettings.Staging.json)
+- System.IO.FileNotFoundException: Could not load file or assembly 'Microsoft.Extensions.Logging.Configuration, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60'. The system cannot find the file specified.
+	- Remove all old files in wwwroot directory (be careful about logs directory)
+	- publish --> settings --> File Publish Options --> Remove allditional files at destination (be careful about logs directory)
 - Failed to load API definition. Fetch error Internal Server Error /swagger/v1/swagger.json
 	- check if there's double post(put, get...) on a same end point
 	-  missing a HttpGet attribute for one of my api methods
@@ -301,6 +312,9 @@ at least in my case this was the issue
 		- if error An error occur uploading 'com.dph.GoFriend.aab': The caller does not have permission [403] --> find the signed bundle and upload to googleplay
 		- Shared Mono runtime is enabled for --> Release mode
 		- Stopping, no Google credentials --> remove the old Api Access account, register new one 
+			--> go to https://play.google.com/console/developers/7807612718733433873/app/4975835833460843557/tracks/production 
+				create new release
+				upload com.dph.GoFriend.aab
 	- Save As
 	- Upload to https://play.google.com/
 	

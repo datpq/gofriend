@@ -421,10 +421,12 @@ namespace goFriend.ViewModels
                     (previousMessage != null && previousMessage.MessageIndex + 1 != message.MessageIndex))
                 {
                     Logger.Debug("There is some missing messages up the list");
-                    IsRefreshing = true;
+                    //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                    if (Device.RuntimePlatform == Device.Android) IsRefreshing = true;
                     var missingMessages = await App.FriendStore.ChatGetMessages(message.ChatId, message.MessageIndex,
                         previousMessage?.MessageIndex ?? 0, Constants.ChatMessagePageSize);
-                    IsRefreshing = false;
+                    //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                    if (Device.RuntimePlatform == Device.Android) IsRefreshing = false;
                     foreach (var msg in missingMessages.OrderByDescending(x => x.MessageIndex))
                     {
                         ReceiveMessage(msg);
@@ -436,10 +438,12 @@ namespace goFriend.ViewModels
                 if (nextMessage != null && nextMessage.MessageIndex - 1 != message.MessageIndex)
                 {
                     Logger.Debug("There is some missing messages down the list");
-                    IsRefreshing = true;
+                    //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                    if (Device.RuntimePlatform == Device.Android) IsRefreshing = true;
                     var missingMessages = await App.FriendStore.ChatGetMessages(message.ChatId, message.MessageIndex,
                         nextMessage?.MessageIndex ?? 0, Constants.ChatMessagePageSize);
-                    IsRefreshing = false;
+                    //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                    if (Device.RuntimePlatform == Device.Android) IsRefreshing = false;
                     foreach (var msg in missingMessages.OrderBy(x => x.MessageIndex))
                     {
                         ReceiveMessage(msg);
@@ -471,7 +475,8 @@ namespace goFriend.ViewModels
             }
             finally
             {
-                IsRefreshing = false;
+                //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                if (Device.RuntimePlatform == Device.Android) IsRefreshing = false;
                 Logger.Debug($"OnMessageAppearing.END");
             }
         }

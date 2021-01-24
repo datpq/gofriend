@@ -130,11 +130,13 @@ namespace goFriend.Views
                             continue;
                         }
                         Logger.Debug("There is some missing messages up the list");
-                        vm.IsRefreshing = true;
+                        //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                        if (Device.RuntimePlatform == Device.Android) vm.IsRefreshing = true;
                         var missingMessages = await App.FriendStore.ChatGetMessages(message.ChatId,
                             message.MessageIndex,
                             previousMessage?.MessageIndex ?? 0, Constants.ChatMessagePageSize);
-                        vm.IsRefreshing = false;
+                        //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                        if (Device.RuntimePlatform == Device.Android) vm.IsRefreshing = false;
                         foreach (var msg in missingMessages.OrderByDescending(x => x.MessageIndex))
                         {
                             vm.ReceiveMessage(msg);

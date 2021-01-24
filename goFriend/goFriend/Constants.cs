@@ -18,7 +18,7 @@ namespace goFriend
         public const int MinimumClusterSize = 20;
         public const int SearchCommandDelayTime = 1000; // in milliseconds
         public const int GeolocationRequestTimeout = 5; // in seconds
-        public static int[] SuperUserIds = {4, 5};
+        public static int[] SuperUserIds = { 4, 5 };
         public const int ChatMessagePageSize = 10; // number of message in a page (bundle)
         public const int ChatMaxPagesFetched = 5; // maximum number of fetching when there are unread messages to scroll
         public const int ChatMaxPendingMsg = 50;
@@ -26,12 +26,14 @@ namespace goFriend
         public const int ChatStartIdxToShowScrollDown = 15;
         public const int ChatStartIdxToHideScrollUp = 10;
         public const int ChatPingFrequence = 5; //in minutes
+        public const int AccountOnAppearingTimeout = 5; //in minutes
 
         public static string ChatFuncUrl { get; set; } = "https://gofriendfuncapp.azurewebsites.net";
 
         public const string AzureBackendUrl = "https://gofriend.azurewebsites.net";
         public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
         public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
+        public static string BackendUrl = AzureBackendUrl;
         public static string HomePageUrl = "http://gofriend.azurewebsites.net";
 
         public const string CacheTimeoutPrefix = "CacheTimeout.";
@@ -41,6 +43,7 @@ namespace goFriend
         public const string ROUTE_HOME_GROUPCONNECTION = "//Home/GroupConnection";
         public const string ROUTE_HOME_MAP = "//Home/Map";
         public const string ROUTE_HOME_ADMIN = "//Home/Admin";
+        public const string ROUTE_HOME_LOGIN = "//Home/Login";
         public const string ROUTE_HOME_ABOUT = "//Home/About";
         public const string ROUTE_BROWSE = "Browse";
         public const string ROUTE_MAPONLINE = "MapOnline";
@@ -54,7 +57,6 @@ namespace goFriend
         public const string ImgDelete = "delete.png";
         public const string ImgMute = "mute.png";
         public const string ImgUnMute = "unmute.png";
-        public const string ImgSearch = "search.png";
         public const string ImgAccept = "accept.png";
         public const string ImgDeny = "deny.png";
 
@@ -69,8 +71,17 @@ namespace goFriend
         public static string IoniconsFontFamily = Device.RuntimePlatform == Device.Android ?
             "ionicons.ttf#Ionicons" : "Ionicons";
         //ChatInputBarView.xaml fa-solid-900.ttf#Font Awesome 5 Free
+        public const string IconChatGroup = "\uF086";
         public const string IconSend = "\uF1D8";
         public const string IconThumbsUp = "\uF164";
+        public const string IconOK = "\uF00C";
+        public static ImageSource IconSearch = new FontImageSource
+        {
+            Glyph = "\uF002",
+            Color = Color.FromHex("#61A830"),
+            Size = 26,
+            FontFamily = IconFontFamily
+        };
         public static ImageSource IconMnuMore = new FontImageSource
         {
             Glyph = "\uF142",

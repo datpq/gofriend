@@ -26,7 +26,7 @@ namespace goFriend.Views
                 try
                 {
                     Logger.Debug("NotificationClicked.BEGIN");
-                    await App.TaskInitialization;
+                    await App.TaskInitialization; // use await whenever possible because that doesn't block UI thread
                     var selectedNotification = _allNotifications.Single(x => x.Id == selectedItem.Id);
                     switch (selectedNotification.Type)
                     {

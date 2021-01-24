@@ -50,11 +50,9 @@ namespace goFriend.ViewModels
             {
                 chat.OwnerId = 0;
             }
-            if (chat.LogoUrl == null)
-            {
-                chat.LogoUrl = "/logos/group.png";
-            }
-            chat.LogoUrl = $"{Constants.HomePageUrl}{chat.LogoUrl}";
+            //"/logos/group.png"
+            chat.LogoUrl = chat.LogoUrl == null ? Constants.IconChatGroup
+                : $"{Constants.HomePageUrl}{chat.LogoUrl}";
 
             if (chat.GetChatType() == ChatType.MixedGroup || chat.GetChatType() == ChatType.Individual)
             {
@@ -200,7 +198,8 @@ namespace goFriend.ViewModels
             {
                 Logger.Debug("RefreshCommandAsyncExec.BEGIN");
 
-                IsRefreshing = true;
+                //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                if (Device.RuntimePlatform == Device.Android) IsRefreshing = true;
 
                 var myChats = await App.FriendStore.ChatGetChats();
                 foreach (var chat in myChats)
@@ -220,7 +219,8 @@ namespace goFriend.ViewModels
             }
             finally
             {
-                IsRefreshing = false;
+                //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
+                if (Device.RuntimePlatform == Device.Android) IsRefreshing = false;
                 Logger.Debug("RefreshCommandAsyncExec.END");
             }
         }

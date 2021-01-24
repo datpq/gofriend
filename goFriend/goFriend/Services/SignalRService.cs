@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -17,6 +18,7 @@ namespace goFriend.Services
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private readonly HttpClient httpClient;
         private HubConnection hubConnection;
+        private ConcurrentDictionary<int, FriendLocation> _lastFriendLocations = new ConcurrentDictionary<int, FriendLocation>();
 
         public bool IsConnected { get; private set; }
         public bool IsBusy { get; private set; }
@@ -280,11 +282,23 @@ namespace goFriend.Services
 
         private void OnReceiveLocation(FriendLocation friendLocation)
         {
+            if (Views.MapOnlinePage.Instance == null) return;
             var stopWatch = Stopwatch.StartNew();
             try
             {
                 Logger.Debug($"OnReceiveLocation.BEGIN(FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo})");
-                Views.MapOnlinePage.Instance.ReceiveLocation(friendLocation);
+                if (_lastFriendLocations.Any(
+                    x => x.Key == friendLocation.FriendId && x.Value.Location == friendLocation.Location))
+                {
+                    // the case when some one has more than one common group as you have
+                    // his/her location is sent to you more than one times, so ignore the duplicate ones.
+                    //Logger.Debug($"lastFriendLocations.Count={_lastFriendLocations.Count}. Same location as the last one. Do nothing.");
+                }
+                else
+                {
+                    _lastFriendLocations[friendLocation.FriendId] = friendLocation;
+                    Views.MapOnlinePage.Instance.ReceiveLocation(friendLocation);
+                }
             }
             catch (Exception e) //Unknown error
             {

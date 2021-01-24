@@ -58,7 +58,7 @@ namespace goFriend
 
             VersionTracking.Track();
             _logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
-            _logger.Info($"AzureBackendUrl = {Constants.AzureBackendUrlDev}");
+            _logger.Info($"BackendUrl = {Constants.BackendUrl}");
             _logger.Debug(Extension.GetDeviceInfo());
             res.Culture = new CultureInfo("vi-VN");
             //res.Culture = new CultureInfo("");
@@ -98,7 +98,7 @@ namespace goFriend
             //};
             //return;
 
-            Initialize();
+            Initialize(true);
 
             if (IsUserLoggedIn && User != null)
             {
@@ -248,9 +248,10 @@ namespace goFriend
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(bool fullInit)
         {
-            TaskInitialization = new Task(async () =>
+            //use Task.Run, never use new Task()
+            TaskInitialization = Task.Run(async () =>
             {
                 try
                 {
@@ -258,7 +259,10 @@ namespace goFriend
                     IsInitializing = true;
                     if (IsUserLoggedIn && User != null)
                     {
-                        await Constants.InitializeConfiguration();
+                        if (fullInit)
+                        {
+                            await Constants.InitializeConfiguration();
+                        }
                         MyGroups = await FriendStore.GetMyGroups();
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
@@ -266,10 +270,12 @@ namespace goFriend
                             await FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
                         }
 
-                        await ChatListVm.RefreshCommandAsyncExec();
+                        if (fullInit && MyGroups.Any(x => x.GroupFriend.Active)) {
+                            await ChatListVm.RefreshCommandAsyncExec();
 
-                        await FriendStore.SignalR.ConnectAsync();
-                        //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
+                            await FriendStore.SignalR.ConnectAsync();
+                            //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
+                        }
                     }
                     else
                     {
@@ -313,7 +319,6 @@ namespace goFriend
                     _logger.Debug("TaskInitialization.END");
                 }
             });
-            TaskInitialization.Start();
         }
 
         public static async Task ReceiveLocationUpdate(double latitude, double longitude)

@@ -43,7 +43,6 @@ namespace goFriend.Views
                     getSearchItemsFunc(text).ContinueWith(task =>
                     {
                         Sb.IsEnabled = true;
-                        Sb.Focus();
                         var searchResults = task.Result.ToList();
                         //searchResults.Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.Text, text, CompareOptions.IgnoreCase) >= 0)
                         searchResults.OrderByDescending(x => x.ItemType).ThenBy(x => x.Text).ForEach(x =>
@@ -78,17 +77,6 @@ namespace goFriend.Views
             Navigation.PopAsync();
         }
 
-        private void Button_OnClicked(object sender, EventArgs e)
-        {
-            var searchText = _searchViewModel.Text.Trim();
-            //var searchText = Sb.Text.Trim();
-            if (searchText != string.Empty)
-            {
-                _setSelectedItemAction?.Invoke(searchText);
-                Navigation.PopAsync();
-            }
-        }
-
         private void LvResults_OnItemTapped(object sender, ItemTappedEventArgs e)
         {
             // don't do anything if we just de-selected the row.
@@ -99,6 +87,17 @@ namespace goFriend.Views
 
             // Deselect the item.
             if (sender is ListView lv) lv.SelectedItem = null;
+        }
+
+        private async void CmdOk_Clicked(object sender, EventArgs e)
+        {
+            var searchText = _searchViewModel.Text.Trim();
+            //var searchText = Sb.Text.Trim();
+            if (searchText != string.Empty)
+            {
+                _setSelectedItemAction?.Invoke(searchText);
+                await Navigation.PopAsync();
+            }
         }
     }
 }

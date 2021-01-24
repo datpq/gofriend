@@ -22,6 +22,7 @@ namespace goFriend.Views
         public static FriendLocation MyLocation;
         public static readonly Dictionary<int, MapOnlineViewModel> MapOnlineInfo = new Dictionary<int, MapOnlineViewModel>();
         private readonly DphTimer _timer;
+        private readonly object _operationLocker = new object();
         private bool _mapNeedRecentering = true;
 
         //list of all online Friend Ids of all radius from all groups
@@ -39,12 +40,15 @@ namespace goFriend.Views
             {
                 //find new online friends to send notification
                 var newOnlineFriendIds = new List<int>();
-                MapOnlineInfo.Where(x => x.Value.IsRunning).Select(x => x.Value).ToList().ForEach(x =>
+                lock (_operationLocker)
                 {
-                    x.Refresh();
-                    newOnlineFriendIds.AddRange(x.RadiusSelectedItem.FriendLocations.Where(
-                        x => x.FriendId != App.User.Id).Select(y => y.FriendId));
-                });
+                    MapOnlineInfo.Where(x => x.Value.IsRunning).Select(x => x.Value).ToList().ForEach(x =>
+                    {
+                        x.Refresh();
+                        newOnlineFriendIds.AddRange(x.RadiusSelectedItem.FriendLocations.Where(
+                            x => x.FriendId != App.User.Id).Select(y => y.FriendId));
+                    });
+                }
                 newOnlineFriendIds = newOnlineFriendIds.Distinct().ToList();
                 var inboxLines = new List<string[]>();
                 //refresh remove all expired items
@@ -80,10 +84,10 @@ namespace goFriend.Views
                 });
                 //update new online list
                 _onlineFriendIds = newOnlineFriendIds;
-                Logger.Debug($"online={_onlineFriendIds.Count}, offline={_wentOfflineFriends.Count}");
+                //Logger.Debug($"online={_onlineFriendIds.Count}, offline={_wentOfflineFriends.Count}");
 
                 var vm = (MapOnlineViewModel)BindingContext;
-                if (vm.IsRunning)
+                if (vm != null && vm.IsRunning)
                 {
                     var pins = vm.GetPins();
                     Map.Pins.Clear();
@@ -123,6 +127,7 @@ namespace goFriend.Views
                 }
                 if (vm.IsRunning)
                 {
+                    Map.Pins.Clear();
                     _mapNeedRecentering = true;
                     RecenterMap();
                 }
@@ -146,7 +151,10 @@ namespace goFriend.Views
         private void CmdPlay_Clicked(object sender, EventArgs e)
         {
             var vm = (MapOnlineViewModel)BindingContext;
-            vm.IsRunning = !vm.IsRunning;
+            lock (_operationLocker)
+            {
+                vm.IsRunning = !vm.IsRunning;
+            }
             if (!App.LocationService.IsRunning())
             {
                 App.LocationService.Start();
@@ -155,6 +163,7 @@ namespace goFriend.Views
             vm.DisabledExpiredTime = DateTime.Now.AddSeconds(Constants.MAPONLINE_COMMAND_DISABLED_TIMEOUT);
             _timer.StartingTime = vm.DisabledExpiredTime;
             _timer.Start();
+            Map.Pins.Clear();
             _mapNeedRecentering = true;
             RecenterMap();
         }
@@ -162,8 +171,13 @@ namespace goFriend.Views
         private void CmdStop_Clicked(object sender, EventArgs e)
         {
             var vm = (MapOnlineViewModel)BindingContext;
-            vm.IsRunning = !vm.IsRunning;
-            vm.Items.ToList().ForEach(x => x.OnlineFriends = 0);
+            lock (_operationLocker)
+            {
+                vm.IsRunning = !vm.IsRunning;
+                vm.Items.ToList().ForEach(x => x.OnlineFriends = 0);
+            }
+            //Refresh GUI
+            vm.RefreshOnlineFriendsGui();
             if (MapOnlineInfo.All(x => !x.Value.IsRunning))
             {
                 if (App.LocationService.IsRunning())
@@ -207,7 +221,7 @@ namespace goFriend.Views
         {
             return MapOnlineInfo.Where(x => x.Value.IsRunning)
                 .Select(x => $"{x.Key}{DataModel.Extension.SepSub}{x.Value.Radius}")
-                .Aggregate((i, j) => $"{i}{DataModel.Extension.SepSub}{j}");
+                .Aggregate((i, j) => $"{i}{DataModel.Extension.SepMain}{j}");
         }
 
         public async void ReceiveLocation(FriendLocation friendLocation)

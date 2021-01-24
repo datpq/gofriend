@@ -23,8 +23,7 @@ namespace goFriend.Services
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
-        private static readonly string BackendUrl = Constants.AzureBackendUrlDev;
-        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{BackendUrl}/") };
+        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.BackendUrl}/") };
         private readonly IMemoryCache _memoryCache;
         public SignalRService SignalR { get; set;}
 
@@ -453,13 +452,28 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useCache = true)
+        public async Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<ApiGetGroupsModel> result = null;
             try
             {
-                Logger.Debug($"GetMyGroups.BEGIN(useCache={useCache})");
+                Logger.Debug($"GetMyGroups.BEGIN(useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.";
+                //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
+                    if (result != null)
+                    {
+                        //Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -485,6 +499,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -564,13 +579,28 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<Friend> GetProfile(bool useCache = true)
+        public async Task<Friend> GetProfile(bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             Friend result = null;
             try
             {
-                Logger.Debug($"GetProfile.BEGIN(useCache={useCache})");
+                Logger.Debug($"GetProfile.BEGIN(useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.";
+                //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as Friend;
+                    if (result != null)
+                    {
+                        //Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -594,6 +624,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)

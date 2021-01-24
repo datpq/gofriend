@@ -15,6 +15,7 @@ namespace goFriend.Views
     public partial class AccountPage : ContentPage
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        private DateTime _lastOnAppearing = DateTime.MinValue;
 
         public AccountPage()
         {
@@ -30,11 +31,21 @@ namespace goFriend.Views
             BindingContext = new AccountViewModel();
 
             CellBasicInfo.Tapped += CellBasicInfo_Tapped;
-            CellGroups.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION); };
-            CellMap.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_MAP); };
-            CellAdmin.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_ADMIN); };
+            CellGroups.Tapped += (s, e) => {
+                //Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
+                Navigation.PushAsync(new GroupConnectionPage());
+            };
+            CellMap.Tapped += (s, e) => {
+                //Shell.Current.GoToAsync(Constants.ROUTE_HOME_MAP);
+                Navigation.PushAsync(new MapPage());
+            };
+            CellAdmin.Tapped += (s, e) => {
+                //Shell.Current.GoToAsync(Constants.ROUTE_HOME_ADMIN);
+                Navigation.PushAsync(new AdminPage());
+            };
             CellLogin.Tapped += (s, e) =>
             {
+                //Shell.Current.GoToAsync(Constants.ROUTE_HOME_LOGIN); //ERROR Shell.Current is null
                 Navigation.PushAsync(new LoginPage());
             };
             CellLogout.Tapped += async (s, e) =>
@@ -42,7 +53,10 @@ namespace goFriend.Views
                 if (!await App.DisplayMsgQuestion(res.MsgLogoutConfirm)) return;
                 await Logout();
             };
-            CellAbout.Tapped += async (s, e) => { await Shell.Current.GoToAsync(Constants.ROUTE_HOME_ABOUT); };
+            CellAbout.Tapped += (s, e) => {
+                //Shell.Current.GoToAsync(Constants.ROUTE_HOME_ABOUT);
+                Navigation.PushAsync(new AboutPage());
+            };
             //MessagingCenter.Subscribe<Application>(this, Constants.MsgLogout, obj => Logout());
         }
 
@@ -63,14 +77,29 @@ namespace goFriend.Views
             App.IsUserLoggedIn = false;
             App.User = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
+            (Shell.Current as AppShell)?.RefreshTabs();
             Application.Current.MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name})
                 { BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"], BarTextColor = (Color)Application.Current.Resources["ColorTitle"] };
             Logger.Debug("Logout.END");
         }
 
+        protected override async void OnAppearing()
+        {
+            if (DateTime.Now < _lastOnAppearing.AddMinutes(Constants.AccountOnAppearingTimeout)) return;
+            _lastOnAppearing = DateTime.Now;
+            //If user logged in, but does not belong to any group
+            if (App.IsUserLoggedIn && App.User != null && App.User.Active
+                && (App.MyGroups == null || App.MyGroups.All(x => !x.GroupFriend.Active))) {
+                App.Initialize(true);
+                await App.TaskInitialization;
+                RefreshMenu();
+            }
+        }
+
         public async void RefreshMenu()
         {
             TsShells.Clear();
+            (Shell.Current as AppShell)?.RefreshTabs();
             if (App.IsUserLoggedIn && App.User != null)
             {
                 try
@@ -105,7 +134,6 @@ namespace goFriend.Views
                         TsShells.Add(CellGroups);
                     //}
 
-                    TsShells.Add(CellMap);
                     TsShells.Add(CellLogout);
                     TsShells.Add(CellAbout);
                     ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
@@ -115,26 +143,26 @@ namespace goFriend.Views
                     LblMemberSince.Text = string.Format(res.MemberSince, App.User.CreatedDate?.ToShortDateString());
                     if (App.User.Active)
                     {
-                        //if (App.User.Location != null)
-                        //{
-                            await App.TaskInitialization;
-                            if (App.MyGroups != null &&
-                                App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
-                            {
-                                TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
-                            }
-                        //}
-                        //else
-                        //{
-                        if (!App.MyGroups.Any(x => x.GroupFriend.Active)) {
-                            App.DisplayMsgInfo(res.MsgNoGroupWarning);
-                            await Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
-                        }
-                        else if (App.User.Location == null && App.User.ShowLocation == true)
+                        await App.TaskInitialization;
+                        if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.Active))
                         {
-                            //App.DisplayMsgInfo(res.MsgNoLocationSuggestion);
-                            CellBasicInfo_Tapped(null, null);
+                            TsShells.Insert(TsShells.IndexOf(CellLogout), CellMap);
                         }
+                        if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                        {
+                            TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
+                        }
+                        //if (App.MyGroups != null && App.MyGroups.All(x => !x.GroupFriend.Active)) {
+                        //    App.DisplayMsgInfo(res.MsgNoGroupWarning);
+                        //    //await Shell.Current.GoToAsync(Constants.ROUTE_HOME_GROUPCONNECTION);
+                        //    await Navigation.PushAsync(new GroupConnectionPage());
+                        //}
+                        //else if (App.User.Location == null && App.User.ShowLocation == true)
+                        //{
+                        //    //App.DisplayMsgInfo(res.MsgNoLocationSuggestion);
+                        //    CellBasicInfo_Tapped(null, null);
+                        //}
+                        (Shell.Current as AppShell)?.RefreshTabs();
                     }
                     else
                     {
