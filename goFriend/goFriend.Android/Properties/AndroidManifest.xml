@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="18" android:versionName="2.0.0" package="com.dph.GoFriend" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="19" android:versionName="2.0.1" package="com.dph.GoFriend" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
 	<application android:label="Hanoi9194" android:icon="@drawable/hn9194_25">
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDIr1maPr_3HnZZAAb3SAvjbLKa9ZrjN3E" />

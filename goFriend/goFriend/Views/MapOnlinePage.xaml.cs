@@ -96,7 +96,7 @@ namespace goFriend.Views
                         x.Pin.Tag = x;
                         Map.Pins.Add(x.Pin);
                     });
-                    Logger.Debug($"Pins count = {pins.Count}");
+                    //Logger.Debug($"Pins count = {pins.Count}");
                 }
                 return true; // True = Repeat again, False = Stop the timer
             });

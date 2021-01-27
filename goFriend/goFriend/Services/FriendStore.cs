@@ -190,7 +190,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{groupId}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.{groupId}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -323,7 +323,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{groupId}.{otherFriendId}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.{groupId}.{otherFriendId}.";
                 //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -462,7 +462,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.";
                 //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -524,13 +524,28 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<ApiGetGroupsModel>> GetGroups(string searchText = null, bool useCache = true)
+        public async Task<IEnumerable<ApiGetGroupsModel>> GetGroups(string searchText = null, bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<ApiGetGroupsModel> result = null;
             try
             {
-                Logger.Debug($"GetGroups.BEGIN(searchText={searchText}, useCache={useCache})");
+                Logger.Debug($"GetGroups.BEGIN(searchText={searchText}, useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.{searchText}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
+                //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
+                    if (result != null)
+                    {
+                        //Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -556,6 +571,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -589,7 +605,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.";
                 //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -708,11 +724,11 @@ namespace goFriend.Services
             Friend result = null;
             try
             {
-                Logger.Debug($"GetFriendInfo.BEGIN(otherFriendId={otherFriendId}, useClientCache={useClientCache}, useCache={useCache})");
+                //Logger.Debug($"GetFriendInfo.BEGIN(otherFriendId={otherFriendId}, useClientCache={useClientCache}, useCache={useCache})");
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{otherFriendId}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.{otherFriendId}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
                 //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -768,7 +784,7 @@ namespace goFriend.Services
             finally
             {
                 //Logger.Debug($"GetFriendInfo.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
-                Logger.Debug($"GetFriendInfo.END(Name={result?.Name}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //Logger.Debug($"GetFriendInfo.END(Name={result?.Name}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -976,7 +992,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -1045,7 +1061,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.";
+                var cacheKey = $"{cachePrefix}.{App.User.Id}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)

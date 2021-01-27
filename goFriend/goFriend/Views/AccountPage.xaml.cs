@@ -16,17 +16,30 @@ namespace goFriend.Views
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private DateTime _lastOnAppearing = DateTime.MinValue;
+        private bool _isInitializing = false;
 
         public AccountPage()
         {
             InitializeComponent();
+            _isInitializing = true;
             Tv.Margin = DeviceInfo.Platform == DevicePlatform.iOS ?
                 DeviceInfo.Version <= new Version(10, 3, 4) ?
                     new Thickness(0, -62, 0, 0) : new Thickness(0, -30, 0, 0)
                 : new Thickness(0, 0, 0, 0);
             Logger.Debug($"Platform={DeviceInfo.Platform}, Version={DeviceInfo.Version}, Margin.Top={Tv.Margin.Top}");
 
-            RefreshMenu();
+            UserDialogs.Instance.ShowLoading(res.Processing);
+            ClearMenus();
+            App.TaskInitialization.ContinueWith(task =>
+            {
+                Device.BeginInvokeOnMainThread(() => {
+                    //Logger.Debug("ConstructorRefresh.BEGIN");
+                    UserDialogs.Instance.HideLoading();
+                    RefreshMenu();
+                    //Logger.Debug("ConstructorRefresh.END");
+                    _isInitializing = false;
+                });
+            });
 
             BindingContext = new AccountViewModel();
 
@@ -76,8 +89,8 @@ namespace goFriend.Views
             App.NotificationService.CancelNotification();
             App.IsUserLoggedIn = false;
             App.User = null;
+            App.MyGroups = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
-            (Shell.Current as AppShell)?.RefreshTabs();
             Application.Current.MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name})
                 { BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"], BarTextColor = (Color)Application.Current.Resources["ColorTitle"] };
             Logger.Debug("Logout.END");
@@ -85,30 +98,50 @@ namespace goFriend.Views
 
         protected override async void OnAppearing()
         {
+            if (_isInitializing) return;
             if (DateTime.Now < _lastOnAppearing.AddMinutes(Constants.AccountOnAppearingTimeout)) return;
             _lastOnAppearing = DateTime.Now;
             //If user logged in, but does not belong to any group
             if (App.IsUserLoggedIn && App.User != null && App.User.Active
                 && (App.MyGroups == null || App.MyGroups.All(x => !x.GroupFriend.Active))) {
-                App.Initialize(true);
+                Logger.Debug("OnAppearing.BEGIN");
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                App.Initialize();
                 await App.TaskInitialization;
+                UserDialogs.Instance.HideLoading();
                 RefreshMenu();
+                Logger.Debug("OnAppearing.END");
             }
+        }
+
+        private void ClearMenus()
+        {
+            TsShells.Clear();
+            if (App.IsUserLoggedIn && App.User != null)
+            {
+                TsShells.Add(CellLogout);
+            }
+            else
+            {
+                TsShells.Add(CellLogin);
+            }
+            TsShells.Add(CellAbout);
+            (Shell.Current as AppShell)?.RefreshTabs();
         }
 
         public async void RefreshMenu()
         {
-            TsShells.Clear();
-            (Shell.Current as AppShell)?.RefreshTabs();
+            Logger.Debug("RefreshMenu.BEGIN");
+            ClearMenus();
             if (App.IsUserLoggedIn && App.User != null)
             {
                 try
                 {
                     UserDialogs.Instance.ShowLoading(res.Processing);
-                    TsShells.Add(CellAvatar);
+                    TsShells.Insert(TsShells.IndexOf(CellLogout), CellAvatar);
                     if (App.User.Active)
                     {
-                        TsShells.Add(CellBasicInfo);
+                        TsShells.Insert(TsShells.IndexOf(CellLogout), CellBasicInfo);
                     }
 
                     try
@@ -129,13 +162,8 @@ namespace goFriend.Views
                         // ignored
                     }
 
-                    //if (App.User.Active && App.User.Location != null)
-                    //{
-                        TsShells.Add(CellGroups);
-                    //}
+                    TsShells.Insert(TsShells.IndexOf(CellLogout), CellGroups);
 
-                    TsShells.Add(CellLogout);
-                    TsShells.Add(CellAbout);
                     ImgAvatar.Source = App.User.GetImageUrl(); // normal 100 x 100
                     Logger.Debug($"ImgAvatar.Source = {ImgAvatar.Source}");
                     //ImgAvatar.Source = Extension.GetImageSourceFromFile("admin.png"); // normal 100 x 100
@@ -178,11 +206,7 @@ namespace goFriend.Views
                     UserDialogs.Instance.HideLoading();
                 }
             }
-            else
-            {
-                TsShells.Add(CellLogin);
-                TsShells.Add(CellAbout);
-            }
+            Logger.Debug("RefreshMenu.END");
         }
     }
 }

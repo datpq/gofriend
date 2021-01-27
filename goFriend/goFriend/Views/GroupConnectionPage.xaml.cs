@@ -20,6 +20,7 @@ namespace goFriend.Views
         private readonly IList<string> _lstCatEntriesText = new List<string>();
         private IList<string> _arrFixedCatValues;
         private Group _selectedGroup;
+        private IEnumerable<ApiGetGroupsModel> _searchingResultGroups;
 
         public GroupConnectionPage()
         {
@@ -28,11 +29,11 @@ namespace goFriend.Views
             DphGroupSearch.Initialize(async (searchText) =>
             {
                 Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
-                App.TaskInitialization.Wait();
-                App.AllGroups = await App.FriendStore.GetGroups(searchText);
+                await App.TaskInitialization;
+                _searchingResultGroups = await App.FriendStore.GetGroups(searchText);
                 var searchResult = App.MyGroups.Where(
                     x => x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
-                    App.AllGroups.Where(x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(
+                    _searchingResultGroups.Where(x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(
                     x => new SearchItemModel
                     {
                         Text = x.Group.Name,
@@ -83,14 +84,14 @@ namespace goFriend.Views
                 var selectedApiGroup = App.MyGroups?.SingleOrDefault(x => x.Group.Name == groupName);
                 if (selectedApiGroup == null)
                 {
-                    if (App.AllGroups == null)
+                    if (_searchingResultGroups == null)
                     {
-                        App.AllGroups = await App.FriendStore.GetGroups(groupName);
+                        _searchingResultGroups = await App.FriendStore.GetGroups(groupName);
                     }
-                    selectedApiGroup = App.AllGroups?.SingleOrDefault(x => x.Group.Name == groupName);
+                    selectedApiGroup = _searchingResultGroups?.SingleOrDefault(x => x.Group.Name == groupName);
                 }
 
-                Logger.Debug($"selectedApiGroup={JsonConvert.SerializeObject(selectedApiGroup)}");
+                //Logger.Debug($"selectedApiGroup={JsonConvert.SerializeObject(selectedApiGroup)}");
                 CmdModify.IsVisible = selectedApiGroup?.UserRight == UserType.Pending; // Modify button visible when subscription is in pending
                 CmdSubscribe.IsVisible = selectedApiGroup?.UserRight == UserType.NotMember;
 
@@ -265,10 +266,14 @@ namespace goFriend.Views
                 var result = await App.FriendStore.SubscribeGroup(groupFriend);
                 if (result)
                 {
-                    App.DisplayMsgInfo(res.MsgSubscriptionSuccessful);
-                    App.Initialize(false);
+                    UserDialogs.Instance.ShowLoading(res.Processing);
+                    await App.FriendStore.GetMyGroups(false); // no cache, get MyGroups, put in the cache to be used in Initialize
+                    App.Initialize();
+                    await App.TaskInitialization;
+                    UserDialogs.Instance.HideLoading();
 
                     SelectItemAction(_selectedGroup.Name);
+                    App.DisplayMsgInfo(res.MsgSubscriptionSuccessful);
                 }
             }
             catch (Exception ex)

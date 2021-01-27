@@ -238,7 +238,7 @@ namespace goFriend.Controls
 
         private void CmdRefresh_OnClicked(object sender, EventArgs e)
         {
-            App.Initialize(false);
+            App.Initialize();
 
             Refresh();
         }

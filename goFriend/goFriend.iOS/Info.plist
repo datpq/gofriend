@@ -84,7 +84,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Thư viện ảnh được dùng khi bạn muốn gửi ảnh cho bạn bè.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>2.0.1</string>
 	<key>CFBundleVersion</key>
 	<string>21</string>
 	<key>UIBackgroundModes</key>

@@ -25,6 +25,7 @@ namespace goFriend
     {
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
+        public static IEnumerable<ApiGetGroupsModel> MyGroups;
         public static Friend User { get; set; }
         public readonly IFacebookManager FaceBookManager;
         public static ILocationService LocationService;
@@ -37,8 +38,6 @@ namespace goFriend
         public static ChatListViewModel ChatListVm; // List of all Chats
 
         public static Task TaskInitialization;
-        public static IEnumerable<ApiGetGroupsModel> MyGroups;
-        public static IEnumerable<ApiGetGroupsModel> AllGroups;
         public static ISimpleAudioPlayer SapChatNewMessage = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
         public static ISimpleAudioPlayer SapChatNewChat = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
 
@@ -98,7 +97,7 @@ namespace goFriend
             //};
             //return;
 
-            Initialize(true);
+            Initialize();
 
             if (IsUserLoggedIn && User != null)
             {
@@ -248,8 +247,9 @@ namespace goFriend
             }
         }
 
-        public static void Initialize(bool fullInit)
+        public static void Initialize()
         {
+            if (IsInitializing) return;
             //use Task.Run, never use new Task()
             TaskInitialization = Task.Run(async () =>
             {
@@ -259,22 +259,36 @@ namespace goFriend
                     IsInitializing = true;
                     if (IsUserLoggedIn && User != null)
                     {
-                        if (fullInit)
-                        {
-                            await Constants.InitializeConfiguration();
-                        }
-                        MyGroups = await FriendStore.GetMyGroups();
+                        await Constants.InitializeConfiguration();
+                        var newMyGroups = await FriendStore.GetMyGroups();
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
                             _logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");
                             await FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
                         }
 
-                        if (fullInit && MyGroups.Any(x => x.GroupFriend.Active)) {
+                        if ((MyGroups == null || MyGroups.All(x => !x.GroupFriend.Active))
+                        && newMyGroups.Any(x => x.GroupFriend.Active)) {
+                            _logger.Debug("First active group approved or first time connecting to Chat");
+                            MyGroups = newMyGroups;
                             await ChatListVm.RefreshCommandAsyncExec();
 
                             await FriendStore.SignalR.ConnectAsync();
                             //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
+                        }
+                        //new Active group aproved
+                        else if (MyGroups != null && newMyGroups.Any(x => x.GroupFriend.Active
+                        && !MyGroups.Any(y => y.GroupFriend.Active && y.Group.Id == x.Group.Id)))
+                        {
+                            _logger.Debug("New active group approved.");
+                            MyGroups = newMyGroups;
+                            await ChatListVm.RefreshCommandAsyncExec();
+
+                            _ = FriendStore.SignalR.SendMessageAsync<string>(ChatMessageType.JoinChat.ToString());
+                        }
+                        else
+                        {
+                            MyGroups = newMyGroups;
                         }
                     }
                     else
@@ -325,11 +339,10 @@ namespace goFriend
         {
             try
             {
-                _logger.Debug($"ReceiveLocationUpdate.BEGIN");
+                //_logger.Debug($"ReceiveLocationUpdate.BEGIN");
                 if (IsUserLoggedIn && User != null)
                 {
                     //var newPosition = await ((Point)null).GetPosition();
-                    ServiceNotification result = null;
                     if (MapOnlinePage.MyLocation == null || MapOnlinePage.MyLocation.IsRefreshNeeded()
                         || MapOnlinePage.MyLocation.SharingInfo != MapOnlinePage.GetSharingInfo())
                     {
@@ -354,7 +367,7 @@ namespace goFriend
             }
             finally
             {
-                _logger.Debug("ReceiveLocationUpdate.END");
+                //_logger.Debug("ReceiveLocationUpdate.END");
             }
         }
 

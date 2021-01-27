@@ -238,7 +238,7 @@ namespace goFriend.ViewModels
         {
             try
             {
-                Logger.Debug($"ReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex})");
+                //Logger.Debug($"ReceiveMessage.BEGIN(ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex})");
                 chatMessage.Chat = ChatListItem.Chat;
                 chatMessage.CreatedDate = chatMessage.CreatedDate.ToLocalTime();
                 chatMessage.ModifiedDate = chatMessage.ModifiedDate.ToLocalTime();
@@ -261,7 +261,7 @@ namespace goFriend.ViewModels
                     lastDateTime = Messages[arrIdx].CreatedDate.Date;
                     break;
                 }
-                Logger.Debug($"arrIdx={arrIdx}, Messages.Count={Messages.Count}");
+                //Logger.Debug($"arrIdx={arrIdx}, Messages.Count={Messages.Count}");
 
                 if (lastDateTime < chatMessage.CreatedDate.Date)
                 {
@@ -271,11 +271,11 @@ namespace goFriend.ViewModels
                     {
                         arrIdx--;
                         Messages[arrIdx].MessageIndex = chatMessage.MessageIndex;
-                        Logger.Debug($"arrIdx={arrIdx}");
+                        //Logger.Debug($"arrIdx={arrIdx}");
                     }
                     else
                     {
-                        Logger.Debug($"SysDate message added for {chatMessage.CreatedDate.Date:yyyy MMMM dd}");
+                        //Logger.Debug($"SysDate message added for {chatMessage.CreatedDate.Date:yyyy MMMM dd}");
                         Messages.Insert(arrIdx, new ChatMessage
                         {
                             CreatedDate = chatMessage.CreatedDate.Date,
@@ -327,7 +327,7 @@ namespace goFriend.ViewModels
                     Logger.Debug($"No last msgidx ever saved for chat {chatMessage.ChatId}. Creating a new one.");
                     lastMsgIdxRetrieved = 0;
                 }
-                Logger.Debug($"chatId={chatMessage.ChatId}, lastMsgIdxRetrieved={lastMsgIdxRetrieved}");
+                //Logger.Debug($"chatId={chatMessage.ChatId}, lastMsgIdxRetrieved={lastMsgIdxRetrieved}");
                 if (lastMsgIdxRetrieved < chatMessage.MessageIndex)
                 {
                     //Save new value in the setting
@@ -361,7 +361,7 @@ namespace goFriend.ViewModels
                         }
                     }
                 }
-                Logger.Debug($"Message {chatMessage.Id}, ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex} received. Added at {arrIdx}.");
+                //Logger.Debug($"Message {chatMessage.Id}, ChatId={chatMessage.ChatId}, MessageIndex={chatMessage.MessageIndex} received. Added at {arrIdx}.");
             }
             catch (Exception e)
             {
@@ -369,7 +369,7 @@ namespace goFriend.ViewModels
             }
             finally
             {
-                Logger.Debug($"ReceiveMessage.END");
+                //Logger.Debug($"ReceiveMessage.END");
             }
         }
 

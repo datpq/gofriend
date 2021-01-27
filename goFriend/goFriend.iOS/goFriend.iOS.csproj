@@ -75,14 +75,13 @@
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>Apple Distribution: Quoc Dat PHAM (77WDKHWFLA)</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <OptimizePNGs>true</OptimizePNGs>
     <MtouchFloat32>true</MtouchFloat32>
     <MtouchEnableSGenConc>false</MtouchEnableSGenConc>
     <CodesignExtraArgs />
     <CodesignResourceRules />
-    <CodesignProvision>Second Lockdown Dist</CodesignProvision>
     <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;__IOS__13;</DefineConstants>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchExtraArgs>--interpreter</MtouchExtraArgs>

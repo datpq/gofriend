@@ -328,7 +328,7 @@
     <value>sửa thông tin kết nối trong yêu cầu tham gia nhóm</value>
   </data>
   <data name="MsgNoLocationWarning" xml:space="preserve">
-    <value>Bạn chọn không hiển thị hoặc chưa cập nhật vị trí của bạn, không ai có thể nhìn thấy bạn trên bản đồ và ở chiều ngược lại bạn cũng không nhìn thấy ai trên bản đồ. Bạn có thể vào menu Nhà-Hồ sơ cá nhân để thay đổi điều này.</value>
+    <value>Bạn chọn không hiển thị hoặc chưa cập nhật vị trí của bạn, không ai có thể nhìn thấy bạn trên bản đồ ngoại tuyến và ở chiều ngược lại bạn cũng không nhìn thấy ai trên bản đồ ngoại tuyến. Bạn có thể vào trang Nhà-Hồ sơ cá nhân để thay đổi điều này.</value>
   </data>
   <data name="MsgSaveConfirm" xml:space="preserve">
     <value>Bạn muốn cập nhật vị trí?</value>
@@ -355,7 +355,7 @@
     <value>Hiện vị trí của bạn:</value>
   </data>
   <data name="MsgNoLocationSuggestion" xml:space="preserve">
-    <value>Bạn không thể nhìn thấy mọi người trên bản đồ nếu bạn không cập nhật vị trí của bạn. Hãy thay đổi vị trí của bạn bằng cách dịch chuyển con trỏ đến vị trí mong muốn rồi ấn Cập Nhật.</value>
+    <value>Bạn không thể nhìn thấy mọi người trên bản đồ ngoại tuyến nếu bạn không cập nhật vị trí của bạn. Hãy thay đổi vị trí của bạn bằng cách dịch chuyển con trỏ đến vị trí mong muốn rồi ấn Cập Nhật.</value>
   </data>
   <data name="SearchByName" xml:space="preserve">
     <value>Tìm tên:</value>
