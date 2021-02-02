@@ -28,19 +28,6 @@ namespace goFriend.Views
                 : new Thickness(0, 0, 0, 0);
             Logger.Debug($"Platform={DeviceInfo.Platform}, Version={DeviceInfo.Version}, Margin.Top={Tv.Margin.Top}");
 
-            UserDialogs.Instance.ShowLoading(res.Processing);
-            ClearMenus();
-            App.TaskInitialization.ContinueWith(task =>
-            {
-                Device.BeginInvokeOnMainThread(() => {
-                    //Logger.Debug("ConstructorRefresh.BEGIN");
-                    UserDialogs.Instance.HideLoading();
-                    RefreshMenu();
-                    //Logger.Debug("ConstructorRefresh.END");
-                    _isInitializing = false;
-                });
-            });
-
             BindingContext = new AccountViewModel();
 
             CellBasicInfo.Tapped += CellBasicInfo_Tapped;
@@ -91,6 +78,8 @@ namespace goFriend.Views
             App.User = null;
             App.MyGroups = null;
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
+            App.ChatListVm.ChatListItems.Clear();
+            MapOnlinePage.Instance?.Reset();
             Application.Current.MainPage = new NavigationPage(new AccountPage{ Title = AppInfo.Name})
                 { BarBackgroundColor = (Color)Application.Current.Resources["ColorPrimary"], BarTextColor = (Color)Application.Current.Resources["ColorTitle"] };
             Logger.Debug("Logout.END");
@@ -98,7 +87,19 @@ namespace goFriend.Views
 
         protected override async void OnAppearing()
         {
-            if (_isInitializing) return;
+            if (_isInitializing)
+            {
+                //continue from Constructor
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                ClearMenus();
+                await App.TaskInitialization;
+                Logger.Debug("ConstructorRefresh.BEGIN");
+                UserDialogs.Instance.HideLoading();
+                RefreshMenu();
+                Logger.Debug("ConstructorRefresh.END");
+                _isInitializing = false;
+                return;
+            }
             if (DateTime.Now < _lastOnAppearing.AddMinutes(Constants.AccountOnAppearingTimeout)) return;
             _lastOnAppearing = DateTime.Now;
             //If user logged in, but does not belong to any group

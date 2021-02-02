@@ -34,7 +34,7 @@ namespace goFriend.Controls
                 {
                     var listViewModel = (DphListViewModel) DphListView.BindingContext;
                     var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true,
-                        listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true, searchText,
+                        listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true, true, searchText,
                         arrCatValues);
                     var result = catGroupFriends.Select(x =>
                         {

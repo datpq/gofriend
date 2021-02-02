@@ -38,6 +38,7 @@ namespace goFriend.Views
             _timer = new DphTimer(() => ((MapOnlineViewModel)BindingContext).DisabledExpiredTime = DateTime.MinValue);
             Device.StartTimer(TimeSpan.FromSeconds(Constants.MAPONLINE_REFRESH_INTERVAL), () =>
             {
+                if (!App.IsUserLoggedIn || App.User == null) return true;
                 //find new online friends to send notification
                 var newOnlineFriendIds = new List<int>();
                 lock (_operationLocker)
@@ -224,9 +225,36 @@ namespace goFriend.Views
                 .Aggregate((i, j) => $"{i}{DataModel.Extension.SepMain}{j}");
         }
 
+        public void Reset()
+        {
+            try
+            {
+                lock (_operationLocker)
+                {
+                    _onlineFriendIds.Clear();
+                    _wentOfflineFriends.Clear();
+                    MyLocation = null;
+                    foreach (var mapOnlineInfo in MapOnlineInfo)
+                    {
+                        mapOnlineInfo.Value.Refresh();
+                    }
+                    MapOnlineInfo.Clear();
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e.ToString());
+            }
+        }
+
         public async void ReceiveLocation(FriendLocation friendLocation)
         {
             if (friendLocation.SharingInfo == null) return;
+            if (!App.IsUserLoggedIn || App.User == null)
+            {
+                Logger.Warn("Reiceiving location while logged out");
+                return;
+            }
             friendLocation.ModifiedDate = DateTime.Now;
             if (friendLocation.FriendId == App.User.Id) //receive my own location. Stored to use in distance calculation
             {

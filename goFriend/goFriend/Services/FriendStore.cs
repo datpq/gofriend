@@ -246,7 +246,8 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetGroupFixedCatValues.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                //{JsonConvert.SerializeObject(result)}
+                Logger.Debug($"GetGroupFixedCatValues.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -309,7 +310,7 @@ namespace goFriend.Services
             }
             finally
             {
-                Logger.Debug($"GetGroupCatValues.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+                Logger.Debug($"GetGroupCatValues.END(Count={result?.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
@@ -386,13 +387,28 @@ namespace goFriend.Services
         }
 
         public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive = true, int top = 0, int skip = 0,
-            bool useCache = true, string searchText = null, params string[] arrCatValues)
+            bool useClientCache = true, bool useCache = true, string searchText = null, params string[] arrCatValues)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<GroupFriend> result = null;
             try
             {
-                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, top = {top}, skip = {skip}, useCache={useCache}, searchText={searchText}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+                Logger.Debug($"GetGroupFriends.BEGIN(groupId={groupId}, isActive={isActive}, top = {top}, skip = {skip}, useClientCache={useClientCache}, useCache={useCache}, searchText={searchText}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{top}.{skip}.{searchText}.{string.Join(".", arrCatValues)}";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as IEnumerable<GroupFriend>;
+                    if (result != null)
+                    {
+                        //Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -429,6 +445,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)

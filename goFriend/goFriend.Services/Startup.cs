@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace goFriend.Services
 {
@@ -12,6 +13,12 @@ namespace goFriend.Services
             services.AddDbContext<FriendDbContext>(options =>
                 options.UseSqlServer(connectionString, x => x.UseNetTopologySuite().MigrationsAssembly("goFriend.WebApi")));
             //.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            services.AddHealthChecks().AddSqlServer(
+                connectionString: connectionString,
+                healthQuery: "SELECT 1;",
+                name: "sql",
+                failureStatus: HealthStatus.Degraded,
+                tags: new string[] { "db", "sql", "sqlserver" });
 
             if (initData)
             {

@@ -201,7 +201,8 @@ namespace goFriend.WebApi.Controllers
         public ActionResult<Friend> LoginWithThirdParty([FromBody] Friend friend, [FromHeader] string deviceInfo)
         {
             var stopWatch = Stopwatch.StartNew();
-            Logger.Debug($"BEGIN({friend}, ThirdPartyLogin={friend.ThirdPartyLogin}, ThirdPartyUserId={friend.ThirdPartyUserId}, Info={friend.Info})");
+            Logger.Debug($"BEGIN({friend}, Name={friend.Name}, Email={friend.Email} ThirdPartyLogin={friend.ThirdPartyLogin}, ThirdPartyUserId={friend.ThirdPartyUserId}, Info={friend.Info})");
+            //Logger.Debug($"friend={JsonConvert.SerializeObject(friend)}");
             try
             {
                 if (!ModelState.IsValid)
@@ -222,12 +223,16 @@ namespace goFriend.WebApi.Controllers
                         result = _dataRepo.Get<Friend>(x => x.ThirdPartyLogin == friend.ThirdPartyLogin && x.ThirdPartyUserId == friend.ThirdPartyUserId);
                         if (result == null)
                         {
-                            if (string.IsNullOrEmpty(friend.Name) || string.IsNullOrEmpty(friend.Email))
-                            {
-                                Logger.Warn(Message.MsgThirdPartyIdNull.Msg);
-                                return BadRequest(Message.MsgThirdPartyIdNull);
+                            if (string.IsNullOrEmpty(friend.Name)) {
+                                Logger.Warn("Cannot retrieve Name from thirdparty login");
+                                friend.Name = "Unknown";
                             }
-                            Logger.Debug("New thirdparty user registered.");
+                            //if (string.IsNullOrEmpty(friend.Name) || string.IsNullOrEmpty(friend.Email))
+                            //{
+                            //    Logger.Warn(Message.MsgThirdPartyIdNull.Msg);
+                            //    return BadRequest(Message.MsgThirdPartyIdNull);
+                            //}
+                                Logger.Debug("New thirdparty user registered.");
                             var setting = _dataRepo.Get<Setting, int>(
                                 x => Regex.Match(deviceInfo, x.Rule, RegexOptions.IgnoreCase).Success, x => x.Order, true);
                             Logger.Debug($"setting={JsonConvert.SerializeObject(setting)}");

@@ -28,7 +28,7 @@ namespace goFriend.Views
                 Settings.LastMapPageGroupName = selectedGroup.Group.Name;
                 RefreshComponentsVisibility();
                 if (!Map.IsVisible) return;
-                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, searchText, arrCatValues).ContinueWith(task =>
+                App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true, 0, 0, true, true, searchText, arrCatValues).ContinueWith(task =>
                 {
                     var catGroupFriends = task.Result;
                     Map.Pins.Clear();

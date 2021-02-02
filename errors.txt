@@ -208,6 +208,8 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 	or
 	- First, go to ~/Library/MobileDevice/Provisioning Profiles. Make sure Xcode isn't running. Then, delete all provisioning files (like xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.mobileprovision).
 	Start Xcode. You will see something like "Fix this issue" in your Target's General tab. Click it.
+	or
+	- project ios --> options --> iOS Bundle Signing --> Signing Identity = Developer one
 Xcode will now load new provisioning profile.
 - ApplicationVerificationFailed: Failed to verify code signature of .. (An unknown error has occurred.)
 - ApplicationVerificationFailed: Failed to verify code signature of ... : 0xe8008016 (The executable was signed with invalid entitlements.)
