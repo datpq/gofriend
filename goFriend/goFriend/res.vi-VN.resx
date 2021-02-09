@@ -228,9 +228,6 @@
   <data name="SearchBarPlaceHolder" xml:space="preserve">
     <value>Nhập từ tìm kiếm</value>
   </data>
-  <data name="SelectGender" xml:space="preserve">
-    <value>Chọn giới tính</value>
-  </data>
   <data name="Slogan" xml:space="preserve">
     <value>Kết nối yêu thương</value>
   </data>
@@ -331,7 +328,7 @@
     <value>Bạn chọn không hiển thị hoặc chưa cập nhật vị trí của bạn, không ai có thể nhìn thấy bạn trên bản đồ ngoại tuyến và ở chiều ngược lại bạn cũng không nhìn thấy ai trên bản đồ ngoại tuyến. Bạn có thể vào trang Nhà-Hồ sơ cá nhân để thay đổi điều này.</value>
   </data>
   <data name="MsgSaveConfirm" xml:space="preserve">
-    <value>Bạn muốn cập nhật vị trí?</value>
+    <value>Bạn muốn cập nhật dữ liệu?</value>
   </data>
   <data name="CmdReset" xml:space="preserve">
     <value>Hủy thay đổi</value>
@@ -494,5 +491,38 @@
   </data>
   <data name="AppearOnline" xml:space="preserve">
     <value>xuất hiện</value>
+  </data>
+  <data name="Tel" xml:space="preserve">
+    <value>Điện thoại:</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Thông tin chi tiết</value>
+  </data>
+  <data name="Relationship" xml:space="preserve">
+    <value>Tình trạng:</value>
+  </data>
+  <data name="RelationshipComplicated" xml:space="preserve">
+    <value>Phức tạp</value>
+  </data>
+  <data name="RelationshipDivorced" xml:space="preserve">
+    <value>Ly hôn</value>
+  </data>
+  <data name="RelationshipEngaged" xml:space="preserve">
+    <value>Đính hôn</value>
+  </data>
+  <data name="RelationshipMarried" xml:space="preserve">
+    <value>Có gia đình</value>
+  </data>
+  <data name="RelationshipSeparated" xml:space="preserve">
+    <value>Ly thân</value>
+  </data>
+  <data name="RelationshipSingle" xml:space="preserve">
+    <value>Độc thân</value>
+  </data>
+  <data name="MsgSavePosConfirm" xml:space="preserve">
+    <value>Bạn muốn cập nhật vị trí?</value>
+  </data>
+  <data name="MsgMandatoryField" xml:space="preserve">
+    <value>{0} là bắt buộc</value>
   </data>
 </root>

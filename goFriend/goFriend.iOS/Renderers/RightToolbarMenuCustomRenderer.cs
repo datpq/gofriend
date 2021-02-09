@@ -7,11 +7,8 @@ using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using goFriend.iOS.Renderers;
-using goFriend.Views;
 
-[assembly: ExportRenderer(typeof(ChatPage), typeof(RightToolbarMenuCustomRenderer))]
-[assembly: ExportRenderer(typeof(ChatListPage), typeof(RightToolbarMenuCustomRenderer))]
-//[assembly: ExportRenderer(typeof(ContentPage), typeof(RightToolbarMenuCustomRenderer))]
+[assembly: ExportRenderer(typeof(ContentPage), typeof(RightToolbarMenuCustomRenderer))]
 
 namespace goFriend.iOS.Renderers
 {

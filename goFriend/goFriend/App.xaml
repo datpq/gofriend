@@ -41,5 +41,9 @@
         <x:String x:Key="IconSend">&#xF1D8;</x:String>
         <x:String x:Key="IconFolderOpen">&#xF107;</x:String>
         <x:String x:Key="IconFolderClose">&#xF105;</x:String>
+        <!--<x:String x:Key="IconSetGps">&#xF5A0;</x:String>-->
+        <x:String x:Key="IconSetGps">&#xF21D;</x:String>
+        <x:String x:Key="IconCancel">&#xF00D;</x:String>
+        <x:String x:Key="IconSave">&#xF0C7;</x:String>
     </Application.Resources>
 </Application>

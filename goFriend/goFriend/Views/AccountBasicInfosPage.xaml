@@ -9,7 +9,6 @@
              xmlns:local="clr-namespace:goFriend"
              xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.BasicInfos}"
-             Visual="Material"
              x:Class="goFriend.Views.AccountBasicInfosPage">
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
@@ -21,9 +20,12 @@
             </On>
         </OnPlatform>
     </ContentPage.BackgroundColor>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="MnuDetail" Text="{Static local:res.Detail}" Order="Secondary" Priority="0" Command="{Binding CommandDetail}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout Margin="10,10,10,5">
+        <StackLayout Spacing="0">
+            <StackLayout Margin="10">
                 <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -50,14 +52,24 @@
                     <Label Text="{Binding Email}" Grid.Row="1" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                    <Label Text="{Static local:res.Gender}" Grid.Row="2" Grid.Column="1"
+                    <Label Text="{Static local:res.Gender}" Grid.Row="2" Grid.Column="1" IsVisible="False"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
-                    <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2"
+                    <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2" IsVisible="False"
+                       LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
+                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    <Label Text="{Static local:res.Relationship}" Grid.Row="2" Grid.Column="1"
+                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    <Label Text="{Binding RelationshipByLanguage}" Grid.Row="2" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1" IsVisible="False"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="3" Grid.Column="2" IsVisible="False"
+                       LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
+                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    <Label Text="{Static local:res.Tel}" Grid.Row="3" Grid.Column="1"
+                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    <Label Text="{Binding Phone}" Grid.Row="3" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
                        TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label x:Name="LabelShowLocation" Text="{Static local:res.ShowYourLocation}" Grid.Row="3" Grid.Column="1"
@@ -81,8 +93,29 @@
                     <Setter Property="IsVisible" Value="false" />
                 </DataTrigger>
             </controls:DphMap.Triggers>-->
-            <StackLayout Margin="10, 0, 10, 10" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
+            <StackLayout Spacing="0" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
                 <Button x:Name="CmdSetGps"
+                    Clicked="CmdSetGps_Click" Text="{x:Static local:res.CmdSetGPSPos}" FontSize="Micro" FontAttributes="Bold">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconSetGps}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}"/>
+                    </Button.ImageSource>
+                </Button>
+                <Button x:Name="CmdReset"
+                        Clicked="CmdReset_Click" Text="{x:Static local:res.CmdReset}" FontSize="Micro" FontAttributes="Bold" >
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconCancel}" Color="DarkRed"
+                                         FontFamily="{StaticResource IconFontFamily}"/>
+                    </Button.ImageSource>
+                </Button>
+                <Button x:Name="CmdSave"
+                        Clicked="CmdSave_Click" Text="{x:Static local:res.CmdSave}" FontSize="Micro" FontAttributes="Bold">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconSave}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}"/>
+                    </Button.ImageSource>
+                </Button>
+                <!--<Button x:Name="CmdSetGps"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimaryLight}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdSetGPSPos}"
@@ -96,7 +129,7 @@
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimaryLight}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"
                         Text="{x:Static local:res.CmdSave}"
-                        Clicked="CmdSave_Click" />
+                        Clicked="CmdSave_Click" />-->
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

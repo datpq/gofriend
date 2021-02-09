@@ -228,9 +228,6 @@
   <data name="SearchBarPlaceHolder" xml:space="preserve">
     <value>Type here to search</value>
   </data>
-  <data name="SelectGender" xml:space="preserve">
-    <value>Select gender</value>
-  </data>
   <data name="Slogan" xml:space="preserve">
     <value>Connecting Love</value>
   </data>
@@ -494,5 +491,38 @@
   </data>
   <data name="AppearOnline" xml:space="preserve">
     <value />
+  </data>
+  <data name="Tel" xml:space="preserve">
+    <value>Telephone:</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Relationship" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RelationshipComplicated" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RelationshipDivorced" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RelationshipEngaged" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RelationshipMarried" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RelationshipSeparated" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RelationshipSingle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MsgSavePosConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MsgMandatoryField" xml:space="preserve">
+    <value>{0} is mandatory</value>
   </data>
 </root>

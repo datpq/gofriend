@@ -397,6 +397,41 @@ namespace goFriend.WebApi.Controllers
                     isUpdated = true;
                 }
 
+                if (friend.Email != null && friend.Email != result.Email)
+                {
+                    Logger.Debug($"Email updated: {friend.Email}");
+                    result.Email = friend.Email;
+                    isUpdated = true;
+                }
+
+                if (friend.Relationship != null && friend.Relationship != result.Relationship)
+                {
+                    Logger.Debug($"Relationship updated: {friend.Relationship}");
+                    result.Relationship = friend.Relationship;
+                    isUpdated = true;
+                }
+
+                if (friend.Phone != null && friend.Phone != result.Phone)
+                {
+                    Logger.Debug($"Phone updated: {friend.Phone}");
+                    result.Phone = friend.Phone;
+                    isUpdated = true;
+                }
+
+                if (friend.Gender != null && friend.Gender != result.Gender)
+                {
+                    Logger.Debug($"Gender updated: {friend.Gender}");
+                    result.Gender = friend.Gender;
+                    isUpdated = true;
+                }
+
+                if (friend.Birthday != null && friend.Birthday != result.Birthday)
+                {
+                    Logger.Debug($"Birthday updated: {friend.Birthday}");
+                    result.Birthday = friend.Birthday;
+                    isUpdated = true;
+                }
+
                 if (isUpdated)
                 {
                     result.ModifiedDate = DateTime.Now;
@@ -1258,7 +1293,7 @@ namespace goFriend.WebApi.Controllers
                         MemberCount = _dataRepo.GetMany<GroupFriend>(y => y.GroupId == x.Id && y.Active).Count()
                     }).ToList();
 
-                Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;

@@ -59,8 +59,6 @@ namespace goFriend
             _logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
             _logger.Info($"BackendUrl = {Constants.BackendUrl}");
             _logger.Debug(Extension.GetDeviceInfo());
-            res.Culture = new CultureInfo("vi-VN");
-            //res.Culture = new CultureInfo("");
             //Thread.CurrentThread.CurrentCulture = res.Culture;
             //Thread.CurrentThread.CurrentUICulture = res.Culture;
 

@@ -32,6 +32,7 @@ namespace goFriend.Views
 
         protected override async void OnAppearing()
         {
+            return;
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {
                 var setting = await App.FriendStore.GetSetting();
@@ -71,11 +72,14 @@ namespace goFriend.Views
             BindingContext = _viewModel = new AccountBasicInfosViewModel
             {
                 Friend = friend,
-                Editable = true
+                Editable = true,
+                CommandDetail = new Command(() => MnuDetail_OnClicked())
             };
-            var setting = await App.FriendStore.GetSetting();
-            if (setting == null) return;
-            LabelShowLocation.IsVisible = SwitchShowLocation.IsVisible = setting.LocationSwitch;
+            // iOS location check compliance
+            //var setting = await App.FriendStore.GetSetting();
+            //if (setting == null) return;
+            //LabelShowLocation.IsVisible = SwitchShowLocation.IsVisible = setting.LocationSwitch;
+            LabelShowLocation.IsVisible = SwitchShowLocation.IsVisible = false;
 
             CmdSave.IsEnabled = _viewModel.Friend.Location == null;
             CmdReset.IsEnabled = false;
@@ -121,7 +125,8 @@ namespace goFriend.Views
                 GroupFriend = groupFriend,
                 FixedCatsCount = fixedCatsCount,
                 Friend = otherFriend,
-                Editable = false
+                Editable = false,
+                CommandDetail = new Command(() => MnuDetail_OnClicked())
             };
             LabelShowLocation.IsVisible = SwitchShowLocation.IsVisible = false;
 
@@ -247,7 +252,7 @@ namespace goFriend.Views
 
         private async void CmdSave_Click(object sender, EventArgs e)
         {
-            if (!await App.DisplayMsgQuestion(res.MsgSaveConfirm)) return;
+            if (!await App.DisplayMsgQuestion(res.MsgSavePosConfirm)) return;
             try
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
@@ -294,6 +299,14 @@ namespace goFriend.Views
                 UserDialogs.Instance.HideLoading();
                 Logger.Debug("CmdSave_Click.END");
             }
+        }
+
+        private void MnuDetail_OnClicked()
+        {
+            Navigation.PushAsync(new AccountDetailPage(new AccountBasicInfosViewModel() {
+                Friend = _viewModel.Friend,
+                Editable = _viewModel.Editable
+            }));
         }
 
         private async void SwitchShowLocation_OnToggled(object sender, ToggledEventArgs e)

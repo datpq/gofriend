@@ -304,6 +304,7 @@ at least in my case this was the issue
 
 - Azure functions:
 	- Functions runtime: 3
+	- Could not load file or assembly: downgrade some packages in goFriend.Services
 	
 
 - Deployment on Google Play

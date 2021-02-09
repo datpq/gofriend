@@ -1,5 +1,6 @@
 ﻿using goFriend.Services;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -9,6 +10,27 @@ namespace goFriend
     public static class Constants
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+
+        static Constants()
+        {
+            res.Culture = new CultureInfo("vi-VN");
+            GenderDictionary = new Dictionary<string, string>()
+            {
+                { "male", res.Male },
+                { "female",  res.Female }
+            };
+            SourceGenders = GenderDictionary.Values.ToArray();
+            RelationshipDictionary = new Dictionary<string, string>()
+            {
+                { "single", res.RelationshipSingle },
+                { "married",  res.RelationshipMarried },
+                { "engaged",  res.RelationshipEngaged },
+                { "divorced", res.RelationshipDivorced },
+                { "separated",  res.RelationshipSeparated },
+                { "complicated",  res.RelationshipComplicated }
+            };
+            SourceRelationships = RelationshipDictionary.Values.ToArray();
+        }
 
         public const string MsgProfile = "MsgProfile";
         public const string MsgProfileExt = "MsgProfileExt";
@@ -49,6 +71,11 @@ namespace goFriend
         public const string ROUTE_MAPONLINE = "MapOnline";
         public const string ROUTE_CHAT = "Chat";
         public const string ROUTE_NOTIFICATION = "Notification";
+
+        public static Dictionary<string, string> GenderDictionary;
+        public static Dictionary<string, string> RelationshipDictionary;
+        public static string[] SourceGenders;
+        public static string[] SourceRelationships;
 
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";

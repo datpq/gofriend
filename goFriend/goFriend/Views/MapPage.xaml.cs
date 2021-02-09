@@ -60,6 +60,7 @@ namespace goFriend.Views
 
         protected override async void OnAppearing()
         {
+            return;
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {
                 var setting = await App.FriendStore.GetSetting();

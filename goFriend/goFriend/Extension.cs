@@ -232,6 +232,16 @@ namespace goFriend
             return Constants.SuperUserIds.Contains(friendId);
         }
 
+        private const string Marks = ",:;";
+        public static string RemoveEndingMark(this string s)
+        {
+            if (!string.IsNullOrEmpty(s) && Marks.IndexOf(s[s.Length - 1]) >= 0)
+            {
+                return s.Substring(0, s.Length - 1);
+            }
+            return s;
+        }
+
         /*
         public static ImageSource GetImageSource(this Friend friend, FacebookImageType imageType = FacebookImageType.normal)
         {

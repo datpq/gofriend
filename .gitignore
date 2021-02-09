@@ -22,3 +22,6 @@ goFriend/goFriend.Functions/Properties/PublishProfiles/
 goFriend/goFriend.WebApi/bin/
 goFriend/goFriend.WebApi/obj/
 goFriend/goFriend.MobileAppService/wwwroot/
+*.user
+*.pubxml
+goFriend/goFriend.WebApi/Properties/ServiceDependencies/

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:goFriend"
+             Title="{Static local:res.Detail}"
+             x:Class="goFriend.Views.AccountDetailPage">
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android, WinPhone">
+                <StaticResource Key="ColorTabPageBackgroundAndroid" />
+            </On>
+            <On Platform="iOS">
+                <StaticResource Key="ColorTabPageBackgroundIOS" />
+            </On>
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+    <ContentPage.Content>
+        <StackLayout Margin="10" Visual="Material">
+            <StackLayout>
+                <Label Margin="0,10" Text="{Binding Name}" HorizontalOptions="CenterAndExpand"
+                       LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
+                       TextColor="{StaticResource ColorLabel}" FontAttributes="Bold" FontSize="{StaticResource LblFontSize}"/>
+                <StackLayout IsVisible="{Binding Editable}">
+                    <Entry Placeholder="{Static local:res.Email}" Text="{Binding Email}" MaxLength="50" x:Name="TxtEmail"
+                           TextColor="{StaticResource ColorPrimary}" HorizontalOptions="FillAndExpand"/>
+                    <Picker Title="{Static local:res.Relationship}" SelectedItem="{Binding RelationshipByLanguage}"
+                            TextColor="{StaticResource ColorPrimary}" ItemsSource="{Static local:Constants.SourceRelationships}" />
+                    <Entry Placeholder="{Static local:res.Tel}" Text="{Binding Phone}" MaxLength="20" x:Name="TxtPhone"
+                           TextColor="{StaticResource ColorPrimary}" HorizontalOptions="FillAndExpand"/>
+                    <Picker Title="{Static local:res.Gender}" SelectedItem="{Binding GenderByLanguage}"
+                            TextColor="{StaticResource ColorPrimary}" ItemsSource="{Static local:Constants.SourceGenders}"/>
+                    <Label Text="{Static local:res.BirthDay}" Margin="0,0,0,-6" />
+                    <DatePicker Date="{Binding Birthday}" TextColor="{StaticResource ColorPrimary}"/>
+                </StackLayout>
+                <StackLayout IsVisible="{Binding Editable, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid x:Name="Grid" ColumnSpacing="10" HorizontalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Text="{Static local:res.Email}" Grid.Row="0" Grid.Column="0"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Binding Email}" Grid.Row="0" Grid.Column="1"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Static local:res.Relationship}" Grid.Row="1" Grid.Column="0"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Binding RelationshipByLanguage}" Grid.Row="1" Grid.Column="1"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Static local:res.Tel}" Grid.Row="2" Grid.Column="0"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Binding Phone}" Grid.Row="2" Grid.Column="1"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Static local:res.Gender}" Grid.Row="3" Grid.Column="0"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Binding GenderByLanguage}" Grid.Row="3" Grid.Column="1"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Static local:res.BirthDay}" Grid.Row="4" Grid.Column="0"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                        <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="4" Grid.Column="1"
+                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+            <StackLayout Margin="0,10,0,0" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
+                <Button x:Name="CmdSave" CornerRadius="5" FontAttributes="Bold"
+                        Clicked="CmdSave_Clicked" Text="{x:Static local:res.CmdSave}" FontSize="Micro"
+                        TextColor="White" BackgroundColor="{StaticResource ColorPrimaryLight}">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconSave}" Color="White"
+                                         FontFamily="{StaticResource IconFontFamily}"/>
+                    </Button.ImageSource>
+                </Button>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

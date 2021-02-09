@@ -37,6 +37,12 @@ namespace goFriend.DataModel
         [Column(TypeName = "VARCHAR(10)")]
         public string Gender { get; set; }
 
+        [Column(TypeName = "VARCHAR(20)")]
+        public string Phone { get; set; }
+
+        [Column(TypeName = "VARCHAR(25)")]
+        public string Relationship { get; set; }
+
         public bool Active { get; set; }
 
         public DateTime? CreatedDate { get; set; }
