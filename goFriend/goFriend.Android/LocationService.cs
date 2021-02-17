@@ -35,7 +35,7 @@ namespace goFriend.Droid
             if (LocationForegroundService.GetInstance() != null)
             {
                 IsTracing = startOrPause;
-                await LocationForegroundService.GetInstance().StartForegroundService();
+                //await LocationForegroundService.GetInstance().StartForegroundService();
             }
             else
             {

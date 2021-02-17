@@ -14,6 +14,7 @@ namespace goFriend.Controls
         public string IconUrl { get; set; }
         public string Url { get; set; }
         public UserType UserRight { get; set; }
+        public Friend User { get; set; }
 
         public bool IsDraggable {
             get => Pin.IsDraggable;

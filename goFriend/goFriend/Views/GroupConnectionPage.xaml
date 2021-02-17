@@ -37,12 +37,12 @@
                 </StackLayout>
                 <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
                 <ScrollView Margin="0,5,0,0">
-                    <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand" HeightRequest="230">
+                    <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand">
                         <Label Margin="20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblDetailFontSize}" />
                         <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblSectionFontSize}" />
                     </StackLayout>
                 </ScrollView>
-                <StackLayout Orientation="Horizontal" VerticalOptions="End" Margin="10" HorizontalOptions="Center">
+                <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand" Margin="10" HorizontalOptions="Center">
                     <Button x:Name="CmdModify"
                         CornerRadius="{StaticResource BtnCornerRadius}"
                         BackgroundColor="{StaticResource ColorPrimary}" FontSize="Micro" FontAttributes="Bold" HeightRequest="35"

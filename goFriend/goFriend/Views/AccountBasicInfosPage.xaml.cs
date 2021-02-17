@@ -98,6 +98,7 @@ namespace goFriend.Views
                 SubTitle2 = _viewModel.CountryName,
                 IconUrl = _viewModel.ImageUrl,
                 UserRight = UserType.Normal,
+                User = _viewModel.Friend,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
@@ -197,6 +198,7 @@ namespace goFriend.Views
                 SubTitle2 =  _viewModel.GroupFriend.GetCatValueDisplay(_viewModel.FixedCatsCount),
                 IconUrl = _viewModel.ImageUrl,
                 UserRight = _viewModel.GroupFriend.FriendId.IsSuperUser() ? UserType.Normal : _viewModel.GroupFriend.UserRight,
+                User = _viewModel.Friend,
                 //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place

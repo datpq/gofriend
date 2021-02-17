@@ -88,7 +88,7 @@ namespace goFriend.Views
                     });
                 DphListView.LoadItems(async () =>
                 {
-                    var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, false);
+                    var groupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, false, useClientCache: false);
                     var result = groupFriends?.Select(x => new DphListViewItemModel
                     {
                         Id = x.Id,

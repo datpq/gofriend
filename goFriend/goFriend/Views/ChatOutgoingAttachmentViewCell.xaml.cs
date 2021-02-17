@@ -23,17 +23,24 @@ namespace goFriend.Views
                             new Action(async () =>
                             {
                                 if (!await App.DisplayMsgQuestion(res.MsgDeleteConfirm)) return;
-                                var chatMessage = new ChatMessage
+                                try
                                 {
-                                    IsDeleted = true,
-                                    ChatId = msg.ChatId,
-                                    MessageIndex = msg.MessageIndex,
-                                    MessageType = msg.MessageType,
-                                    OwnerId = msg.OwnerId,
-                                    Token = App.User.Token.ToString(),
-                                    LogoUrl = msg.LogoUrl
-                                };
-                                await App.FriendStore.SendText(chatMessage);
+                                    var chatMessage = new ChatMessage
+                                    {
+                                        IsDeleted = true,
+                                        ChatId = msg.ChatId,
+                                        MessageIndex = msg.MessageIndex,
+                                        MessageType = msg.MessageType,
+                                        OwnerId = msg.OwnerId,
+                                        Token = App.User.Token.ToString(),
+                                        LogoUrl = msg.LogoUrl
+                                    };
+                                    await App.FriendStore.SendText(chatMessage);
+                                }
+                                catch
+                                {
+                                    App.DisplayMsgError(res.MsgErrConnection);
+                                }
                             })
                         });
                 }

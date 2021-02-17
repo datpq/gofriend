@@ -45,6 +45,7 @@ namespace goFriend.Views
                                 IconUrl = groupFriend.Friend.GetImageUrl(),
                                 UserRight = groupFriend.FriendId.IsSuperUser() ? UserType.Pending :
                                 groupFriend.UserRight == UserType.Normal ? UserType.Pending : groupFriend.UserRight, // all normal users have Pending (offline) icon
+                                User = groupFriend.Friend,
                                 //UserRight = Constants.SuperUserIds.Contains(groupFriend.FriendId) ? UserType.Normal : groupFriend.UserRight,
                                 IsDraggable = false,
                                 Type = PinType.Place

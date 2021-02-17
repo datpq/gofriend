@@ -267,7 +267,7 @@ namespace goFriend.Views
                 if (result)
                 {
                     UserDialogs.Instance.ShowLoading(res.Processing);
-                    await App.FriendStore.GetMyGroups(false); // no cache, get MyGroups, put in the cache to be used in Initialize
+                    await App.FriendStore.GetMyGroups(false, false); // no cache, get MyGroups, put in the cache to be used in Initialize
                     App.Initialize();
                     await App.TaskInitialization;
                     UserDialogs.Instance.HideLoading();

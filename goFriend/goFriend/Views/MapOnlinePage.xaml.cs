@@ -7,6 +7,7 @@ using goFriend.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
@@ -149,7 +150,7 @@ namespace goFriend.Views
             }
         }
 
-        private void CmdPlay_Clicked(object sender, EventArgs e)
+        private async void CmdPlay_Clicked(object sender, EventArgs e)
         {
             var vm = (MapOnlineViewModel)BindingContext;
             lock (_operationLocker)
@@ -158,9 +159,16 @@ namespace goFriend.Views
             }
             if (!App.LocationService.IsRunning())
             {
-                App.LocationService.Start();
+                await Task.Run(() => App.LocationService.Start());
             }
-            App.LocationService.RefreshStatus();
+            await Task.Run(() =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    App.LocationService.RefreshStatus();
+                });
+            });
+            //await Task.Run(() => App.LocationService.RefreshStatus());
             vm.DisabledExpiredTime = DateTime.Now.AddSeconds(Constants.MAPONLINE_COMMAND_DISABLED_TIMEOUT);
             _timer.StartingTime = vm.DisabledExpiredTime;
             _timer.Start();
@@ -169,7 +177,7 @@ namespace goFriend.Views
             RecenterMap();
         }
 
-        private void CmdStop_Clicked(object sender, EventArgs e)
+        private async void CmdStop_Clicked(object sender, EventArgs e)
         {
             var vm = (MapOnlineViewModel)BindingContext;
             lock (_operationLocker)
@@ -183,16 +191,23 @@ namespace goFriend.Views
             {
                 if (App.LocationService.IsRunning())
                 {
-                    App.LocationService.Pause();
+                    await Task.Run(() => App.LocationService.Pause());
                 }
             }
-            App.LocationService.RefreshStatus();
+            await Task.Run(() =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    App.LocationService.RefreshStatus();
+                });
+            });
+            //await Task.Run(() => App.LocationService.RefreshStatus());
             vm.DisabledExpiredTime = DateTime.Now.AddSeconds(Constants.MAPONLINE_COMMAND_DISABLED_TIMEOUT);
             _timer.StartingTime = vm.DisabledExpiredTime;
             _timer.Start();
         }
 
-        private void PickerRadius_SelectedIndexChanged(object sender, EventArgs e)
+        private async void PickerRadius_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!(PickerRadius.SelectedItem is RadiusItemModel selectedRadius)) return;
             var vm = (MapOnlineViewModel)BindingContext;
@@ -205,7 +220,14 @@ namespace goFriend.Views
                     vm.DisabledExpiredTime = DateTime.Now.AddSeconds(Constants.MAPONLINE_COMMAND_DISABLED_TIMEOUT);
                     _timer.StartingTime = vm.DisabledExpiredTime;
                     _timer.Start();
-                    App.LocationService.RefreshStatus();
+                    await Task.Run(() =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            App.LocationService.RefreshStatus();
+                        });
+                    });
+                    //await Task.Run(() => App.LocationService.RefreshStatus());
                     _mapNeedRecentering = true;
                     RecenterMap();
                 }

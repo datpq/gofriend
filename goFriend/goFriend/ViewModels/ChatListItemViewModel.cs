@@ -59,17 +59,21 @@ namespace goFriend.ViewModels
 
         public async Task RefreshOnlineStatus()
         {
-            if (IsAppearing)
+            try
             {
-                await App.FriendStore.SignalR.ConnectAsync();
-                //ping to Chat server to make the user Active
-                if (LastPingTime.AddMinutes(Constants.ChatPingFrequence) < DateTime.Now)
+                if (IsAppearing)
                 {
-                    Logger.Debug("Last ping expired. Sending another ping...");
-                    LastPingTime = DateTime.Now;
-                    await App.FriendStore.SendPing(Chat.Id);
+                    await App.FriendStore.SignalR.ConnectAsync();
+                    //ping to Chat server to make the user Active
+                    if (LastPingTime.AddMinutes(Constants.ChatPingFrequence) < DateTime.Now)
+                    {
+                        Logger.Debug("Last ping expired. Sending another ping...");
+                        LastPingTime = DateTime.Now;
+                        await App.FriendStore.SendPing(Chat.Id);
+                    }
                 }
             }
+            catch { }
         }
 
         private bool _isLastMessageRead; 

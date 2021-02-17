@@ -191,44 +191,46 @@ namespace goFriend.ViewModels
         public ChatViewModel()
         {
             SendMessageCommand = new Command(async () => {
-                await App.FriendStore.SignalR.ConnectAsync();
-                if (!IsEnabled)
+                try
+                {
+                    var chatMessage = new ChatMessage
+                    {
+                        ChatId = ChatListItem.Chat.Id,
+                        Message = string.IsNullOrWhiteSpace(Message) ? null : Message.Trim(),
+                        MessageType = ChatMessageType.Text,
+                        OwnerId = App.User.Id,
+                        Token = App.User.Token.ToString(),
+                        LogoUrl = App.User.GetImageUrl()
+                    };
+                    await App.FriendStore.SendText(chatMessage);
+                    Message = string.Empty;
+                }
+                catch (Exception)
                 {
                     App.DisplayMsgError(res.MsgErrConnection);
-                    return;
                 }
-                var chatMessage = new ChatMessage
-                {
-                    ChatId = ChatListItem.Chat.Id,
-                    Message = string.IsNullOrWhiteSpace(Message) ? null : Message.Trim(),
-                    MessageType = ChatMessageType.Text,
-                    OwnerId = App.User.Id,
-                    Token = App.User.Token.ToString(),
-                    LogoUrl = App.User.GetImageUrl()
-                };
-                await App.FriendStore.SendText(chatMessage);
-                Message = string.Empty;
             });
             SendAttachmentCommand = (async uploadedFilePath =>
             {
-                await App.FriendStore.SignalR.ConnectAsync();
-                if (!IsEnabled)
+                try
+                {
+                    var chatMessage = new ChatMessage
+                    {
+                        ChatId = ChatListItem.Chat.Id,
+                        Message = string.IsNullOrWhiteSpace(Message) ? null : Message.Trim(),
+                        MessageType = ChatMessageType.Attachment,
+                        Attachments = uploadedFilePath,
+                        OwnerId = App.User.Id,
+                        Token = App.User.Token.ToString(),
+                        LogoUrl = App.User.GetImageUrl()
+                    };
+                    await App.FriendStore.SendAttachment(chatMessage);
+                    Message = string.Empty;
+                }
+                catch
                 {
                     App.DisplayMsgError(res.MsgErrConnection);
-                    return;
                 }
-                var chatMessage = new ChatMessage
-                {
-                    ChatId = ChatListItem.Chat.Id,
-                    Message = string.IsNullOrWhiteSpace(Message) ? null : Message.Trim(),
-                    MessageType = ChatMessageType.Attachment,
-                    Attachments = uploadedFilePath,
-                    OwnerId = App.User.Id,
-                    Token = App.User.Token.ToString(),
-                    LogoUrl = App.User.GetImageUrl()
-                };
-                await App.FriendStore.SendAttachment(chatMessage);
-                Message = string.Empty;
             });
             MessageAppearingCommand = new Command<ChatMessage>(OnMessageAppearing);
             MessageDisappearingCommand = new Command<ChatMessage>(OnMessageDisappearing);
@@ -413,7 +415,7 @@ namespace goFriend.ViewModels
             try
             {
                 var listIdx = Messages.IndexOf(message);
-                Logger.Debug($"OnMessageAppearing.BEGIN(listIdx={listIdx}, MessageIndex={message.MessageIndex})");
+                //Logger.Debug($"OnMessageAppearing.BEGIN(listIdx={listIdx}, MessageIndex={message.MessageIndex})");
 
                 //go up the list find the previous message
                 var previousMessage = GetPreviousMessage(listIdx);
@@ -465,7 +467,7 @@ namespace goFriend.ViewModels
                 else if (listIdx <= 6)
                 {
                     LastMessageVisible = true;
-                    Logger.Debug($"listIdx={listIdx}, LastMessageVisible={LastMessageVisible}");
+                    //Logger.Debug($"listIdx={listIdx}, LastMessageVisible={LastMessageVisible}");
                 }
                 ShowScrollTapDown = listIdx > Constants.ChatStartIdxToShowScrollDown;
             }
@@ -477,21 +479,21 @@ namespace goFriend.ViewModels
             {
                 //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
                 if (Device.RuntimePlatform == Device.Android) IsRefreshing = false;
-                Logger.Debug($"OnMessageAppearing.END");
+                //Logger.Debug($"OnMessageAppearing.END");
             }
         }
 
         void OnMessageDisappearing(ChatMessage message)
         {
-            Logger.Debug("OnMessageDisappearing.BEGIN");
+            //Logger.Debug("OnMessageDisappearing.BEGIN");
             if (!message.MessageType.IsRealShowableMessage()) return;
             var listIdx = Messages.IndexOf(message);
             if (listIdx <= 6)
             {
                 LastMessageVisible = false;
-                Logger.Debug($"listIdx={listIdx}, LastMessageVisible={LastMessageVisible}");
+                //Logger.Debug($"listIdx={listIdx}, LastMessageVisible={LastMessageVisible}");
             }
-            Logger.Debug("OnMessageDisappearing.END");
+            //Logger.Debug("OnMessageDisappearing.END");
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "")

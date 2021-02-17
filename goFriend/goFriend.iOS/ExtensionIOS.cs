@@ -7,12 +7,17 @@ namespace goFriend.iOS
     public class ExtensionIOS
     {
         public const string CHARCODE_PIN = "\uF1AE";
-        public static UIColor COLOR_PIN_ADMIN = FromHex(0x9400d3);
+        public const string CHARCODE_PIN_FEMALE = "\uF182";
+        public static UIColor COLOR_PIN_ADMIN = FromHex(0x9400D3);
         public static UIColor COLOR_PIN_NORMAL = FromHex(0x61A830);
         public static UIColor COLOR_PIN_PENDING = UIColor.Gray;
+        public static UIColor COLOR_PIN_FEMALE = FromHex(0xFF6699);
         public static UIImage ICON_PIN_ADMIN = ImageWithFont(CHARCODE_PIN, COLOR_PIN_ADMIN);
+        public static UIImage ICON_PIN_ADMIN_FEMALE = ImageWithFont(CHARCODE_PIN_FEMALE, COLOR_PIN_ADMIN);
         public static UIImage ICON_PIN_NORMAL = ImageWithFont(CHARCODE_PIN, COLOR_PIN_NORMAL);
+        public static UIImage ICON_PIN_NORMAL_FEMALE = ImageWithFont(CHARCODE_PIN_FEMALE, COLOR_PIN_FEMALE);
         public static UIImage ICON_PIN_PENDING = ImageWithFont(CHARCODE_PIN, COLOR_PIN_PENDING);
+        public static UIImage ICON_PIN_PENDING_FEMALE = ImageWithFont(CHARCODE_PIN_FEMALE, COLOR_PIN_PENDING);
 
         public static UIImage ImageWithFont(string text, UIColor color, float fontSize = 32, string fontName = "Font Awesome 5 Free")
         {

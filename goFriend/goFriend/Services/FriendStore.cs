@@ -1147,7 +1147,11 @@ namespace goFriend.Services
             if (CrossConnectivity.Current.IsConnected)
             {
                 Logger.Debug("Internet available. Rejoining chat...");
-                await SignalR.ConnectAsync();
+                try
+                {
+                    await SignalR.ConnectAsync();
+                }
+                catch { }
             }
         }
 
@@ -1196,6 +1200,7 @@ namespace goFriend.Services
             catch (Exception e)
             {
                 Logger.TrackError(e);
+                throw;
             }
             finally
             {
@@ -1215,6 +1220,7 @@ namespace goFriend.Services
             catch (Exception e)
             {
                 Logger.TrackError(e);
+                throw;
             }
             finally
             {
@@ -1240,6 +1246,7 @@ namespace goFriend.Services
             catch (Exception e)
             {
                 Logger.TrackError(e);
+                throw;
             }
             finally
             {

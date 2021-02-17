@@ -4,7 +4,6 @@ using goFriend.iOS;
 using System;
 using UIKit;
 using Xamarin.Forms;
-using Xamarin.Essentials;
 using goFriend.Models;
 using goFriend.Views;
 

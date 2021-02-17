@@ -117,15 +117,22 @@ namespace goFriend.Views
         private void CmdOk_OnClicked(object sender, EventArgs e)
         {
             if (ChipContainer.Children.Count <= 1) return;
-            var chatVm = (ChatViewModel) BindingContext;
-            var newChat = new Chat
+            try
             {
-                Id = chatVm?.ChatListItem?.Chat?.Id ?? 0,
-                Members = string.Join(",", ChipContainer.Children.Select(x => $"u{((Chip)x).Tag}")),
-                Name = ChipContainer.Children.Count == 2 ? string.Empty : TxtName.Text,
-            };
-            App.FriendStore.SendCreateChat(newChat);
-            Navigation.PopAsync();
+                var chatVm = (ChatViewModel)BindingContext;
+                var newChat = new Chat
+                {
+                    Id = chatVm?.ChatListItem?.Chat?.Id ?? 0,
+                    Members = string.Join(",", ChipContainer.Children.Select(x => $"u{((Chip)x).Tag}")),
+                    Name = ChipContainer.Children.Count == 2 ? string.Empty : TxtName.Text,
+                };
+                App.FriendStore.SendCreateChat(newChat);
+                Navigation.PopAsync();
+            }
+            catch (Exception)
+            {
+                App.DisplayMsgError(res.MsgErrConnection);
+            }
         }
 
         private void CmdClear_OnClicked(object sender, EventArgs e)

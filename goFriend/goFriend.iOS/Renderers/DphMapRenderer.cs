@@ -141,8 +141,9 @@ namespace goFriend.iOS.Renderers
             marker.Title = pin.Label;
             marker.Snippet = pin.Address;
             //marker.Icon = UIImage.FromFile($"pin_{dphPin?.UserRight}.png");
-            marker.Icon = dphPin?.UserRight == UserType.Admin ? ExtensionIOS.ICON_PIN_ADMIN :
-                dphPin?.UserRight == UserType.Pending ? ExtensionIOS.ICON_PIN_PENDING : ExtensionIOS.ICON_PIN_NORMAL;
+            marker.Icon = dphPin?.UserRight == UserType.Admin ? (dphPin?.User.IsFemale == true ? ExtensionIOS.ICON_PIN_ADMIN_FEMALE : ExtensionIOS.ICON_PIN_ADMIN) :
+                dphPin?.UserRight == UserType.Pending ? (dphPin?.User.IsFemale == true ? ExtensionIOS.ICON_PIN_PENDING_FEMALE : ExtensionIOS.ICON_PIN_PENDING)
+                : (dphPin?.User.IsFemale == true ? ExtensionIOS.ICON_PIN_NORMAL_FEMALE : ExtensionIOS.ICON_PIN_NORMAL);
             marker.Draggable = pin.IsDraggable;
         }
     }
@@ -269,8 +270,9 @@ namespace goFriend.iOS.Renderers
             //marker.InfoWindowAnchor = new CGPoint(marker.InfoWindowAnchor.X, 0.2);
             marker.InfoWindowAnchor = new CGPoint(marker.InfoWindowAnchor.X, 0);
             //marker.Icon = UIImage.FromFile($"pin_{dphPin?.UserRight}.png");
-            marker.Icon = dphPin?.UserRight == UserType.Admin ? ExtensionIOS.ICON_PIN_ADMIN :
-                dphPin?.UserRight == UserType.Pending ? ExtensionIOS.ICON_PIN_PENDING : ExtensionIOS.ICON_PIN_NORMAL;
+            marker.Icon = dphPin?.UserRight == UserType.Admin ? (dphPin?.User.IsFemale == true ? ExtensionIOS.ICON_PIN_ADMIN_FEMALE : ExtensionIOS.ICON_PIN_ADMIN) :
+                dphPin?.UserRight == UserType.Pending ? (dphPin?.User.IsFemale == true ? ExtensionIOS.ICON_PIN_PENDING_FEMALE : ExtensionIOS.ICON_PIN_PENDING)
+                : (dphPin?.User.IsFemale == true ? ExtensionIOS.ICON_PIN_NORMAL_FEMALE : ExtensionIOS.ICON_PIN_NORMAL);
             marker.Draggable = pin.IsDraggable;
         }
     }

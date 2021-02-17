@@ -66,12 +66,7 @@ namespace goFriend.Services
         public async Task<TResult> SendMessageAsync<TResult>(string msgType, object msgContent = null)
         {
             TResult result = default;
-            if (!App.IsUserLoggedIn || App.User == null
-                || (hubConnection != null && hubConnection.State != HubConnectionState.Connected))
-            {
-                //Logger.Debug("User is not logged in or internet is disconnected.");
-                return result;
-            }
+            await ConnectAsync();
             var stopWatch = Stopwatch.StartNew();
             try
             {
@@ -134,30 +129,28 @@ namespace goFriend.Services
 
         public async Task ConnectAsync()
         {
+            if (!App.IsUserLoggedIn || App.User == null)
+            {
+                throw new Exception("User is not logged in.");
+            }
+            if (hubConnection != null)
+            {
+                if (hubConnection.State == HubConnectionState.Connected)
+                {
+                    Logger.Debug("Hub connected. Do nothing.");
+                    return;
+                }
+                else if (hubConnection.State == HubConnectionState.Connecting || hubConnection.State == HubConnectionState.Reconnecting)
+                {
+                    Logger.Debug($"hubConnection.State = {hubConnection.State}");
+                    throw new Exception("Connecting to the Hub. Wait for automatic connection to be completed");
+                }
+            }
             var stopWatch = Stopwatch.StartNew();
             try
             {
                 Logger.Debug($"ConnectAsync.BEGIN");
 
-                if (!App.IsUserLoggedIn || App.User == null)
-                {
-                    Logger.Debug("User is not logged in.");
-                    return;
-                }
-                if (hubConnection != null)
-                {
-                    Logger.Debug($"hubConnection.State = {hubConnection.State}");
-                    if (hubConnection.State == HubConnectionState.Connected)
-                    {
-                        Logger.Debug("Hub connected. Do nothing.");
-                        return;
-                    }
-                    else if (hubConnection.State == HubConnectionState.Connecting || hubConnection.State == HubConnectionState.Reconnecting)
-                    {
-                        Logger.Debug("Connecting to the Hub. Wait for automatic connection to be completed");
-                        return;
-                    }
-                }
                 IsBusy = true;
                 var request = BuildRequest("negotiate", HttpMethod.Get);
 
@@ -194,6 +187,7 @@ namespace goFriend.Services
                 IsBusy = false;
                 Logger.Error(e.ToString());
                 Logger.TrackError(e);
+                throw;
             }
             finally
             {
@@ -215,7 +209,11 @@ namespace goFriend.Services
             Logger.Debug($"OnClosed(exception={arg})");
             Logger.Debug("Waiting for 5 seconds before rejoining the chat");
             await Task.Delay(TimeSpan.FromSeconds(5));
-            await ConnectAsync();
+            try
+            {
+                await ConnectAsync();
+            }
+            catch { }
         }
 
         private async Task OnChatReceiveCreateChat(Chat chat)

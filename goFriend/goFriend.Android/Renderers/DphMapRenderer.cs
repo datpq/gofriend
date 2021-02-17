@@ -111,8 +111,9 @@ namespace goFriend.Droid.Renderers
             markerOptions.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
             markerOptions.SetTitle(pin.Label);
             markerOptions.SetSnippet(pin.Address);
-            var pinIcon = dphPin?.UserRight == UserType.Admin ? ExtensionAndroid.ICON_PIN_ADMIN :
-                dphPin?.UserRight == UserType.Pending ? ExtensionAndroid.ICON_PIN_PENDING : ExtensionAndroid.ICON_PIN_NORMAL;
+            var pinIcon = dphPin?.UserRight == UserType.Admin ? (dphPin?.User.IsFemale == true ? ExtensionAndroid.ICON_PIN_ADMIN_FEMALE : ExtensionAndroid.ICON_PIN_ADMIN) :
+                dphPin?.UserRight == UserType.Pending ? (dphPin?.User.IsFemale == true ? ExtensionAndroid.ICON_PIN_PENDING_FEMALE : ExtensionAndroid.ICON_PIN_PENDING)
+                : (dphPin?.User.IsFemale == true ? ExtensionAndroid.ICON_PIN_NORMAL_FEMALE : ExtensionAndroid.ICON_PIN_NORMAL);
             markerOptions.SetIcon(BitmapDescriptorFactory.FromBitmap(pinIcon));
             //markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(
             //        dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :
@@ -253,8 +254,9 @@ namespace goFriend.Droid.Renderers
         {
             var dphPin = pin.Tag as DphPin;
             clusteredMarker.InfoWindowAnchorY = 0;
-            var pinIcon = dphPin?.UserRight == UserType.Admin ? ExtensionAndroid.ICON_PIN_ADMIN :
-                dphPin?.UserRight == UserType.Pending ? ExtensionAndroid.ICON_PIN_PENDING : ExtensionAndroid.ICON_PIN_NORMAL;
+            var pinIcon = dphPin?.UserRight == UserType.Admin ? (dphPin?.User.IsFemale == true ? ExtensionAndroid.ICON_PIN_ADMIN_FEMALE : ExtensionAndroid.ICON_PIN_ADMIN) :
+                dphPin?.UserRight == UserType.Pending ? (dphPin?.User.IsFemale == true ? ExtensionAndroid.ICON_PIN_PENDING_FEMALE : ExtensionAndroid.ICON_PIN_PENDING)
+                : (dphPin?.User.IsFemale == true ? ExtensionAndroid.ICON_PIN_NORMAL_FEMALE : ExtensionAndroid.ICON_PIN_NORMAL);
             clusteredMarker.Icon = BitmapDescriptorFactory.FromBitmap(pinIcon);
             //clusteredMarker.Icon = BitmapDescriptorFactory.FromResource(
             //    dphPin?.UserRight == UserType.Admin ? Resource.Drawable.pin_Admin :

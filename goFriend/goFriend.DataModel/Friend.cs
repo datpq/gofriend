@@ -108,6 +108,10 @@ namespace goFriend.DataModel
             return result;
         }
 
+        [JsonIgnore]
+        [NotMapped]
+        public bool IsFemale => Gender == "female";
+
         public void CopyToIfNull(Friend friend)
         {
             var isChanged = false;

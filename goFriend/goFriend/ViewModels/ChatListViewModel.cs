@@ -109,18 +109,21 @@ namespace goFriend.ViewModels
                     arrLastMsgIdxRetrievedByChatId.Add(chat.Id, 0);
                     Settings.LastMsgIdxRetrievedByChatId = arrLastMsgIdxRetrievedByChatId;
 
-                    App.SapChatNewChat.Play();
-                    Vibration.Vibrate();
-                    App.NotificationService.SendNotification(
-                        new Models.ServiceNotification
-                        {
-                            ContentTitle = chat.Owner?.Name,
-                            ContentText = $"{res.ChatNew}: {await chat.GetMemberNames()}",
-                            SummaryText = null,
-                            LargeIconUrl = chat.Owner?.GetImageUrl(),
-                            ExtraId = chat.Id,
-                            NotificationType = Models.NotificationType.ChatReceiveCreateChat,
-                        });
+                    if (chat.OwnerId != App.User.Id) // if chat is created by another person so send notification.
+                    {
+                        App.SapChatNewChat.Play();
+                        Vibration.Vibrate();
+                        App.NotificationService.SendNotification(
+                            new Models.ServiceNotification
+                            {
+                                ContentTitle = chat.Owner?.Name,
+                                ContentText = $"{res.ChatNew}: {await chat.GetMemberNames()}",
+                                SummaryText = null,
+                                LargeIconUrl = chat.Owner?.GetImageUrl(),
+                                ExtraId = chat.Id,
+                                NotificationType = Models.NotificationType.ChatReceiveCreateChat,
+                            });
+                    }
                 }
 
                 //if user is added to an existing chat --> retrieve the history of the chat

@@ -6,6 +6,8 @@ using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
 using goFriend.Services;
+using Nito.AsyncEx;
+using Nito.AsyncEx.Synchronous;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,9 +30,9 @@ namespace goFriend.Droid
 
         //Fused Location Provider
         private bool _isGooglePlayServicesInstalled;
-        private FusedLocationProviderClient _fusedLocationProviderClient;
-        private LocationCallback _locationCallback;
-        private LocationRequest _locationRequest;
+        private static FusedLocationProviderClient _fusedLocationProviderClient;
+        private static LocationCallback _locationCallback;
+        private static LocationRequest _locationRequest;
 
         public override void OnCreate()
         {
@@ -79,7 +81,14 @@ namespace goFriend.Droid
             }
             else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
             {
-                App.LocationService.Stop();
+                //run async task in sync method
+                AsyncContext.Run(async () => await Task.Run(() => App.LocationService.Stop()));
+                //Task.Run(() => App.LocationService.Stop()).GetAwaiter().GetResult();
+                //Task.Run(async () => await Task.Run(() =>
+                //{
+                //    App.LocationService.Stop();
+                //})).WaitAndUnwrapException();
+                //App.LocationService.Stop();
             }
             else if (intent.Action.Equals(Constants.ACTION_STARTSTOP_TRACING))
             {
@@ -99,8 +108,22 @@ namespace goFriend.Droid
                         x.Value.IsRunningSaved = false;
                     });
                 }
-                App.LocationService.Pause();
-                App.LocationService.RefreshStatus();
+                //Task.Run(() =>
+                //{
+                //    App.LocationService.Pause();
+                //    App.LocationService.RefreshStatus();
+                //}).GetAwaiter().GetResult();
+                //run async task in sync method
+                AsyncContext.Run(async () =>
+                {
+                    await Task.Run(() => App.LocationService.Pause());
+                    await Task.Run(() => App.LocationService.RefreshStatus());
+                });
+                //Task.Run(async () => await Task.Run(() =>
+                //{
+                //    App.LocationService.Pause();
+                //    App.LocationService.RefreshStatus();
+                //})).WaitAndUnwrapException();
             }
 
             _serviceUniqueInstance = this;

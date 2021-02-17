@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Xamarin.Forms;
 using goFriend.Services;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
@@ -15,7 +14,6 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Plugin.SimpleAudioPlayer;
 using Device = Xamarin.Forms.Device;
-using goFriend.Models;
 using Point = NetTopologySuite.Geometries.Point;
 using Xamarin.Forms.Internals;
 
@@ -271,7 +269,11 @@ namespace goFriend
                             MyGroups = newMyGroups;
                             await ChatListVm.RefreshCommandAsyncExec();
 
-                            await FriendStore.SignalR.ConnectAsync();
+                            try
+                            {
+                                await FriendStore.SignalR.ConnectAsync();
+                            }
+                            catch { }
                             //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
                         }
                         //new Active group aproved
