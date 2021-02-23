@@ -10,12 +10,14 @@ using goFriend.ViewModels;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
+using NLog;
+using System.Diagnostics;
 
 namespace goFriend
 {
     public static class Extension
     {
-        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        private static readonly Services.ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
         public static string GetSpentTime(this DateTime dateTime)
         {
@@ -270,5 +272,126 @@ namespace goFriend
             return ImageSource.FromResource($"goFriend.Images.{fileName}", typeof(ImageResourceExtension).GetTypeInfo().Assembly);
         }
         */
+
+        public static bool QuickZip(string directoryToZip, string destinationZipFullPath)
+        {
+            try
+            {
+                // Delete existing zip file if exists
+                if (File.Exists(destinationZipFullPath))
+                    File.Delete(destinationZipFullPath);
+                if (!Directory.Exists(directoryToZip))
+                    return false;
+                else
+                {
+                    System.IO.Compression.ZipFile.CreateFromDirectory(directoryToZip, destinationZipFullPath, System.IO.Compression.CompressionLevel.Optimal, true);
+                    return File.Exists(destinationZipFullPath);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Exception: {e.Message}");
+                Logger.TrackError(e);
+                return false;
+            }
+        }
+
+        public static string CreateZipLogFile()
+        {
+            string zipFileName = null;
+            if (NLog.LogManager.IsLoggingEnabled())
+            {
+                string folder;
+                if (Device.RuntimePlatform == Device.iOS)
+                    folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "..", "Library");
+                else if (Device.RuntimePlatform == Device.Android)
+                    folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                else
+                    throw new Exception("Could not show log: Platform undefined.");
+                //Delete old zipfiles (housekeeping)
+                try
+                {
+                    foreach (var fileName in Directory.GetFiles(folder, "*.zip"))
+                    {
+                        File.Delete(fileName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.TrackError(ex);
+                    Console.WriteLine($"Error deleting old zip files: {ex.Message}");
+                }
+                var logFolder = Path.Combine(folder, "logs");
+                if (Directory.Exists(logFolder))
+                {
+                    zipFileName = $"{folder}/{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.zip";
+                    var filesCount = Directory.GetFiles(logFolder, "*.csv").Length;
+                    if (filesCount > 0)
+                    {
+                        if (!QuickZip(logFolder, zipFileName))
+                            zipFileName = null;
+                    }
+                    else
+                        zipFileName = null;
+                }
+            }
+            return zipFileName;
+        }
+
+        public static void SendLogFile()
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug("SendLogFile.BEGIN");
+
+                var logFile = CreateZipLogFile();
+                Logger.Debug($"logFile={logFile}");
+                if (!string.IsNullOrEmpty(logFile))
+                {
+                    App.StorageService.Upload(StorageContainer.logs, logFile, $"{App.User?.Id}_{Path.GetFileName(logFile)}");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.TrackError(e);
+            }
+            finally
+            {
+                Logger.Debug($"SendLogFile.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public static void SetNlogLogLevel(LogLevel level)
+        {
+            // Uncomment these to enable NLog logging. NLog exceptions are swallowed by default.
+            ////NLog.Common.InternalLogger.LogFile = @"C:\Temp\nlog.debug.log";
+            ////NLog.Common.InternalLogger.LogLevel = LogLevel.Debug;
+
+            if (level == LogLevel.Off)
+            {
+                LogManager.DisableLogging();
+            }
+            else
+            {
+                if (!LogManager.IsLoggingEnabled())
+                {
+                    LogManager.EnableLogging();
+                }
+
+                foreach (var rule in LogManager.Configuration.LoggingRules)
+                {
+                    // Iterate over all levels up to and including the target, (re)enabling them.
+                    for (int i = level.Ordinal; i <= 5; i++)
+                    {
+                        rule.EnableLoggingForLevel(LogLevel.FromOrdinal(i));
+                    }
+                }
+            }
+
+            if (Constants.FUNC_SENDLOGFILE) {
+                LogManager.ReconfigExistingLoggers();
+            }
+        }
     }
 }

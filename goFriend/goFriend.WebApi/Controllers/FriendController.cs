@@ -1833,7 +1833,7 @@ namespace goFriend.WebApi.Controllers
 
                 var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
                 var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
-                var cacheKey = $"{cachePrefix}.";
+                var cacheKey = $"{cachePrefix}.{friendId}.";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useCache)
@@ -1846,7 +1846,15 @@ namespace goFriend.WebApi.Controllers
                     }
                 }
 
-                result = _dataRepo.GetMany<Configuration>(x => x.Enabled).ToList();
+                var res = _dataRepo.GetMany<Configuration>(x => x.Enabled).ToList().Where(
+                    x => Regex.Match($"{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}",
+                    x.Rule, RegexOptions.IgnoreCase).Success).ToList();
+
+                //group by key and take only the first elements of each group
+                result = (from x in res
+                         group x by x.Key
+                         into groups
+                         select groups.OrderBy(x => x.Order).First()).ToList();
 
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 

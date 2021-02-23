@@ -118,7 +118,6 @@ namespace goFriend.Services
             }
             catch (Exception e)
             {
-                Logger.Error(e.ToString());
                 Logger.TrackError(e);
             }
             finally
@@ -185,7 +184,6 @@ namespace goFriend.Services
             {
                 IsConnected = false;
                 IsBusy = false;
-                Logger.Error(e.ToString());
                 Logger.TrackError(e);
                 throw;
             }
@@ -228,7 +226,6 @@ namespace goFriend.Services
             }
             catch (Exception e) //Unknown error
             {
-                Logger.Error(e.ToString());
                 Logger.TrackError(e);
             }
             finally
@@ -269,7 +266,6 @@ namespace goFriend.Services
             }
             catch (Exception e) //Unknown error
             {
-                Logger.Error(e.ToString());
                 Logger.TrackError(e);
             }
             finally
@@ -300,7 +296,6 @@ namespace goFriend.Services
             }
             catch (Exception e) //Unknown error
             {
-                Logger.Error(e.ToString());
                 Logger.TrackError(e);
             }
             finally

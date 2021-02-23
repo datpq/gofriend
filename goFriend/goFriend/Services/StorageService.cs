@@ -10,9 +10,8 @@ namespace goFriend.Services
     {
         private readonly ILogger _logger;
         private readonly IMediaService _mediaService;
-        private const string ChatStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=gofriendstorage;AccountKey=8aUIkXRCsKD/uy3rA5aa1kzt4rtjCz21UNV1X7vbjn83GKeAj2HQb92lUqu7fvCkIxRlcjCyT/lGihUmctb44w==;EndpointSuffix=core.windows.net";
-        private const string ChatStorageKey = "8aUIkXRCsKD/uy3rA5aa1kzt4rtjCz21UNV1X7vbjn83GKeAj2HQb92lUqu7fvCkIxRlcjCyT/lGihUmctb44w==";
-        private const string ChatStorageContainer = "chat";
+        private const string StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=gofriendstorage;AccountKey=8aUIkXRCsKD/uy3rA5aa1kzt4rtjCz21UNV1X7vbjn83GKeAj2HQb92lUqu7fvCkIxRlcjCyT/lGihUmctb44w==;EndpointSuffix=core.windows.net";
+        private const string StorageKey = "8aUIkXRCsKD/uy3rA5aa1kzt4rtjCz21UNV1X7vbjn83GKeAj2HQb92lUqu7fvCkIxRlcjCyT/lGihUmctb44w==";
 
         public StorageService(ILogger logger, IMediaService mediaService = null)
         {
@@ -20,15 +19,15 @@ namespace goFriend.Services
             _mediaService = mediaService;
         }
 
-        public bool Upload(string localFilePath, string remoteFilePath, float width = 0, float height = 0)
+        public bool Upload(StorageContainer container, string localFilePath, string remoteFilePath, float width = 0, float height = 0)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                _logger.Debug($"Upload.BEGIN(localFilePath={localFilePath}, remoteFilePath={remoteFilePath}, width={width}, height={height})");
-                var chatContainerClient = new BlobContainerClient(ChatStorageConnectionString, ChatStorageContainer);
-                //chatContainerClient.Create();
-                var blobClient = chatContainerClient.GetBlobClient(remoteFilePath);
+                _logger.Debug($"Upload.BEGIN(container={container}, localFilePath={localFilePath}, remoteFilePath={remoteFilePath}, width={width}, height={height})");
+                var containerClient = new BlobContainerClient(StorageConnectionString, container.ToString());
+                //containerClient.Create();
+                var blobClient = containerClient.GetBlobClient(remoteFilePath);
                 var localFileToUpload = localFilePath;
                 if (width != 0 && height != 0)
                 {
@@ -57,16 +56,16 @@ namespace goFriend.Services
             }
         }
 
-        public bool Rename(string oldFilePath, string newFilePath)
+        public bool Rename(StorageContainer container, string oldFilePath, string newFilePath)
         {
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                _logger.Debug($"Rename.BEGIN(oldFilePath={oldFilePath}, newFilePath={newFilePath})");
-                var chatContainerClient = new BlobContainerClient(ChatStorageConnectionString, ChatStorageContainer);
+                _logger.Debug($"Rename.BEGIN(container={container}, oldFilePath={oldFilePath}, newFilePath={newFilePath})");
+                var containerClient = new BlobContainerClient(StorageConnectionString, container.ToString());
                 //chatContainerClient.Create();
-                var blobOldFile = chatContainerClient.GetBlobClient(oldFilePath);
-                var blobNewFile = chatContainerClient.GetBlobClient(newFilePath);
+                var blobOldFile = containerClient.GetBlobClient(oldFilePath);
+                var blobNewFile = containerClient.GetBlobClient(newFilePath);
                 blobNewFile.StartCopyFromUri(blobOldFile.Uri);
                 blobOldFile.DeleteIfExists();
                 return true;

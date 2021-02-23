@@ -227,7 +227,7 @@ namespace goFriend.Droid
                 _isStarted = true;
 
                 //Fused Location Provider RequestLocationUpdates
-                if (Droid.LocationService.IsTracing)
+                if (Droid.LocationService.IsTracing && _fusedLocationProviderClient == null)
                 {
                     _isGooglePlayServicesInstalled = IsGooglePlayServicesInstalled();
                     if (_isGooglePlayServicesInstalled)
@@ -246,7 +246,7 @@ namespace goFriend.Droid
                         App.DisplayMsgInfo(res.MsgNoGooglePlayServiceWarning);
                     }
                 }
-                else
+                else if (!Droid.LocationService.IsTracing)
                 {
                     await StopRequestLocationUpdates();
                 }

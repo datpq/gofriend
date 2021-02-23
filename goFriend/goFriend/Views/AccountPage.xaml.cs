@@ -113,6 +113,11 @@ namespace goFriend.Views
                 RefreshMenu();
                 Logger.Debug("OnAppearing.END");
             }
+
+            if (Constants.FUNC_SENDLOGFILE)
+            {
+                Extension.SendLogFile();
+            }
         }
 
         private void ClearMenus()

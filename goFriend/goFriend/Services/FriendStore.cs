@@ -23,7 +23,7 @@ namespace goFriend.Services
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
-        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.BackendUrl}/") };
+        private static HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.BackendUrl}/") };
         private readonly IMemoryCache _memoryCache;
         public SignalRService SignalR { get; set;}
 
@@ -45,6 +45,12 @@ namespace goFriend.Services
             Logger.Debug($"FriendStore.END");
 
             SignalR = new SignalRService();
+        }
+
+        public static void UpdateBackendUrl()
+        {
+            httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.BackendUrl}/") };
+            Logger.Info($"BackendUrl={Constants.BackendUrl}");
         }
 
         private static HttpClient GetSecuredHttpClient()

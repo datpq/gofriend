@@ -65,7 +65,9 @@
     <CodesignResourceRules />
     <MtouchLink>SdkOnly</MtouchLink>
     <BuildIpa>false</BuildIpa>
-    <MtouchExtraArgs>--interpreter</MtouchExtraArgs>
+    <MtouchExtraArgs>
+    </MtouchExtraArgs>
+    <MtouchInterpreter>-all</MtouchInterpreter>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -84,7 +86,9 @@
     <CodesignResourceRules />
     <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;__IOS__13;</DefineConstants>
     <MtouchLink>SdkOnly</MtouchLink>
-    <MtouchExtraArgs>--interpreter</MtouchExtraArgs>
+    <MtouchExtraArgs>
+    </MtouchExtraArgs>
+    <MtouchInterpreter>-all</MtouchInterpreter>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <AppExtensionDebugBundleId />

@@ -75,6 +75,7 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 		To confirm that you are in safe mode (safe mode should be written in red at the top right corner of the login screen).
 		Login, plug in your iphone and the problem is solved
 	- Image, CachedImage is not working with ImageSource is Url from internet:
+		- Removal of --interpreter from the 'Additional mtouch arguments:' and check the 'Enable the Mono interpreter' in ios project properties
 		- if that happens to only real iPhone --> test with simulator --> if it works nothing to do
 		- other solution is to: use ImageSourceConverter to download image first, and set imagesource from stream
 			<Image Source="{Binding ImageUrl, Converter={StaticResource ImageSourceConverter}}" />
@@ -293,7 +294,15 @@ at least in my case this was the issue
             {
                 builder.AddUserSecrets<Startup>();
             }
-
+- compile in Release:
+	- in assembly: 'System.Diagnostics.DiagnosticSource.dll' ---> System.IO.FileNotFoundException: Could not load assembly 'System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. Perhaps it doesn't exist in the Mono for Android profile?
+		remove the following configuration in goFriend.Android.csproj Release|AnyCPU and restart Visual Studio
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidSigningKeyStore>C:\Users\u724886\perso\GoFriend9194.keystore</AndroidSigningKeyStore>
+		<AndroidSigningStorePass>goFriend9194</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>goFriend9194</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>goFriend9194</AndroidSigningKeyPass>
+	
 - Nlog configuration for .NET Core
 	- https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-2
 	- if action:${aspnet-mvc-action}|ip:${aspnet-request-ip} is not shown --> CreateHostBuilder(args).UseNLog().Build().Run();

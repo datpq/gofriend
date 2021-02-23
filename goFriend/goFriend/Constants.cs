@@ -49,13 +49,11 @@ namespace goFriend
         public const int ChatStartIdxToHideScrollUp = 10;
         public const int ChatPingFrequence = 5; //in minutes
         public const int AccountOnAppearingTimeout = 5; //in minutes
+        public static bool FUNC_SENDLOGFILE = false;
 
         public static string ChatFuncUrl { get; set; } = "https://gofriendfuncapp.azurewebsites.net";
 
-        public const string AzureBackendUrl = "https://gofriend.azurewebsites.net";
-        public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
-        public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
-        public static string BackendUrl = AzureBackendUrl;
+        public static string BackendUrl = "https://gofriend.azurewebsites.net";
         public static string HomePageUrl = "http://gofriend.azurewebsites.net";
 
         public const string CacheTimeoutPrefix = "CacheTimeout.";
@@ -185,6 +183,17 @@ namespace goFriend
                         break;
                     case "HomePageUrl":
                         HomePageUrl = x.Value;
+                        break;
+                    case "FUNC_SENDLOGFILE":
+                        FUNC_SENDLOGFILE = bool.Parse(x.Value);
+                        if (FUNC_SENDLOGFILE)
+                        {
+                            Extension.SetNlogLogLevel(NLog.LogLevel.Debug);
+                        }
+                        break;
+                    case "BackendUrl":
+                        BackendUrl = x.Value;
+                        FriendStore.UpdateBackendUrl();
                         break;
                     default:
                         if (x.Key.StartsWith(CacheTimeoutPrefix))

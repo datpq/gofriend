@@ -103,8 +103,10 @@ namespace goFriend.Views
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
             };
+            //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
+            _pin.Pin.Tag = _pin;
 
-            PostInitialize();
+            SwitchShowLocation_OnToggled(null, null);
         }
 
         public async Task Initialize(Group group, GroupFriend groupFriend, int fixedCatsCount)
@@ -203,15 +205,9 @@ namespace goFriend.Views
                 IsDraggable = _viewModel.Editable,
                 Type = PinType.Place
             };
-
-            PostInitialize();
-        }
-
-        private void PostInitialize()
-        {
             //ImageService.Instance.LoadUrl(pin.IconUrl).Preload();
             _pin.Pin.Tag = _pin;
-            Map.Pins.Add(_pin.Pin);
+
             SwitchShowLocation_OnToggled(null, null);
         }
 
@@ -353,6 +349,8 @@ namespace goFriend.Views
                 _isMoveToRegionDone = true;
                 Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
                 {
+                    Map.Pins.Clear();
+                    Map.Pins.Add(_pin.Pin);
                     Map.MoveToRegion(MapSpan.FromCenterAndRadius(
                         new Position(_pin.Position.Latitude, _pin.Position.Longitude), Distance.FromKilometers(MapExtension.DefaultDistance)));
                     return false;
