@@ -66,6 +66,8 @@ namespace goFriend.iOS
                     Logger.Debug("Notification Scheduled: {0}", request);
                 }
             });
+
+            Logger.Debug($"SendNotification.END");
         }
     }
 }

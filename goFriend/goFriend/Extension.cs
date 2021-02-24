@@ -340,6 +340,7 @@ namespace goFriend
 
         public static void SendLogFile()
         {
+            if (!Constants.FUNC_SENDLOGFILE) return;
             var stopWatch = Stopwatch.StartNew();
             try
             {

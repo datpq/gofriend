@@ -18,6 +18,8 @@ namespace goFriend.iOS
 
         protected CLLocationManager LocationManager { get; set; }
         private bool _isRunning = false;
+        private double _lastLatitude;
+        private double _lastLongitude;
 
         public LocationService()
         {
@@ -79,7 +81,12 @@ namespace goFriend.iOS
         private async void LocationManager_LocationsUpdated(object sender, CLLocationsUpdatedEventArgs e)
         {
             var location = e.Locations[e.Locations.Length - 1];
-            Logger.Debug($"LocationManager_LocationsUpdated Latitude: {location.Coordinate.Latitude}, Longitude: {location.Coordinate.Longitude}");
+            if (_lastLatitude != location.Coordinate.Latitude || _lastLongitude != location.Coordinate.Longitude)
+            {
+                Logger.Debug($"LocationManager_LocationsUpdated Latitude: {location.Coordinate.Latitude}, Longitude: {location.Coordinate.Longitude}");
+                _lastLatitude = location.Coordinate.Latitude;
+                _lastLongitude = location.Coordinate.Longitude;
+            }
             if (_isRunning)
             {
                 //LocationUpdated(this, new LocationUpdatedEventArgs(e.Locations[e.Locations.Length - 1]));

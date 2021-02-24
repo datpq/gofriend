@@ -175,6 +175,8 @@ namespace goFriend.Views
             Map.Pins.Clear();
             _mapNeedRecentering = true;
             RecenterMap();
+
+            Extension.SendLogFile();
         }
 
         private async void CmdStop_Clicked(object sender, EventArgs e)
@@ -205,6 +207,8 @@ namespace goFriend.Views
             vm.DisabledExpiredTime = DateTime.Now.AddSeconds(Constants.MAPONLINE_COMMAND_DISABLED_TIMEOUT);
             _timer.StartingTime = vm.DisabledExpiredTime;
             _timer.Start();
+
+            Extension.SendLogFile();
         }
 
         private async void PickerRadius_SelectedIndexChanged(object sender, EventArgs e)
@@ -242,9 +246,17 @@ namespace goFriend.Views
 
         public static string GetSharingInfo()
         {
-            return MapOnlineInfo.Where(x => x.Value.IsRunning)
-                .Select(x => $"{x.Key}{DataModel.Extension.SepSub}{x.Value.Radius}")
-                .Aggregate((i, j) => $"{i}{DataModel.Extension.SepMain}{j}");
+            var arrSharingInfo = MapOnlineInfo.Where(x => x.Value.IsRunning)
+                .Select(x => $"{x.Key}{DataModel.Extension.SepSub}{x.Value.Radius}");
+            if (arrSharingInfo.Any())
+            {
+                return arrSharingInfo.Aggregate((i, j) => $"{i}{DataModel.Extension.SepMain}{j}");
+            }
+            else
+            {
+                return null;
+            }
+             
         }
 
         public void Reset()

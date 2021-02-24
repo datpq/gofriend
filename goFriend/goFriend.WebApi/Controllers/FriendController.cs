@@ -937,7 +937,7 @@ namespace goFriend.WebApi.Controllers
                 #endregion
 
                 result = _dataRepo.Get<Setting, int>(
-                    x => Regex.Match($"{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}",
+                    x => Regex.Match($"|{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}|FriendId={friend.Id}|",
                         x.Rule, RegexOptions.IgnoreCase).Success, x => x.Order, true);
 
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
@@ -1847,7 +1847,7 @@ namespace goFriend.WebApi.Controllers
                 }
 
                 var res = _dataRepo.GetMany<Configuration>(x => x.Enabled).ToList().Where(
-                    x => Regex.Match($"{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}",
+                    x => Regex.Match($"|{friend.DeviceInfo}|{friend.Info}|Email={friend.Email}|FullName={friend.Name}|FriendId={friend.Id}|",
                     x.Rule, RegexOptions.IgnoreCase).Success).ToList();
 
                 //group by key and take only the first elements of each group

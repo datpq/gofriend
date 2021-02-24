@@ -1263,6 +1263,11 @@ namespace goFriend.Services
         public async Task SendLocation(double latitude, double longitude)
         {
             var sharingInfo = MapOnlinePage.GetSharingInfo();
+            if (string.IsNullOrEmpty(sharingInfo))
+            {
+                Logger.Warn("SharingInfo is null. Do nothing.");
+                return;
+            }
             Logger.Debug($"SendLocation.BEGIN(latitude={latitude}, longitude={longitude}, sharingInfo={sharingInfo})");
             try
             {

@@ -87,6 +87,8 @@ namespace goFriend.Views
 
         protected override async void OnAppearing()
         {
+            Extension.SendLogFile();
+
             if (_isInitializing)
             {
                 //continue from Constructor
@@ -112,11 +114,6 @@ namespace goFriend.Views
                 UserDialogs.Instance.HideLoading();
                 RefreshMenu();
                 Logger.Debug("OnAppearing.END");
-            }
-
-            if (Constants.FUNC_SENDLOGFILE)
-            {
-                Extension.SendLogFile();
             }
         }
 
