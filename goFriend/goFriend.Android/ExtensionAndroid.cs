@@ -1,23 +1,33 @@
 ﻿using Android.App;
 using Android.Graphics;
+using goFriend.Services;
+using System;
 using System.Net;
 
 namespace goFriend.Droid
 {
     public static class ExtensionAndroid
     {
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+
         public static Bitmap GetImageBitmapFromUrl(string url)
         {
             Bitmap imageBitmap = null;
-
-            using (var webClient = new WebClient())
+            try
             {
+                using var webClient = new WebClient();
                 var imageBytes = webClient.DownloadData(url);
                 if (imageBytes != null && imageBytes.Length > 0)
                 {
                     imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
                 }
             }
+            catch (Exception e)
+            {
+                Logger.Error($"Error while getting url: {url}");
+                Logger.Error(e.ToString());
+            }
+
             return imageBitmap;
         }
 
@@ -38,6 +48,10 @@ namespace goFriend.Droid
             canvas.DrawBitmap(bitmap, rect, rect, paint);
             return output;
         }
+
+        public const string CHANNEL_ID = "GoFriendSvc";
+        public const string CHANNEL_NAME = "Hanoi914 Notification channel";
+        public const string CHANNEL_DESC = "Hanoi9194 Notification is the channel to receive notifications when a friend appears online";
 
         public const string CHARCODE_PIN = "\uF1AE";
         public const string CHARCODE_PIN_FEMALE = "\uF182";

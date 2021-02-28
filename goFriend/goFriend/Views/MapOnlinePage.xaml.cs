@@ -71,7 +71,7 @@ namespace goFriend.Views
                         ContentTitle = AppInfo.Name,
                         ContentText = null,
                         SummaryText = null,
-                        LargeIconUrl = $"{Constants.HomePageUrl}/logos/g1.png",
+                        LargeIconUrl = $"{Constants.HomePageUrl}{Constants.NOTIFICATION_ICON_PATH}",
                         NotificationType = Models.NotificationType.AppearOnMap,
                         InboxLines = inboxLines
                     };

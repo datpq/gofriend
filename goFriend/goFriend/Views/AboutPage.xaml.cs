@@ -10,7 +10,7 @@ namespace goFriend.Views
             InitializeComponent();
 
             SpanTitle.Text = AppInfo.Name;
-            SpanVersion.Text = AppInfo.VersionString;
+            SpanVersion.Text = $"{AppInfo.VersionString}.{AppInfo.BuildString}";
         }
     }
 }

@@ -48,14 +48,20 @@ namespace goFriend.Droid
                     if (serviceNotification.LargeIconUrl.Contains("//"))
                     {
                         var largeIconFromUrl = ExtensionAndroid.GetImageBitmapFromUrl(serviceNotification.LargeIconUrl);
-                        largeIcon = largeIconFromUrl.CreateRoundedBitmap(/*10*/);
+                        if (largeIcon != null)
+                        {
+                            largeIcon = largeIconFromUrl.CreateRoundedBitmap(/*10*/);
+                        }
                     } else
                     {
                         largeIcon = ExtensionAndroid.CreateTextBitmap(serviceNotification.LargeIconUrl, MainActivity.COLOR_PRIMARY, fontSize:32);
                         //largeIcon = largeIcon.CreateRoundedBitmap(/*10*/);
                     }
                     Logger.Debug($"CreateRoundedBitmap done.");
-                    _memoryCache.Set(cacheKey, largeIcon, DateTimeOffset.Now.AddDays(1));
+                    if (largeIcon != null)
+                    {
+                        _memoryCache.Set(cacheKey, largeIcon, DateTimeOffset.Now.AddDays(1));
+                    }
                 }
 
                 builder.SetLargeIcon(largeIcon);

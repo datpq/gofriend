@@ -183,6 +183,27 @@ namespace goFriend.Droid
         //    Logger.Debug("Getting location here...");
         //}
 
+        private Notification.Builder CreateNotificationBuilderWithChannel()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                Logger.Debug("No notification channel need.");
+                // Notification channels are new in API 26 (and not a part of the
+                // support library). There is no need to create a notification 
+                // channel on older versions of Android.
+                return new Notification.Builder(this);
+            }
+            Logger.Debug("Creating notification channel...");
+            var channel = new NotificationChannel(ExtensionAndroid.CHANNEL_ID, ExtensionAndroid.CHANNEL_NAME, NotificationImportance.Default)
+            {
+                Description = ExtensionAndroid.CHANNEL_DESC
+            };
+            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            notificationManager.CreateNotificationChannel(channel);
+            Logger.Debug("Notification channel done.");
+            return new Notification.Builder(this, ExtensionAndroid.CHANNEL_ID);
+        }
+
         public async Task StartForegroundService()
         {
             try
@@ -195,7 +216,8 @@ namespace goFriend.Droid
                 }
 
                 //Register a foreground service
-                var builder = new Notification.Builder(this)
+                //var builder = new Notification.Builder(this)
+                var builder = CreateNotificationBuilderWithChannel()
                     .SetColor(new Color(ContextCompat.GetColor(this, Resource.Color.colorPrimary)))
                     .SetContentTitle(res.SvcBackground)
                     //.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis() / 1000)
