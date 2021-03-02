@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace goFriend.Services
 {
@@ -281,6 +282,23 @@ namespace goFriend.Services
             try
             {
                 Logger.Debug($"OnReceiveLocation.BEGIN(FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo})");
+                if (friendLocation.SharingInfo == null) return;
+                if (!App.IsUserLoggedIn || App.User == null)
+                {
+                    Logger.Warn("Reiceiving location while logged out");
+                    return;
+                }
+                friendLocation.ModifiedDate = DateTime.Now;
+                if (friendLocation.FriendId == App.User.Id) //receive my own location. Stored to use in distance calculation
+                {
+                    friendLocation.Friend = App.User;
+                    Views.MapOnlinePage.MyLocation = friendLocation;
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Views.MapOnlinePage.Instance.RecenterMap();//First time receiving Location, recenter the map
+                    });
+                }
                 if (_lastFriendLocations.Any(
                     x => x.Key == friendLocation.FriendId && x.Value.Location == friendLocation.Location))
                 {

@@ -138,7 +138,7 @@ namespace goFriend.Views
             App.NotificationService.CancelNotification(Models.NotificationType.AppearOnMap);
         }
 
-        private void RecenterMap()
+        public void RecenterMap()
         {
             if (_mapNeedRecentering && MyLocation != null && MyLocation.IsOnline())
             {
@@ -283,24 +283,7 @@ namespace goFriend.Views
 
         public async void ReceiveLocation(FriendLocation friendLocation)
         {
-            if (friendLocation.SharingInfo == null) return;
-            if (!App.IsUserLoggedIn || App.User == null)
-            {
-                Logger.Warn("Reiceiving location while logged out");
-                return;
-            }
-            friendLocation.ModifiedDate = DateTime.Now;
-            if (friendLocation.FriendId == App.User.Id) //receive my own location. Stored to use in distance calculation
-            {
-                friendLocation.Friend = App.User;
-                MyLocation = friendLocation;
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    RecenterMap();//First time receiving Location, recenter the map
-                });
-            }
-            else
+            if (friendLocation.FriendId != App.User.Id)
             {
                 var friend = await App.FriendStore.GetFriendInfo(friendLocation.FriendId);
                 friendLocation.Friend = friend;
