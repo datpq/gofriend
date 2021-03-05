@@ -300,11 +300,11 @@ namespace goFriend.Services
                     });
                 }
                 if (_lastFriendLocations.Any(
-                    x => x.Key == friendLocation.FriendId && x.Value.Location == friendLocation.Location))
+                    x => x.Key == friendLocation.FriendId && x.Value.Location == friendLocation.Location && !x.Value.IsRefreshNeeded()))
                 {
                     // the case when some one has more than one common group as you have
                     // his/her location is sent to you more than one times, so ignore the duplicate ones.
-                    //Logger.Debug($"lastFriendLocations.Count={_lastFriendLocations.Count}. Same location as the last one. Do nothing.");
+                    // receive the duplicated one only if the old one need to be refreshed
                 }
                 else
                 {

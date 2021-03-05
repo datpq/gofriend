@@ -116,7 +116,7 @@ namespace goFriend.ViewModels
                         App.NotificationService.SendNotification(
                             new Models.ServiceNotification
                             {
-                                ContentTitle = chat.Owner?.Name,
+                                ContentTitle = chat.Owner?.Name ?? AppInfo.Name,
                                 ContentText = $"{res.ChatNew}: {await chat.GetMemberNames()}",
                                 SummaryText = null,
                                 LargeIconUrl = chat.Owner?.GetImageUrl(),
