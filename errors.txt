@@ -71,6 +71,7 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 	https://apps.admob.com/v2/apps/2612776501/settings
 - Test on iOS
 	- USB connection problem with iPhone (iPhone oscillates connecting and disconnecting rapidly)
+		- sudo killall -STOP -c usbd
 		BOOTING IN SAFE MODE SOLVED IT. Boot in safe mode (hold down shift key immediately you power the macbook).
 		To confirm that you are in safe mode (safe mode should be written in red at the top right corner of the login screen).
 		Login, plug in your iphone and the problem is solved
@@ -124,6 +125,15 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 		Download your certificate to your Mac, then double click the .cer file to install in Keychain Access. Make sure to save a backup copy of your private and public keys somewhere secure.
 		Edit the profile in Apple account, and include the certificate in this profile
 			developer.apple.com/account/resources/profiles/edit/4Z89GS337Q
+	- codesign" exited with code 1 iOS
+	- Warning: unable to build chain to self-signed root for signer
+		if the certificate in Key Chain Access is not trusted
+			--> go to that link: https://developer.apple.com/account/resources/certificates/add
+			and install 2 CA certificates:
+				Worldwide Developer Relations Certificate Authority (Expiring 02/07/2023)
+				Worldwide Developer Relations Certificate Authority (Expiring 02/20/2030)
+	- Method not found: Microsoft.AspNetCore.Http.Connections.NegotiationResponse Microsoft.AspNetCore.Http.Connections.NegotiateProtocol.ParseResponse
+		- Downgrade Visual Studio version to Version 16.8.4
 	- The user name or passphrase you entered is not correct
 		Try opening Keychain Access.app. Right-click on the login keychain and try locking it and then unlocking it again.
 	- when successful
@@ -153,6 +163,8 @@ Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the c
 	- Navigation.PushAsync is not working --> ShellContent must be static
 	- The assembly 'Xamarin.iOS.dll' can't be AOT-compiled for 32-bit architectures because the native code is too big for the 32-bit ARM architecture.	goFriend.iOS			
 		- Supported Architectures --> ARM64
+	- System.MissingMethodException: Method not found: Microsoft.AspNetCore.Http.Connections.NegotiationResponse
+		- caching issue
 	- Build error - targeted OS version does not support use of thread local variables
 		- change Deployment target to 9.0 or greater under Deployment Info tab. (info.plist)
 	- Attempting to JIT compile method '(wrapper delegate-invoke)
@@ -302,7 +314,8 @@ at least in my case this was the issue
 		<AndroidSigningStorePass>goFriend9194</AndroidSigningStorePass>
 		<AndroidSigningKeyAlias>goFriend9194</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>goFriend9194</AndroidSigningKeyPass>
-	
+- Mono.Linker.MarkException: Error processing method
+	- project properties -> Linking = None
 - Nlog configuration for .NET Core
 	- https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-2
 	- if action:${aspnet-mvc-action}|ip:${aspnet-request-ip} is not shown --> CreateHostBuilder(args).UseNLog().Build().Run();
@@ -314,7 +327,8 @@ at least in my case this was the issue
 - Azure functions:
 	- Functions runtime: 3
 	- Could not load file or assembly: downgrade some packages in goFriend.Services
-	
+	- Azure Functions - Value cannot be null. (Parameter 'connectionString')
+		- go to Azure Functions in portal --> Settings --> Configuration: Copy all settings from previous good settings including GoFriendConnection
 
 - Deployment on Google Play
 	- modify version in: C:\Users\dat\source\repos\goFriend\goFriend\goFriend.Android\Properties\AndroidManifest.xml
@@ -371,7 +385,7 @@ at least in my case this was the issue
 In Package Manager Console:
 			Change Default Project to: goFriendMobileAppService
 The term “Add-Migration” is not recognized
-	--> Restart VS
+	--> Restart VSfailed
 Change Start up prokect to goFriendMobileAppService
 Add-Migration InitialCreate
 Update-Database

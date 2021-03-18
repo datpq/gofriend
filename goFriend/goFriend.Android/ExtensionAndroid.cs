@@ -59,8 +59,8 @@ namespace goFriend.Droid
         public static Bitmap ICON_PIN_ADMIN_FEMALE = CreateTextBitmap(CHARCODE_PIN_FEMALE, Color.DarkViolet);
         public static Bitmap ICON_PIN_NORMAL = CreateTextBitmap(CHARCODE_PIN, MainActivity.COLOR_PRIMARY);
         public static Bitmap ICON_PIN_NORMAL_FEMALE = CreateTextBitmap(CHARCODE_PIN_FEMALE, Color.ParseColor("#FF6699"));
-        public static Bitmap ICON_PIN_PENDING = CreateTextBitmap(CHARCODE_PIN, Color.Gray);
-        public static Bitmap ICON_PIN_PENDING_FEMALE = CreateTextBitmap(CHARCODE_PIN_FEMALE, Color.Gray);
+        public static Bitmap ICON_PIN_PENDING = CreateTextBitmap(CHARCODE_PIN, Color.ParseColor($"#{Constants.ColorOfflinePinMale}"));
+        public static Bitmap ICON_PIN_PENDING_FEMALE = CreateTextBitmap(CHARCODE_PIN_FEMALE, Color.ParseColor($"#{Constants.ColorOfflinePinFemale}"));
 
         public static Bitmap CreateTextBitmap(string text, Color color,
             string fontName = "fa-solid-900.ttf", int bitmapSize = 48, int fontSize = 48)

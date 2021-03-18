@@ -76,6 +76,9 @@ namespace goFriend
         public static string[] SourceGenders;
         public static string[] SourceRelationships;
 
+        public static string ColorOfflinePinMale = "33A5FF";
+        public static string ColorOfflinePinFemale = "FFA0AA";
+
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";
         public const string ImgGroupAdmin = "group_admin";
@@ -184,6 +187,15 @@ namespace goFriend
                         break;
                     case "HomePageUrl":
                         HomePageUrl = x.Value;
+                        break;
+                    case "ChatFuncUrl":
+                        ChatFuncUrl = x.Value;
+                        break;
+                    case "ColorOfflinePinMale":
+                        ColorOfflinePinMale = x.Value;
+                        break;
+                    case "ColorOfflinePinFemale":
+                        ColorOfflinePinFemale = x.Value;
                         break;
                     case "FUNC_SENDLOGFILE":
                         FUNC_SENDLOGFILE = bool.Parse(x.Value);
