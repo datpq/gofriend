@@ -35,8 +35,8 @@
             </ContentView>
         </StackLayout>
         <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
-            <ctl:FacebookLoginButton x:Name="BtnFacebook" Margin="0,0,0,10"/>
-            <ctl:AppleSignInButton SignIn="AppleSignInButton_OnSignIn"  ButtonStyle="Black" x:Name="BtnSignInApple">
+            <ctl:FacebookLoginButton x:Name="BtnFacebook" Margin="0,0,0,10" HeightRequest="50"/>
+            <ctl:AppleSignInButton SignIn="AppleSignInButton_OnSignIn"  ButtonStyle="Black" x:Name="BtnSignInApple" HeightRequest="50">
                 <ctl:AppleSignInButton.IsVisible>
                     <OnPlatform x:TypeArguments="x:Boolean">
                         <On Platform="Android, WinPhone">false</On>
