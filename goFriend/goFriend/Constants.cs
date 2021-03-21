@@ -124,13 +124,13 @@ namespace goFriend
         //Service
         public static int LOCATIONSERVICE_UPDATE_INTERVAL = 30; // in seconds
         public static double LOCATIONSERVICE_DISTANCE_THRESHOLD = 10; // meter
-        public static double MAPONLINE_DEFAULT_RADIUS = 0.2; // km (200m)
+        public static int MAPONLINE_DEFAULT_RADIUS = 200; // in meter (200m)
         public static int MAPONLINE_ACTIVE_TIMEOUT = 10; // in minutes
         public static int MAPONLINE_ONLINE_TIMEOUT = 30; // in minutes
         public static int MAPONLINE_OFFLINE_TIMEOUT = 30; // in minutes
         public static int MAPONLINE_REFRESH_INTERVAL = 10; // in seconds
         public static int MAPONLINE_COMMAND_DISABLED_TIMEOUT = 60; // in seconds
-        public static double[] MAPONLINE_RADIUS_LIST = { 0.2, 0.5, 1, 10, 0 };
+        public static int[] MAPONLINE_RADIUS_LIST = { 200, 500, 1000, 1000*10, 1000* 50, 0 };
         public const int SERVICE_RUNNING_NOTIFICATION_ID = 12976;
         public const string SERVICE_STARTED_KEY = "service_started";
         public const string SERVICE_EXTRAID_KEY = "service_extraid";
@@ -167,7 +167,7 @@ namespace goFriend
                             x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
                         break;
                     case "MAPONLINE_DEFAULT_RADIUS":
-                        MAPONLINE_DEFAULT_RADIUS = double.Parse(x.Value);
+                        MAPONLINE_DEFAULT_RADIUS = int.Parse(x.Value);
                         break;
                     case "MAPONLINE_COMMAND_DISABLED_TIMEOUT":
                         MAPONLINE_COMMAND_DISABLED_TIMEOUT = int.Parse(x.Value);
@@ -177,7 +177,7 @@ namespace goFriend
                         break;
                     case "MAPONLINE_RADIUS_LIST":
                         MAPONLINE_RADIUS_LIST = x.Value.Split(";").Where(
-                            x => !string.IsNullOrEmpty(x)).Select(x => double.Parse(x)).ToArray();
+                            x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
                         break;
                     case "LOCATIONSERVICE_UPDATE_INTERVAL":
                         LOCATIONSERVICE_UPDATE_INTERVAL = int.Parse(x.Value);

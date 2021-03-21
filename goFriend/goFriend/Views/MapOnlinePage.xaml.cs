@@ -145,7 +145,7 @@ namespace goFriend.Views
                 var vm = (MapOnlineViewModel)BindingContext;
                 Map.MoveToRegion(MapSpan.FromCenterAndRadius(
                     new Position(MyLocation.Location.Y, MyLocation.Location.X),
-                    Distance.FromKilometers(vm.Radius == 0 ? 10 : vm.Radius * 1.2)));
+                    Distance.FromMeters(vm.Radius == 0 ? 10*1000 : vm.Radius * 1.05))); // unlimited = 10km
                 _mapNeedRecentering = false;
             }
         }

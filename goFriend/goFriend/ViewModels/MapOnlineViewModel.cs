@@ -103,7 +103,7 @@ namespace goFriend.ViewModels
         }
 
         public bool IsRunningSaved { get; set; }
-        public double RadiusSaved { get; set; }
+        public int RadiusSaved { get; set; }
 
         private DateTime _disabledExpiredTime = DateTime.MinValue;
         public DateTime DisabledExpiredTime {
@@ -126,8 +126,8 @@ namespace goFriend.ViewModels
             }
         }
 
-        private double _radius = Constants.MAPONLINE_DEFAULT_RADIUS;
-        public double Radius {
+        private int _radius = Constants.MAPONLINE_DEFAULT_RADIUS;
+        public int Radius {
             get => _radius;
             set
             {
@@ -163,8 +163,8 @@ namespace goFriend.ViewModels
 
     public class RadiusItemModel : INotifyPropertyChanged
     {
-        private double _radius;
-        public double Radius { 
+        private int _radius;
+        public int Radius { 
             get => _radius;
             set
             {
@@ -174,7 +174,7 @@ namespace goFriend.ViewModels
                 OnPropertyChanged(nameof(DisplayWithSummary));
             }
         }
-        public double RadiusInKm => Radius == 0 ? double.MaxValue : Radius;
+        public double RadiusInKm => Radius == 0 ? double.MaxValue : (double)Radius/1000;
 
         public ObservableCollection<FriendLocation> FriendLocations { get; } = new ObservableCollection<FriendLocation>();
         private int _onlineFriends = 0;
@@ -188,7 +188,7 @@ namespace goFriend.ViewModels
             }
         }
 
-        public string Display => Radius == 0 ? res.RadiusNoLimit : Radius < 1 ? $"{Radius * 1000} {res.RadiusM}" : $"{Radius} {res.RadiusKM}";
+        public string Display => Radius == 0 ? res.RadiusNoLimit : Radius < 1000 ? $"{Radius} {res.RadiusM}" : $"{Radius/1000} {res.RadiusKM}";
         public string DisplayWithSummary => $"{Display} ({OnlineFriends})";
 
         //INotifyPropertyChanged implementation method
