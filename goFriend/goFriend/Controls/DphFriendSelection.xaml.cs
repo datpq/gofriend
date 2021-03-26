@@ -67,14 +67,14 @@ namespace goFriend.Controls
                 if (SelectedGroup == null) return;
                 _onSelectionAction?.Invoke(SelectedGroup, EntryName.Text, ArrFixedCats, _arrCatValues);
             });
-
-            Refresh();
         }
 
         private Action<ApiGetGroupsModel, string, List<string>, string[]> _onSelectionAction;
         public void Initialize(Action<ApiGetGroupsModel, string, List<string>, string[]> onSelectionAction)
         {
             _onSelectionAction = onSelectionAction;
+
+            Refresh();
         }
 
         public void Refresh()

@@ -86,7 +86,7 @@ namespace goFriend.WebApi.Controllers
                     
                 foreach (var chatMessage in messages)
                 {
-                    chatMessage.LogoUrl = _dataRepo.Get<Friend>(x => x.Id == chatMessage.OwnerId, true)
+                    chatMessage.LogoUrl = _dataRepo.Get<Friend>(x => x.Id == chatMessage.OwnerId, true)?
                         .GetImageUrl(FacebookImageType.small);
                     chatMessage.OwnerName = chatMessage.Owner.Name;
                     chatMessage.OwnerFirstName = chatMessage.Owner.FirstName;

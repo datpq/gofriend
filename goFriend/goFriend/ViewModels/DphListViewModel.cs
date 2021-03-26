@@ -103,6 +103,7 @@ namespace goFriend.ViewModels
         {
             try
             {
+                if (GetListViewItemsFunc == null) return;
                 //do not show Refreshing on iOS, that make ListView to scroll to Top unexpectedly
                 if (Device.RuntimePlatform == Device.Android) IsRefreshing = true;
                 var result = await GetListViewItemsFunc();
