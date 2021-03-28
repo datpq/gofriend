@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:goFriend"
              x:Class="goFriend.Views.LoginManual"
              xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup">
-    <StackLayout Padding="20" Spacing="10" BackgroundColor="{StaticResource ColorPageBackground}"
+    <StackLayout Padding="20" Spacing="10"
                  HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand">
         <StackLayout Orientation="Horizontal" Margin="0,0,0,10">
             <Label Text="{Static local:res.Login}" VerticalOptions="EndAndExpand" FontSize="20" TextColor="Black" HorizontalOptions="Start" />

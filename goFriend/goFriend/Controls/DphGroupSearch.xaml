@@ -15,16 +15,6 @@
                 <SearchBar.Behaviors>
                     <helpers:TextChangedBehavior />
                 </SearchBar.Behaviors>
-                <SearchBar.BackgroundColor>
-                    <OnPlatform x:TypeArguments="Color">
-                        <On Platform="Android, WinPhone">
-                            <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                        </On>
-                        <On Platform="iOS">
-                            <StaticResource Key="ColorTabPageBackgroundIOS" />
-                        </On>
-                    </OnPlatform>
-                </SearchBar.BackgroundColor>
             </SearchBar>
             <ListView x:Name="LvResults" ItemsSource="{Binding Items}" VerticalOptions="FillAndExpand" HasUnevenRows="true"
                       ItemTapped="LvResults_OnItemTapped">
@@ -45,12 +35,12 @@
                                     <!--<Image Source="{local:ImageResource goFriend.Images.group.png}" Margin="10" BackgroundColor="Aqua"-->
                                     <controls:IconView Source="{Binding ImageSource}" Foreground="{Binding ImageForeground}" Margin="5" WidthRequest="{Binding ImageSize}" HeightRequest="{Binding ImageSize}"
                                            Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" />
-                                    <Label Text="{Binding Text}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
+                                    <Label Text="{Binding Text}" FontAttributes="Bold"
                                            Grid.Row="0" Grid.Column="1"
                                            LineBreakMode="TailTruncation"
                                            Style="{DynamicResource ListItemTextStyle}" 
                                            FontSize="{StaticResource LblFontSize}" />
-                                    <Label Text="{Binding SubItemCount}" TextColor="{StaticResource ColorLabel}" FontAttributes="Bold"
+                                    <Label Text="{Binding SubItemCount}" FontAttributes="Bold"
                                            Grid.Row="0" Grid.Column="2"
                                            LineBreakMode="NoWrap" HorizontalTextAlignment="Center"
                                            Style="{DynamicResource ListItemTextStyle}"

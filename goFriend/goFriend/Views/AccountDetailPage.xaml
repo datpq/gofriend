@@ -4,30 +4,20 @@
              xmlns:local="clr-namespace:goFriend"
              Title="{Static local:res.Detail}"
              x:Class="goFriend.Views.AccountDetailPage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout Margin="10" Visual="Material">
             <StackLayout>
                 <Label Margin="0,10" Text="{Binding Name}" HorizontalOptions="CenterAndExpand"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
-                       TextColor="{StaticResource ColorLabel}" FontAttributes="Bold" FontSize="{StaticResource LblFontSize}"/>
+                       FontAttributes="Bold" FontSize="{StaticResource LblFontSize}"/>
                 <StackLayout IsVisible="{Binding Editable}">
-                    <Entry Placeholder="{Static local:res.Email}" Text="{Binding Email}" MaxLength="50" x:Name="TxtEmail"
+                    <Entry Placeholder="{Static local:res.Email}" PlaceholderColor="{StaticResource ColorLabelDetail}" Text="{Binding Email}" MaxLength="50" x:Name="TxtEmail"
                            TextColor="{StaticResource ColorPrimary}" HorizontalOptions="FillAndExpand"/>
-                    <Picker Title="{Static local:res.Relationship}" SelectedItem="{Binding RelationshipByLanguage}"
+                    <Picker Title="{Static local:res.Relationship}" TitleColor="{StaticResource ColorLabelDetail}" SelectedItem="{Binding RelationshipByLanguage}"
                             TextColor="{StaticResource ColorPrimary}" ItemsSource="{Static local:Constants.SourceRelationships}" />
-                    <Entry Placeholder="{Static local:res.Tel}" Text="{Binding Phone}" MaxLength="20" x:Name="TxtPhone"
+                    <Entry Placeholder="{Static local:res.Tel}" PlaceholderColor="{StaticResource ColorLabelDetail}" Text="{Binding Phone}" MaxLength="20" x:Name="TxtPhone"
                            TextColor="{StaticResource ColorPrimary}" HorizontalOptions="FillAndExpand"/>
-                    <Picker Title="{Static local:res.Gender}" SelectedItem="{Binding GenderByLanguage}"
+                    <Picker Title="{Static local:res.Gender}" TitleColor="{StaticResource ColorLabelDetail}" SelectedItem="{Binding GenderByLanguage}"
                             TextColor="{StaticResource ColorPrimary}" ItemsSource="{Static local:Constants.SourceGenders}"/>
                     <Label Text="{Static local:res.BirthDay}" Margin="0,0,0,-6" />
                     <DatePicker Date="{Binding Birthday}" TextColor="{StaticResource ColorPrimary}"/>
@@ -46,25 +36,25 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label Text="{Static local:res.Email}" Grid.Row="0" Grid.Column="0"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Binding Email}" Grid.Row="0" Grid.Column="1"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Static local:res.Relationship}" Grid.Row="1" Grid.Column="0"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Binding RelationshipByLanguage}" Grid.Row="1" Grid.Column="1"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Static local:res.Tel}" Grid.Row="2" Grid.Column="0"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Binding Phone}" Grid.Row="2" Grid.Column="1"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Static local:res.Gender}" Grid.Row="3" Grid.Column="0"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Binding GenderByLanguage}" Grid.Row="3" Grid.Column="1"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Static local:res.BirthDay}" Grid.Row="4" Grid.Column="0"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                         <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="4" Grid.Column="1"
-                               TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                               FontSize="{StaticResource LblDetailFontSize}"/>
                     </Grid>
                 </StackLayout>
             </StackLayout>

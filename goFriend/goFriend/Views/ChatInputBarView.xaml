@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Views.ChatInputBarView">
-    <Grid ColumnSpacing="0">
+    <Grid ColumnSpacing="0" BackgroundColor="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -40,8 +40,8 @@
             <controls:ExtendedEditorControl x:Name="ChatTextInput" BackgroundColor="#F3F3F3"
                 Margin="1" Keyboard="Chat" IsExpandable="True" HorizontalOptions="FillAndExpand"
                 Focused="ChatTextInput_OnFocused" Unfocused="ChatTextInput_OnUnfocused" TextChanged="ChatTextInput_OnTextChanged"
-                TextColor="{StaticResource ColorLabel}" PlaceholderColor="Gray" Placeholder="{Static local:res.TypeMsgHere}"
-                Text="{Binding Message}"/>
+                PlaceholderColor="Gray" Placeholder="{Static local:res.TypeMsgHere}"
+                TextColor="Black" Text="{Binding Message}"/>
         </Frame>
         <ImageButton Margin="5,0,5,0" Grid.Column="3" Clicked="BtnSend_OnClicked" BackgroundColor="White">
             <ImageButton.Source>

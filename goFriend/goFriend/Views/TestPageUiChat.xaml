@@ -61,8 +61,7 @@
                            HeightRequest="30"
                            VerticalOptions="CenterAndExpand"/>
                     <Label Text="{Binding PendingMessageCount}"
-                           HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center"
-                           TextColor="{StaticResource ColorLabel}"/>
+                           HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" />
                 </StackLayout>
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Tapped="ScrollTapUp"/>

@@ -7,16 +7,6 @@
              xmlns:local="clr-namespace:goFriend"
              mc:Ignorable="d"
              x:Class="goFriend.Views.OnlineMembersPage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.ToolbarItems>
         <ToolbarItem Order="Primary" Priority="0" x:Name="MnuMembers"/>
     </ContentPage.ToolbarItems>

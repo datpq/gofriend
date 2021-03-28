@@ -102,7 +102,7 @@ namespace goFriend.Views
                 }
                 return true; // True = Repeat again, False = Stop the timer
             });
-            CmdPlay.BackgroundColor = CmdStop.BackgroundColor = BackgroundColor;
+            CmdPlay.BackgroundColor = CmdStop.BackgroundColor = Color.Transparent;
             PickerRadius.Title = $"{res.Select} {res.Radius}";
             LblRadius.Text = $"{res.Radius}:";
 

@@ -46,32 +46,12 @@
                                                 Command="{Binding Path=BindingContext.Button1Command, Source={x:Reference Lv}}"
                                                 CommandParameter="{Binding .}">
                                                 <!--Clicked="Button1_OnClicked" we don't use Clicked as we have to pass parameter in command-->
-                                            <Button.BackgroundColor>
-                                                <OnPlatform x:TypeArguments="Color">
-                                                    <On Platform="Android, WinPhone">
-                                                        <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                                                    </On>
-                                                    <On Platform="iOS">
-                                                        <StaticResource Key="ColorTabPageBackgroundIOS" />
-                                                    </On>
-                                                </OnPlatform>
-                                            </Button.BackgroundColor>
                                         </Button>
                                         <Button BorderWidth="1" BorderColor="Black" CornerRadius="{Binding Button2Radius}" HorizontalOptions="Center" VerticalOptions="Center"
                                                 WidthRequest="{Binding Button2Width}" HeightRequest="{Binding Button2Height}"
                                                 ImageSource="{Binding Button2ImageSource}"
                                                 Command="{Binding Path=BindingContext.Button2Command, Source={x:Reference Lv}}"
                                                 CommandParameter="{Binding .}">
-                                            <Button.BackgroundColor>
-                                                <OnPlatform x:TypeArguments="Color">
-                                                    <On Platform="Android, WinPhone">
-                                                        <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                                                    </On>
-                                                    <On Platform="iOS">
-                                                        <StaticResource Key="ColorTabPageBackgroundIOS" />
-                                                    </On>
-                                                </OnPlatform>
-                                            </Button.BackgroundColor>
                                         </Button>
                                     </StackLayout>
                                 </Grid>

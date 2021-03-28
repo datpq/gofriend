@@ -31,7 +31,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid RowSpacing="0" ColumnSpacing="0">
+        <Grid RowSpacing="0" ColumnSpacing="0" BackgroundColor="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="1" />
@@ -43,6 +43,7 @@
                                        ItemAppearingCommand="{Binding MessageAppearingCommand}"
                                        ItemDisappearingCommand="{Binding MessageDisappearingCommand}"
                                        IsRefreshing="{Binding IsRefreshing}"
+                                       BackgroundColor="White"
                                        FlowDirection="RightToLeft" Rotation="180"
                                        VerticalScrollBarVisibility="Never" SeparatorVisibility="None" SeparatorColor="Transparent"
                                        Margin="0" VerticalOptions="FillAndExpand">
@@ -64,7 +65,7 @@
                            VerticalOptions="CenterAndExpand"/>
                     <Label Text="{Binding PendingMessageCount}"
                            HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center"
-                           TextColor="{StaticResource ColorLabel}"/>
+                           TextColor="Black"/>
                 </StackLayout>
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Tapped="ScrollTapUp"/>

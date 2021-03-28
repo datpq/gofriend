@@ -318,4 +318,9 @@
   <ItemGroup>
     <BundleResource Include="Resources\account_info.png" />
   </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties TriggeredFromHotReload="False" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

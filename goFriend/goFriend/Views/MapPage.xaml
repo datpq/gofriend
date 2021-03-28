@@ -16,7 +16,7 @@
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
             <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20" IsVisible="False"
                    VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
-                   TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
+                   FontSize="{StaticResource LblFontSize}"/>
             <controls:DphClusterMap x:Name="Map" MyLocationEnabled="False" IsVisible="False" />
         </StackLayout>
     </ContentPage.Content>

@@ -10,16 +10,6 @@
              xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.BasicInfos}"
              x:Class="goFriend.Views.AccountBasicInfosPage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="MnuDetail" Text="{Static local:res.Detail}" Order="Secondary" Priority="0" Command="{Binding CommandDetail}"/>
     </ContentPage.ToolbarItems>
@@ -46,34 +36,34 @@
                     </ff:CachedImage>
                     <Label Text="{Binding Name}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
-                       TextColor="{StaticResource ColorLabel}" FontAttributes="Bold" FontSize="{StaticResource LblFontSize}"/>
+                       FontAttributes="Bold" FontSize="{StaticResource LblFontSize}"/>
                     <Label Text="{Static local:res.Email}" Grid.Row="1" Grid.Column="1"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Binding Email}" Grid.Row="1" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Static local:res.Gender}" Grid.Row="2" Grid.Column="1" IsVisible="False"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Binding GenderByLanguage}" Grid.Row="2" Grid.Column="2" IsVisible="False"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Static local:res.Relationship}" Grid.Row="2" Grid.Column="1"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Binding RelationshipByLanguage}" Grid.Row="2" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Static local:res.BirthDay}" Grid.Row="3" Grid.Column="1" IsVisible="False"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Binding Birthday, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="3" Grid.Column="2" IsVisible="False"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Static local:res.Tel}" Grid.Row="3" Grid.Column="1"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label Text="{Binding Phone}" Grid.Row="3" Grid.Column="2"
                        LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}"
-                       TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                       FontSize="{StaticResource LblDetailFontSize}"/>
                     <Label x:Name="LabelShowLocation" Text="{Static local:res.ShowYourLocation}" Grid.Row="3" Grid.Column="1"
-                           TextColor="{StaticResource ColorLabelDetail}" FontSize="{StaticResource LblDetailFontSize}"/>
+                           FontSize="{StaticResource LblDetailFontSize}"/>
                     <Switch x:Name="SwitchShowLocation"  Grid.Row="3" Grid.Column="2" IsToggled="{Binding ShowLocation}" IsEnabled="{Binding Editable}"
                             ThumbColor="{StaticResource ColorPrimary}" Toggled="SwitchShowLocation_OnToggled" />
                 </Grid>
@@ -82,7 +72,7 @@
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
             <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20"
                    VerticalOptions="FillAndExpand" VerticalTextAlignment="Center"
-                   TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblFontSize}"/>
+                   FontSize="{StaticResource LblFontSize}"/>
             <controls:DphMap x:Name="Map" MyLocationEnabled="True" />
             <!--IsVisible="{Binding Source={x:Reference SwitchShowLocation}, Path=IsToggled}"-->
             <!--<controls:DphMap.Triggers>

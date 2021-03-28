@@ -8,16 +8,6 @@
              xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.SvcBackground}"
              x:Class="goFriend.Views.MapOnlinePage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
             <controls:DphFriendSelection x:Name="DphFriendSelection" Margin="10,0,10,0"

@@ -10,16 +10,6 @@
              xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              x:Class="goFriend.Views.AccountPage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
         <StackLayout>
             <TableView Intent="Data" HasUnevenRows="True" VerticalOptions="FillAndExpand" x:Name="Tv">
                 <TableRoot>
@@ -47,48 +37,48 @@
                                     </imagecircle:CircleImage.HeightRequest>
                                 </imagecircle:CircleImage>
                                 -->
-                                <Label FontSize="20" TextColor="{StaticResource ColorLabel}" x:Name="LblFullName" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
+                                <Label FontSize="20" x:Name="LblFullName" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" x:Name="LblMemberSince" HorizontalOptions="CenterAndExpand" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellBasicInfo">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.BasicInfos}" />
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.BasicInfos}" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.BasicInfosDesc}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellGroups">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Groups}" />
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Groups}" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.GroupConnectionsInfos}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellMap">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.MapOffline}" />
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.MapOffline}" />
                                 <Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.MapOfflineDesc}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellAdmin">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.AdminDesc}" />
-                                <!--<Label FontSize="{StaticResource LblFontSize}" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Admin}" />-->
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.AdminDesc}" />
+                                <!--<Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Admin}" />-->
                                 <!--<Label FontSize="{StaticResource LblDetailFontSize}" Text="{Static local:res.AdminDesc}" />-->
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellLogout">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Logout}" TextColor="{StaticResource ColorLabel}" />
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Logout}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellLogin">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Login}" TextColor="{StaticResource ColorLabel}" />
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.Login}" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell x:Name="CellAbout">
                             <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.About}" TextColor="{StaticResource ColorLabel}" />
+                                <Label FontSize="{StaticResource LblFontSize}" Text="{Static local:res.About}" />
                             </StackLayout>
                         </ViewCell>
                     </TableSection>

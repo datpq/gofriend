@@ -145,7 +145,6 @@ namespace goFriend.Views
             {
                 VerticalOptions = LayoutOptions.Center,
                 FontSize = (double)Application.Current.Resources["LblFontSize"],
-                TextColor = (Color)Application.Current.Resources["ColorLabel"],
                 Text = _viewModel.Group.Name
             });
             var gr = new Grid
@@ -173,7 +172,6 @@ namespace goFriend.Views
                     Text = $"{arrCats[i]}:",
                     VerticalOptions = LayoutOptions.Center,
                     FontSize = (double)Application.Current.Resources["LblDetailFontSize"],
-                    TextColor = (Color)Application.Current.Resources["ColorLabel"]
                 };
                 Grid.SetColumn(lblCat, 0);
                 Grid.SetRow(lblCat, i - _viewModel.FixedCatsCount);

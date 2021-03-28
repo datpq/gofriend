@@ -9,16 +9,6 @@
              xmlns:helpers="clr-namespace:goFriend.Helpers"
              Title="{Static local:res.Chat}"
              x:Class="goFriend.Views.ChatListPage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="MnuAddNew" Text="{Static local:res.ChatNew}" Order="Secondary" Priority="0" Command="{Binding CommandAddNew}"/> <!--Clicked="MnuAddNew_Clicked"-->
     </ContentPage.ToolbarItems>

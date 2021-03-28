@@ -5,16 +5,6 @@
              xmlns:vm="clr-namespace:goFriend.ViewModels"
              xmlns:local="clr-namespace:goFriend"
              Title="{Static local:res.About}">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.BindingContext>
         <vm:AboutViewModel />
     </ContentPage.BindingContext>
@@ -46,7 +36,7 @@
                             <FormattedString.Spans>
                                 <Span x:Name="SpanTitle" FontAttributes="Bold" FontSize="22" />
                                 <Span Text=" " />
-                                <Span x:Name="SpanVersion" ForegroundColor="{StaticResource LightTextColor}" FontSize="13" />
+                                <Span x:Name="SpanVersion" FontSize="{StaticResource LblDetailFontSize}" />
                             </FormattedString.Spans>
                         </FormattedString>
                     </Label.FormattedText>
@@ -55,9 +45,9 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="Chương trình được viết bởi Dat Pham, một thành viên của nhóm" />
+                                <Span Text="Chương trình được viết bởi Dat Pham, một thành viên của nhóm" FontSize="{StaticResource LblDetailFontSize}" />
                                 <Span Text=" " />
-                                <Span Text="Hanoi9194" FontAttributes="Bold" />
+                                <Span Text="Hanoi9194" FontAttributes="Bold" FontSize="{StaticResource LblDetailFontSize}" />
                                 <Span Text="." />
                             </FormattedString.Spans>
                         </FormattedString>
@@ -67,7 +57,17 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="Email: gofriend9194@gmail.com" />
+                                <Span Text="Email: gofriend9194@gmail.com" FontSize="{StaticResource LblDetailFontSize}"/>
+                                <Span Text=" " />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Bản quyền (C) 2021 Dat Pham" FontSize="{StaticResource LblDetailFontSize}"/>
                                 <Span Text=" " />
                             </FormattedString.Spans>
                         </FormattedString>

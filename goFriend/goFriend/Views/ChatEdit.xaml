@@ -28,31 +28,11 @@
                             x:Name="CmdClear" Clicked="CmdClear_OnClicked"
                             BorderWidth="1" BorderColor="Black" WidthRequest="30" HeightRequest="30" CornerRadius="15" 
                             ImageSource="{Static local:Constants.ImgDeny}">
-                        <Button.BackgroundColor>
-                            <OnPlatform x:TypeArguments="Color">
-                                <On Platform="Android, WinPhone">
-                                    <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                                </On>
-                                <On Platform="iOS">
-                                    <StaticResource Key="ColorTabPageBackgroundIOS" />
-                                </On>
-                            </OnPlatform>
-                        </Button.BackgroundColor>
                     </Button>
                     <Button VerticalOptions="Center"
                             x:Name="CmdOk" Clicked="CmdOk_OnClicked"
                             BorderWidth="1" BorderColor="Black" WidthRequest="30" HeightRequest="30" CornerRadius="15" 
                             ImageSource="{Static local:Constants.ImgAccept}">
-                        <Button.BackgroundColor>
-                            <OnPlatform x:TypeArguments="Color">
-                                <On Platform="Android, WinPhone">
-                                    <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                                </On>
-                                <On Platform="iOS">
-                                    <StaticResource Key="ColorTabPageBackgroundIOS" />
-                                </On>
-                            </OnPlatform>
-                        </Button.BackgroundColor>
                     </Button>
                 </StackLayout>
                 <ScrollView Margin="0,3,0,0" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="0">
@@ -65,18 +45,9 @@
                        HorizontalOptions="FillAndExpand" FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
             </Grid>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" /><!--Grid.Row="1"-->
-            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}"><!--Grid.Row="2"-->
-                <controls:DphFriendList.BackgroundColor>
-                    <OnPlatform x:TypeArguments="Color">
-                        <On Platform="Android, WinPhone">
-                            <StaticResource Key="ColorTabPageBackgroundAndroid" />
-                        </On>
-                        <On Platform="iOS">
-                            <StaticResource Key="ColorTabPageBackgroundIOS" />
-                        </On>
-                    </OnPlatform>
-                </controls:DphFriendList.BackgroundColor>
-            </controls:DphFriendList>
+            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" />
+            <!--Grid.Row="2"-->
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

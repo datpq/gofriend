@@ -8,16 +8,6 @@
              xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.Browse}"
              x:Class="goFriend.Views.BrowsePage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
             <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.BigImage}" VerticalOptions="FillAndExpand"/>

@@ -26,7 +26,7 @@ namespace goFriend.Views
             Logger.Debug($"SearchPage.BEGIN(searchText={searchText})");
             InitializeComponent();
 
-            CmdOk.BackgroundColor = Sb.BackgroundColor;
+            CmdOk.BackgroundColor = Color.Transparent;
             BindingContext = _searchViewModel = new SearchViewModel
             {
                 Title = title,

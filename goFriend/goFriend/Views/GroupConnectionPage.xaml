@@ -8,23 +8,13 @@
              Title="{Static local:res.Groups}"
              Visual="Material"
              x:Class="goFriend.Views.GroupConnectionPage">
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android, WinPhone">
-                <StaticResource Key="ColorTabPageBackgroundAndroid" />
-            </On>
-            <On Platform="iOS">
-                <StaticResource Key="ColorTabPageBackgroundIOS" />
-            </On>
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
     <ContentPage.Content>
         <StackLayout>
             <controls:DphGroupSearch x:Name="DphGroupSearch" />
             <StackLayout x:Name="SlGroupDetail" IsVisible="False">
                 <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" x:Name="CommonConnectionInfoLine" />
                 <StackLayout Margin="20,5,20,0" x:Name="CommonConnectionInfoLayout">
-                    <Label TextColor="{StaticResource ColorLabel}" Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" />
+                    <Label Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" />
                     <Grid Margin="0,5" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -38,8 +28,8 @@
                 <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
                 <ScrollView Margin="0,5,0,0">
                     <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand">
-                        <Label Margin="20,0" x:Name="LblInfoCats" TextColor="{StaticResource ColorLabel}" Text="{Static local:res.Information}" FontSize="{StaticResource LblDetailFontSize}" />
-                        <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" TextColor="{StaticResource ColorLabel}" FontSize="{StaticResource LblSectionFontSize}" />
+                        <Label Margin="20,0" x:Name="LblInfoCats" Text="{Static local:res.Information}" FontSize="{StaticResource LblDetailFontSize}" />
+                        <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" FontSize="{StaticResource LblSectionFontSize}" />
                     </StackLayout>
                 </ScrollView>
                 <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand" Margin="10" HorizontalOptions="Center">

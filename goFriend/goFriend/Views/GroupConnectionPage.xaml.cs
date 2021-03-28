@@ -5,7 +5,6 @@ using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
-using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
@@ -122,8 +121,6 @@ namespace goFriend.Views
                             //FontSize = (double)Application.Current.Resources["LblDetailFontSize"],
                             //FontSize = (double)Application.Current.Resources["LblFontSize"],
                             FontSize = (double)Application.Current.Resources["LblSectionFontSize"],
-                            //TextColor = (Color)Application.Current.Resources["ColorLabelDetail"],
-                            TextColor = (Color)Application.Current.Resources["ColorLabel"],
                             Text = arrCatDesc[i] + ":"
                         };
                         Grid.SetColumn(lbl, 0);
@@ -134,7 +131,6 @@ namespace goFriend.Views
                             VerticalOptions = LayoutOptions.Center,
                             //FontSize = (double)Application.Current.Resources["LblFontSize"],
                             FontSize = (double)Application.Current.Resources["LblSectionFontSize"],
-                            TextColor = (Color)Application.Current.Resources["ColorLabel"],
                             //FontAttributes = FontAttributes.Bold,
                             //HorizontalTextAlignment = TextAlignment.End,
                             Text = _arrFixedCatValues[i]
@@ -150,7 +146,7 @@ namespace goFriend.Views
                         {
                             Placeholder = arrCatDesc[i],
                             Text = selectedApiGroup?.GroupFriend?.GetCatByIdx(i + 1),
-                            PlaceholderColor = (Color)Application.Current.Resources["ColorLabel"],
+                            PlaceholderColor = (Color)Application.Current.Resources["ColorLabelDetail"],
                             TextColor = (Color)Application.Current.Resources["ColorPrimary"],
                             ClearButtonVisibility = ClearButtonVisibility.WhileEditing,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -159,7 +155,7 @@ namespace goFriend.Views
                         var button = new ImageButton
                         {
                             Source = Constants.IconSearch,
-                            BackgroundColor = BackgroundColor,
+                            BackgroundColor = Color.Transparent,
                             Margin = new Thickness(5, 0),
                             IsEnabled = entry.IsEnabled,
                         };
