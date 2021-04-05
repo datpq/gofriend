@@ -49,7 +49,7 @@ namespace goFriend.Views
                             Spans =
                             {
                                 new Span {Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
-                                    FontSize = (double)Application.Current.Resources["LblFontSize"], LineHeight = 1.2},
+                                    FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Span)), LineHeight = 1.2},
                                 new Span {Text = Environment.NewLine},
                                 new Span {Text = x.Time.AddMinutes(
                                     Constants.ChatPingFrequence) >= now ? res.Online : x.Time == DateTime.MinValue ? string.Empty :

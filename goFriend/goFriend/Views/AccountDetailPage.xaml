@@ -59,12 +59,12 @@
                 </StackLayout>
             </StackLayout>
             <StackLayout Margin="0,10,0,0" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
-                <Button x:Name="CmdSave" CornerRadius="5" FontAttributes="Bold"
+                <Button x:Name="CmdSave" CornerRadius="5"
                         Clicked="CmdSave_Clicked" Text="{x:Static local:res.CmdSave}" FontSize="Micro"
                         TextColor="White" BackgroundColor="{StaticResource ColorPrimaryLight}">
                     <Button.ImageSource>
                         <FontImageSource Glyph="{StaticResource IconSave}" Color="White"
-                                         FontFamily="{StaticResource IconFontFamily}"/>
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
                     </Button.ImageSource>
                 </Button>
             </StackLayout>

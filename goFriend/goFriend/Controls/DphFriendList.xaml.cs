@@ -16,7 +16,7 @@ namespace goFriend.Controls
         }
 
         public static readonly BindableProperty ImageSizeProperty =
-            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphFriendList), DphListView.BigImage);
+            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphFriendList), DphListView.MediumImage);
         public double ImageSize
         {
             get => (double)GetValue(ImageSizeProperty);
@@ -45,17 +45,19 @@ namespace goFriend.Controls
                                     new Span
                                     {
                                         Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
-                                        FontSize = (double) Application.Current.Resources["LblFontSize"],
+                                        FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Span)),
                                         LineHeight = 1.2
                                     },
                                     new Span {Text = Environment.NewLine},
-                                    new Span {Text = x.GetCatValueDisplay(arrFixedCats.Count), LineHeight = 1.2},
+                                    new Span {Text = x.GetCatValueDisplay(arrFixedCats.Count), LineHeight = 1,
+                                        FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Span)) },
                                 }
                             };
-                            if (ImageSize == DphListView.BigImage)
+                            //if (ImageSize == DphListView.BigImage)
                             {
                                 formattedString.Spans.Add(new Span { Text = Environment.NewLine });
-                                formattedString.Spans.Add(new Span { Text = x.Friend.CountryName, LineHeight = 1.2 });
+                                formattedString.Spans.Add(new Span { Text = x.Friend.CountryName, LineHeight = 1,
+                                    FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Span)) });
                             }
                             return new DphListViewItemModel
                             {

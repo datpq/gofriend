@@ -100,11 +100,12 @@ namespace goFriend.Views
                             Spans =
                             {
                                 new Span { Text = x.Friend.Name, FontAttributes = FontAttributes.Bold,
-                                    FontSize = (double)Application.Current.Resources["LblFontSize"]},
-                                new Span {Text = arrFixedCats.Count == x.GetCatList().Count() ? $" {res.AskedToJoinGroup}" : $", {x.GetCatValueDisplay(arrFixedCats.Count)}, {res.AskedToJoinGroup}"},
+                                    FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Span))},
+                                new Span {Text = arrFixedCats.Count == x.GetCatList().Count() ? $" {res.AskedToJoinGroup}" : $", {x.GetCatValueDisplay(arrFixedCats.Count)}, {res.AskedToJoinGroup}",
+                                    FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Span))},
                                 new Span {Text = Environment.NewLine},
                                 new Span {Text = x.ModifiedDate.HasValue ? x.ModifiedDate.Value.GetSpentTime()
-                                    : string.Empty, LineHeight = 1.3}
+                                    : string.Empty, LineHeight = 1, FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Span))}
                             }
                         },
                         Button1ImageSource = Constants.ImgDeny,

@@ -279,7 +279,10 @@ namespace goFriend.Functions
 
         private void RemoveCache(string key)
         {
-            httpClient.GetAsync($"api/Friend/ClearCache/{key}");
+            var requestUri = $"api/Friend/ClearCache/{key}";
+            httpClient.GetAsync(requestUri);
+            new HttpClient { BaseAddress = new Uri($"{Constants.AzureBackendUrlDev}/") }.GetAsync(requestUri);
+            new HttpClient { BaseAddress = new Uri($"{Constants.AzureBackendUrlChat}/") }.GetAsync(requestUri);
         }
 
         [FunctionName("CreateChat")]

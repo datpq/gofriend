@@ -85,24 +85,24 @@
             </controls:DphMap.Triggers>-->
             <StackLayout Spacing="0" Orientation="Horizontal" IsVisible="{Binding Editable}" HorizontalOptions="Center">
                 <Button x:Name="CmdSetGps"
-                    Clicked="CmdSetGps_Click" Text="{x:Static local:res.CmdSetGPSPos}" FontSize="Micro" FontAttributes="Bold">
+                    Clicked="CmdSetGps_Click" Text="{x:Static local:res.CmdSetGPSPos}" FontSize="Micro">
                     <Button.ImageSource>
                         <FontImageSource Glyph="{StaticResource IconSetGps}" Color="{StaticResource ColorPrimaryLight}"
-                                         FontFamily="{StaticResource IconFontFamily}"/>
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
                     </Button.ImageSource>
                 </Button>
                 <Button x:Name="CmdReset"
-                        Clicked="CmdReset_Click" Text="{x:Static local:res.CmdReset}" FontSize="Micro" FontAttributes="Bold" >
+                        Clicked="CmdReset_Click" Text="{x:Static local:res.CmdReset}" FontSize="Micro">
                     <Button.ImageSource>
                         <FontImageSource Glyph="{StaticResource IconCancel}" Color="DarkRed"
-                                         FontFamily="{StaticResource IconFontFamily}"/>
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
                     </Button.ImageSource>
                 </Button>
                 <Button x:Name="CmdSave"
-                        Clicked="CmdSave_Click" Text="{x:Static local:res.CmdSave}" FontSize="Micro" FontAttributes="Bold">
+                        Clicked="CmdSave_Click" Text="{x:Static local:res.CmdSave}" FontSize="Micro">
                     <Button.ImageSource>
                         <FontImageSource Glyph="{StaticResource IconSave}" Color="{StaticResource ColorPrimaryLight}"
-                                         FontFamily="{StaticResource IconFontFamily}"/>
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
                     </Button.ImageSource>
                 </Button>
                 <!--<Button x:Name="CmdSetGps"

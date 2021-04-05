@@ -57,16 +57,18 @@ namespace goFriend
                             new Span
                             {
                                 Text = groupSubscriptionNotif?.FriendName, FontAttributes = FontAttributes.Bold,
-                                FontSize = (double)Application.Current.Resources["LblDetailFontSize"]
+                                FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Span))
                             },
-                            new Span { Text = $" {notifMsg} " },
+                            new Span { Text = $" {notifMsg} ",
+                                FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Span)) },
                             new Span
                             {
                                 Text = groupSubscriptionNotif?.GroupName, FontAttributes = FontAttributes.Bold,
-                                FontSize = (double)Application.Current.Resources["LblDetailFontSize"]
+                                FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Span))
                             },
                             new Span { Text = Environment.NewLine },
-                            new Span { Text = notification.CreatedDate.HasValue ? notification.CreatedDate.Value.GetSpentTime() : string.Empty, LineHeight = 1.3 }
+                            new Span { Text = notification.CreatedDate.HasValue ? notification.CreatedDate.Value.GetSpentTime() : string.Empty,
+                                LineHeight = 1, FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Span))}
                         }
                     };
                     break;

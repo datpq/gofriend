@@ -110,11 +110,11 @@ namespace goFriend.ViewModels
                     new Span
                     {
                         Text = Chat.Name, FontAttributes = FontAttributes.Bold,
-                        FontSize = (double) Application.Current.Resources["LblFontSize"], LineHeight = 1.2
+                        FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Span)), LineHeight = 1.2
                     },
                     new Span { Text = Environment.NewLine },
-                    new Span {Text = LastMessage.TruncateAtWord(70), LineHeight = 1.2,
-                        FontSize = (double) Application.Current.Resources["LblDetailFontSize"],
+                    new Span {Text = LastMessage.TruncateAtWord(70), LineHeight = 1,
+                        FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Span)),
                         FontAttributes = IsLastMessageRead ? FontAttributes.None : FontAttributes.Bold}
                 }
             };

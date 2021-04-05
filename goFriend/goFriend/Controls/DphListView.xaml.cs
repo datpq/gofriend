@@ -19,7 +19,7 @@ namespace goFriend.Controls
         private DateTime _lastRefreshDateTime = DateTime.Today.AddYears(-1); //default value is a very small value
 
         public static readonly BindableProperty ImageSizeProperty =
-            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphListView), BigImage);
+            BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphListView), MediumImage);
         public double ImageSize
         {
             get => (double)GetValue(ImageSizeProperty);
