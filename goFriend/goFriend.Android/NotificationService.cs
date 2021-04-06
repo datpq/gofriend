@@ -34,7 +34,7 @@ namespace goFriend.Droid
                     .SetColor(new Color(ContextCompat.GetColor(LocationForegroundService.GetInstance(), Resource.Color.colorPrimary)))
                     .SetContentTitle(serviceNotification.ContentTitle)
                     .SetContentText(serviceNotification.ContentText)
-                    .SetSmallIcon(Resource.Drawable.hn9194_25)
+                    .SetSmallIcon(Resource.Drawable.logo)
                     .SetShowWhen(true)
                     .SetAutoCancel(true);
 
@@ -65,7 +65,7 @@ namespace goFriend.Droid
                 }
 
                 builder.SetLargeIcon(largeIcon);
-                //builder.SetLargeIcon(BitmapFactory.DecodeResource(Resources, Resource.Drawable.hn9194_25));
+                //builder.SetLargeIcon(BitmapFactory.DecodeResource(Resources, Resource.Drawable.logo));
             }
             catch (Exception e)
             {

@@ -250,9 +250,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\hn9194_25.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\ic_help_green.png" />
   </ItemGroup>
   <ItemGroup>
@@ -317,6 +314,9 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\account_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\logo.png" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

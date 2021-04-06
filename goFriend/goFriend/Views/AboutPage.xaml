@@ -24,7 +24,7 @@
         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
             <StackLayout Orientation="Horizontal" HorizontalOptions="Start" VerticalOptions="Center">
                 <ContentView Padding="16,16,16,16" VerticalOptions="FillAndExpand">
-                    <Image Source="hn9194_25.png" VerticalOptions="Center" HeightRequest="96"/>
+                    <Image Source="logo.png" VerticalOptions="Center" HeightRequest="96"/>
                 </ContentView>
             </StackLayout>
         </StackLayout>

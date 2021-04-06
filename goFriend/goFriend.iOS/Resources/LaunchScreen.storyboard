@@ -21,7 +21,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23" image="hn9194_25.png" horizontalHuggingPriority="257">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23" image="logo.png" horizontalHuggingPriority="257">
                                 <rect key="frame" x="41" y="128" width="238" height="244"/>
                                 <rect key="contentStretch" x="0.0" y="0.0" width="0.0" height="0.0"/>
                                 <constraints>
@@ -44,7 +44,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="hn9194_25.png" width="240" height="240"/>
+        <image name="logo.png" width="240" height="240"/>
     </resources>
     <color key="tintColor" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace" white="1" alpha="1"/>
 </document>
