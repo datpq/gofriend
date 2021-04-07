@@ -19,6 +19,7 @@ namespace goFriend.Views
         {
             Title = res.Login;
             InitializeComponent();
+            BtnSignInApple.IsVisible = Device.RuntimePlatform == Device.iOS && Constants.AppleSignInButtonVisible;
 
             //Facebook event handlers
             BtnFacebook.OnSuccess = new Command<string>(async authToken =>

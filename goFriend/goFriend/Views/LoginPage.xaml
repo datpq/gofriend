@@ -33,14 +33,7 @@
                     </OnPlatform>
                 </ctl:FacebookLoginButton.HeightRequest>
             </ctl:FacebookLoginButton>
-            <ctl:AppleSignInButton SignIn="AppleSignInButton_OnSignIn"  ButtonStyle="Black" x:Name="BtnSignInApple" HeightRequest="50">
-                <ctl:AppleSignInButton.IsVisible>
-                    <OnPlatform x:TypeArguments="x:Boolean">
-                        <On Platform="Android, WinPhone">false</On>
-                        <On Platform="iOS">true</On>
-                    </OnPlatform>
-                </ctl:AppleSignInButton.IsVisible>
-            </ctl:AppleSignInButton>
+            <ctl:AppleSignInButton SignIn="AppleSignInButton_OnSignIn"  ButtonStyle="Black" x:Name="BtnSignInApple" HeightRequest="50" />
             <!--<StackLayout Orientation="Horizontal" Margin="0,10,0,5">
                 <Button CornerRadius="{StaticResource BtnCornerRadius}"
                     HeightRequest="50" HorizontalOptions="StartAndExpand" WidthRequest="140"

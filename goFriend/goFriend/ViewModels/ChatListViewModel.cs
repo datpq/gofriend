@@ -60,8 +60,10 @@ namespace goFriend.ViewModels
                 if (ChatListItems.Any(x => x.Chat.Id == chat.Id) && chat.GetMemberIds().All(x => x != App.User.Id))
                 {
                     Logger.Debug($"User is kicked out from the chat {chat.Id}");
-                    ChatListItems.Remove(ChatListItems.FirstOrDefault(x => x.Chat.Id == chat.Id));
-                    ChatListPage.Instance?.Refresh();
+                    MainThread.BeginInvokeOnMainThread(() => {
+                        ChatListItems.Remove(ChatListItems.FirstOrDefault(x => x.Chat.Id == chat.Id));
+                        ChatListPage.Instance?.Refresh();
+                    });
                     return;
                 }
             }
@@ -85,7 +87,7 @@ namespace goFriend.ViewModels
                 item.ChatViewModel.ChatName = chat.Name;
                 item.Chat.Members = chat.Members;
                 //if there is any new messages following the CreateChat --> retrieve them
-                await App.RetrieveNewMessages(item);
+                MainThread.BeginInvokeOnMainThread(async () => await App.RetrieveNewMessages(item));
             }
             else
             {
@@ -127,7 +129,7 @@ namespace goFriend.ViewModels
                 }
 
                 //if user is added to an existing chat --> retrieve the history of the chat
-                await App.RetrieveNewMessages(chatListItemVm);
+                MainThread.BeginInvokeOnMainThread(async() => await App.RetrieveNewMessages(chatListItemVm));
 
                 if (ChatListPage.Instance != null && !App.IsInitializing) {
                     var trigger = new TaskCompletionSource<object>();
@@ -190,7 +192,7 @@ namespace goFriend.ViewModels
                 //}
             }
 
-            ChatListPage.Instance?.Refresh();
+            MainThread.BeginInvokeOnMainThread(() => ChatListPage.Instance?.Refresh());
 
             Logger.Debug("ReceiveCreateChat.END");
         }

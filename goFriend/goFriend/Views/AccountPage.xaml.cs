@@ -43,10 +43,13 @@ namespace goFriend.Views
                 //Shell.Current.GoToAsync(Constants.ROUTE_HOME_ADMIN);
                 Navigation.PushAsync(new AdminPage());
             };
-            CellLogin.Tapped += (s, e) =>
+            CellLogin.Tapped += async (s, e) =>
             {
                 //Shell.Current.GoToAsync(Constants.ROUTE_HOME_LOGIN); //ERROR Shell.Current is null
-                Navigation.PushAsync(new LoginPage());
+                var appleSignInConfig = await App.FriendStore.GetConfiguration("AppleSignInButtonVisible");
+                bool.TryParse(appleSignInConfig, out Constants.AppleSignInButtonVisible);
+                Logger.Debug($"AppleSignInButtonVisible={Constants.AppleSignInButtonVisible}");
+                await Navigation.PushAsync(new LoginPage());
             };
             CellLogout.Tapped += async (s, e) =>
             {

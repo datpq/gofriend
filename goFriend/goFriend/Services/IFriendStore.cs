@@ -24,6 +24,7 @@ namespace goFriend.Services
         Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight);
         Task<bool> SubscribeGroup(GroupFriend groupFriend);
         Task<Setting> GetSetting(bool useClientCache = true, bool useCache = true);
+        Task<string> GetConfiguration(string key, bool useClientCache = true, bool useCache = true);
         Task<IEnumerable<Configuration>> GetConfigurations(bool useClientCache = true, bool useCache = true);
 
         SignalRService SignalR { get; }

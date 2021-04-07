@@ -56,6 +56,7 @@ namespace goFriend
         public static string BackendUrl = "https://gofriend.azurewebsites.net";
         public static string HomePageUrl = "http://gofriend.azurewebsites.net";
         public const string NOTIFICATION_ICON_PATH = "/logos/9194.png";
+        public static bool AppleSignInButtonVisible = true;
 
         public const string CacheTimeoutPrefix = "CacheTimeout.";
         private static Dictionary<string, int> CacheTimeoutDict = new Dictionary<string, int>();

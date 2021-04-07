@@ -133,6 +133,16 @@ namespace goFriend
 
         public static async Task<string> GetMemberNames(this Chat chat)
         {
+            if (chat.GetChatType() == ChatType.StandardGroup)
+            {
+                try
+                {
+                    var groupId = int.Parse(chat.Members.Substring(1));
+                    var groups = await App.FriendStore.GetGroups();
+                    return groups.SingleOrDefault(x => x.Group.Id == groupId).Group.Name;
+                }
+                catch { }
+            }
             var arrIds = chat.GetMemberIds();
             var arrNames = new string[arrIds.Length];
             for (var i = 0; i < arrNames.Length; i++)

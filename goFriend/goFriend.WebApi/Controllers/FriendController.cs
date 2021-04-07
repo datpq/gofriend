@@ -1797,6 +1797,50 @@ namespace goFriend.WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("GetConfiguration/{key}/{useCache}")]
+        public ActionResult<string> GetConfiguration([FromRoute] string key, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<string> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(key={key}, useCache={useCache})");
+
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{key}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _cacheService.Get(cacheKey) as ActionResult<string>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                var config = _dataRepo.Get<Configuration>(x => x.Key == key && x.Enabled, true);
+                result = config?.Value;
+
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(result={result?.Value}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
         [Route("GetConfigurations/{friendId}/{useCache}")]
         public ActionResult<IEnumerable<Configuration>> GetConfigurations([FromHeader] string token, [FromRoute] int friendId,
             bool useCache = true)

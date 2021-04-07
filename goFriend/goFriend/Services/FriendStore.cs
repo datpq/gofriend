@@ -53,6 +53,12 @@ namespace goFriend.Services
             Logger.Info($"BackendUrl={Constants.BackendUrl}");
         }
 
+        private static HttpClient GetHttpClient()
+        {
+            httpClient.DefaultRequestHeaders.Clear();
+            return httpClient;
+        }
+
         private static HttpClient GetSecuredHttpClient()
         {
             httpClient.DefaultRequestHeaders.Clear();
@@ -1071,6 +1077,66 @@ namespace goFriend.Services
             finally
             {
                 Logger.Debug($"GetSetting.END({JsonConvert.SerializeObject(result)}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        public async Task<string> GetConfiguration(string key, bool useClientCache = true, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            string result = null;
+            try
+            {
+                Logger.Debug($"GetConfiguration.BEGIN(key={key}, useClientCache={useClientCache}, useCache={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{key}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _memoryCache.Get(cacheKey) as string;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                Validate();
+
+                var client = GetHttpClient();
+                var requestUrl = $"api/Friend/GetConfiguration/{key}/{useCache}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<string>(jsonString.Result);
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.TrackError(e);
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetConfiguration.END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
             }
         }
 
