@@ -47,8 +47,8 @@
                   </ImageButton>
               </StackLayout>
               <Label x:Name="LblName" Grid.Row="1" Grid.Column="0" Text="{Static local:res.SearchByName}"
-                     FontSize="{StaticResource LblDetailFontSize}" VerticalOptions="Center" IsVisible="{Binding IsExpandableCategories}"/>
-              <Entry x:Name="EntryName" Grid.Row="1" Grid.Column="1" FontSize="{StaticResource LblDetailFontSize}"
+                     FontSize="Caption" VerticalOptions="Center" IsVisible="{Binding IsExpandableCategories}"/>
+              <Entry x:Name="EntryName" Grid.Row="1" Grid.Column="1" FontSize="Caption"
                      ClearButtonVisibility="WhileEditing" IsVisible="{Binding IsExpandableCategories}">
                   <Entry.Behaviors>
                       <controls:BehaviorTextChangedEntry />

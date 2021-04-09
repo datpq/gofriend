@@ -525,4 +525,13 @@
   <data name="MsgMandatoryField" xml:space="preserve">
     <value>{0} là bắt buộc</value>
   </data>
+  <data name="MsgNewVersionAvailable" xml:space="preserve">
+    <value>Hiện đã có phiên bản mới của chương trình. Hãy cập nhật để có những chức năng mới nhất. Bạn đồng ý cập nhật?</value>
+  </data>
+  <data name="LatestVersionInfo" xml:space="preserve">
+    <value>Bạn đang có phiên bản mới nhất của chương trình</value>
+  </data>
+  <data name="LatestVersionWarn" xml:space="preserve">
+    <value>Phiên bản mới nhất của chương trình là {0}</value>
+  </data>
 </root>

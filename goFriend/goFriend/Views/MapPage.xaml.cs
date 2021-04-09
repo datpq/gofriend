@@ -61,7 +61,6 @@ namespace goFriend.Views
 
         protected override async void OnAppearing()
         {
-            Extension.SendLogFile();
             return;
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {

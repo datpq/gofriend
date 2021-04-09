@@ -430,6 +430,24 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string LatestVersionInfo {
+            get {
+                return ResourceManager.GetString("LatestVersionInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string LatestVersionWarn {
+            get {
+                return ResourceManager.GetString("LatestVersionWarn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {
@@ -678,6 +696,15 @@ namespace goFriend {
         public static string MsgMuteTitle {
             get {
                 return ResourceManager.GetString("MsgMuteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgNewVersionAvailable {
+            get {
+                return ResourceManager.GetString("MsgNewVersionAvailable", resourceCulture);
             }
         }
         

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
-using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -138,7 +136,8 @@ namespace goFriend.Controls
                         //Logger.Debug($"i={i}");
                         var lbl = new Label
                         {
-                            FontSize = LblGroup.FontSize,
+                            //FontSize = LblGroup.FontSize,
+                            FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Label)),
                             VerticalOptions = LblGroup.VerticalOptions,
                             TextColor = LblName.TextColor,
                             IsVisible = IsShowingCategories,
@@ -149,8 +148,9 @@ namespace goFriend.Controls
                         Grid.Children.Add(lbl);
                         var picker = new Picker
                         {
-                            FontSize = PickerGroups.FontSize,
-                            HeightRequest = PickerGroups.HeightRequest,
+                            //FontSize = PickerGroups.FontSize,
+                            //HeightRequest = PickerGroups.HeightRequest,
+                            FontSize = Device.GetNamedSize(NamedSize.Caption, typeof(Picker)),
                             //ItemDisplayBinding = new Binding("Display"),
                             ItemDisplayBinding = PickerGroups.ItemDisplayBinding,
                             IsVisible = IsShowingCategories,

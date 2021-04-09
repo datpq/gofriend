@@ -46,10 +46,6 @@ namespace goFriend.Views
             {
                 Logger.Debug("Authentication cancelled by the user");
             });
-            if (Device.RuntimePlatform == Device.iOS)
-            {
-                BtnSignInApple.IsVisible = CrossDeviceInfo.Current.VersionNumber.Major >= 13;
-            }
         }
 
         private async void AppleSignInButton_OnSignIn(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using goFriend.ViewModels;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Plugin.LatestVersion;
 
 namespace goFriend.Views
 {
@@ -45,11 +46,24 @@ namespace goFriend.Views
             };
             CellLogin.Tapped += async (s, e) =>
             {
-                //Shell.Current.GoToAsync(Constants.ROUTE_HOME_LOGIN); //ERROR Shell.Current is null
-                var appleSignInConfig = await App.FriendStore.GetConfiguration("AppleSignInButtonVisible");
-                bool.TryParse(appleSignInConfig, out Constants.AppleSignInButtonVisible);
-                Logger.Debug($"AppleSignInButtonVisible={Constants.AppleSignInButtonVisible}");
-                await Navigation.PushAsync(new LoginPage());
+                if (Device.RuntimePlatform != Device.iOS)
+                {
+                    await Navigation.PushAsync(new LoginPage());
+                    return;
+                }
+                try
+                {
+                    UserDialogs.Instance.ShowLoading(res.Processing);
+                    //Shell.Current.GoToAsync(Constants.ROUTE_HOME_LOGIN); //ERROR Shell.Current is null
+                    var appleSignInConfig = await App.FriendStore.GetConfiguration("AppleSignInButtonVisible");
+                    bool.TryParse(appleSignInConfig, out Constants.AppleSignInButtonVisible);
+                    Logger.Debug($"AppleSignInButtonVisible={Constants.AppleSignInButtonVisible}");
+                    await Navigation.PushAsync(new LoginPage());
+                }
+                finally
+                {
+                    UserDialogs.Instance.HideLoading();
+                }
             };
             CellLogout.Tapped += async (s, e) =>
             {
@@ -117,6 +131,14 @@ namespace goFriend.Views
                 UserDialogs.Instance.HideLoading();
                 RefreshMenu();
                 Logger.Debug("OnAppearing.END");
+            }
+
+            if (!await CrossLatestVersion.Current.IsUsingLatestVersion())
+            {
+                if (await App.DisplayMsgQuestion(res.MsgNewVersionAvailable))
+                {
+                    await CrossLatestVersion.Current.OpenAppInStore();
+                }
             }
         }
 

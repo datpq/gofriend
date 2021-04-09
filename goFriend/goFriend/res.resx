@@ -525,4 +525,13 @@
   <data name="MsgMandatoryField" xml:space="preserve">
     <value>{0} is mandatory</value>
   </data>
+  <data name="MsgNewVersionAvailable" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LatestVersionInfo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LatestVersionWarn" xml:space="preserve">
+    <value />
+  </data>
 </root>
