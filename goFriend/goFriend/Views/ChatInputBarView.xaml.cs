@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Acr.UserDialogs;
 using goFriend.ViewModels;
 using Plugin.Media;
 using Xamarin.Forms;
@@ -18,12 +19,20 @@ namespace goFriend.Views
 
         private void BtnSend_OnClicked(object sender, EventArgs e)
         {
-            var chatViewModel = BindingContext as ChatViewModel;
-            if (!string.IsNullOrWhiteSpace(chatViewModel?.Message))
+            try
             {
-                ChatTextInput.Focus();
+                UserDialogs.Instance.ShowLoading(res.Processing);
+                var chatViewModel = BindingContext as ChatViewModel;
+                if (!string.IsNullOrWhiteSpace(chatViewModel?.Message))
+                {
+                    ChatTextInput.Focus();
+                }
+                chatViewModel?.SendMessageCommand.Execute(null);
             }
-            chatViewModel?.SendMessageCommand.Execute(null);
+            finally
+            {
+                UserDialogs.Instance.HideLoading();
+            }
         }
 
         public void UnFocusEntry()

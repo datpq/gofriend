@@ -80,6 +80,7 @@ namespace goFriend
         public static string ColorOfflinePinMale = "33A5FF";
         public static string ColorOfflinePinFemale = "FFA0AA";
 
+        public const string ImgMap = "gps.png";
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";
         public const string ImgGroupAdmin = "group_admin";

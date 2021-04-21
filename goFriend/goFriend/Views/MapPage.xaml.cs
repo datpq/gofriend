@@ -7,6 +7,7 @@ using goFriend.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
+using System.Linq;
 
 namespace goFriend.Views
 {
@@ -14,15 +15,21 @@ namespace goFriend.Views
     public partial class MapPage : ContentPage
     {
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
+        private bool _isFirstZoomDone;
+        private int _friendId;
 
-        public MapPage()
+        public MapPage() : this(Settings.LastMapPageGroupName) {}
+
+        public MapPage(string selectedGroupName, int friendId = 0)
         {
             InitializeComponent();
 
             Map.ClusterOptions.Buckets[0] = Constants.MinimumClusterSize;
             Map.ClusterOptions.SetMinimumClusterSize(Constants.MinimumClusterSize);
 
-            DphFriendSelection.SelectedGroupName = Settings.LastMapPageGroupName;
+            DphFriendSelection.SelectedGroupName = selectedGroupName;
+            _friendId = friendId;
+            _isFirstZoomDone = friendId == 0; // first time initalization, do not zoom to the Friend if there's no friendId
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
                 Settings.LastMapPageGroupName = selectedGroup.Group.Name;
@@ -54,7 +61,20 @@ namespace goFriend.Views
                             Map.Pins.Add(dphPin.Pin);
                         }
                     }
-                    Map.MoveToRegionToCoverAllPins();
+                    if (!_isFirstZoomDone && _friendId != 0)
+                    {
+                        _isFirstZoomDone = true;
+                        var pin = Map.Pins.FirstOrDefault(x => (x.Tag as DphPin)?.User.Id == _friendId);
+                        if (pin != null)
+                        {
+                            Map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                                new Position(pin.Position.Latitude, pin.Position.Longitude), Distance.FromKilometers(MapExtension.DefaultDistance)));
+                        }
+                    }
+                    else
+                    {
+                        Map.MoveToRegionToCoverAllPins();
+                    }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             });
         }

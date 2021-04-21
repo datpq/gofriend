@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using goFriend.DataModel;
 using goFriend.Helpers;
 using Xamarin.Essentials;
@@ -13,58 +14,50 @@ namespace goFriend.Views
         public ChatOutgoingViewCell()
         {
             InitializeComponent();
-            LongPressedEffect.SetCommand(FraMessage, new Command(async () =>
+            LongPressedEffect.SetCommand(FraMessage, new Command(() =>
             {
-                //if (res.Copy == await App.DisplayActionSheet(res.Copy))
-                //{
-                //    await Clipboard.SetTextAsync((BindingContext as ChatMessage)?.Message);
-                //};
-                var msg = (ChatMessage)BindingContext;
-                if (msg.IsDeleted)
+                var chatMessage = (ChatMessage)BindingContext;
+                if (!chatMessage.IsDeleted)
                 {
-                    App.DisplayContextMenu(new[] { res.Copy, Constants.ImgCopy },
-                        new[]
-                        {
-                            new Action(async () =>
-                            {
-                                await Clipboard.SetTextAsync(msg?.Message);
-                            })
-                        });
-                }
-                else
-                {
-                    App.DisplayContextMenu(new[] { res.Copy, Constants.ImgCopy, res.Delete, Constants.ImgDelete },
-                        new[]
-                        {
-                            new Action(async () =>
-                            {
-                                await Clipboard.SetTextAsync(msg?.Message);
-                            }),
-                            async () =>
-                            {
-                                if (!await App.DisplayMsgQuestion(res.MsgDeleteConfirm)) return;
-                                try
-                                {
-                                    var chatMessage = new ChatMessage
-                                    {
-                                        IsDeleted = true,
-                                        ChatId = msg.ChatId,
-                                        MessageIndex = msg.MessageIndex,
-                                        MessageType = msg.MessageType,
-                                        OwnerId = msg.OwnerId,
-                                        Token = App.User.Token.ToString(),
-                                        LogoUrl = msg.LogoUrl
-                                    };
-                                    await App.FriendStore.SendText(chatMessage);
-                                }
-                                catch
-                                {
-                                    App.DisplayMsgError(res.MsgErrConnection);
-                                }
-                            }
-                        });
+                    DisplayContextMenu(chatMessage);
                 }
             }));
+        }
+
+        public static void DisplayContextMenu(ChatMessage chatMessage)
+        {
+            var menuItems = new List<string>() { res.Copy, Constants.ImgCopy };
+            var menuItemActions = new List<Action>() {
+                new Action(async () =>
+                {
+                    await Clipboard.SetTextAsync(chatMessage.Message);
+                })};
+
+            menuItems.AddRange(new[] { res.Delete, Constants.ImgDelete });
+            menuItemActions.Add(
+                new Action(async () =>
+                {
+                    if (!await App.DisplayMsgQuestion(res.MsgDeleteConfirm)) return;
+                    try
+                    {
+                        var deletedMsg = new ChatMessage
+                        {
+                            IsDeleted = true,
+                            ChatId = chatMessage.ChatId,
+                            MessageIndex = chatMessage.MessageIndex,
+                            MessageType = chatMessage.MessageType,
+                            OwnerId = chatMessage.OwnerId,
+                            Token = App.User.Token.ToString(),
+                            LogoUrl = chatMessage.LogoUrl
+                        };
+                        await App.FriendStore.SendText(deletedMsg);
+                    }
+                    catch
+                    {
+                        App.DisplayMsgError(res.MsgErrConnection);
+                    }
+                }));
+            App.DisplayContextMenu(menuItems.ToArray(), menuItemActions.ToArray());
         }
     }
 }

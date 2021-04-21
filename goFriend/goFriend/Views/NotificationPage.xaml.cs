@@ -35,7 +35,15 @@ namespace goFriend.Views
                         case NotificationType.SubscriptionApproved:
                         case NotificationType.SubscriptionRejected:
                             var subscription = (GroupSubscriptionNotifBase) selectedNotification.NotificationObject;
-                            await App.GotoAccountInfo(subscription.GroupId, subscription.FriendId);
+                            var friend = await App.FriendStore.GetFriendInfo(subscription.FriendId);
+                            if (friend.Location == null)
+                            {
+                                await App.GotoAccountInfo(subscription.GroupId, subscription.FriendId);
+                            }
+                            else
+                            {
+                                await Navigation.PushAsync(new MapPage(subscription.GroupName, subscription.FriendId));
+                            }
                             break;
                     }
                 }
