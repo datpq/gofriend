@@ -12,7 +12,6 @@ using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Droid.Renderers;
 using NLog;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.GoogleMaps.Android;
@@ -129,7 +128,7 @@ namespace goFriend.Droid.Renderers
                 return;
             }
             var dphPin = _mapMarkerPins[e.Marker.Id];
-            if (string.IsNullOrWhiteSpace(dphPin?.Url)) return;
+            //if (string.IsNullOrWhiteSpace(dphPin?.Url)) return;
             //try
             //{
             //    //Android.App.Application.Context.PackageManager.GetPackageInfo("com.facebook.katana", 0);
@@ -141,7 +140,8 @@ namespace goFriend.Droid.Renderers
             //{
             //    // ignored
             //}
-            Launcher.OpenAsync(new Uri(dphPin.Url));
+            //Launcher.OpenAsync(new Uri(dphPin.Url));
+            MessagingCenter.Send((DphMap)Map, Constants.MsgInfoWindowClick, dphPin);
         }
 
         public View GetInfoContents(Marker marker)
@@ -206,6 +206,7 @@ namespace goFriend.Droid.Renderers
             if (e.OldElement != null)
             {
                 NativeMap.InfoWindowClick -= OnInfoWindowClick;
+                //NativeMap.InfoWindowLongClick -= OnInfoWindowLongClick;
             }
 
             ((MapView)Control)?.GetMapAsync(this);
@@ -214,6 +215,7 @@ namespace goFriend.Droid.Renderers
         public void OnMapReady(GoogleMap googleMap)
         {
             NativeMap.InfoWindowClick += OnInfoWindowClick;
+            //NativeMap.InfoWindowLongClick += OnInfoWindowLongClick;
             NativeMap.SetInfoWindowAdapter(this);
             (Map as DphClusterMap)?.MoveToLastPosition();
         }
@@ -276,10 +278,17 @@ namespace goFriend.Droid.Renderers
         void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
             var dphPin = FindPin(e.Marker.Id, e.Marker.Position);
-            if (string.IsNullOrWhiteSpace(dphPin?.Url)) return;
+            //if (string.IsNullOrWhiteSpace(dphPin?.Url)) return;
 
-            Launcher.OpenAsync(new Uri(dphPin.Url));
+            //Launcher.OpenAsync(new Uri(dphPin.Url));
+            MessagingCenter.Send((DphClusterMap)Map, Constants.MsgInfoWindowClick, dphPin);
         }
+
+        //private void OnInfoWindowLongClick(object sender, GoogleMap.InfoWindowLongClickEventArgs e)
+        //{
+        //    var dphPin = FindPin(e.Marker.Id, e.Marker.Position);
+        //    MessagingCenter.Send(Application.Current, Constants.MsgInfoWindowLongClick, dphPin);
+        //}
 
         public View GetInfoContents(Marker marker)
         {

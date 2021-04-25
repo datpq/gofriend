@@ -8,6 +8,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
 using System.Linq;
+using System.Collections.Generic;
+using Xamarin.Essentials;
 
 namespace goFriend.Views
 {
@@ -53,6 +55,8 @@ namespace goFriend.Views
                                 UserRight = groupFriend.FriendId.IsSuperUser() ? UserType.Pending :
                                 groupFriend.UserRight == UserType.Normal ? UserType.Pending : groupFriend.UserRight, // all normal users have Pending (offline) icon
                                 User = groupFriend.Friend,
+                                GroupId = groupFriend.GroupId,
+                                GroupName = selectedGroup.Group.Name,
                                 //UserRight = Constants.SuperUserIds.Contains(groupFriend.FriendId) ? UserType.Normal : groupFriend.UserRight,
                                 IsDraggable = false,
                                 Type = PinType.Place
@@ -79,8 +83,45 @@ namespace goFriend.Views
             });
         }
 
+        public static async void DisplayContextMenu(DphPin dphPin, bool withOfflineMap)
+        {
+            var menuItems = new List<string>() { res.NavigateTo, Constants.ImgNavigate };
+            var menuItemActions = new List<Action>()
+            {
+                new Action(async () => {
+                    var location = new Location(dphPin.Position.Latitude, dphPin.Position.Longitude);
+                    var options =  new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
+
+                    await Xamarin.Essentials.Map.OpenAsync(location, options);
+                })
+            };
+            if (dphPin.GroupId.HasValue)
+            {
+                menuItems.AddRange(new[] { res.BasicInfos, Constants.ImgAccountInfo });
+                menuItemActions.Add(new Action(async () => await App.GotoAccountInfo(dphPin.GroupId.Value, dphPin.User.Id)));
+            }
+            if (withOfflineMap)
+            {
+                var friend = await App.FriendStore.GetFriendInfo(dphPin.User.Id);
+                if (friend.Location != null)
+                {
+                    menuItems.AddRange(new[] { res.MapOffline, Constants.ImgMap });
+                    menuItemActions.Add(
+                        new Action(() => App.Current.MainPage.Navigation.PushAsync(new MapPage(dphPin.GroupName, dphPin.User.Id))));
+                }
+            }
+            App.DisplayContextMenu(menuItems.ToArray(), menuItemActions.ToArray());
+        }
+
+        protected override void OnDisappearing()
+        {
+            MessagingCenter.Unsubscribe<DphClusterMap, DphPin>(Map, Constants.MsgInfoWindowClick);
+        }
+
         protected override async void OnAppearing()
         {
+            MessagingCenter.Subscribe<DphClusterMap, DphPin>(Map,
+                Constants.MsgInfoWindowClick, (sender, dphPin) => DisplayContextMenu(dphPin, false));
             return;
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {

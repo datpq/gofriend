@@ -297,5 +297,15 @@ namespace goFriend.Views
                 }
             });
         }
+        protected override void OnDisappearing()
+        {
+            MessagingCenter.Unsubscribe<DphMap, DphPin>(Map, Constants.MsgInfoWindowClick);
+        }
+
+        protected override void OnAppearing()
+        {
+            MessagingCenter.Subscribe<DphMap, DphPin>(Map,
+                Constants.MsgInfoWindowClick, (sender, dphPin) => MapPage.DisplayContextMenu(dphPin, false));
+        }
     }
 }

@@ -534,4 +534,7 @@
   <data name="LatestVersionWarn" xml:space="preserve">
     <value />
   </data>
+  <data name="NavigateTo" xml:space="preserve">
+    <value>Navigate to</value>
+  </data>
 </root>

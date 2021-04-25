@@ -534,4 +534,7 @@
   <data name="LatestVersionWarn" xml:space="preserve">
     <value>Phiên bản mới nhất của chương trình là {0}</value>
   </data>
+  <data name="NavigateTo" xml:space="preserve">
+    <value>Tìm đường đi</value>
+  </data>
 </root>

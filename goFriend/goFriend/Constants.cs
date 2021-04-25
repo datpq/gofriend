@@ -35,6 +35,7 @@ namespace goFriend
         public const string MsgProfile = "MsgProfile";
         public const string MsgProfileExt = "MsgProfileExt";
         public const string MsgLocationChanged = "MsgLocationChanged";
+        public const string MsgInfoWindowClick = "MsgInfoWindowClick";
         public const string MsgLogout = "MsgLogout";
         public const int ListViewPageSize = 10;
         public const int MinimumClusterSize = 20;
@@ -81,6 +82,7 @@ namespace goFriend
         public static string ColorOfflinePinFemale = "FFA0AA";
 
         public const string ImgMap = "gps.png";
+        public const string ImgNavigate = "navigate.png";
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";
         public const string ImgGroupAdmin = "group_admin";

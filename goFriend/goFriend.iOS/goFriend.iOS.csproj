@@ -321,6 +321,9 @@
   <ItemGroup>
     <BundleResource Include="Resources\gps.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\navigate.png" />
+  </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties TriggeredFromHotReload="False" />

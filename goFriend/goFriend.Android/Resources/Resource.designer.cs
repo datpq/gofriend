@@ -23039,82 +23039,85 @@ namespace goFriend.Droid
 			public const int mute = 2131165596;
 			
 			// aapt resource value: 0x7F07019D
-			public const int navigation_empty_icon = 2131165597;
+			public const int navigate = 2131165597;
 			
 			// aapt resource value: 0x7F07019E
-			public const int notification_action_background = 2131165598;
+			public const int navigation_empty_icon = 2131165598;
 			
 			// aapt resource value: 0x7F07019F
-			public const int notification_bg = 2131165599;
+			public const int notification_action_background = 2131165599;
 			
 			// aapt resource value: 0x7F0701A0
-			public const int notification_bg_low = 2131165600;
+			public const int notification_bg = 2131165600;
 			
 			// aapt resource value: 0x7F0701A1
-			public const int notification_bg_low_normal = 2131165601;
+			public const int notification_bg_low = 2131165601;
 			
 			// aapt resource value: 0x7F0701A2
-			public const int notification_bg_low_pressed = 2131165602;
+			public const int notification_bg_low_normal = 2131165602;
 			
 			// aapt resource value: 0x7F0701A3
-			public const int notification_bg_normal = 2131165603;
+			public const int notification_bg_low_pressed = 2131165603;
 			
 			// aapt resource value: 0x7F0701A4
-			public const int notification_bg_normal_pressed = 2131165604;
+			public const int notification_bg_normal = 2131165604;
 			
 			// aapt resource value: 0x7F0701A5
-			public const int notification_icon_background = 2131165605;
+			public const int notification_bg_normal_pressed = 2131165605;
 			
 			// aapt resource value: 0x7F0701A6
-			public const int notification_template_icon_bg = 2131165606;
+			public const int notification_icon_background = 2131165606;
 			
 			// aapt resource value: 0x7F0701A7
-			public const int notification_template_icon_low_bg = 2131165607;
+			public const int notification_template_icon_bg = 2131165607;
 			
 			// aapt resource value: 0x7F0701A8
-			public const int notification_tile_bg = 2131165608;
+			public const int notification_template_icon_low_bg = 2131165608;
 			
 			// aapt resource value: 0x7F0701A9
-			public const int notify_panel_notification_icon_bg = 2131165609;
+			public const int notification_tile_bg = 2131165609;
 			
 			// aapt resource value: 0x7F0701AA
-			public const int roundedbg = 2131165610;
+			public const int notify_panel_notification_icon_bg = 2131165610;
 			
 			// aapt resource value: 0x7F0701AB
-			public const int roundedbgdark = 2131165611;
+			public const int roundedbg = 2131165611;
 			
 			// aapt resource value: 0x7F0701AC
-			public const int splash_screen = 2131165612;
+			public const int roundedbgdark = 2131165612;
 			
 			// aapt resource value: 0x7F0701AD
-			public const int tab_about = 2131165613;
+			public const int splash_screen = 2131165613;
 			
 			// aapt resource value: 0x7F0701AE
-			public const int tab_browse = 2131165614;
+			public const int tab_about = 2131165614;
 			
 			// aapt resource value: 0x7F0701AF
-			public const int tab_chat = 2131165615;
+			public const int tab_browse = 2131165615;
 			
 			// aapt resource value: 0x7F0701B0
-			public const int tab_home = 2131165616;
+			public const int tab_chat = 2131165616;
 			
 			// aapt resource value: 0x7F0701B1
-			public const int tab_map = 2131165617;
+			public const int tab_home = 2131165617;
 			
 			// aapt resource value: 0x7F0701B2
-			public const int tab_notification = 2131165618;
+			public const int tab_map = 2131165618;
 			
 			// aapt resource value: 0x7F0701B3
-			public const int test_custom_background = 2131165619;
+			public const int tab_notification = 2131165619;
 			
 			// aapt resource value: 0x7F0701B4
-			public const int tooltip_frame_dark = 2131165620;
+			public const int test_custom_background = 2131165620;
 			
 			// aapt resource value: 0x7F0701B5
-			public const int tooltip_frame_light = 2131165621;
+			public const int tooltip_frame_dark = 2131165621;
 			
 			// aapt resource value: 0x7F0701B6
-			public const int unmute = 2131165622;
+			public const int tooltip_frame_light = 2131165622;
+			
+			// aapt resource value: 0x7F0701B7
+			public const int unmute = 2131165623;
 			
 			static Drawable()
 			{

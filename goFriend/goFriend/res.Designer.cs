@@ -907,6 +907,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Navigate to.
+        /// </summary>
+        public static string NavigateTo {
+            get {
+                return ResourceManager.GetString("NavigateTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notifiation.
         /// </summary>
         public static string Notification {

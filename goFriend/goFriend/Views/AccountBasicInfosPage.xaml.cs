@@ -30,8 +30,15 @@ namespace goFriend.Views
             Map.UiSettings.MyLocationButtonEnabled = true;
         }
 
+        protected override void OnDisappearing()
+        {
+            MessagingCenter.Unsubscribe<DphMap, DphPin>(Map, Constants.MsgInfoWindowClick);
+        }
+
         protected override async void OnAppearing()
         {
+            MessagingCenter.Subscribe<DphMap, DphPin>(Map,
+                Constants.MsgInfoWindowClick, (sender, dphPin) => MapPage.DisplayContextMenu(dphPin, false));
             return;
             if (Device.RuntimePlatform == Device.iOS && App.User.ShowLocation == true)
             {

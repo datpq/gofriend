@@ -93,6 +93,8 @@ namespace goFriend.ViewModels
                         UserRight = x.IsOnlineInactive() ? UserType.Pending : (groupFriend?.UserRight == UserType.Admin
                         && !x.FriendId.IsSuperUser()) ? UserType.Admin : UserType.Normal,
                         User = x.Friend,
+                        GroupId = Group.Id,
+                        GroupName = Group.Name,
                         //Url = $"facebook://facebook.com/info?user={_viewModel.Friend.FacebookId}",
                         IsDraggable = false,
                         Type = PinType.Place
