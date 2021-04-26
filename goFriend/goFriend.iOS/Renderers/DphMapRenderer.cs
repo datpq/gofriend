@@ -36,6 +36,7 @@ namespace goFriend.iOS.Renderers
                 if (Control is MapView nativeMap)
                 {
                     nativeMap.DraggingMarkerEnded -= OnDraggingMarkerEnded;
+                    nativeMap.InfoTapped -= OnInfoTapped;
                     nativeMap.MarkerInfoContents = null;
                     nativeMap.MarkerInfoWindow = null;
                 }
@@ -46,10 +47,22 @@ namespace goFriend.iOS.Renderers
                 //_map = (DphMap)e.NewElement;
                 var nativeMap = Control as MapView;
                 nativeMap.DraggingMarkerEnded += OnDraggingMarkerEnded;
+                nativeMap.InfoTapped += OnInfoTapped;
                 nativeMap.MarkerInfoContents = MarkerInfoContents;
                 nativeMap.MarkerInfoWindow = MarkerInfoWindow;
                 (Map as DphMap)?.MoveToLastPosition();
             }
+        }
+
+        private void OnInfoTapped(object sender, GMSMarkerEventEventArgs e)
+        {
+            if (!_mapMarkerPins.ContainsKey(e.Marker))
+            {
+                Logger.Error("Marker not found");
+                return;
+            }
+            var dphPin = _mapMarkerPins[e.Marker];
+            MessagingCenter.Send((DphMap)Map, Constants.MsgInfoWindowClick, dphPin);
         }
 
         private UIView MarkerInfoWindow(MapView mapView, Marker marker)
@@ -161,6 +174,7 @@ namespace goFriend.iOS.Renderers
             {
                 if (Control is MapView nativeMap)
                 {
+                    nativeMap.InfoTapped -= OnInfoTapped;
                     nativeMap.MarkerInfoContents = null;
                     nativeMap.MarkerInfoWindow = null;
                 }
@@ -170,10 +184,18 @@ namespace goFriend.iOS.Renderers
             {
                 //_map = (DphMap)e.NewElement;
                 var nativeMap = Control as MapView;
+                nativeMap.InfoTapped += OnInfoTapped; ;
                 nativeMap.MarkerInfoContents = MarkerInfoContents;
                 nativeMap.MarkerInfoWindow = MarkerInfoWindow;
                 (Map as DphMap)?.MoveToLastPosition();
             }
+        }
+
+        private void OnInfoTapped(object sender, GMSMarkerEventEventArgs e)
+        {
+            var dphPin = FindPin(e.Marker);
+            if (dphPin == null) return;
+            MessagingCenter.Send((DphClusterMap)Map, Constants.MsgInfoWindowClick, dphPin);
         }
 
         private UIView MarkerInfoWindow(MapView mapView, Marker marker)
