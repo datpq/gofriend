@@ -36,6 +36,7 @@ namespace goFriend.Views
         {
             InitializeComponent();
             Instance = this;
+            Ads.AdUnitId = Device.RuntimePlatform == Device.Android ? Constants.AdBannerIdAndroid : Constants.AdBannerIdiOS;
             _timer = new DphTimer(() => ((MapOnlineViewModel)BindingContext).DisabledExpiredTime = DateTime.MinValue);
             Device.StartTimer(TimeSpan.FromSeconds(Constants.MAPONLINE_REFRESH_INTERVAL), () =>
             {

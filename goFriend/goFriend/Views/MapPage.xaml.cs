@@ -28,6 +28,7 @@ namespace goFriend.Views
 
             Map.ClusterOptions.Buckets[0] = Constants.MinimumClusterSize;
             Map.ClusterOptions.SetMinimumClusterSize(Constants.MinimumClusterSize);
+            Ads.AdUnitId = Device.RuntimePlatform == Device.Android ? Constants.AdBannerIdAndroid : Constants.AdBannerIdiOS;
 
             DphFriendSelection.SelectedGroupName = selectedGroupName;
             _friendId = friendId;

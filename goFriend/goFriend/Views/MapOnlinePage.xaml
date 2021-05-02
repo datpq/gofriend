@@ -9,7 +9,7 @@
              Title="{Static local:res.SvcBackground}"
              x:Class="goFriend.Views.MapOnlinePage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Spacing="0">
             <controls:DphFriendSelection x:Name="DphFriendSelection" Margin="10,0,10,0"
                                          IsShowingCategories="False" IsExpandableCategories="False"
                                          IsShowingRefresh="True"  HorizontalOptions="FillAndExpand"/>
@@ -47,6 +47,7 @@
                 </Label.FormattedText>
             </Label>
             <controls:DphMap x:Name="Map" MyLocationEnabled="True" IsVisible="{Binding IsRunning, FallbackValue='False'}" VerticalOptions="FillAndExpand"/>
+            <controls:AdmobControl x:Name="Ads"></controls:AdmobControl>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

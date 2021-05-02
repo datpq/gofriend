@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              x:Class="goFriend.Controls.DphFriendList">
   <ContentView.Content>
-        <StackLayout>
+        <StackLayout Spacing="0">
             <StackLayout Margin="10,0">
                 <controls:DphFriendSelection x:Name="DphFriendSelection" x:FieldModifier="public"/>
             </StackLayout>

@@ -16,6 +16,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Color = Android.Graphics.Color;
 using ImageCircle.Forms.Plugin.Droid;
+using Android.Gms.Ads;
 
 namespace goFriend.Droid
 {
@@ -86,6 +87,7 @@ namespace goFriend.Droid
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
+            MobileAds.Initialize(ApplicationContext);
             FormsMaterial.Init(this, savedInstanceState);
             UserDialogs.Init(this);
             ImageCircleRenderer.Init();

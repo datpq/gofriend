@@ -148,6 +148,10 @@ namespace goFriend
         public const string ACTION_GOTO_MAPONLINE = "GoFriend.action.GOTO_MAPONLINE";
         public const string ACTION_GOTO_CHAT = "GoFriend.action.GOTO_CHAT";
 
+        public static string AdAppIdiOS = "ca-app-pub-8225913241413637~6516680341";
+        public static string AdBannerIdAndroid = "ca-app-pub-8225913241413637/7176808283";
+        public static string AdBannerIdiOS = "ca-app-pub-8225913241413637/8313456678";
+
         public static async Task InitializeConfiguration()
         {
             Logger.Debug("InitializeConfiguration.BEGIN");
@@ -211,6 +215,15 @@ namespace goFriend
                     case "BackendUrl":
                         BackendUrl = x.Value;
                         FriendStore.UpdateBackendUrl();
+                        break;
+                    case "AdAppIdiOS":
+                        AdAppIdiOS = x.Value;
+                        break;
+                    case "AdBannerIdAndroid":
+                        AdBannerIdAndroid = x.Value;
+                        break;
+                    case "AdBannerIdiOS":
+                        AdBannerIdiOS = x.Value;
                         break;
                     default:
                         if (x.Key.StartsWith(CacheTimeoutPrefix))
