@@ -17,6 +17,7 @@ namespace goFriend.iOS.Renderers
         protected override void OnElementChanged(ElementChangedEventArgs<AdmobControl> e)
         {
             base.OnElementChanged(e);
+            if (Element == null) return;
             if (Control == null)
             {
                 SetNativeControl(CreateBannerView());
@@ -26,14 +27,15 @@ namespace goFriend.iOS.Renderers
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
-            Control.AdUnitID = Element.AdUnitId;
+            if (Control == null) return;
+            Control.AdUnitId = Element.AdUnitId;
         }
 
         private BannerView CreateBannerView()
         {
             var bannerView = new BannerView(AdSizeCons.SmartBannerPortrait)
             {
-                AdUnitID = Element.AdUnitId,
+                AdUnitId = Element.AdUnitId,
                 RootViewController = GetVisibleViewController()
             };
 
