@@ -105,6 +105,7 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="MediaService.cs" />
     <Compile Include="NotificationService.cs" />
+    <Compile Include="Renderers\AdMobViewRenderer.cs" />
     <Compile Include="Renderers\AppleSignInButtonRenderer.cs" />
     <Compile Include="Renderers\ChatEntryRenderer.cs" />
     <Compile Include="Renderers\CustomEditorRenderer.cs" />
@@ -232,6 +233,9 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Visual.Material">
       <Version>5.0.0.2012</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Google.iOS.MobileAds">
+      <Version>7.66.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

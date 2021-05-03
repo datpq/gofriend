@@ -96,5 +96,7 @@
 		<string>fa-solid-900.ttf</string>
 		<string>ionicons.ttf</string>
 	</array>
+  <key>GADApplicationIdentifier</key>
+  <string>ca-app-pub-8225913241413637~6516680341</string>
 </dict>
 </plist>

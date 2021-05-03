@@ -92,6 +92,7 @@ namespace goFriend.iOS
             Forms.Init();
             FormsMaterial.Init();
             ImageCircleRenderer.Init();
+            Google.MobileAds.MobileAds.SharedInstance.Start(null);
 
             Xamarin.FormsGoogleMaps.Init("AIzaSyAxU0F02kSfdb8oVeFoFWKwK619RK5HkqU");
             CachedImageRenderer.Init();

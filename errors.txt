@@ -323,6 +323,13 @@ at least in my case this was the issue
 	- Deploy on IIS (with binding www.gofriend.com, gofriend.azurewebsites.net)
 	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)
 	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
+- Ads:
+	- 'Unable to get provider com.google.android.gms.ads.MobileAdsInitProvider: java.lang.IllegalStateException: xamarin
+		AndroidManifest.xml
+		<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-8225913241413637~2612776501"/>
+	- iOS Info.plist
+		<key>GADApplicationIdentifier</key>
+		<string>ca-app-pub-3940256099942544~1458002511</string>
 
 - Azure functions:
 	- Functions runtime: 3
@@ -392,12 +399,4 @@ Update-Database
 Update-Database Chat
 Remove-Migration
 Update-Database InitialCreate
-
-Google Map Key:
-AIzaSyCDslbf6JY0MUU5KafJW_F67Eso476Tl80
-	
-	iphone 11 Pro Max iOS 13.3 -> Catherine, Bao Anh Bao Linh Bao Chau
-	iphone 11 Pro iOS 13.3 -> Bao Anh Bao Linh Bao Chau
-	iphone 11 iOS 13.3 -> Bao Anh Bao Linh Bao Chau Dark Mode
-	
 
