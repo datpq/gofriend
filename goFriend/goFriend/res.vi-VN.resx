@@ -537,4 +537,7 @@
   <data name="NavigateTo" xml:space="preserve">
     <value>Tìm đường đi</value>
   </data>
+  <data name="MsgErrUnableToTrack" xml:space="preserve">
+    <value>Lỗi chia sẻ vị trí, có thể do bạn chưa cấp quyền trong cấu hình của điện thoại</value>
+  </data>
 </root>

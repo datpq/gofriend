@@ -161,6 +161,12 @@ namespace goFriend.Views
             if (!App.LocationService.IsRunning())
             {
                 await Task.Run(() => App.LocationService.Start());
+                if (!App.LocationService.IsRunning()) //something went wrong (permission not granted maybe)
+                {
+                    vm.IsRunning = !vm.IsRunning; //restore status
+                    App.DisplayMsgError(res.MsgErrUnableToTrack);
+                    return;
+                }
             }
             await Task.Run(() =>
             {

@@ -98,5 +98,7 @@
 	</array>
   <key>GADApplicationIdentifier</key>
   <string>ca-app-pub-8225913241413637~6516680341</string>
+  <key>NSUserTrackingUsageDescription</key>
+  <string>Vị trí của bạn được sử dụng cho mục đích chia sẻ cho bạn bè cùng nhóm khi bạn cần</string>
 </dict>
 </plist>

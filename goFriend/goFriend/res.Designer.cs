@@ -601,6 +601,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MsgErrUnableToTrack {
+            get {
+                return ResourceManager.GetString("MsgErrUnableToTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Api connection error. Please relogin and try again!.
         /// </summary>
         public static string MsgErrWrongToken {
