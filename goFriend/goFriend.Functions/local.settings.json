@@ -1,11 +1,11 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureSignalRConnectionString": "Endpoint=https://gofriend-sample.service.signalr.net;AccessKey=acKDEnRZx2RKx0dH+9RR+LwREKLXjFzGxGLoFqVrS4A=;Version=1.0;",
+    "AzureSignalRConnectionString": "Endpoint=https://hanoi9194chat.service.signalr.net;AccessKey=P5l3S9pVf2MuyHk7GvI74Icw1W1un7xKqseBiZsjEzE=;Version=1.0;",
     "FUNCTIONS_EXTENSION_VERSION": "~3",
-    "GoFriendConnection": "Server=tcp:gofriend.database.windows.net,1433;Initial Catalog=GoFriend;Persist Security Info=False;User ID=dat;Password=GoFriend9194;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+    "GoFriendConnection": "Server=tcp:hanoisqlserver.database.windows.net,1433;Initial Catalog=hanoi9194;Persist Security Info=False;User ID=hanoi9194;Password=your_password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
     "AppSettings:NotificationFetchingDays": 5,
-    "AppSettings:AzureSignalRConnectionString": "Endpoint=https://gofriendasrs.service.signalr.net;AccessKey=Yl9itgW0W3JzYkhpZLbY740j1sxY8DZpfCa3UuKddwo=;Version=1.0;",
+    "AppSettings:AzureSignalRConnectionString": "Endpoint=https://hanoi9194chat.service.signalr.net;AccessKey=P5l3S9pVf2MuyHk7GvI74Icw1W1un7xKqseBiZsjEzE=;Version=1.0;",
     "AppSettings:CacheTableTimeout": 1400,
     "AppSettings:CacheDefaultTimeout": 1
   },
@@ -15,6 +15,6 @@
     "CORSCredentials": false
   },
   "ConnectionStrings": {
-    "GoFriendConnection": "Server=tcp:gofriend.database.windows.net,1433;Initial Catalog=GoFriend;Persist Security Info=False;User ID=dat;Password=GoFriend9194;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    "GoFriendConnection": "Server=tcp:hanoisqlserver.database.windows.net,1433;Initial Catalog=hanoi9194;Persist Security Info=False;User ID=hanoi9194;Password=your_password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
 }
