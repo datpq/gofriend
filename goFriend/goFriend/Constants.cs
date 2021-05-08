@@ -52,10 +52,10 @@ namespace goFriend
         public const int AccountOnAppearingTimeout = 5; //in minutes
         public static bool FUNC_SENDLOGFILE = false;
 
-        public static string ChatFuncUrl { get; set; } = "https://gofriendfuncapp.azurewebsites.net";
+        public static string ChatFuncUrl { get; set; } = "https://hanoi9194func.azurewebsites.net";
 
-        public static string BackendUrl = "https://gofriend.azurewebsites.net";
-        public static string HomePageUrl = "http://gofriend.azurewebsites.net";
+        public static string BackendUrl = "https://hanoi9194.azurewebsites.net";
+        public static string HomePageUrl = "http://hanoi9194.azurewebsites.net";
         public const string NOTIFICATION_ICON_PATH = "/logos/9194.png";
         public static bool AppleSignInButtonVisible = true;
 

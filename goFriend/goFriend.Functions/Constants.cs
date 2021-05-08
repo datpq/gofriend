@@ -2,9 +2,9 @@
 {
     public static class Constants
     {
-        public const string AzureBackendUrl = "https://gofriend.azurewebsites.net";
-        public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
-        public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
+        public const string AzureBackendUrl = "https://hanoi9194.azurewebsites.net";
+        //public const string AzureBackendUrlDev = "https://gofrienddev.azurewebsites.net";
+        //public const string AzureBackendUrlChat = "https://gofriendchat.azurewebsites.net";
 
         public const string SignalRHubName = "goFriendChat";
 

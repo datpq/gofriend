@@ -54,12 +54,12 @@
                         <Span Text="{x:Static local:res.TermConditionMsg1}" />
                         <Span Text=" "/>
                         <ctl:HyperlinkSpan Text="{x:Static local:res.TermCondition}"
-                                         Url="http://gofriend.azurewebsites.net/termcondition.html" />
+                                         Url="http://hanoi9194.azurewebsites.net/termcondition.html" />
                         <Span Text=" "/>
                         <Span Text="{x:Static local:res.TermConditionMsg2}" />
                         <Span Text=" "/>
                         <ctl:HyperlinkSpan Text="{x:Static local:res.PrivacyPolicy}"
-                                         Url="http://gofriend.azurewebsites.net/privacypolicy.html" />
+                                         Url="http://hanoi9194.azurewebsites.net/privacypolicy.html" />
                         <Span Text="."/>
                     </FormattedString>
                 </Label.FormattedText>
