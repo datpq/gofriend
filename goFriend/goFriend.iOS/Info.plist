@@ -84,9 +84,9 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Thư viện ảnh được dùng khi bạn muốn gửi ảnh cho bạn bè.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.14</string>
+	<string>2.0.15</string>
 	<key>CFBundleVersion</key>
-	<string>39</string>
+	<string>41</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -97,8 +97,8 @@
 		<string>ionicons.ttf</string>
 	</array>
   <key>GADApplicationIdentifier</key>
-  <string>ca-app-pub-8225913241413637~6516680341</string>
+  <string>ca-app-pub-6249589914041033~3494807477</string>
   <key>NSUserTrackingUsageDescription</key>
-  <string>Vị trí của bạn được sử dụng cho mục đích chia sẻ cho bạn bè cùng nhóm khi bạn cần</string>
+  <string>Chương trình theo dõi vị trí của bạn và chia sẻ cho bạn bè cùng nhóm trong phạm vi bạn chọn. Bạn có thể bật/tắt chức năng này tùy theo nhóm và theo ý muốn của bạn một cách dễ dàng</string>
 </dict>
 </plist>

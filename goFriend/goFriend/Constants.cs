@@ -148,8 +148,8 @@ namespace goFriend
         public const string ACTION_GOTO_MAPONLINE = "GoFriend.action.GOTO_MAPONLINE";
         public const string ACTION_GOTO_CHAT = "GoFriend.action.GOTO_CHAT";
 
-        public static string AdBannerIdAndroid = "ca-app-pub-8225913241413637/7176808283";
-        public static string AdBannerIdiOS = "ca-app-pub-8225913241413637/8313456678";
+        public static string AdBannerIdAndroid = "ca-app-pub-6249589914041033/2487819899";
+        public static string AdBannerIdiOS = "ca-app-pub-6249589914041033/8670084868";
 
         public static async Task InitializeConfiguration()
         {
