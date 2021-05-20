@@ -98,7 +98,7 @@
 	</array>
   <key>GADApplicationIdentifier</key>
   <string>ca-app-pub-6249589914041033~3494807477</string>
-  <key>NSUserTrackingUsageDescription</key>
-  <string>Chương trình theo dõi vị trí của bạn và chia sẻ cho bạn bè cùng nhóm trong phạm vi bạn chọn. Bạn có thể bật/tắt chức năng này tùy theo nhóm và theo ý muốn của bạn một cách dễ dàng</string>
+  <!--<key>NSUserTrackingUsageDescription</key>
+  <string>Chương trình theo dõi vị trí của bạn và chia sẻ cho bạn bè cùng nhóm trong phạm vi bạn chọn. Bạn có thể bật/tắt chức năng này tùy theo nhóm và theo ý muốn của bạn một cách dễ dàng</string>-->
 </dict>
 </plist>

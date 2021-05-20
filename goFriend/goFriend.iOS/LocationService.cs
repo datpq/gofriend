@@ -54,24 +54,24 @@ namespace goFriend.iOS
             {
                 Logger.Debug($"Start.BEGIN");
 
-                AppTrackingTransparency.ATTrackingManager.RequestTrackingAuthorization((result) =>
-                {
-                    switch (result)
-                    {
-                        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.NotDetermined:
-                            break;
-                        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Restricted:
-                            break;
-                        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Denied:
-                            break;
-                        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Authorized:
-                            break;
-                        default:
-                            break;
-                    }
-                });
-                if (AppTrackingTransparency.ATTrackingManager.TrackingAuthorizationStatus
-                    != AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Authorized) return;
+                //AppTrackingTransparency.ATTrackingManager.RequestTrackingAuthorization((result) =>
+                //{
+                //    switch (result)
+                //    {
+                //        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.NotDetermined:
+                //            break;
+                //        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Restricted:
+                //            break;
+                //        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Denied:
+                //            break;
+                //        case AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Authorized:
+                //            break;
+                //        default:
+                //            break;
+                //    }
+                //});
+                //if (AppTrackingTransparency.ATTrackingManager.TrackingAuthorizationStatus
+                //    != AppTrackingTransparency.ATTrackingManagerAuthorizationStatus.Authorized) return;
 
                 // We need the user's permission for our app to use the GPS in iOS. This is done either by the user accepting
                 // the popover when the app is first launched, or by changing the permissions for the app in Settings
