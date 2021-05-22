@@ -25,10 +25,10 @@ namespace goFriend.Services.Data
                 .HasOne(x => x.Group)
                 .WithMany(x => x.GroupFriends)
                 .HasForeignKey(x => x.GroupId);
-            modelBuilder.Entity<GroupFriend>()
-                .HasOne(x => x.Friend)
-                .WithMany(x => x.GroupFriends)
-                .HasForeignKey(x => x.FriendId);
+            //modelBuilder.Entity<GroupFriend>()
+            //    .HasOne(x => x.Friend)
+            //    .WithMany(x => x.GroupFriends)
+            //    .HasForeignKey(x => x.FriendId);
             modelBuilder.Entity<GroupFriend>().Property(x => x.UserRight)
                 .HasConversion(new EnumToNumberConverter<UserType, int>());
             modelBuilder.Entity<GroupPredefinedCategory>().ToTable("GroupPredefinedCategory");
@@ -47,17 +47,17 @@ namespace goFriend.Services.Data
             modelBuilder.Entity<ChatMessage>().ToTable("ChatMessage");
             modelBuilder.Entity<ChatMessage>().Property(x => x.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<ChatMessage>().HasKey(x => new { x.ChatId, x.MessageIndex });
-            modelBuilder.Entity<ChatMessage>()
-                .HasOne(x => x.Chat)
-                .WithMany(x => x.ChatMessages)
-                .HasForeignKey(x => x.ChatId);
+            //modelBuilder.Entity<ChatMessage>()
+            //    .HasOne(x => x.Chat)
+            //    .WithMany(x => x.ChatMessages)
+            //    .HasForeignKey(x => x.ChatId);
             modelBuilder.Entity<FriendLocation>().ToTable("FriendLocations");
             modelBuilder.Entity<FriendLocation>().Property(x => x.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<FriendLocation>().HasKey(x => new { x.FriendId });
-            modelBuilder.Entity<FriendLocation>()
-                .HasOne(x => x.Friend)
-                .WithOne(x => x.FriendLocation)
-                .HasForeignKey<FriendLocation>(x => x.FriendId);
+            modelBuilder.Entity<FriendLocation>().HasKey(x => new { x.FriendId, x.DeviceId });
+            //modelBuilder.Entity<FriendLocation>()
+            //    .HasOne(x => x.Friend)
+            //    .WithMany()
+            //    .HasForeignKey(x => x.FriendId);
         }
 
         public DbSet<Friend> Friends { get; set; }

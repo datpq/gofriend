@@ -1284,7 +1284,7 @@ namespace goFriend.WebApi.Controllers
 
                 //Where clause is done in 2 times to avoid the error LINQ could not be translated. Either rewrite the query in a form that can be translated
                 //There is already an open DataReader associated with this Command which must be closed first. ==> ToList()
-                result = _dataRepo.GetMany<Group>(x => x.Active).ToList().Where(
+                result = _dataRepo.GetMany<Group>(x => x.Active && x.Public).ToList().Where(
                     x => string.IsNullOrEmpty(searchText) || x.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0)
                     .Select(x => new ApiGetGroupsModel
                     {

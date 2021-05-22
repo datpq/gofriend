@@ -294,6 +294,9 @@ namespace goFriend.Views
             {
                 var friend = await App.FriendStore.GetFriendInfo(friendLocation.FriendId);
                 friendLocation.Friend = friend;
+            } else // 2 devices share the same account
+            {
+                friendLocation.Friend = App.User;
             }
             friendLocation.SharingInfo.Split(DataModel.Extension.SepMain).ToList().ForEach(x =>
             {

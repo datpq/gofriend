@@ -115,6 +115,7 @@
     <Compile Include="Renderers\iOSLongPressedEffect.cs" />
     <Compile Include="Renderers\RightToolbarMenuCustomRenderer.cs" />
     <Compile Include="Services\AppleSignInServiceiOS.cs" />
+    <Compile Include="Services\IOSDevice.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />

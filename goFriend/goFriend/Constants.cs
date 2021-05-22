@@ -51,6 +51,7 @@ namespace goFriend
         public const int ChatPingFrequence = 5; //in minutes
         public const int AccountOnAppearingTimeout = 5; //in minutes
         public static bool FUNC_SENDLOGFILE = false;
+        public static string DeviceId;
 
         public static string ChatFuncUrl { get; set; } = "https://hanoi9194func.azurewebsites.net";
 

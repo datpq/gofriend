@@ -1334,12 +1334,13 @@ namespace goFriend.Services
                 Logger.Warn("SharingInfo is null. Do nothing.");
                 return;
             }
-            Logger.Debug($"SendLocation.BEGIN(latitude={latitude}, longitude={longitude}, sharingInfo={sharingInfo})");
+            Logger.Debug($"SendLocation.BEGIN(latitude={latitude}, longitude={longitude}, sharingInfo={sharingInfo}, DeviceId={Constants.DeviceId})");
             try
             {
                 var friendLocation = new FriendLocation()
                 {
                     FriendId = App.User.Id,
+                    DeviceId = Constants.DeviceId,
                     Location = new Point(longitude, latitude),
                     SharingInfo = sharingInfo
                 };

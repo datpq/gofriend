@@ -13,6 +13,9 @@ namespace goFriend.DataModel
         [Key]
         public int Id { get; set; }
 
+        [Column(TypeName = "VARCHAR(50)")]
+        public string DeviceId { get; set; }
+
         public int FriendId { get; set; }
 
         [JsonIgnore]

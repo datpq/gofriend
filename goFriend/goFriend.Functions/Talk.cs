@@ -502,9 +502,9 @@ namespace goFriend.Functions
                 log.LogDebug($"json = {json}");
 
                 var friendLocation = JsonConvert.DeserializeObject<FriendLocation>(json);
-                log.LogDebug($"FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo}");
+                log.LogDebug($"FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo}, DeviceId={friendLocation.DeviceId}");
 
-                var result = _dataRepo.Get<FriendLocation>(x => x.FriendId == friendLocation.FriendId);
+                var result = _dataRepo.Get<FriendLocation>(x => x.FriendId == friendLocation.FriendId && x.DeviceId == friendLocation.DeviceId);
                 if (result == null)
                 {
                     log.LogDebug("New FriendLocation recorded.");
@@ -530,7 +530,7 @@ namespace goFriend.Functions
                         var groupId = int.Parse(x.Split(Extension.SepSub)[0]);
                         //var radius = double.Parse(x.Split(Extension.SepSub)[1]);
                         var chat = _dataRepo.Get<Chat>(x => x.Members == $"g{groupId}", true);
-                        log.LogDebug($"Sending to the group {groupId} (SharingInfo={friendLocation.SharingInfo}, chatId={chat.Id}, chatName={chat.Name})");
+                        log.LogDebug($"Sending to the group {groupId} (SharingInfo={friendLocation.SharingInfo}, DeviceId={friendLocation.DeviceId}, chatId={chat.Id}, chatName={chat.Name})");
 
                         await signalRMessages.AddAsync(
                             new SignalRMessage
@@ -540,6 +540,7 @@ namespace goFriend.Functions
                                 Arguments = new[] {
                                     new FriendLocation {
                                         FriendId = friendLocation.FriendId,
+                                        DeviceId = friendLocation.DeviceId,
                                         Location = friendLocation.Location,
                                         SharingInfo = friendLocation.SharingInfo
                                     }

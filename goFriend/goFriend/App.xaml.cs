@@ -42,6 +42,8 @@ namespace goFriend
         public App()
         {
             //NinjectManager.Wire(new ApplicationModule());
+            var device = DependencyService.Get<IDevice>();
+            Constants.DeviceId = device.GetIdentifier();
             FaceBookManager = DependencyService.Get<IFacebookManager>();
             LocationService = DependencyService.Get<ILocationService>();
             NotificationService = DependencyService.Get<INotificationService>();
@@ -55,6 +57,7 @@ namespace goFriend
 
             VersionTracking.Track();
             _logger.Info($"GoFriend {VersionTracking.CurrentVersion}({VersionTracking.CurrentBuild}) starting new instance...");
+            _logger.Info($"DeviceId = {Constants.DeviceId}");
             _logger.Info($"BackendUrl = {Constants.BackendUrl}");
             _logger.Debug(Extension.GetDeviceInfo());
             //Thread.CurrentThread.CurrentCulture = res.Culture;

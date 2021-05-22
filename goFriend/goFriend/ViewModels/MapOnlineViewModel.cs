@@ -31,10 +31,10 @@ namespace goFriend.ViewModels
                 var groupFriend = await App.FriendStore.GetGroupFriend(Group.Id, friendLocation.FriendId);
                 friendLocation.GroupFriends.Add(groupFriend);
             }
-            if (friendLocation.FriendId == App.User.Id) return;
+            if (friendLocation.FriendId == App.User.Id && friendLocation.DeviceId == Constants.DeviceId) return;
             lock(_locker)
             {
-                _friendLocations.RemoveAll(x => x.FriendId == friendLocation.FriendId);
+                _friendLocations.RemoveAll(x => x.FriendId == friendLocation.FriendId && x.DeviceId == friendLocation.DeviceId);
                 _friendLocations.Add(friendLocation);
             }
         }

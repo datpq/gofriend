@@ -53,6 +53,8 @@ namespace goFriend.DataModel
         [Column(TypeName = "VARCHAR(255)")]
         public string LogoUrl { get; set; }
 
+        public bool Public { get; set; }
+
         public override string ToString()
         {
             return $"{Id}|{Name}";

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -31,7 +30,7 @@ namespace goFriend.DataModel
         [NotMapped]
         public string Token { get; set; }
 
-        [JsonIgnore]
-        public ICollection<ChatMessage> ChatMessages { get; set; }
+        //[JsonIgnore]
+        //public ICollection<ChatMessage> ChatMessages { get; set; }
     }
 }

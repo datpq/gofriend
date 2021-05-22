@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using goFriend.Services.Data;
@@ -10,9 +11,10 @@ using goFriend.Services.Data;
 namespace goFriend.MobileAppService.Migrations
 {
     [DbContext(typeof(FriendDbContext))]
-    partial class FriendDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210522095313_GoFamily")]
+    partial class GoFamily
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

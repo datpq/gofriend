@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -86,10 +85,10 @@ namespace goFriend.DataModel
 
         public bool? ShowLocation { get; set; }
 
-        [JsonIgnore]
-        public ICollection<GroupFriend> GroupFriends { get; set; }
-        [JsonIgnore]
-        public FriendLocation FriendLocation { get; set; }
+        //[JsonIgnore]
+        //public ICollection<GroupFriend> GroupFriends { get; set; }
+        //[JsonIgnore]
+        //public ICollection<FriendLocation> FriendLocations { get; set; }
 
         public override string ToString()
         {

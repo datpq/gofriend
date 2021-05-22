@@ -19,7 +19,7 @@ namespace goFriend.Services
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private readonly HttpClient httpClient;
         private HubConnection hubConnection;
-        private ConcurrentDictionary<int, FriendLocation> _lastFriendLocations = new ConcurrentDictionary<int, FriendLocation>();
+        private ConcurrentDictionary<string, FriendLocation> _lastFriendLocations = new ConcurrentDictionary<string, FriendLocation>();
 
         public bool IsConnected { get; private set; }
         public bool IsBusy { get; private set; }
@@ -281,7 +281,7 @@ namespace goFriend.Services
             var stopWatch = Stopwatch.StartNew();
             try
             {
-                Logger.Debug($"OnReceiveLocation.BEGIN(FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo})");
+                Logger.Debug($"OnReceiveLocation.BEGIN(FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo}, DeviceId={friendLocation.DeviceId})");
                 if (friendLocation.SharingInfo == null) return;
                 if (!App.IsUserLoggedIn || App.User == null)
                 {
@@ -289,7 +289,7 @@ namespace goFriend.Services
                     return;
                 }
                 friendLocation.ModifiedDate = DateTime.Now;
-                if (friendLocation.FriendId == App.User.Id) //receive my own location. Stored to use in distance calculation
+                if (friendLocation.FriendId == App.User.Id && friendLocation.DeviceId == Constants.DeviceId) //receive my own location. Stored to use in distance calculation
                 {
                     friendLocation.Friend = App.User;
                     Views.MapOnlinePage.MyLocation = friendLocation;
@@ -300,7 +300,7 @@ namespace goFriend.Services
                     });
                 }
                 if (_lastFriendLocations.Any(
-                    x => x.Key == friendLocation.FriendId && x.Value.Location == friendLocation.Location && !x.Value.IsRefreshNeeded()))
+                    x => x.Key == $"{friendLocation.FriendId}@{friendLocation.DeviceId}" && x.Value.Location == friendLocation.Location && !x.Value.IsRefreshNeeded()))
                 {
                     // the case when some one has more than one common group as you have
                     // his/her location is sent to you more than one times, so ignore the duplicate ones.
@@ -308,7 +308,7 @@ namespace goFriend.Services
                 }
                 else
                 {
-                    _lastFriendLocations[friendLocation.FriendId] = friendLocation;
+                    _lastFriendLocations[$"{friendLocation.FriendId}@{friendLocation.DeviceId}"] = friendLocation;
                     Views.MapOnlinePage.Instance.ReceiveLocation(friendLocation);
                 }
             }
