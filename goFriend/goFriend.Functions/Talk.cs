@@ -502,6 +502,7 @@ namespace goFriend.Functions
                 log.LogDebug($"json = {json}");
 
                 var friendLocation = JsonConvert.DeserializeObject<FriendLocation>(json);
+                if (friendLocation.DeviceId == null) friendLocation.DeviceId = "N/A";
                 log.LogDebug($"FriendId={friendLocation.FriendId}, SharingInfo={friendLocation.SharingInfo}, DeviceId={friendLocation.DeviceId}");
 
                 var result = _dataRepo.Get<FriendLocation>(x => x.FriendId == friendLocation.FriendId && x.DeviceId == friendLocation.DeviceId);

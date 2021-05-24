@@ -49,7 +49,7 @@ namespace goFriend.Views
                     {
                         x.Refresh();
                         newOnlineFriendIds.AddRange(x.RadiusSelectedItem.FriendLocations.Where(
-                            x => x.FriendId != App.User.Id).Select(y => y.FriendId));
+                            x => x.FriendId != App.User.Id || x.DeviceId != Constants.DeviceId).Select(y => y.FriendId));
                     });
                 }
                 newOnlineFriendIds = newOnlineFriendIds.Distinct().ToList();
