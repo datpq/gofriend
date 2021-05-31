@@ -45,7 +45,7 @@
                        HorizontalOptions="FillAndExpand" FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
             </Grid>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" /><!--Grid.Row="1"-->
-            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" />
+            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" IsShowingEditGroup="False" IsShowingAllGroup="True"/>
             <!--Grid.Row="2"-->
 
         </StackLayout>

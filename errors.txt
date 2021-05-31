@@ -323,6 +323,9 @@ at least in my case this was the issue
 	- Deploy on IIS (with binding www.gofriend.com, gofriend.azurewebsites.net)
 	- Create new rule in ESET to allow all connection from Samsung (192.168.1.10)
 	- Edit Hosts Go to redirect all www.gofriend.com and gofriend.azurewebsites.net to local machine IP (192.168.1.160
+- Cache:
+	- Api server side: select * from CacheConfiguration
+	- Api client side: select * from Configuration where [key] like 'CacheTimeout.%'
 - Ads:
 	- 'Unable to get provider com.google.android.gms.ads.MobileAdsInitProvider: java.lang.IllegalStateException: xamarin
 		AndroidManifest.xml

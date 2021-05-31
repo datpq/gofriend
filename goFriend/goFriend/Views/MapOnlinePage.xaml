@@ -10,7 +10,7 @@
              x:Class="goFriend.Views.MapOnlinePage">
     <ContentPage.Content>
         <StackLayout Spacing="0">
-            <controls:DphFriendSelection x:Name="DphFriendSelection" Margin="10,0,10,0"
+            <controls:DphFriendSelection x:Name="DphFriendSelection" Margin="10,0,10,0" IsShowingEditGroup="True"
                                          IsShowingCategories="False" IsExpandableCategories="False"
                                          IsShowingRefresh="True"  HorizontalOptions="FillAndExpand"/>
             <StackLayout Orientation="Horizontal" Margin="10,0,10,0">

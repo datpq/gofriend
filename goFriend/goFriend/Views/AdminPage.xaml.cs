@@ -26,7 +26,7 @@ namespace goFriend.Views
             UserDialogs.Instance.ShowLoading(res.Processing);
             //can not await TaskInitialization because we are in a constructor, and not in an async method.
             App.TaskInitialization.Wait();
-                PickerGroups.ItemsSource = App.MyGroups.Where(x => x.GroupFriend.UserRight >= UserType.Admin).OrderBy(x => x.Group.Name).ToList();
+                PickerGroups.ItemsSource = App.MyGroups.Where(x => x.GroupFriend.UserRight >= UserType.Admin && x.Group.Public).ToList();
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
                 for (var i = 0; i < PickerGroups.Items.Count; i++)
                 {

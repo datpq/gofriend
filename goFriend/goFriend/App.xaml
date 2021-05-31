@@ -33,6 +33,7 @@
         <x:String x:Key="IconPlay">&#xF04B;</x:String>
         <x:String x:Key="IconStop">&#xF04D;</x:String>
         <x:String x:Key="IconRefresh">&#xF2F1;</x:String>
+        <x:String x:Key="IconEditGroup">&#xF234;</x:String>
         <x:String x:Key="IconCamera">&#xF030;</x:String>
         <x:String x:Key="IconPhoto">&#xF03E;</x:String>
         <x:String x:Key="IconSend">&#xF1D8;</x:String>

@@ -43,10 +43,10 @@ namespace goFriend.Views
 
             DphFriendList.Initialize(async (selectedItem) =>
             {
-                var selectedGroupFriend = (GroupFriend)selectedItem.SelectedObject;
-                if (ChipContainer.Children.All(x => (int) ((Chip) x).Tag != selectedGroupFriend.Friend.Id))
+                var friend = selectedItem.SelectedObject as Friend ?? (selectedItem.SelectedObject as GroupFriend).Friend;
+                if (ChipContainer.Children.All(x => (int) ((Chip) x).Tag != friend.Id))
                 {
-                    ChipContainer.Children.Add(CreateChipFromFriend(selectedGroupFriend.Friend));
+                    ChipContainer.Children.Add(CreateChipFromFriend(friend));
                     RefreshName();
                 }
             });

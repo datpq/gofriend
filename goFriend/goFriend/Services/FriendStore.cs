@@ -10,7 +10,6 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Web;
 using goFriend.DataModel;
-using Microsoft.Extensions.Caching.Memory;
 using Plugin.Connectivity;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -24,13 +23,12 @@ namespace goFriend.Services
         private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
         private static readonly IMediaService MediaService = DependencyService.Get<IMediaService>();
         private static HttpClient httpClient = new HttpClient { BaseAddress = new Uri($"{Constants.BackendUrl}/") };
-        private readonly IMemoryCache _memoryCache;
+        private static readonly ICacheService _cacheService = DependencyService.Get<ICacheService>();
         public SignalRService SignalR { get; set;}
 
         public FriendStore()
         {
             Logger.Debug($"FriendStore.BEGIN");
-            _memoryCache = new MemoryCache(new MemoryCacheOptions());
             //ChatHubConnection = new HubConnectionBuilder()
             //    .WithUrl($"{BackendUrl}/chat")
             //    .WithAutomaticReconnect()
@@ -207,7 +205,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as GroupFixedCatValues;
+                    result = _cacheService.Get(cacheKey) as GroupFixedCatValues;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -238,7 +236,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -341,7 +339,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as GroupFriend;
+                    result = _cacheService.Get(cacheKey) as GroupFriend;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -373,7 +371,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -398,6 +396,71 @@ namespace goFriend.Services
             }
         }
 
+        public async Task<IEnumerable<Friend>> GetFriends(string searchText, bool isActive = true, int top = 0, int skip = 0, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            IEnumerable<Friend> result = null;
+            try
+            {
+                Logger.Debug($"GetFriends.BEGIN(searchText={searchText}, isActive={isActive}, top = {top}, skip = {skip}, useCache={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{isActive}.{top}.{skip}.{searchText}";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                Validate();
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GetFriends/{App.User.Id}/{top}/{skip}/{useCache}?{DataModel.Extension.ParamIsActive}={isActive}";
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    requestUrl = $"{requestUrl}&{DataModel.Extension.ParamSearchText}={HttpUtility.UrlEncode(searchText)}";
+                }
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.GetAsync(requestUrl);
+                Logger.Debug($"StatusCode: {response.StatusCode}");
+
+                var jsonString = response.Content.ReadAsStringAsync();
+                jsonString.Wait();
+                //Logger.Debug($"jsonString: {jsonString.Result}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<IEnumerable<Friend>>(jsonString.Result);
+                    //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupCatValuesModel>>();
+                }
+                else
+                {
+                    var msg = JsonConvert.DeserializeObject<Message>(jsonString.Result);
+                    //var msg = await response.Content.ReadAsAsync<Message>();
+                    throw new GoException(msg);
+                }
+
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.TrackError(e);
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"GetFriends.END(Count={result?.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         public async Task<IEnumerable<GroupFriend>> GetGroupFriends(int groupId, bool isActive = true, int top = 0, int skip = 0,
             bool useClientCache = true, bool useCache = true, string searchText = null, params string[] arrCatValues)
         {
@@ -414,7 +477,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as IEnumerable<GroupFriend>;
+                    result = _cacheService.Get(cacheKey) as IEnumerable<GroupFriend>;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -457,7 +520,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -496,7 +559,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
+                    result = _cacheService.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -528,7 +591,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -568,7 +631,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
+                    result = _cacheService.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -600,7 +663,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -639,7 +702,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as Friend;
+                    result = _cacheService.Get(cacheKey) as Friend;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -669,7 +732,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -762,7 +825,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as Friend;
+                    result = _cacheService.Get(cacheKey) as Friend;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -792,7 +855,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -964,6 +1027,55 @@ namespace goFriend.Services
             }
         }
 
+        public async Task<bool> SubscribeGroupMultiple(int groupId, Friend[] friends)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            var result = false;
+            try
+            {
+                Logger.Debug($"SubscribeGroupMultiple.BEGIN(groupId={groupId}, friendIds={string.Join(',', friends.Select(x => x.Id))})");
+
+                Validate();
+
+                var serializedObject = JsonConvert.SerializeObject(friends);
+
+                var client = GetSecuredHttpClient();
+                var requestUrl = $"api/Friend/GroupSubscriptionMultiple/{groupId}";
+                Logger.Debug($"requestUrl: {requestUrl}");
+                var response = await client.PostAsync(requestUrl, new StringContent(serializedObject, Encoding.UTF8, "application/json"));
+
+                result = response.IsSuccessStatusCode;
+                if (!result)
+                {
+                    var msg = await response.Content.ReadAsAsync<Message>();
+                    Logger.Error($"Error: {msg}");
+                }
+
+                _cacheService.Remove($".GetGroupFriends.{groupId}.");
+
+                return result;
+            }
+            catch (GoException e)
+            {
+                Logger.Error($"Error: {e.Msg}");
+                throw;
+            }
+            catch (WebException e)
+            {
+                Logger.Error(e.ToString());
+                throw new GoException(new Message { Code = MessageCode.Unknown, Msg = e.Message });
+            }
+            catch (Exception e) //Unknown error
+            {
+                Logger.TrackError(e);
+                return result;
+            }
+            finally
+            {
+                Logger.Debug($"SubscribeGroupMultiple.END(result={result}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         public async Task<bool> SubscribeGroup(GroupFriend groupFriend)
         {
             var stopWatch = Stopwatch.StartNew();
@@ -1026,7 +1138,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as Setting;
+                    result = _cacheService.Get(cacheKey) as Setting;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -1056,7 +1168,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -1095,7 +1207,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as string;
+                    result = _cacheService.Get(cacheKey) as string;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -1126,7 +1238,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (Exception e) //Unknown error
@@ -1155,7 +1267,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _memoryCache.Get(cacheKey) as IEnumerable<Configuration>;
+                    result = _cacheService.Get(cacheKey) as IEnumerable<Configuration>;
                     if (result != null)
                     {
                         Logger.Debug("Cache found. Return value in cache.");
@@ -1187,7 +1299,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
-                _memoryCache.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)

@@ -11,7 +11,7 @@
     <ContentPage.Content>
         <StackLayout Spacing="0">
             <StackLayout Margin="10,0,10,0">
-                <controls:DphFriendSelection x:Name="DphFriendSelection"></controls:DphFriendSelection>
+                <controls:DphFriendSelection x:Name="DphFriendSelection" IsShowingEditGroup="True"/>
             </StackLayout>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
             <Label x:Name="LabelNoLocation" Text="{Static local:res.MsgNoLocationWarning}" Margin="20" IsVisible="False"

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:forms="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.WrapLayout"
+             xmlns:controls="clr-namespace:goFriend.Controls"
+             xmlns:local="clr-namespace:goFriend"
+             mc:Ignorable="d"
+             x:Class="goFriend.Views.GroupEdit">
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Spacing="0">
+            <Grid RowSpacing="0" ColumnSpacing="0" x:Name="Grid" Margin="10,5,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout Orientation="Horizontal" Grid.Row="0" IsVisible="False">
+                    <Label HorizontalOptions="Start" Text="{Static local:res.GroupName}"
+                           FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
+                    <Entry x:Name="TxtName" HorizontalOptions="FillAndExpand"
+                           FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
+                </StackLayout>
+                <Label x:Name="LblMembers" HorizontalOptions="Start" Grid.Row="1" Grid.Column="0"
+                       FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
+                <ScrollView Margin="0,3,0,0" Grid.Row="2" Grid.Column="0" Padding="0">
+                    <FlexLayout Wrap="Wrap" x:Name="ChipContainer"/>
+                    <!--<forms:WrapLayout x:Name="ChipContainer" Orientation="Horizontal"/>-->
+                </ScrollView>
+            </Grid>
+            <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
+            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" IsShowingEditGroup="False" IsShowingAllGroup="True"/>
+            <StackLayout Spacing="0" Orientation="Horizontal" HorizontalOptions="Center">
+                <Button x:Name="CmdReset"
+                        Clicked="CmdReset_Click" Text="{x:Static local:res.CmdReset}" FontSize="Micro">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconCancel}" Color="DarkRed"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
+                    </Button.ImageSource>
+                </Button>
+                <Button x:Name="CmdSave"
+                        Clicked="CmdSave_Click" Text="{x:Static local:res.CmdSave}" FontSize="Micro">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconSave}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
+                    </Button.ImageSource>
+                </Button>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

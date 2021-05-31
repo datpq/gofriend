@@ -229,7 +229,14 @@ namespace goFriend.Views
             var vm = (ChatViewModel)BindingContext;
             if (vm.ChatListItem.Chat.OwnerId == App.User.Id)
             {
-                Navigation.PushAsync(new ChatEdit(vm));
+                if (vm.ChatListItem.Chat.GetChatType() == ChatType.StandardGroup)
+                {
+                    Navigation.PushAsync(new GroupEdit(vm.ChatListItem.Chat.GetMemberGroupId()));
+                }
+                else
+                {
+                    Navigation.PushAsync(new ChatEdit(vm));
+                }
             }
             else
             {

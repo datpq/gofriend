@@ -666,6 +666,110 @@ namespace goFriend.WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("GetFriends/{friendId}/{top}/{skip}/{useCache}")]
+        public ActionResult<IEnumerable<Friend>> GetFriends([FromHeader] string token, [FromRoute] int friendId,
+            int top = 0, int skip = 0, bool useCache = true)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            ActionResult<IEnumerable<Friend>> result = null;
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, friendId={friendId}, top={top}, skip={skip}, useCache={useCache}, QueryString={Request.QueryString})");
+                bool? isActive = null;
+                if (Request.Query.Keys.Contains(Extension.ParamIsActive))
+                {
+                    isActive = bool.Parse(Request.Query[Extension.ParamIsActive]);
+                }
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var arrFriends = _dataRepo.GetMany<Friend>(x => x.Active && x.Id == friendId).ToList();
+                if (arrFriends.Count != 1)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                var friend = arrFriends.Single();
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                var cachePrefix = $"{CacheNameSpace}.{MethodBase.GetCurrentMethod().Name}";
+                var cacheTimeout = _cacheService.GetCacheTimeout(_dataRepo, cachePrefix);
+                var cacheKey = $"{cachePrefix}.{top}.{skip}.{Request.QueryString}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useCache)
+                {
+                    result = _cacheService.Get(cacheKey) as ActionResult<IEnumerable<Friend>>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
+
+                IEnumerable<Friend> queryableResult = _dataRepo.GetAll<Friend>();
+                if (isActive.HasValue)
+                {
+                    queryableResult = queryableResult.Where(x => x.Active == isActive.Value);
+                }
+
+                if (Request.Query.Keys.Contains(Extension.ParamSearchText))
+                {
+                    var searchText = Request.Query[Extension.ParamSearchText];
+                    if (!string.IsNullOrEmpty(searchText))
+                    {
+                        queryableResult = queryableResult.Where(x => x.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+                    }
+                }
+
+                //result = groupFriends.AsQueryable().Include(x => x.Friend).ToList();
+                queryableResult = queryableResult.OrderBy(x => x.Name);
+                if (skip > 0)
+                {
+                    queryableResult = queryableResult.Skip(skip);
+                }
+                if (top > 0)
+                {
+                    queryableResult = queryableResult.Take(top);
+                }
+                //clear Token before returning friend object
+                result = queryableResult.Select(x => { x.Token = Guid.Empty; return x; }).ToList();
+
+                //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
+                return result;
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(Count={result?.Value.Count()}, ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpGet]
         [Route("GetGroupFriends/{friendId}/{groupId}/{top}/{skip}/{useCache}")]
         public ActionResult<IEnumerable<GroupFriend>> GetGroupFriends([FromHeader] string token, [FromRoute] int friendId,
             [FromRoute] int groupId, int top = 0, int skip = 0, bool useCache = true)
@@ -1201,6 +1305,7 @@ namespace goFriend.WebApi.Controllers
                     Group = x.Group,
                     GroupFriend = x,
                     UserRight = x.UserRight,
+                    ChatOwnerId = _dataRepo.Get<Chat>(y => y.Members == $"g{x.Group.Id}")?.OwnerId,
                     MemberCount = _dataRepo.GetMany<GroupFriend>(y => y.GroupId == x.GroupId && y.Active).Count()
                 }).Select(x => {
                     // there's no JsonIgnore in class GroupFriend, so we need to empty Group and Friend here to make object lighter
@@ -1641,6 +1746,124 @@ namespace goFriend.WebApi.Controllers
         }
 
         [HttpPost]
+        [Route("GroupSubscriptionMultiple/{groupId}")]
+        public IActionResult GroupSubscriptionMultiple([FromHeader] string token, [FromRoute] int groupId, [FromBody] Friend[] friends)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                Logger.Debug($"BEGIN(token={token}, groupId={groupId}, friendIds={string.Join(',', friends.Select(x => x.Id))})");
+
+                #region Data Validation
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Logger.Warn(Message.MsgMissingToken.Msg);
+                    return BadRequest(Message.MsgMissingToken);
+                }
+
+                var group = _dataRepo.Get<Group>(x => x.Active && x.Id == groupId && !x.Public);
+                if (group == null)
+                {
+                    Logger.Warn(Message.MsgGroupNotFound);
+                    return BadRequest(Message.MsgGroupNotFound);
+                }
+                var chat = _dataRepo.Get<Chat>(x => x.Members == $"g{groupId}");
+                if (chat == null)
+                {
+                    Logger.Warn(Message.MsgUnknown.Msg);
+                    return BadRequest(Message.MsgUnknown);
+                }
+                var friendId = chat.OwnerId.HasValue ? chat.OwnerId.Value : 0;
+                var friend = _dataRepo.Get<Friend>(x => x.Id == friendId && x.Active);
+                if (friend == null)
+                {
+                    Logger.Warn(Message.MsgUserNotFound.Msg);
+                    return BadRequest(Message.MsgUserNotFound);
+                }
+                if (friend.Token != Guid.Parse(token))
+                {
+                    Logger.Warn(Message.MsgWrongToken.Msg);
+                    return BadRequest(Message.MsgWrongToken);
+                }
+                Logger.Debug($"friend={friend}");
+
+                #endregion
+
+                var arrOldGroupFriendIds = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId).AsQueryable().Include(x => x.Friend).ToList();
+                arrOldGroupFriendIds.Where(x => !friends.Any(y => y.Id == x.FriendId)).ToList().ForEach(x =>
+                {
+                    _dataRepo.Delete<GroupFriend>(x);
+                    _dataRepo.Add(new Notification
+                    {
+                        CreatedDate = DateTime.Now,
+                        OwnerId = friendId,
+                        Destination = $"g{groupId}",
+                        NotificationObject = new NotifSubscriptionRejected
+                        {
+                            FriendId = x.FriendId,
+                            FriendName = x.Friend.Name,
+                            FacebookId = x.Friend.FacebookId,
+                            GroupId = groupId,
+                            GroupName = group.Name
+                        }
+                    });
+                    //remove Cache
+                    _cacheService.Remove($".GetMyGroups.{x.FriendId}.");
+                });
+
+                friends.Where(x => !arrOldGroupFriendIds.Any(y => y.FriendId == x.Id)).ToList().ForEach(x =>
+                {
+                    _dataRepo.Add<GroupFriend>(new GroupFriend {
+                        GroupId = groupId,
+                        FriendId = x.Id,
+                        Active = true,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        UserRight = UserType.Normal
+                    });
+                    _dataRepo.Add(new Notification
+                    {
+                        CreatedDate = DateTime.Now,
+                        OwnerId = friendId,
+                        Destination = $"g{groupId}",
+                        NotificationObject = new NotifSubscriptionApproved
+                        {
+                            FriendId = x.Id,
+                            FriendName = x.Name,
+                            FacebookId = x.FacebookId,
+                            GroupId = groupId,
+                            GroupName = group.Name
+                        }
+                    });
+                    //remove Cache
+                    _cacheService.Remove($".GetMyGroups.{x.Id}.");
+                });
+
+                _dataRepo.Commit();
+
+                _cacheService.Remove($".GetGroupFriends.{groupId}.");
+
+                return Ok();
+            }
+            catch (FormatException e)
+            {
+                Logger.Error(e, Message.MsgWrongToken.Msg);
+                return BadRequest(Message.MsgWrongToken);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                Logger.Error(e, Message.MsgUnknown.Msg);
+                return BadRequest(Message.MsgUnknown);
+            }
+            finally
+            {
+                Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        [HttpPost]
         [Route("GroupSubscription")]
         public IActionResult GroupSubscription([FromHeader] string token, [FromBody] GroupFriend groupFriend)
         {
@@ -1771,10 +1994,11 @@ namespace goFriend.WebApi.Controllers
 
                 //remove Cache
                 _cacheService.Remove($".GetMyGroups.{groupFriend.FriendId}."); //Active and Inactive
-                groupAdmins.ForEach(x =>
-                {
-                    _cacheService.Remove($".GetGroupFriends.{x}."); // refresh subscription of all Admin
-                });
+                //groupAdmins.ForEach(x =>
+                //{
+                //    _cacheService.Remove($".GetGroupFriends.{x}."); // refresh subscription of all Admin
+                //});
+                _cacheService.Remove($".GetGroupFriends.{groupFriend.GroupId}.");
                 //there is a change in Notification but we leave the Cache expiration doing the job
 
                 return Ok();

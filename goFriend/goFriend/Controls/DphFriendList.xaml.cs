@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using goFriend.DataModel;
 using goFriend.ViewModels;
@@ -15,6 +16,22 @@ namespace goFriend.Controls
             InitializeComponent();
         }
 
+        public static readonly BindableProperty IsShowingEditGroupProperty =
+            BindableProperty.CreateAttached(nameof(IsShowingEditGroup), typeof(bool), typeof(DphFriendList), false);
+        public bool IsShowingEditGroup
+        {
+            get => (bool)GetValue(IsShowingEditGroupProperty);
+            set => SetValue(IsShowingEditGroupProperty, value);
+        }
+
+        public static readonly BindableProperty IsShowingAllGroupProperty =
+            BindableProperty.CreateAttached(nameof(IsShowingAllGroup), typeof(bool), typeof(DphFriendList), false);
+        public bool IsShowingAllGroup
+        {
+            get => (bool)GetValue(IsShowingAllGroupProperty);
+            set => SetValue(IsShowingAllGroupProperty, value);
+        }
+
         public static readonly BindableProperty ImageSizeProperty =
             BindableProperty.CreateAttached(nameof(ImageSize), typeof(double), typeof(DphFriendList), DphListView.MediumImage);
         public double ImageSize
@@ -28,15 +45,62 @@ namespace goFriend.Controls
             DphFriendSelection.SelectedGroupName = Settings.LastBrowsePageGroupName;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
-                Settings.LastBrowsePageGroupName = selectedGroup.Group.Name;
+                if (selectedGroup.Group != null)
+                {
+                    Settings.LastBrowsePageGroupName = selectedGroup.Group.Name;
+                }
                 DphListView.Initialize(cellOnTapped);
                 DphListView.LoadItems(async () =>
                 {
                     var listViewModel = (DphListViewModel) DphListView.BindingContext;
-                    var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true,
-                        listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true, true, searchText,
-                        arrCatValues);
-                    var result = catGroupFriends.Select(x =>
+                    IEnumerable<DphListViewItemModel> result = new List<DphListViewItemModel>();
+                    if (selectedGroup.Group == null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(searchText))
+                        {
+                            var friends = await App.FriendStore.GetFriends(searchText.Trim(), true,
+                            listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true);
+                            result = friends.Select(x =>
+                            {
+                                var formattedString = new FormattedString
+                                {
+                                    Spans =
+                                {
+                                    new Span
+                                    {
+                                        Text = x.Name, FontAttributes = FontAttributes.Bold,
+                                        FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Span)),
+                                        LineHeight = 1.2
+                                    },
+                                }
+                                };
+                                //if (ImageSize == DphListView.BigImage)
+                                {
+                                    formattedString.Spans.Add(new Span { Text = Environment.NewLine });
+                                    formattedString.Spans.Add(new Span
+                                    {
+                                        Text = x.CountryName,
+                                        LineHeight = 1,
+                                        FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Span))
+                                    });
+                                }
+                                return new DphListViewItemModel
+                                {
+                                    Id = x.Id,
+                                    SelectedObject = x,
+                                    //ImageUrl = x.Friend.GetImageUrl(FacebookImageType.small) // small 50 x 50
+                                    ImageUrl = x.GetImageUrl(), // normal 100 x 100
+                                    FormattedText = formattedString
+                                };
+                            });
+                        }
+                    }
+                    else
+                    {
+                        var catGroupFriends = await App.FriendStore.GetGroupFriends(selectedGroup.Group.Id, true,
+                            listViewModel.PageSize, listViewModel.CurrentPage * listViewModel.PageSize, true, true, searchText,
+                            arrCatValues);
+                        result = catGroupFriends.Select(x =>
                         {
                             var formattedString = new FormattedString
                             {
@@ -56,8 +120,12 @@ namespace goFriend.Controls
                             //if (ImageSize == DphListView.BigImage)
                             {
                                 formattedString.Spans.Add(new Span { Text = Environment.NewLine });
-                                formattedString.Spans.Add(new Span { Text = x.Friend.CountryName, LineHeight = 1,
-                                    FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Span)) });
+                                formattedString.Spans.Add(new Span
+                                {
+                                    Text = x.Friend.CountryName,
+                                    LineHeight = 1,
+                                    FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Span))
+                                });
                             }
                             return new DphListViewItemModel
                             {
@@ -67,8 +135,8 @@ namespace goFriend.Controls
                                 ImageUrl = x.Friend.GetImageUrl(), // normal 100 x 100
                                 FormattedText = formattedString
                             };
-                        }
-                    );
+                        });
+                    }
                     return result;
                 });
             });

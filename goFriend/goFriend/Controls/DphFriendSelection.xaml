@@ -45,7 +45,13 @@
                                            FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
                       </ImageButton.Source>
                   </ImageButton>
-              </StackLayout>
+                    <ImageButton x:Name="CmdEditGroup" Clicked="CmdEditGroup_OnClicked" BackgroundColor="Transparent">
+                        <ImageButton.Source>
+                            <FontImageSource Glyph="{StaticResource IconEditGroup}" Color="{StaticResource ColorPrimary}"
+                                           FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                </StackLayout>
               <Label x:Name="LblName" Grid.Row="1" Grid.Column="0" Text="{Static local:res.SearchByName}"
                      FontSize="Caption" VerticalOptions="Center" IsVisible="{Binding IsExpandableCategories}"/>
               <Entry x:Name="EntryName" Grid.Row="1" Grid.Column="1" FontSize="Caption"

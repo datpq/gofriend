@@ -5,6 +5,7 @@ using System.Linq;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -22,6 +23,22 @@ namespace goFriend.Controls
         {
             get => (bool)GetValue(IsShowingCategoriesProperty);
             set => SetValue(IsShowingCategoriesProperty, value);
+        }
+
+        public static readonly BindableProperty IsShowingEditGroupProperty =
+            BindableProperty.CreateAttached(nameof(IsShowingEditGroup), typeof(bool), typeof(DphFriendSelection), false);
+        public bool IsShowingEditGroup
+        {
+            get => (bool)GetValue(IsShowingEditGroupProperty);
+            set => SetValue(IsShowingEditGroupProperty, value);
+        }
+
+        public static readonly BindableProperty IsShowingAllGroupProperty =
+            BindableProperty.CreateAttached(nameof(IsShowingAllGroup), typeof(bool), typeof(DphFriendSelection), false);
+        public bool IsShowingAllGroup
+        {
+            get => (bool)GetValue(IsShowingAllGroupProperty);
+            set => SetValue(IsShowingAllGroupProperty, value);
         }
 
         public static readonly BindableProperty IsExpandableCategoriesProperty =
@@ -81,8 +98,22 @@ namespace goFriend.Controls
             UserDialogs.Instance.ShowLoading(res.Processing);
             //can not await TaskInitialization because we are in a constructor, and not in an async method.
             App.TaskInitialization.Wait();
-                var myGroups = App.MyGroups == null ? new List<ApiGetGroupsModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).OrderBy(x => x.Group.Name).ToList();
-                PickerGroups.ItemsSource = new ObservableCollection<ApiGetGroupsModel>(myGroups);
+                var myGroups = App.MyGroups == null ? new List<ApiGetGroupsModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).ToList();
+            var oc = new ObservableCollection<ApiGetGroupsModel>(myGroups);
+            if (IsShowingAllGroup)
+            {
+                oc.Insert(0, new ApiGetGroupsModel
+                {
+                    Group = null,
+                    GroupFriend = null,
+                    ChatOwnerId = 0
+                });
+                PickerGroups.ItemsSource = oc;
+                UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
+                PickerGroups.SelectedIndex = 0;
+                return;
+            }
+            PickerGroups.ItemsSource = oc;
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
                 for (var i = 0; i < PickerGroups.Items.Count; i++)
                 {
@@ -113,8 +144,8 @@ namespace goFriend.Controls
                 Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 SelectedGroup = PickerGroups.SelectedItem as ApiGetGroupsModel;
+                CmdEditGroup.IsVisible = IsShowingEditGroup && SelectedGroup != null && SelectedGroup.ChatOwnerId.HasValue && SelectedGroup.ChatOwnerId.Value == App.User.Id;
                 if (SelectedGroup == null) return;
-                SelectedGroupName = SelectedGroup.Group.Name;
                 var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex).ToList();
                 foreach (var child in rowToRemove)
                 {
@@ -124,6 +155,15 @@ namespace goFriend.Controls
                 {
                     Grid.RowDefinitions.RemoveAt(DynamicRowStartIndex);
                 }
+
+                if (SelectedGroup.Group == null) // All Groups
+                {
+                    UserDialogs.Instance.HideLoading();
+                    EntryName.ReturnCommand.Execute(null);
+                    return;
+                }
+
+                SelectedGroupName = SelectedGroup.Group.Name;
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(SelectedGroup.Group.Id);
                 var arrCats = SelectedGroup.Group.GetCatDescList().ToList();
                 ArrFixedCats = groupFixedCatValues == null ? new List<string>() : groupFixedCatValues.GetCatList().ToList();
@@ -234,6 +274,11 @@ namespace goFriend.Controls
                 UserDialogs.Instance.HideLoading();
                 Logger.Debug("PickerGroups_OnSelectedIndexChanged.END");
             }
+        }
+
+        private void CmdEditGroup_OnClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new GroupEdit(SelectedGroup.Group.Id));
         }
 
         private void CmdRefresh_OnClicked(object sender, EventArgs e)

@@ -9,7 +9,9 @@
   <ContentView.Content>
         <StackLayout Spacing="0">
             <StackLayout Margin="10,0">
-                <controls:DphFriendSelection x:Name="DphFriendSelection" x:FieldModifier="public"/>
+                <controls:DphFriendSelection x:Name="DphFriendSelection" x:FieldModifier="public"
+                                             IsShowingEditGroup="{Binding Source={RelativeSource AncestorType={x:Type controls:DphFriendList}}, Path=IsShowingEditGroup}"
+                                             IsShowingAllGroup="{Binding Source={RelativeSource AncestorType={x:Type controls:DphFriendList}}, Path=IsShowingAllGroup}"/>
             </StackLayout>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
             <StackLayout VerticalOptions="FillAndExpand">

@@ -81,6 +81,7 @@ namespace goFriend
                 User = Settings.LastUser;
             }
 
+            DependencyService.Register<CacheService>();
             DependencyService.Register<FriendStore>();
             FriendStore = DependencyService.Get<IFriendStore>();
             //StorageService = NinjectManager.Resolve<IStorageService>();
@@ -260,6 +261,10 @@ namespace goFriend
                     {
                         await Constants.InitializeConfiguration();
                         var newMyGroups = await FriendStore.GetMyGroups();
+                        newMyGroups = newMyGroups.Where(x => x.GroupFriend.Active).OrderBy(
+                            x => x.ChatOwnerId.HasValue && x.ChatOwnerId.Value == App.User.Id ? 0 : x.ChatOwnerId.HasValue ? 1 : 2)
+                        .ThenBy(x => x.Group.Name).ToList();
+
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
                             _logger.Debug("IsFirstLaunchForCurrentBuild --> Update Info");

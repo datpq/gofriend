@@ -10,7 +10,8 @@
              x:Class="goFriend.Views.BrowsePage">
     <ContentPage.Content>
         <StackLayout>
-            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" VerticalOptions="FillAndExpand"/>
+            <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" VerticalOptions="FillAndExpand"
+                                    IsShowingEditGroup="True"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
