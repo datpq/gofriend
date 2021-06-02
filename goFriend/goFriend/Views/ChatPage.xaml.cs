@@ -66,6 +66,7 @@ namespace goFriend.Views
                 _logo.Source1 = overlapImageInfo.ImageUrl;
                 _logo.Source2 = overlapImageInfo.OverlappingImageUrl;
                 _logo.OverlapType = overlapImageInfo.OverlapType;
+                Title = (BindingContext as ChatViewModel)?.ChatName;
             };
             Disappearing += (sender, args) => chatListItem.IsAppearing = false;
         }

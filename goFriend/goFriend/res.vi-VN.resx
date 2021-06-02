@@ -540,4 +540,7 @@
   <data name="MsgErrUnableToTrack" xml:space="preserve">
     <value>Lỗi chia sẻ vị trí, có thể do bạn chưa cấp quyền trong cấu hình của điện thoại</value>
   </data>
+  <data name="All" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
 </root>

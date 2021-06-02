@@ -108,6 +108,15 @@ namespace goFriend {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string All {
+            get {
+                return ResourceManager.GetString("All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string AppearOnline {
             get {
                 return ResourceManager.GetString("AppearOnline", resourceCulture);

@@ -23,7 +23,7 @@ namespace goFriend
     {
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
-        public static IEnumerable<ApiGetGroupsModel> MyGroups;
+        public static IEnumerable<MyGroupViewModel> MyGroups;
         public static Friend User { get; set; }
         public readonly IFacebookManager FaceBookManager;
         public static ILocationService LocationService;

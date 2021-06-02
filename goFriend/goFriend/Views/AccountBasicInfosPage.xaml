@@ -121,6 +121,7 @@
                         Text="{x:Static local:res.CmdSave}"
                         Clicked="CmdSave_Click" />-->
             </StackLayout>
+            <controls:AdmobControl x:Name="Ads" IsVisible="{Binding Editable, Converter={StaticResource InverseBoolConverter}}" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

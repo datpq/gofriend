@@ -47,8 +47,8 @@ namespace goFriend.Views
         {
             try
             {
-                Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
-                if (!(PickerGroups.SelectedItem is ApiGetGroupsModel selectedGroup)) return;
+                Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as MyGroupViewModel)?.Group?.Name})");
+                if (!(PickerGroups.SelectedItem is MyGroupViewModel selectedGroup)) return;
                 Settings.LastAdminPageGroupNme = selectedGroup.Group.Name;
 
                 UserDialogs.Instance.ShowLoading(res.Processing);

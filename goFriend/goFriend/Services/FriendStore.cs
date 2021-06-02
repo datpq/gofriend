@@ -15,6 +15,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using goFriend.Views;
 using Point = NetTopologySuite.Geometries.Point;
+using goFriend.ViewModels;
 
 namespace goFriend.Services
 {
@@ -186,6 +187,7 @@ namespace goFriend.Services
                 Logger.Error($"Error: {msg}");
             }
 
+            _cacheService.Remove($".GetFriend.{friend.Id}");
             Logger.Debug($"SaveBasicInfo.END({result})");
             return result;
         }
@@ -200,7 +202,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{App.User.Id}.{groupId}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
+                var cacheKey = $"{cachePrefix}.{groupId}.{App.User.Id}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -261,13 +263,28 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues(int groupId, bool useCache = true, params string[] arrCatValues)
+        public async Task<IEnumerable<ApiGetGroupCatValuesModel>> GetGroupCatValues(int groupId, bool useClientCache = true, bool useCache = true, params string[] arrCatValues)
         {
             var stopWatch = Stopwatch.StartNew();
             IEnumerable<ApiGetGroupCatValuesModel> result = null;
             try
             {
-                Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+                Logger.Debug($"GetGroupCatValues.BEGIN(groupId={groupId}, useClientCache={useClientCache}, useCache={useCache}, arrCatValues.Length={arrCatValues.Length}. {string.Join(", ", arrCatValues)})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{groupId}.{App.User.Id}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _cacheService.Get(cacheKey) as IEnumerable<ApiGetGroupCatValuesModel>;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -301,6 +318,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)
@@ -480,7 +498,7 @@ namespace goFriend.Services
                     result = _cacheService.Get(cacheKey) as IEnumerable<GroupFriend>;
                     if (result != null)
                     {
-                        //Logger.Debug("Cache found. Return value in cache.");
+                        Logger.Debug("Cache found. Return value in cache.");
                         return result;
                     }
                 }
@@ -544,10 +562,10 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<ApiGetGroupsModel>> GetMyGroups(bool useClientCache = true, bool useCache = true)
+        public async Task<IEnumerable<MyGroupViewModel>> GetMyGroups(bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
-            IEnumerable<ApiGetGroupsModel> result = null;
+            IEnumerable<MyGroupViewModel> result = null;
             try
             {
                 Logger.Debug($"GetMyGroups.BEGIN(useClientCache={useClientCache}, useCache={useCache})");
@@ -559,7 +577,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _cacheService.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
+                    result = _cacheService.Get(cacheKey) as IEnumerable<MyGroupViewModel>;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -581,7 +599,7 @@ namespace goFriend.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupsModel>>(jsonString.Result);
+                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupsModel>>(jsonString.Result).Select(x => new MyGroupViewModel(x));
                     //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
                 }
                 else
@@ -616,10 +634,10 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<IEnumerable<ApiGetGroupsModel>> GetGroups(string searchText = null, bool useClientCache = true, bool useCache = true)
+        public async Task<IEnumerable<MyGroupViewModel>> GetGroups(string searchText = null, bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
-            IEnumerable<ApiGetGroupsModel> result = null;
+            IEnumerable<MyGroupViewModel> result = null;
             try
             {
                 Logger.Debug($"GetGroups.BEGIN(searchText={searchText}, useClientCache={useClientCache}, useCache={useCache})");
@@ -631,7 +649,7 @@ namespace goFriend.Services
 
                 if (useClientCache)
                 {
-                    result = _cacheService.Get(cacheKey) as IEnumerable<ApiGetGroupsModel>;
+                    result = _cacheService.Get(cacheKey) as IEnumerable<MyGroupViewModel>;
                     if (result != null)
                     {
                         //Logger.Debug("Cache found. Return value in cache.");
@@ -653,7 +671,7 @@ namespace goFriend.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupsModel>>(jsonString.Result);
+                    result = JsonConvert.DeserializeObject<IEnumerable<ApiGetGroupsModel>>(jsonString.Result).Select(x => new MyGroupViewModel(x));
                     //result = await response.Content.ReadAsAsync<IEnumerable<ApiGetGroupsModel>>();
                 }
                 else
@@ -756,13 +774,28 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<Friend> GetFriend(int groupId, int otherFriendId, bool useCache = true)
+        public async Task<Friend> GetFriend(int groupId, int otherFriendId, bool useClientCache = true, bool useCache = true)
         {
             var stopWatch = Stopwatch.StartNew();
             Friend result = null;
             try
             {
-                Logger.Debug($"GetFriend.BEGIN(groupId={groupId}, otherFriendId={otherFriendId}, useCache={useCache})");
+                Logger.Debug($"GetFriend.BEGIN(groupId={groupId}, otherFriendId={otherFriendId}, useClientCache={useClientCache}, useCache ={useCache})");
+
+                var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
+                var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
+                var cacheKey = $"{cachePrefix}.{otherFriendId}.{App.User.Id}.";
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+
+                if (useClientCache)
+                {
+                    result = _cacheService.Get(cacheKey) as Friend;
+                    if (result != null)
+                    {
+                        Logger.Debug("Cache found. Return value in cache.");
+                        return result;
+                    }
+                }
 
                 Validate();
 
@@ -786,6 +819,7 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
             catch (GoException e)

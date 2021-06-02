@@ -18,36 +18,39 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <!--<BoxView Grid.ColumnSpan="2" Color="{StaticResource ColorPrimaryLight}" HorizontalOptions="FillAndExpand" VerticalOptions="Center" />-->
-                <Label x:Name="LblMembers" HorizontalOptions="Start" Grid.Row="0" Grid.Column="0"
-                       FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
-                <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalOptions="End" Margin="0" Padding="0" Spacing="10">
-                    <Button VerticalOptions="Center"
-                            x:Name="CmdClear" Clicked="CmdClear_OnClicked"
-                            BorderWidth="1" BorderColor="Black" WidthRequest="30" HeightRequest="30" CornerRadius="15" 
-                            ImageSource="{Static local:Constants.ImgDeny}">
-                    </Button>
-                    <Button VerticalOptions="Center"
-                            x:Name="CmdOk" Clicked="CmdOk_OnClicked"
-                            BorderWidth="1" BorderColor="Black" WidthRequest="30" HeightRequest="30" CornerRadius="15" 
-                            ImageSource="{Static local:Constants.ImgAccept}">
-                    </Button>
+                <StackLayout Orientation="Horizontal" Grid.Row="0">
+                    <Label HorizontalOptions="Start" Text="{Static local:res.GroupName}"
+                           FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
+                    <Entry x:Name="TxtName" HorizontalOptions="FillAndExpand" TextChanged="TxtName_TextChanged"
+                           FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
                 </StackLayout>
-                <ScrollView Margin="0,3,0,0" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="0">
+                <!--<BoxView Grid.ColumnSpan="2" Color="{StaticResource ColorPrimaryLight}" HorizontalOptions="FillAndExpand" VerticalOptions="Center" />-->
+                <Label x:Name="LblMembers" HorizontalOptions="Start" Grid.Row="1" Grid.Column="0"
+                       FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
+                <ScrollView Margin="0,3,0,0" Grid.Row="2" Grid.Column="0" Padding="0">
                     <FlexLayout Wrap="Wrap" x:Name="ChipContainer"/>
                     <!--<forms:WrapLayout x:Name="ChipContainer" Orientation="Horizontal"/>-->
                 </ScrollView>
-                <Label HorizontalOptions="Start" Text="{Static local:res.GroupName}" Grid.Row="2" Grid.Column="0"
-                       FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
-                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding ChatName}" x:Name="TxtName"
-                       HorizontalOptions="FillAndExpand" FontSize="{StaticResource LblDetailFontSize}" VerticalTextAlignment="Center"/>
             </Grid>
             <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" /><!--Grid.Row="1"-->
             <controls:DphFriendList x:Name="DphFriendList" ImageSize="{Static controls:DphListView.MediumImage}" IsShowingEditGroup="False" IsShowingAllGroup="True"/>
-            <!--Grid.Row="2"-->
-
+            <StackLayout Spacing="0" Orientation="Horizontal" HorizontalOptions="Center">
+                <Button x:Name="CmdReset"
+                        Clicked="CmdReset_Click" Text="{x:Static local:res.CmdReset}" FontSize="Micro">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconCancel}" Color="DarkRed"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
+                    </Button.ImageSource>
+                </Button>
+                <Button x:Name="CmdSave"
+                        Clicked="CmdSave_Click" Text="{x:Static local:res.CmdSave}" FontSize="Micro">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{StaticResource IconSave}" Color="{StaticResource ColorPrimaryLight}"
+                                         FontFamily="{StaticResource IconFontFamily}" Size="Small"/>
+                    </Button.ImageSource>
+                </Button>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

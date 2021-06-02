@@ -5,6 +5,7 @@ using System.Linq;
 using Acr.UserDialogs;
 using goFriend.DataModel;
 using goFriend.Services;
+using goFriend.ViewModels;
 using goFriend.Views;
 using Newtonsoft.Json;
 using Xamarin.Forms;
@@ -60,7 +61,7 @@ namespace goFriend.Controls
         public string SelectedGroupName { get; set; }
 
         //search criteria
-        public ApiGetGroupsModel SelectedGroup { get; private set; }
+        public MyGroupViewModel SelectedGroup { get; private set; }
         public List<string> ArrFixedCats { get; private set; }
         private string[] _arrCatValues;
         private bool _isSelectionEventEnabled = true;
@@ -84,8 +85,8 @@ namespace goFriend.Controls
             });
         }
 
-        private Action<ApiGetGroupsModel, string, List<string>, string[]> _onSelectionAction;
-        public void Initialize(Action<ApiGetGroupsModel, string, List<string>, string[]> onSelectionAction)
+        private Action<MyGroupViewModel, string, List<string>, string[]> _onSelectionAction;
+        public void Initialize(Action<MyGroupViewModel, string, List<string>, string[]> onSelectionAction)
         {
             _onSelectionAction = onSelectionAction;
 
@@ -98,11 +99,11 @@ namespace goFriend.Controls
             UserDialogs.Instance.ShowLoading(res.Processing);
             //can not await TaskInitialization because we are in a constructor, and not in an async method.
             App.TaskInitialization.Wait();
-                var myGroups = App.MyGroups == null ? new List<ApiGetGroupsModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).ToList();
-            var oc = new ObservableCollection<ApiGetGroupsModel>(myGroups);
+                var myGroups = App.MyGroups == null ? new List<MyGroupViewModel>() : App.MyGroups.Where(x => x.GroupFriend.Active).ToList();
+            var oc = new ObservableCollection<MyGroupViewModel>(myGroups);
             if (IsShowingAllGroup)
             {
-                oc.Insert(0, new ApiGetGroupsModel
+                oc.Insert(0, new MyGroupViewModel
                 {
                     Group = null,
                     GroupFriend = null,
@@ -141,9 +142,9 @@ namespace goFriend.Controls
         {
             try
             {
-                Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as ApiGetGroupsModel)?.Group?.Name})");
+                Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as MyGroupViewModel)?.Group?.Name})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                SelectedGroup = PickerGroups.SelectedItem as ApiGetGroupsModel;
+                SelectedGroup = PickerGroups.SelectedItem as MyGroupViewModel;
                 CmdEditGroup.IsVisible = IsShowingEditGroup && SelectedGroup != null && SelectedGroup.ChatOwnerId.HasValue && SelectedGroup.ChatOwnerId.Value == App.User.Id;
                 if (SelectedGroup == null) return;
                 var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex).ToList();
@@ -228,7 +229,7 @@ namespace goFriend.Controls
                                     if (j == localI + 1 && picker.SelectedIndex > 0)//don't get catvalues when first item selected. Let it's null
                                     {
                                         var localJ = j;
-                                        var groupCatValues = await App.FriendStore.GetGroupCatValues(SelectedGroup.Group.Id, true, _arrCatValues);
+                                        var groupCatValues = await App.FriendStore.GetGroupCatValues(SelectedGroup.Group.Id, true, true, _arrCatValues);
                                         var itemSourceList = new List<ApiGetGroupCatValuesModel> { new ApiGetGroupCatValuesModel { Display = res.ClearSelection } }
                                             .Concat(groupCatValues.ToList());
                                         arrPickers[localJ].ItemsSource = itemSourceList.ToList();

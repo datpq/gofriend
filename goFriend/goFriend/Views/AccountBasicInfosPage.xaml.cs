@@ -27,6 +27,7 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
+            Ads.AdUnitId = Device.RuntimePlatform == Device.Android ? Constants.AdBannerIdAndroid : Constants.AdBannerIdiOS;
             Map.UiSettings.MyLocationButtonEnabled = true;
         }
 

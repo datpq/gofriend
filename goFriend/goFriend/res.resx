@@ -540,4 +540,7 @@
   <data name="MsgErrUnableToTrack" xml:space="preserve">
     <value />
   </data>
+  <data name="All" xml:space="preserve">
+    <value />
+  </data>
 </root>

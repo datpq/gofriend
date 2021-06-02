@@ -19,7 +19,7 @@ namespace goFriend.Views
         private readonly IList<string> _lstCatEntriesText = new List<string>();
         private IList<string> _arrFixedCatValues;
         private Group _selectedGroup;
-        private IEnumerable<ApiGetGroupsModel> _searchingResultGroups;
+        private IEnumerable<MyGroupViewModel> _searchingResultGroups;
 
         public GroupConnectionPage()
         {
@@ -172,7 +172,7 @@ namespace goFriend.Views
                                 {
                                     Logger.Debug($"Search.{arrCatDesc[idx]}.BEGIN(searchText={searchText})");
 
-                                    var catValueList = await App.FriendStore.GetGroupCatValues(_selectedGroup.Id, true, arrCatValues);
+                                    var catValueList = await App.FriendStore.GetGroupCatValues(_selectedGroup.Id, true, true, arrCatValues);
                                     var searchResult = catValueList.Where(x => x.CatValue.IndexOf(searchText ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) >= 0)
                                         .Select(x => new SearchItemModel
                                         {
