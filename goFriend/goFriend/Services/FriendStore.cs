@@ -238,6 +238,11 @@ namespace goFriend.Services
                     throw new GoException(msg);
                 }
 
+                if (result == null)
+                {
+                    result = new GroupFixedCatValues();
+                    Logger.Debug("result NULL. store the default value.");
+                }
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
                 return result;
             }
@@ -1085,6 +1090,7 @@ namespace goFriend.Services
                     Logger.Error($"Error: {msg}");
                 }
 
+                _cacheService.Remove($".GetMyGroups.");
                 _cacheService.Remove($".GetGroupFriends.{groupId}.");
 
                 return result;

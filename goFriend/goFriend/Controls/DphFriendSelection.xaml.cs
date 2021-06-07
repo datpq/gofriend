@@ -109,10 +109,6 @@ namespace goFriend.Controls
                     GroupFriend = null,
                     ChatOwnerId = 0
                 });
-                PickerGroups.ItemsSource = oc;
-                UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
-                PickerGroups.SelectedIndex = 0;
-                return;
             }
             PickerGroups.ItemsSource = oc;
                 UserDialogs.Instance.HideLoading();//must be called before setting SelectedIndex
@@ -145,8 +141,8 @@ namespace goFriend.Controls
                 Logger.Debug($"PickerGroups_OnSelectedIndexChanged.BEGIN(SelectedIndex={PickerGroups.SelectedIndex}, SelectedItem={(PickerGroups.SelectedItem as MyGroupViewModel)?.Group?.Name})");
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 SelectedGroup = PickerGroups.SelectedItem as MyGroupViewModel;
-                CmdEditGroup.IsVisible = IsShowingEditGroup && SelectedGroup != null && SelectedGroup.ChatOwnerId.HasValue && SelectedGroup.ChatOwnerId.Value == App.User.Id;
                 if (SelectedGroup == null) return;
+                CmdEditGroup.IsVisible = IsShowingEditGroup && SelectedGroup.Group != null && SelectedGroup.ChatOwnerId.HasValue && SelectedGroup.ChatOwnerId.Value == App.User.Id;
                 var rowToRemove = Grid.Children.Where(x => Grid.GetRow(x) >= DynamicRowStartIndex).ToList();
                 foreach (var child in rowToRemove)
                 {
@@ -160,6 +156,7 @@ namespace goFriend.Controls
                 if (SelectedGroup.Group == null) // All Groups
                 {
                     UserDialogs.Instance.HideLoading();
+                    SelectedGroupName = null;
                     EntryName.ReturnCommand.Execute(null);
                     return;
                 }
@@ -277,16 +274,21 @@ namespace goFriend.Controls
             }
         }
 
-        private void CmdEditGroup_OnClicked(object sender, EventArgs e)
+        private async void CmdEditGroup_OnClicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new GroupEdit(SelectedGroup.Group.Id));
+            UserDialogs.Instance.ShowLoading(res.Processing);
+            var friends = await GroupEdit.GetFriends(SelectedGroup.Group.Id);
+            await Navigation.PushAsync(new GroupEdit(SelectedGroup.Group.Id, friends));
+            UserDialogs.Instance.HideLoading();
         }
 
-        private void CmdRefresh_OnClicked(object sender, EventArgs e)
+        private async void CmdRefresh_OnClicked(object sender, EventArgs e)
         {
-            App.Initialize();
+            CmdEditGroup.IsEnabled = CmdRefresh.IsEnabled = false;
+            await App.RefreshMyGroups();
 
             Refresh();
+            CmdEditGroup.IsEnabled = CmdRefresh.IsEnabled = true;
         }
 
         private void CmdCategories_OnClicked(object sender, EventArgs e)

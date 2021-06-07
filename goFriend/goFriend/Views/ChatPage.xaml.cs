@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
 using goFriend.Services;
@@ -225,19 +226,23 @@ namespace goFriend.Views
             Navigation.PushAsync(new OnlineMembersPage(vm));
         }
 
-        private void MnuEdit_OnClicked(object sender, EventArgs e)
+        private async void MnuEdit_OnClicked(object sender, EventArgs e)
         {
             var vm = (ChatViewModel)BindingContext;
             if (vm.ChatListItem.Chat.OwnerId == App.User.Id)
             {
+                UserDialogs.Instance.ShowLoading(res.Processing);
                 if (vm.ChatListItem.Chat.GetChatType() == ChatType.StandardGroup)
                 {
-                    Navigation.PushAsync(new GroupEdit(vm.ChatListItem.Chat.GetMemberGroupId()));
+                    var friends = await GroupEdit.GetFriends(vm.ChatListItem.Chat.GetMemberGroupId());
+                    await Navigation.PushAsync(new GroupEdit(vm.ChatListItem.Chat.GetMemberGroupId(), friends));
                 }
                 else
                 {
-                    Navigation.PushAsync(new ChatEdit(vm));
+                    var friends = await ChatEdit.GetFriends(vm.ChatListItem.Chat.GetMemberIds());
+                    await Navigation.PushAsync(new ChatEdit(vm, friends));
                 }
+                UserDialogs.Instance.HideLoading();
             }
             else
             {

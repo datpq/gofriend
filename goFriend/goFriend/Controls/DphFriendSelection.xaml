@@ -39,7 +39,7 @@
                   <Picker x:Name="PickerGroups" FontSize="{StaticResource LblDetailFontSize}" HorizontalOptions="FillAndExpand"
                           SelectedIndexChanged="PickerGroups_OnSelectedIndexChanged"
                           ItemDisplayBinding="{Binding Display}" HeightRequest="40" />
-                  <ImageButton Clicked="CmdRefresh_OnClicked" BackgroundColor="Transparent" IsVisible="{Binding IsShowingRefresh}">
+                  <ImageButton x:Name="CmdRefresh" Clicked="CmdRefresh_OnClicked" BackgroundColor="Transparent" IsVisible="{Binding IsShowingRefresh}">
                       <ImageButton.Source>
                           <FontImageSource Glyph="{StaticResource IconRefresh}" Color="{StaticResource ColorPrimary}"
                                            FontFamily="{StaticResource IconFontFamily}" Size="{StaticResource IconSize}" />

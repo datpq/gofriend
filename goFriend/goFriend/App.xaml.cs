@@ -118,22 +118,46 @@ namespace goFriend
 
         protected override void OnSleep()
         {
-            foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
+            try
             {
-                chatListItemViewModel.Tag = chatListItemViewModel.IsAppearing;
-                chatListItemViewModel.IsAppearing = false;
+                _logger.Debug("OnSleep.BEGIN");
+                foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
+                {
+                    chatListItemViewModel.Tag = chatListItemViewModel.IsAppearing;
+                    chatListItemViewModel.IsAppearing = false;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+            }
+            finally
+            {
+                _logger.Debug("OnSleep.END");
             }
         }
 
         protected override async void OnResume()
         {
-            foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
+            try
             {
-                if (chatListItemViewModel.Tag != null)
+                _logger.Debug("OnResume.BEGIN");
+                foreach (var chatListItemViewModel in ChatListVm.ChatListItems)
                 {
-                    chatListItemViewModel.IsAppearing = (bool)chatListItemViewModel.Tag;
-                    await chatListItemViewModel.RefreshOnlineStatus();
+                    if (chatListItemViewModel.Tag != null)
+                    {
+                        chatListItemViewModel.IsAppearing = (bool)chatListItemViewModel.Tag;
+                        await chatListItemViewModel.RefreshOnlineStatus();
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+            }
+            finally
+            {
+                _logger.Debug("OnResume.END");
             }
         }
 
@@ -247,6 +271,43 @@ namespace goFriend
             }
         }
 
+        public static async Task RefreshMyGroups()
+        {
+            var newMyGroups = await FriendStore.GetMyGroups();
+            newMyGroups = newMyGroups.Where(x => x.GroupFriend.Active).OrderBy(
+                x => x.ChatOwnerId.HasValue && x.ChatOwnerId.Value == App.User.Id ? 0 : x.ChatOwnerId.HasValue ? 1 : 2)
+            .ThenBy(x => x.Group.Name).ToList();
+
+            if ((MyGroups == null || MyGroups.All(x => !x.GroupFriend.Active))
+                && newMyGroups.Any(x => x.GroupFriend.Active))
+            {
+                _logger.Debug("First active group approved or first time connecting to Chat");
+                MyGroups = newMyGroups;
+                await ChatListVm.RefreshCommandAsyncExec();
+
+                try
+                {
+                    await FriendStore.SignalR.ConnectAsync();
+                }
+                catch { }
+                //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
+            }
+            //new Active group aproved
+            else if (MyGroups != null && newMyGroups.Any(x => x.GroupFriend.Active
+            && !MyGroups.Any(y => y.GroupFriend.Active && y.Group.Id == x.Group.Id)))
+            {
+                _logger.Debug("New active group approved.");
+                MyGroups = newMyGroups;
+                await ChatListVm.RefreshCommandAsyncExec();
+
+                _ = FriendStore.SignalR.SendMessageAsync<string>(ChatMessageType.JoinChat.ToString());
+            }
+            else
+            {
+                MyGroups = newMyGroups;
+            }
+        }
+
         public static void Initialize()
         {
             if (IsInitializing) return;
@@ -260,10 +321,6 @@ namespace goFriend
                     if (IsUserLoggedIn && User != null)
                     {
                         await Constants.InitializeConfiguration();
-                        var newMyGroups = await FriendStore.GetMyGroups();
-                        newMyGroups = newMyGroups.Where(x => x.GroupFriend.Active).OrderBy(
-                            x => x.ChatOwnerId.HasValue && x.ChatOwnerId.Value == App.User.Id ? 0 : x.ChatOwnerId.HasValue ? 1 : 2)
-                        .ThenBy(x => x.Group.Name).ToList();
 
                         if (VersionTracking.IsFirstLaunchForCurrentBuild)
                         {
@@ -271,33 +328,7 @@ namespace goFriend
                             await FriendStore.SaveBasicInfo(new Friend {Id = User.Id, Info = Extension.GetVersionTrackingInfo()});
                         }
 
-                        if ((MyGroups == null || MyGroups.All(x => !x.GroupFriend.Active))
-                        && newMyGroups.Any(x => x.GroupFriend.Active)) {
-                            _logger.Debug("First active group approved or first time connecting to Chat");
-                            MyGroups = newMyGroups;
-                            await ChatListVm.RefreshCommandAsyncExec();
-
-                            try
-                            {
-                                await FriendStore.SignalR.ConnectAsync();
-                            }
-                            catch { }
-                            //await RetrieveAllNewMessages(); //already done in ChatListVm.RefreshCommandAsyncExec() when receiving CreateChat
-                        }
-                        //new Active group aproved
-                        else if (MyGroups != null && newMyGroups.Any(x => x.GroupFriend.Active
-                        && !MyGroups.Any(y => y.GroupFriend.Active && y.Group.Id == x.Group.Id)))
-                        {
-                            _logger.Debug("New active group approved.");
-                            MyGroups = newMyGroups;
-                            await ChatListVm.RefreshCommandAsyncExec();
-
-                            _ = FriendStore.SignalR.SendMessageAsync<string>(ChatMessageType.JoinChat.ToString());
-                        }
-                        else
-                        {
-                            MyGroups = newMyGroups;
-                        }
+                        await RefreshMyGroups();
                     }
                     else
                     {

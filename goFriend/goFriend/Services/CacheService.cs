@@ -30,7 +30,7 @@ namespace goFriend.Services
 
         public void Remove(string key)
         {
-            Logger.Debug($"BEGIN(key={key}, count={_cacheKeys.Keys.Count})");
+            Logger.Debug($"Remove.BEGIN(key={key}, count={_cacheKeys.Count})");
             //foreach (var cacheKey in _cacheKeys.Keys.Where(x => x.Contains(key, StringComparison.CurrentCultureIgnoreCase)).ToList())
             foreach (var cacheKey in _cacheKeys.Keys.Where(x => x.Contains(key)).ToList())
             {
@@ -38,7 +38,7 @@ namespace goFriend.Services
                 _cacheKeys.TryRemove(cacheKey, out DateTimeOffset outValue);
                 _memoryCache.Remove(cacheKey);
             }
-            Logger.Debug($"END(count={_cacheKeys.Keys.Count})");
+            Logger.Debug($"Remove.END(count={_cacheKeys.Count})");
         }
     }
 }

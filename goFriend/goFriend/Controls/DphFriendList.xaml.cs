@@ -40,6 +40,11 @@ namespace goFriend.Controls
             set => SetValue(ImageSizeProperty, value);
         }
 
+        public void Refresh()
+        {
+            DphFriendSelection.Refresh();
+        }
+
         public void Initialize(Action<DphListViewItemModel> cellOnTapped = null)
         {
             DphFriendSelection.SelectedGroupName = Settings.LastBrowsePageGroupName;

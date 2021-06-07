@@ -79,9 +79,9 @@ namespace goFriend.Views
             //Logger.Debug($"RefreshLastMessage.END");
         }
 
-        private void MnuAddNew_Clicked(object sender, System.EventArgs e)
+        private async void MnuAddNew_Clicked(object sender, System.EventArgs e)
         {
-            Navigation.PushAsync(new ChatEdit());
+            await Navigation.PushAsync(new ChatEdit());
         }
 
         public void Refresh()

@@ -1,7 +1,7 @@
 ﻿using Acr.UserDialogs;
 using goFriend.Controls;
 using goFriend.DataModel;
-using goFriend.ViewModels;
+using goFriend.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +14,13 @@ namespace goFriend.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class GroupEdit : ContentPage
 	{
-        private int? _chatOwnerId;
-        int _groupId;
-        int[] _friendIds;
-        List<Friend> _friends = new List<Friend>();
+        private static readonly ILogger Logger = new LoggerNLogPclImpl(NLog.LogManager.GetCurrentClassLogger());
 
-		public GroupEdit (int groupId)
+        private int? _chatOwnerId;
+        private int _groupId;
+        private List<Friend> _friends;
+
+		public GroupEdit (int groupId, List<Friend> friends)
 		{
 			InitializeComponent ();
 
@@ -30,18 +31,8 @@ namespace goFriend.Views
             _chatOwnerId = apiGroup.ChatOwnerId;
             TxtName.Text = apiGroup.Group.Name;
             CmdReset.IsEnabled = CmdSave.IsEnabled = false;
-
-            Task.Run(async () =>
-            {
-                var groupFriends = await App.FriendStore.GetGroupFriends(groupId);
-                _friendIds = groupFriends.Select(x => x.FriendId).ToArray();
-                foreach(var friendId in _friendIds)
-                {
-                    var friend = await App.FriendStore.GetFriendInfo(friendId);
-                    ChipContainer.Children.Add(CreateChipFromFriend(friend));
-                    _friends.Add(friend);
-                }
-            });
+            _friends = friends;
+            foreach(var friend in _friends) ChipContainer.Children.Add(CreateChipFromFriend(friend));
 
             DphFriendList.Initialize(async (selectedItem) =>
             {
@@ -57,6 +48,18 @@ namespace goFriend.Views
                     CmdReset.IsEnabled = CmdSave.IsEnabled = true;
                 }
             });
+        }
+
+        public static async Task<List<Friend>> GetFriends(int groupId)
+        {
+            var result = new List<Friend>();
+            var groupFriends = await App.FriendStore.GetGroupFriends(groupId);
+            foreach (var friendId in groupFriends.Select(x => x.FriendId))
+            {
+                var friend = await App.FriendStore.GetFriendInfo(friendId);
+                result.Add(friend);
+            }
+            return result;
         }
 
         public Chip CreateChipFromFriend(Friend friend)
@@ -89,14 +92,15 @@ namespace goFriend.Views
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
                 var lstFriends = new List<Friend>();
-                ChipContainer.Children.ToList().ForEach(async x =>
+                foreach(var x in ChipContainer.Children)
                 {
                     var friend = await App.FriendStore.GetFriendInfo((int)((Chip)x).Tag);
                     lstFriends.Add(friend);
-                });
+                }
                 var result = await App.FriendStore.SubscribeGroupMultiple(_groupId, lstFriends.ToArray());
                 if (result)
                 {
+                    await App.RefreshMyGroups();
                     App.DisplayMsgInfo(res.SaveSuccess);
                     CmdReset.IsEnabled = CmdSave.IsEnabled = false;
                 }

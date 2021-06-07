@@ -11,6 +11,8 @@ namespace goFriend.Views
         {
             InitializeComponent();
 
+            Appearing += (sender, args) => DphFriendList.Refresh();
+
             DphFriendList.Initialize(async (selectedItem) =>
             {
                 var selectedGroupFriend = (GroupFriend)selectedItem.SelectedObject;

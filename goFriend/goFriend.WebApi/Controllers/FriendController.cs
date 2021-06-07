@@ -1298,9 +1298,9 @@ namespace goFriend.WebApi.Controllers
 
                 var myGroups = _dataRepo.GetMany<GroupFriend>(x => x.FriendId == friendId).AsQueryable().Include(x => x.Group)
                     .ToList().Select(x => { x.Group.Info = null; return x; }).ToList(); // .Info = null is no more necessary as we can set JsonIgnore
-                Logger.Debug($"myGroups={JsonConvert.SerializeObject(myGroups.Select(x => x.Group.Name))}");
+                //Logger.Debug($"myGroups={JsonConvert.SerializeObject(myGroups.Select(x => x.Group.Name))}");
 
-                result = myGroups.Select(x => new ApiGetGroupsModel
+                var myGroupModels = myGroups.Select(x => new ApiGetGroupsModel
                 {
                     Group = x.Group,
                     GroupFriend = x,
@@ -1313,7 +1313,9 @@ namespace goFriend.WebApi.Controllers
                     x.GroupFriend.Friend = null;
                     return x;
                 }).ToList();
+                result = myGroupModels;
 
+                Logger.Debug($"myGroupModels={JsonConvert.SerializeObject(myGroupModels.Select(x => new { x.Group.Name, x.MemberCount}))}");
                 //Logger.Debug($"result={JsonConvert.SerializeObject(result)}");
 
                 _cacheService.Set(cacheKey, result, DateTimeOffset.Now.AddMinutes(cacheTimeout));
@@ -1791,6 +1793,7 @@ namespace goFriend.WebApi.Controllers
                 #endregion
 
                 var arrOldGroupFriendIds = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId).AsQueryable().Include(x => x.Friend).ToList();
+                Logger.Debug($"removing members...");
                 arrOldGroupFriendIds.Where(x => !friends.Any(y => y.Id == x.FriendId)).ToList().ForEach(x =>
                 {
                     _dataRepo.Delete<GroupFriend>(x);
@@ -1812,6 +1815,7 @@ namespace goFriend.WebApi.Controllers
                     _cacheService.Remove($".GetMyGroups.{x.FriendId}.");
                 });
 
+                Logger.Debug($"adding new members...");
                 friends.Where(x => !arrOldGroupFriendIds.Any(y => y.FriendId == x.Id)).ToList().ForEach(x =>
                 {
                     _dataRepo.Add<GroupFriend>(new GroupFriend {
@@ -1839,6 +1843,11 @@ namespace goFriend.WebApi.Controllers
                     //remove Cache
                     _cacheService.Remove($".GetMyGroups.{x.Id}.");
                 });
+
+                Logger.Debug($"removing the cache for old members...");
+                arrOldGroupFriendIds.Where(x => friends.Any(y => y.Id == x.FriendId)).ToList().ForEach(x =>
+                    _cacheService.Remove($".GetMyGroups.{x.FriendId}.")
+                );
 
                 _dataRepo.Commit();
 
