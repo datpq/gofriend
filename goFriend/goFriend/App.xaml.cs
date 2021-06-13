@@ -23,7 +23,7 @@ namespace goFriend
     {
         public static bool UseMockDataStore = true;
         public static bool IsUserLoggedIn { get; set; }
-        public static IEnumerable<MyGroupViewModel> MyGroups;
+        public static IEnumerable<MyGroupViewModel> MyGroups = new List<MyGroupViewModel>();
         public static Friend User { get; set; }
         public readonly IFacebookManager FaceBookManager;
         public static ILocationService LocationService;
@@ -273,11 +273,41 @@ namespace goFriend
 
         public static async Task RefreshMyGroups()
         {
+            _logger.Debug("RefreshMyGroups.BEGIN");
             var newMyGroups = await FriendStore.GetMyGroups();
             newMyGroups = newMyGroups.Where(x => x.GroupFriend.Active).OrderBy(
                 x => x.ChatOwnerId.HasValue && x.ChatOwnerId.Value == App.User.Id ? 0 : x.ChatOwnerId.HasValue ? 1 : 2)
             .ThenBy(x => x.Group.Name).ToList();
 
+            var gotKickedOutGroups = MyGroups.Where(x => x.GroupFriend.Active && newMyGroups.All(
+                y => y.GroupFriend.Active && y.Group.Id != x.Group.Id)).Select(x => x.Group.Id).ToList();
+            if (gotKickedOutGroups.Count > 0)
+            {
+                //remove from chat list
+                var gotKickedOutChats = ChatListVm.ChatListItems.Where(x => x.Chat.GetChatType() == ChatType.StandardGroup
+                && gotKickedOutGroups.Any(y => $"g{y}" == x.Chat.Members)).ToList();
+                foreach (var x in gotKickedOutChats)
+                {
+                    _logger.Debug($"Remove chat {x.Chat.Name}({x.Chat.Id})");
+                    ChatListVm.ChatListItems.Remove(x);
+                }
+
+                // remove from online map
+                foreach(var groupId in gotKickedOutGroups)
+                {
+                    if (MapOnlinePage.MapOnlineInfo.TryGetValue(groupId, out MapOnlineViewModel vm))
+                    {
+                        if (vm.IsRunning)
+                        {
+                            _logger.Debug($"Stop sharing for group {groupId}");
+                            vm.IsRunning = !vm.IsRunning;
+                            vm.Items.ToList().ForEach(x => x.OnlineFriends = 0);
+                        }
+                        _logger.Debug($"Remove MapOnlineInfo {groupId}");
+                        MapOnlinePage.MapOnlineInfo.Remove(groupId);
+                    }
+                }
+            }
             if ((MyGroups == null || MyGroups.All(x => !x.GroupFriend.Active))
                 && newMyGroups.Any(x => x.GroupFriend.Active))
             {
@@ -306,6 +336,7 @@ namespace goFriend
             {
                 MyGroups = newMyGroups;
             }
+            _logger.Debug("RefreshMyGroups.END");
         }
 
         public static void Initialize()

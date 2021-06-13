@@ -97,7 +97,10 @@ namespace goFriend.Views
                     var friend = await App.FriendStore.GetFriendInfo((int)((Chip)x).Tag);
                     lstFriends.Add(friend);
                 }
-                var result = await App.FriendStore.SubscribeGroupMultiple(_groupId, lstFriends.ToArray());
+                Logger.Debug("disconnecting kicked-out members and connecting new members...");
+                await App.FriendStore.SignalR.SendMessageAsync<string>(
+                    ChatMessageType.EditGroup.ToString(), lstFriends.Select(x => x.Id).ToList(), _groupId.ToString());
+                var result = await App.FriendStore.SubscribeGroupMultiple(_groupId, lstFriends);
                 if (result)
                 {
                     await App.RefreshMyGroups();

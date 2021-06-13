@@ -24,7 +24,7 @@ namespace goFriend.Services
         Task<Friend> GetFriendInfo(int otherFriendId, bool useClientCache = true, bool useCache = true);
         Task<bool> ReadNotification(string notifIds);
         Task<bool> GroupSubscriptionReact(int groupFriendId, UserType userRight);
-        Task<bool> SubscribeGroupMultiple(int groupId, Friend[] friends);
+        Task<bool> SubscribeGroupMultiple(int groupId, List<Friend> friends);
         Task<bool> SubscribeGroup(GroupFriend groupFriend);
         Task<Setting> GetSetting(bool useClientCache = true, bool useCache = true);
         Task<string> GetConfiguration(string key, bool useClientCache = true, bool useCache = true);

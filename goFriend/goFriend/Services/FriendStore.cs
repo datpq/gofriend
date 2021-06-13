@@ -1066,7 +1066,7 @@ namespace goFriend.Services
             }
         }
 
-        public async Task<bool> SubscribeGroupMultiple(int groupId, Friend[] friends)
+        public async Task<bool> SubscribeGroupMultiple(int groupId, List<Friend> friends)
         {
             var stopWatch = Stopwatch.StartNew();
             var result = false;

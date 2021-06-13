@@ -64,7 +64,7 @@ namespace goFriend.Services
             return request;
         }
 
-        public async Task<TResult> SendMessageAsync<TResult>(string msgType, object msgContent = null)
+        public async Task<TResult> SendMessageAsync<TResult>(string msgType, object msgContent = null, string extraRoute = null)
         {
             TResult result = default;
             await ConnectAsync();
@@ -75,6 +75,8 @@ namespace goFriend.Services
                 IsBusy = true;
 
                 var request = BuildRequest(msgType, HttpMethod.Post, msgContent);
+                if (extraRoute != null) request.RequestUri = new Uri(request.RequestUri.AbsoluteUri + "/" + extraRoute);
+                Logger.Debug($"RequestUri={request.RequestUri}");
 
                 //var result = await client.PostAsync($"{Constants.HostName}/api/talk", content);
                 var responseMessage = await httpClient.SendAsync(request);

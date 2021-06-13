@@ -484,6 +484,69 @@ namespace goFriend.Functions
             }
         }
 
+        [FunctionName("EditGroup")]
+        public async Task<IActionResult> EditGroup(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "EditGroup/{groupId}")] HttpRequest req,
+            [SignalR(HubName = Constants.SignalRHubName)] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = Constants.SignalRHubName)] IAsyncCollector<SignalRGroupAction> signalRGroupActions,
+            int groupId, ILogger log)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            try
+            {
+                log.LogDebug($"EditGroup.BEGIN(groupId={groupId})");
+
+                req.ParseSignalRHeaders(out string UserId, out string token);
+                log.LogDebug($"UserId={UserId}, Authorization={token}");
+                //var friend = _dataRepo.Get<Friend>(x => x.Id == int.Parse(UserId));
+
+                string json = await new StreamReader(req.Body).ReadToEndAsync();
+                log.LogDebug($"json = {json}");
+
+                var chat = _dataRepo.Get<Chat>(x => x.Members == $"g{groupId}");
+                if (chat == null) throw new ArgumentException($"Could not find the chat for group {groupId}");
+                var friendIds = JsonConvert.DeserializeObject<List<int>>(json);
+                var arrOldGroupFriendIds = _dataRepo.GetMany<GroupFriend>(x => x.GroupId == groupId && x.Active).Select(x => x.FriendId).ToList();
+                log.LogDebug($"chatId={chat?.Id}, friendIds={string.Join(',', friendIds)}, arrOldGroupFriendIds={string.Join(',', arrOldGroupFriendIds)}");
+
+                log.LogDebug($"disconnecting kicked-out members...");
+                foreach(var x in arrOldGroupFriendIds.Where(x => !friendIds.Any(y => y == x)).ToList())
+                {
+                    log.LogDebug($"disconnecting user {x}...");
+                    await signalRGroupActions.AddAsync(
+                        new SignalRGroupAction
+                        {
+                            UserId = x.ToString(),
+                            GroupName = chat.Id.ToString(),
+                            Action = GroupAction.Remove
+                        });
+                }
+                log.LogDebug($"connecting new members...");
+                foreach (var x in friendIds.Where(x => !arrOldGroupFriendIds.Any(y => y == x)).ToList())
+                {
+                    log.LogDebug($"connecting user {x}...");
+                    await signalRGroupActions.AddAsync(
+                        new SignalRGroupAction
+                        {
+                            UserId = x.ToString(),
+                            GroupName = chat.Id.ToString(),
+                            Action = GroupAction.Add
+                        });
+                }
+
+                return new OkObjectResult(null);
+            }
+            catch (Exception e)
+            {
+                log.LogError(e.Message);
+                return new BadRequestObjectResult($"Error: {e.Message}");
+            }
+            finally
+            {
+                log.LogDebug($"EditGroup.END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
         [FunctionName("Location")]
         public async Task<IActionResult> Location(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Location")] HttpRequest req,

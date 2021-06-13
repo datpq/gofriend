@@ -126,8 +126,7 @@ namespace goFriend.Views
                 && (App.MyGroups == null || App.MyGroups.All(x => !x.GroupFriend.Active))) {
                 Logger.Debug("OnAppearing.BEGIN");
                 UserDialogs.Instance.ShowLoading(res.Processing);
-                App.Initialize();
-                await App.TaskInitialization;
+                await App.RefreshMyGroups();
                 UserDialogs.Instance.HideLoading();
                 RefreshMenu();
                 Logger.Debug("OnAppearing.END");
@@ -204,7 +203,7 @@ namespace goFriend.Views
                         {
                             TsShells.Insert(TsShells.IndexOf(CellLogout), CellMap);
                         }
-                        if (App.MyGroups != null && App.MyGroups.Any(x => x.GroupFriend.UserRight >= UserType.Admin))
+                        if (App.MyGroups != null && App.MyGroups.Any(x => x.Group.Public && x.GroupFriend.UserRight >= UserType.Admin))
                         {
                             TsShells.Insert(TsShells.IndexOf(CellLogout), CellAdmin);
                         }

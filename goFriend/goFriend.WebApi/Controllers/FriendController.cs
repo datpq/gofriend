@@ -84,6 +84,7 @@ namespace goFriend.WebApi.Controllers
                                 ShowLocation = setting.DefaultShowLocation,
                                 Active = true // new user is Active for now
                             };
+                            updateProfileFromFbProfile(result, fbUser, authToken, deviceInfo, info);
                             _dataRepo.Add(result);
                         }
                         else
@@ -95,86 +96,7 @@ namespace goFriend.WebApi.Controllers
                 else//already registered. Logged-in again
                 {
                     Logger.Debug($"Already registered. Logged-in again.  {result.ToFullString()}");
-                }
-
-                var isUpdated = false;
-                if (!string.IsNullOrEmpty(fbUser.name) && result.Name != fbUser.name)
-                {
-                    result.Name = fbUser.name;
-                    Logger.Debug($"Name updated: {result.Name}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(fbUser.first_name) && result.FirstName != fbUser.first_name)
-                {
-                    result.FirstName = fbUser.first_name;
-                    Logger.Debug($"FirstName updated: {result.FirstName}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(fbUser.last_name) && result.LastName != fbUser.last_name)
-                {
-                    result.LastName = fbUser.last_name;
-                    Logger.Debug($"LastName updated: {result.LastName}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(fbUser.middle_name) && result.MiddleName != fbUser.middle_name)
-                {
-                    result.MiddleName = fbUser.middle_name;
-                    Logger.Debug($"MiddleName updated: {result.MiddleName}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(fbUser.email) && result.Email != fbUser.email)
-                {
-                    result.Email = fbUser.email;
-                    Logger.Debug($"Email updated: {result.Email}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(fbUser.gender) && result.Gender != fbUser.gender)
-                {
-                    result.Gender = fbUser.gender;
-                    Logger.Debug($"Gender updated: {result.Gender}");
-                    isUpdated = true;
-                }
-                result.FacebookToken = authToken;
-                result.ThirdPartyToken = authToken;
-                if (!string.IsNullOrEmpty(deviceInfo) && result.DeviceInfo != deviceInfo)
-                {
-                    result.DeviceInfo = deviceInfo;
-                    Logger.Debug($"DeviceInfo updated: {result.DeviceInfo}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(info) && result.Info != info)
-                {
-                    result.Info = info;
-                    Logger.Debug($"Info updated: {result.Info}");
-                    isUpdated = true;
-                }
-
-                if (result.ModifiedDate != null && result.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
-                {
-                    result.Token = Guid.NewGuid();
-                    Logger.Debug($"Token expired. new Token = {result.Token}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(fbUser.birthday))
-                {
-                    try
-                    {
-                        var birthday = DateTime.ParseExact(fbUser.birthday, "MM/dd/yyyy", null);
-                        if (result.Birthday != birthday)
-                        {
-                            Logger.Debug($"Birthday updated: {result.Birthday}");
-                            result.Birthday = birthday;
-                            isUpdated = true;
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-                if (isUpdated)
-                {
-                    result.ModifiedDate = DateTime.Now;
+                    updateProfileFromFbProfile(result, fbUser, authToken, deviceInfo, info);
                 }
 
                 _dataRepo.Commit();
@@ -193,6 +115,154 @@ namespace goFriend.WebApi.Controllers
             finally
             {
                 Logger.Debug($"END(ProcessingTime={stopWatch.Elapsed.ToStringStandardFormat()})");
+            }
+        }
+
+        private void updateProfileFromFbProfile(Friend profile, dynamic fbUser, string authToken, string deviceInfo, string info)
+        {
+            var isUpdated = false;
+            if (!string.IsNullOrEmpty(fbUser.name) && profile.Name != fbUser.name)
+            {
+                profile.Name = fbUser.name;
+                Logger.Debug($"Name updated: {profile.Name}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(fbUser.first_name) && profile.FirstName != fbUser.first_name)
+            {
+                profile.FirstName = fbUser.first_name;
+                Logger.Debug($"FirstName updated: {profile.FirstName}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(fbUser.last_name) && profile.LastName != fbUser.last_name)
+            {
+                profile.LastName = fbUser.last_name;
+                Logger.Debug($"LastName updated: {profile.LastName}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(fbUser.middle_name) && profile.MiddleName != fbUser.middle_name)
+            {
+                profile.MiddleName = fbUser.middle_name;
+                Logger.Debug($"MiddleName updated: {profile.MiddleName}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(fbUser.email) && profile.Email != fbUser.email)
+            {
+                profile.Email = fbUser.email;
+                Logger.Debug($"Email updated: {profile.Email}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(fbUser.gender) && profile.Gender != fbUser.gender)
+            {
+                profile.Gender = fbUser.gender;
+                Logger.Debug($"Gender updated: {profile.Gender}");
+                isUpdated = true;
+            }
+            profile.FacebookToken = authToken;
+            profile.ThirdPartyToken = authToken;
+            if (!string.IsNullOrEmpty(deviceInfo) && profile.DeviceInfo != deviceInfo)
+            {
+                profile.DeviceInfo = deviceInfo;
+                Logger.Debug($"DeviceInfo updated: {profile.DeviceInfo}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(info) && profile.Info != info)
+            {
+                profile.Info = info;
+                Logger.Debug($"Info updated: {profile.Info}");
+                isUpdated = true;
+            }
+
+            if (profile.ModifiedDate != null && profile.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
+            {
+                profile.Token = Guid.NewGuid();
+                Logger.Debug($"Token expired. new Token = {profile.Token}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(fbUser.birthday))
+            {
+                try
+                {
+                    var birthday = DateTime.ParseExact(fbUser.birthday, "MM/dd/yyyy", null);
+                    if (profile.Birthday != birthday)
+                    {
+                        Logger.Debug($"Birthday updated: {profile.Birthday}");
+                        profile.Birthday = birthday;
+                        isUpdated = true;
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            if (isUpdated)
+            {
+                profile.ModifiedDate = DateTime.Now;
+            }
+        }
+        private void updateProfileFromFriend(Friend profile, Friend friend, string deviceInfo)
+        {
+            var isUpdated = false;
+            if (!string.IsNullOrEmpty(friend.Name) && profile.Name != friend.Name)
+            {
+                profile.Name = friend.Name;
+                Logger.Debug($"Name updated: {profile.Name}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(friend.FirstName) && profile.FirstName != friend.FirstName)
+            {
+                profile.FirstName = friend.FirstName;
+                Logger.Debug($"FirstName updated: {profile.FirstName}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(friend.LastName) && profile.LastName != friend.LastName)
+            {
+                profile.LastName = friend.LastName;
+                Logger.Debug($"LastName updated: {profile.LastName}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(friend.MiddleName) && profile.MiddleName != friend.MiddleName)
+            {
+                profile.MiddleName = friend.MiddleName;
+                Logger.Debug($"MiddleName updated: {profile.MiddleName}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(friend.Email) && profile.Email != friend.Email)
+            {
+                profile.Email = friend.Email;
+                Logger.Debug($"Email updated: {profile.Email}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(friend.Gender) && profile.Gender != friend.Gender)
+            {
+                profile.Gender = friend.Gender;
+                Logger.Debug($"Gender updated: {profile.Gender}");
+                isUpdated = true;
+            }
+            //profile.ThirdPartyToken = thirdPartyToken;
+            if (!string.IsNullOrEmpty(deviceInfo) && profile.DeviceInfo != deviceInfo)
+            {
+                profile.DeviceInfo = deviceInfo;
+                Logger.Debug($"DeviceInfo updated: {profile.DeviceInfo}");
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(friend.Info) && profile.Info != friend.Info)
+            {
+                profile.Info = friend.Info;
+                Logger.Debug($"Info updated: {profile.Info}");
+                isUpdated = true;
+            }
+
+            if (profile.ModifiedDate != null && profile.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
+            {
+                profile.Token = Guid.NewGuid();
+                Logger.Debug($"Token expired. new Token = {profile.Token}");
+                isUpdated = true;
+            }
+
+            if (isUpdated)
+            {
+                profile.ModifiedDate = DateTime.Now;
             }
         }
 
@@ -246,6 +316,7 @@ namespace goFriend.WebApi.Controllers
                                 ShowLocation = setting.DefaultShowLocation,
                                 Active = true // new user is Active for now
                             };
+                            updateProfileFromFriend(result, friend, deviceInfo);
                             _dataRepo.Add(result);
                         }
                         else
@@ -257,69 +328,7 @@ namespace goFriend.WebApi.Controllers
                 else//already registered. Logged-in again
                 {
                     Logger.Debug($"Already registered. Logged-in again.  {result.ToFullString()}");
-                }
-
-                var isUpdated = false;
-                if (!string.IsNullOrEmpty(friend.Name) && result.Name != friend.Name)
-                {
-                    result.Name = friend.Name;
-                    Logger.Debug($"Name updated: {result.Name}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(friend.FirstName) && result.FirstName != friend.FirstName)
-                {
-                    result.FirstName = friend.FirstName;
-                    Logger.Debug($"FirstName updated: {result.FirstName}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(friend.LastName) && result.LastName != friend.LastName)
-                {
-                    result.LastName = friend.LastName;
-                    Logger.Debug($"LastName updated: {result.LastName}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(friend.MiddleName) && result.MiddleName != friend.MiddleName)
-                {
-                    result.MiddleName = friend.MiddleName;
-                    Logger.Debug($"MiddleName updated: {result.MiddleName}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(friend.Email) && result.Email != friend.Email)
-                {
-                    result.Email = friend.Email;
-                    Logger.Debug($"Email updated: {result.Email}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(friend.Gender) && result.Gender != friend.Gender)
-                {
-                    result.Gender = friend.Gender;
-                    Logger.Debug($"Gender updated: {result.Gender}");
-                    isUpdated = true;
-                }
-                //result.ThirdPartyToken = thirdPartyToken;
-                if (!string.IsNullOrEmpty(deviceInfo) && result.DeviceInfo != deviceInfo)
-                {
-                    result.DeviceInfo = deviceInfo;
-                    Logger.Debug($"DeviceInfo updated: {result.DeviceInfo}");
-                    isUpdated = true;
-                }
-                if (!string.IsNullOrEmpty(friend.Info) && result.Info != friend.Info)
-                {
-                    result.Info = friend.Info;
-                    Logger.Debug($"Info updated: {result.Info}");
-                    isUpdated = true;
-                }
-
-                if (result.ModifiedDate != null && result.ModifiedDate.Value.AddDays(1) < DateTime.Now) //
-                {
-                    result.Token = Guid.NewGuid();
-                    Logger.Debug($"Token expired. new Token = {result.Token}");
-                    isUpdated = true;
-                }
-
-                if (isUpdated)
-                {
-                    result.ModifiedDate = DateTime.Now;
+                    updateProfileFromFriend(result, friend, deviceInfo);
                 }
 
                 _dataRepo.Commit();
@@ -1749,7 +1758,7 @@ namespace goFriend.WebApi.Controllers
 
         [HttpPost]
         [Route("GroupSubscriptionMultiple/{groupId}")]
-        public IActionResult GroupSubscriptionMultiple([FromHeader] string token, [FromRoute] int groupId, [FromBody] Friend[] friends)
+        public IActionResult GroupSubscriptionMultiple([FromHeader] string token, [FromRoute] int groupId, [FromBody] List<Friend> friends)
         {
             var stopWatch = Stopwatch.StartNew();
             try
@@ -1812,6 +1821,7 @@ namespace goFriend.WebApi.Controllers
                         }
                     });
                     //remove Cache
+                    _cacheService.Remove($".GetChats.{x.FriendId}.");
                     _cacheService.Remove($".GetMyGroups.{x.FriendId}.");
                 });
 
@@ -1841,13 +1851,16 @@ namespace goFriend.WebApi.Controllers
                         }
                     });
                     //remove Cache
+                    _cacheService.Remove($".GetChats.{x.Id}.");
                     _cacheService.Remove($".GetMyGroups.{x.Id}.");
                 });
 
                 Logger.Debug($"removing the cache for old members...");
                 arrOldGroupFriendIds.Where(x => friends.Any(y => y.Id == x.FriendId)).ToList().ForEach(x =>
-                    _cacheService.Remove($".GetMyGroups.{x.FriendId}.")
-                );
+                {
+                    _cacheService.Remove($".GetChats.{x.FriendId}.");
+                    _cacheService.Remove($".GetMyGroups.{x.FriendId}.");
+                });
 
                 _dataRepo.Commit();
 

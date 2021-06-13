@@ -154,6 +154,12 @@ namespace goFriend.Views
         private async void CmdPlay_Clicked(object sender, EventArgs e)
         {
             var vm = (MapOnlineViewModel)BindingContext;
+            //Got kicked out of a group
+            if (App.MyGroups.All(x => x.Group.Active && x.Group.Id != vm.Group.Id))
+            {
+                DphFriendSelection.Refresh();
+                return;
+            }
             lock (_operationLocker)
             {
                 vm.IsRunning = !vm.IsRunning;
@@ -189,6 +195,12 @@ namespace goFriend.Views
         private async void CmdStop_Clicked(object sender, EventArgs e)
         {
             var vm = (MapOnlineViewModel)BindingContext;
+            //Got kicked out of a group
+            if (App.MyGroups.All(x => x.Group.Active && x.Group.Id != vm.Group.Id))
+            {
+                DphFriendSelection.Refresh();
+                return;
+            }
             lock (_operationLocker)
             {
                 vm.IsRunning = !vm.IsRunning;

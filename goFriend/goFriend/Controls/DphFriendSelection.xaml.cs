@@ -81,6 +81,12 @@ namespace goFriend.Controls
             EntryName.ReturnCommand = new Command(() =>
             {
                 if (SelectedGroup == null) return;
+                //Got kicked out of a group
+                if (SelectedGroup.Group != null && App.MyGroups.All(x => x.Group.Active && x.Group.Id != SelectedGroup.Group.Id))
+                {
+                    Refresh();
+                    return;
+                }
                 _onSelectionAction?.Invoke(SelectedGroup, EntryName.Text, ArrFixedCats, _arrCatValues);
             });
         }
