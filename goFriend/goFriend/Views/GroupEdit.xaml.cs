@@ -87,7 +87,6 @@ namespace goFriend.Views
 
         private async void CmdSave_Click(object sender, EventArgs e)
         {
-            if (ChipContainer.Children.Count <= 1) return;
             try
             {
                 UserDialogs.Instance.ShowLoading(res.Processing);
@@ -96,6 +95,12 @@ namespace goFriend.Views
                 {
                     var friend = await App.FriendStore.GetFriendInfo((int)((Chip)x).Tag);
                     lstFriends.Add(friend);
+                }
+                if (_friends.All(x => lstFriends.Any(y => y.Id == x.Id)) && _friends.Count == lstFriends.Count)
+                {
+                    Logger.Debug("Same as before. Nothing to do.");
+                    CmdReset.IsEnabled = CmdSave.IsEnabled = false;
+                    return;
                 }
                 Logger.Debug("disconnecting kicked-out members and connecting new members...");
                 await App.FriendStore.SignalR.SendMessageAsync<string>(

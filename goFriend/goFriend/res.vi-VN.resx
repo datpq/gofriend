@@ -543,4 +543,7 @@
   <data name="All" xml:space="preserve">
     <value>Tất cả</value>
   </data>
+  <data name="MsgOneMemberGroupWarn" xml:space="preserve">
+    <value>Nhóm {0} mới có 1 thành viên. Bạn nên thêm người thân vào nhóm để có thể cùng chia sẻ vị trí trên bản đồ trực tuyến.</value>
+  </data>
 </root>

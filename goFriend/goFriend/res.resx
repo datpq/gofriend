@@ -543,4 +543,7 @@
   <data name="All" xml:space="preserve">
     <value />
   </data>
+  <data name="MsgOneMemberGroupWarn" xml:space="preserve">
+    <value>{0}</value>
+  </data>
 </root>

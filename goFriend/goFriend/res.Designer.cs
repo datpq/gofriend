@@ -808,6 +808,15 @@ namespace goFriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.
+        /// </summary>
+        public static string MsgOneMemberGroupWarn {
+            get {
+                return ResourceManager.GetString("MsgOneMemberGroupWarn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you really want to save?.
         /// </summary>
         public static string MsgSaveConfirm {

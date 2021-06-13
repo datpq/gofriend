@@ -21,7 +21,7 @@ namespace goFriend.Views
                 await accountBasicInfoPage.Initialize(DphFriendList.DphFriendSelection.SelectedGroup.Group,
                     selectedGroupFriend, DphFriendList.DphFriendSelection.ArrFixedCats.Count);
                 await Navigation.PushAsync(accountBasicInfoPage);
-            });
+            }, Settings.LastBrowsePageGroupName);
         }
     }
 }

@@ -45,9 +45,9 @@ namespace goFriend.Controls
             DphFriendSelection.Refresh();
         }
 
-        public void Initialize(Action<DphListViewItemModel> cellOnTapped = null)
+        public void Initialize(Action<DphListViewItemModel> cellOnTapped = null, string selectedGroupName = null)
         {
-            DphFriendSelection.SelectedGroupName = Settings.LastBrowsePageGroupName;
+            DphFriendSelection.SelectedGroupName = selectedGroupName;
             DphFriendSelection.Initialize((selectedGroup, searchText, arrFixedCats, arrCatValues) =>
             {
                 if (selectedGroup.Group != null)

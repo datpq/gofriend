@@ -134,6 +134,10 @@ namespace goFriend.Views
                     _mapNeedRecentering = true;
                     RecenterMap();
                 }
+                if (selectedGroup.MemberCount <= 1 && selectedGroup.ChatOwnerId == App.User.Id)
+                {
+                    App.DisplayMsgInfo(string.Format(res.MsgOneMemberGroupWarn, selectedGroup.Group.Name));
+                }
             });
 
             App.NotificationService.CancelNotification(Models.NotificationType.AppearOnMap);
