@@ -12,7 +12,7 @@ namespace goFriend.Services.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Group>().ToTable("Groups").HasIndex(x => x.Name).IsUnique();
+            modelBuilder.Entity<Group>().ToTable("Groups"); //.HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<Group>().Property(x => x.Id).ValueGeneratedOnAdd();
             //modelBuilder.Entity<Friend>().ToTable("Friends").HasIndex(x => x.FacebookId).IsUnique();
             modelBuilder.Entity<Friend>().Property(x => x.Id).ValueGeneratedOnAdd();

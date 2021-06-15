@@ -9,6 +9,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Plugin.LatestVersion;
+using System.Collections.Generic;
 
 namespace goFriend.Views
 {
@@ -93,7 +94,7 @@ namespace goFriend.Views
             App.NotificationService.CancelNotification();
             App.IsUserLoggedIn = false;
             App.User = null;
-            App.MyGroups = null;
+            App.MyGroups = new List<MyGroupViewModel>();
             Settings.IsUserLoggedIn = App.IsUserLoggedIn;
             App.ChatListVm.ChatListItems.Clear();
             MapOnlinePage.Instance?.Reset();
