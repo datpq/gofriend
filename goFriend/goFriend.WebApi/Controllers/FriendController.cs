@@ -552,7 +552,10 @@ namespace goFriend.WebApi.Controllers
                         currentPredefinedCategory = _dataRepo.Get<GroupPredefinedCategory>(
                             x => x.GroupId == groupId && x.Category == catVal && x.ParentId == parentCategoryId, true);
                         Logger.Debug($"currentPredefinedCategory.Id={currentPredefinedCategory?.Id}");
-                        groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]);
+                        if (!string.IsNullOrEmpty(Request.Query[$"Cat{localIdx}"]))
+                        {
+                            groupFriends = groupFriends.Where(x => x.GetCatByIdx(localIdx + startCatIdx) == Request.Query[$"Cat{localIdx}"]);
+                        }
                         idx++;
                     }
 

@@ -86,7 +86,6 @@ namespace goFriend
         public const string ImgNavigate = "navigate.png";
         public const string ImgAccountInfo = "account_info.png";
         public const string ImgGroup = "group.png";
-        public const string ImgGroupAdmin = "group_admin";
         public const string ImgCopy = "copy.png";
         public const string ImgDelete = "delete.png";
         public const string ImgMute = "mute.png";

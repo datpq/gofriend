@@ -275,7 +275,7 @@ namespace goFriend
         {
             _logger.Debug("RefreshMyGroups.BEGIN");
             var newMyGroups = await FriendStore.GetMyGroups();
-            newMyGroups = newMyGroups.Where(x => x.GroupFriend.Active).OrderBy(
+            newMyGroups = newMyGroups.OrderBy( // .Where(x => x.GroupFriend.Active) we need to get inactive groups (waiting for approval)
                 x => x.ChatOwnerId.HasValue && x.ChatOwnerId.Value == App.User.Id ? 0 : x.ChatOwnerId.HasValue ? 1 : 2)
             .ThenBy(x => x.Group.Name).ToList();
 

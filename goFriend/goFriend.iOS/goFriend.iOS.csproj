@@ -264,9 +264,6 @@
     <BundleResource Include="Resources\group.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\group_admin.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\tab_browse.png" />
   </ItemGroup>
   <ItemGroup>

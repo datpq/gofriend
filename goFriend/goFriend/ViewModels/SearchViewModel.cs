@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using FFImageLoading.Work;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -28,13 +30,13 @@ namespace goFriend.ViewModels
         public Color ImageForeground { get; set; }
         public int SubItemCount { get; set; }
 
+        public List<ITransformation> Transformations {get; set;}
+
+        int _imageSize = 0;
         public int ImageSize
         {
-            get
-            {
-                var result = string.IsNullOrEmpty(ImageSource) ? 0 : 26;
-                return result;
-            }
+            get => _imageSize != 0 ? _imageSize : 26;
+            set => _imageSize = value;
         }
     }
 }

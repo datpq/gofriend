@@ -278,7 +278,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{groupId}.{App.User.Id}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
+                var cacheKey = $"{cachePrefix}.{groupId}.{App.User.Id}.{arrCatValues.Length}.{string.Join(".", arrCatValues)}."; //No need to have User.Id in this key. Just leave here to have same thing in other block
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -495,7 +495,7 @@ namespace goFriend.Services
 
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
-                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{top}.{skip}.{searchText}.{string.Join(".", arrCatValues)}";
+                var cacheKey = $"{cachePrefix}.{groupId}.{isActive}.{top}.{skip}.{searchText}.{arrCatValues.Length}.{string.Join(".", arrCatValues)}";
                 Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
@@ -578,14 +578,14 @@ namespace goFriend.Services
                 var cachePrefix = $"{Constants.CacheTimeoutPrefix}{GetActualAsyncMethodName()}";
                 var cacheTimeout = Constants.GetCacheTimeout(cachePrefix);
                 var cacheKey = $"{cachePrefix}.{App.User.Id}.";
-                //Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
+                Logger.Debug($"cacheKey={cacheKey}, cacheTimeout={cacheTimeout}");
 
                 if (useClientCache)
                 {
                     result = _cacheService.Get(cacheKey) as IEnumerable<MyGroupViewModel>;
                     if (result != null)
                     {
-                        //Logger.Debug("Cache found. Return value in cache.");
+                        Logger.Debug("Cache found. Return value in cache.");
                         return result;
                     }
                 }
@@ -1140,6 +1140,7 @@ namespace goFriend.Services
                     Logger.Error($"Error: {msg}");
                 }
 
+                _cacheService.Remove($".GetMyGroups.");
                 return result;
             }
             catch (GoException e)

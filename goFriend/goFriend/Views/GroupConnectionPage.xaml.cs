@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Acr.UserDialogs;
+using FFImageLoading.Transformations;
 using goFriend.DataModel;
 using goFriend.Services;
 using goFriend.ViewModels;
@@ -28,10 +29,10 @@ namespace goFriend.Views
             DphGroupSearch.Initialize(async (searchText) =>
             {
                 Logger.Debug($"Search.Group.BEGIN(searchText={searchText})");
-                await App.TaskInitialization;
+                await App.RefreshMyGroups();
                 _searchingResultGroups = await App.FriendStore.GetGroups(searchText);
-                var searchResult = App.MyGroups.Where(
-                    x => x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
+                var searchResult = App.MyGroups.Where(x => x.Group.Public
+                    && x.Group.Name.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase) >= 0).Union(
                     _searchingResultGroups.Where(x => App.MyGroups.All(y => y.Group.Id != x.Group.Id))).Select(
                     x => new SearchItemModel
                     {
@@ -40,10 +41,26 @@ namespace goFriend.Views
                         Id = x.Group.Id,
                         ItemType = (int)x.UserRight,
                         SubItemCount = x.MemberCount,
-                        ImageSource = x.UserRight == UserType.Admin ? Constants.ImgGroupAdmin : Constants.ImgGroup,
-                        ImageForeground = x.UserRight == UserType.Admin ? Color.BlueViolet :
-                        x.UserRight == UserType.Normal ? (Color)Application.Current.Resources["ColorPrimary"] :
-                        x.UserRight == UserType.Pending ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.LightGray
+                        //ImageSource = x.UserRight == UserType.Admin ? Constants.ImgGroupAdmin : Constants.ImgGroup,
+                        ImageSource = x.Group.LogoUrl == null ? Constants.ImgGroup : $"{Constants.HomePageUrl}{x.Group.LogoUrl}",
+                        ImageSize = 40,
+                        Transformations = x.UserRight == UserType.Admin || x.UserRight == UserType.Normal ?
+                            new List<FFImageLoading.Work.ITransformation>
+                            {
+                                new CircleTransformation(),
+                            } : x.UserRight == UserType.Pending ?
+                            new List<FFImageLoading.Work.ITransformation>
+                            {
+                                new CircleTransformation(),
+                                new SepiaTransformation()
+                            } : new List<FFImageLoading.Work.ITransformation>
+                            {
+                                new CircleTransformation(),
+                                new GrayscaleTransformation()
+                            },
+                        ImageForeground = x.UserRight == UserType.Admin ? Color.BlueViolet : Color.Default
+                        //x.UserRight == UserType.Normal ? (Color)Application.Current.Resources["ColorPrimary"] :
+                        //x.UserRight == UserType.Pending ? (Color)Application.Current.Resources["ColorPrimaryLight"] : Color.LightGray
                     });
                 //Logger.Debug($"groupList={JsonConvert.SerializeObject(groupList)}");
                 Logger.Debug("Search.Group.END");
