@@ -7,29 +7,45 @@
              xmlns:local="clr-namespace:goFriend" xmlns:controls="clr-namespace:goFriend.Controls"
              Title="{Static local:res.Groups}"
              Visual="Material"
+             xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:ffTransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
              x:Class="goFriend.Views.GroupConnectionPage">
     <ContentPage.Content>
         <StackLayout>
             <controls:DphGroupSearch x:Name="DphGroupSearch" />
             <StackLayout x:Name="SlGroupDetail" IsVisible="False">
                 <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" x:Name="CommonConnectionInfoLine" />
-                <StackLayout Margin="20,5,20,0" x:Name="CommonConnectionInfoLayout">
-                    <Label Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" />
-                    <Grid Margin="0,5" x:Name="Grid" ColumnSpacing="30" HorizontalOptions="FillAndExpand">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </StackLayout>
+                <Grid Margin="10,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout x:Name="CommonConnectionInfoLayout" Grid.Column="0">
+                        <Label Text="{Static local:res.CommonConnectionInfo}" FontSize="{StaticResource LblDetailFontSize}" />
+                        <Grid x:Name="Grid" HorizontalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </StackLayout>
+                    <ff:CachedImage x:Name="GroupLogo" WidthRequest="100" HeightRequest="100" Grid.Column="1">
+                        <ff:CachedImage.Transformations>
+                            <ffTransformations:CircleTransformation/>
+                        </ff:CachedImage.Transformations>
+                    </ff:CachedImage>
+                </Grid>
                 <BoxView HorizontalOptions="Fill" HeightRequest="1" Color="LightGray" />
-                <ScrollView Margin="0,5,0,0">
+                <ScrollView Margin="10,5">
                     <StackLayout x:Name="SlMain" VerticalOptions="StartAndExpand">
-                        <Label Margin="20,0" x:Name="LblInfoCats" Text="{Static local:res.Information}" FontSize="{StaticResource LblDetailFontSize}" />
-                        <Label Margin="20,10,20,0" x:Name="LblSubscriptionMsg" FontSize="{StaticResource LblSectionFontSize}" />
+                        <Label x:Name="LblInfoCats" Text="{Static local:res.Information}" FontSize="{StaticResource LblDetailFontSize}" />
+                        <Label Margin="10" x:Name="LblSubscriptionMsg" FontSize="{StaticResource LblSectionFontSize}" />
                     </StackLayout>
                 </ScrollView>
                 <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand" Margin="10" HorizontalOptions="Center">

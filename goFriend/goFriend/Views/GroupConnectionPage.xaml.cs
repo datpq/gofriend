@@ -95,7 +95,7 @@ namespace goFriend.Views
 
                 if (string.IsNullOrEmpty(groupName)) return;
 
-                await App.TaskInitialization; // use await whenever possible because that doesn't block UI thread
+                await App.RefreshMyGroups();
 
                 var selectedApiGroup = App.MyGroups?.SingleOrDefault(x => x.Group.Name == groupName);
                 if (selectedApiGroup == null)
@@ -122,8 +122,10 @@ namespace goFriend.Views
                 var groupFixedCatValues = await App.FriendStore.GetGroupFixedCatValues(_selectedGroup.Id);
                 _arrFixedCatValues = groupFixedCatValues == null ? new List<string>() : groupFixedCatValues.GetCatList().ToList();
 
-                Logger.Debug($"groupFixedCatValues.GetCatList.Count = {_arrFixedCatValues.Count}");
-                CommonConnectionInfoLine.IsVisible = CommonConnectionInfoLayout.IsVisible = _arrFixedCatValues.Count > 0;
+                GroupLogo.Source = $"{Constants.HomePageUrl}{_selectedGroup.LogoUrl}";
+                Logger.Debug($"groupFixedCatValues.GetCatList.Count = {_arrFixedCatValues.Count}, LogoUrl={GroupLogo.Source}");
+                CommonConnectionInfoLine.IsVisible = CommonConnectionInfoLayout.IsVisible
+                    = _arrFixedCatValues.Count > 0 || _selectedGroup.LogoUrl != null;
 
                 var arrCatDesc = _selectedGroup.GetCatDescList().ToList();
                 LblInfoCats.Text = $"{LblInfoCats.Text} {string.Join(", ", arrCatDesc.ToArray(), _arrFixedCatValues.Count, arrCatDesc.Count - _arrFixedCatValues.Count).ToUpper()}";
@@ -208,7 +210,7 @@ namespace goFriend.Views
                         var sl = new StackLayout
                         {
                             Orientation = StackOrientation.Horizontal,
-                            Margin = new Thickness(5,0),
+                            //Margin = new Thickness(5,0),
                             Children = { entry, button }
                         };
                         SlMain.Children.Insert(SlMain.Children.Count - 1, sl);

@@ -1,4 +1,5 @@
 ﻿using goFriend.Services;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -153,88 +154,100 @@ namespace goFriend
 
         public static async Task InitializeConfiguration()
         {
-            Logger.Debug("InitializeConfiguration.BEGIN");
-            var configurations = await App.FriendStore.GetConfigurations();
-            configurations.ToList().ForEach(x =>
+            try
             {
-                Logger.Debug($"Key={x.Key}, Value={x.Value}");
-                switch(x.Key)
+                Logger.Debug("InitializeConfiguration.BEGIN");
+                var configurations = await App.FriendStore.GetConfigurations();
+                if (configurations == null) return;
+                configurations.ToList().ForEach(x =>
                 {
-                    case "MAPONLINE_ACTIVE_TIMEOUT":
-                        MAPONLINE_ACTIVE_TIMEOUT = int.Parse(x.Value);
-                        break;
-                    case "MAPONLINE_ONLINE_TIMEOUT":
-                        MAPONLINE_ONLINE_TIMEOUT = int.Parse(x.Value);
-                        break;
-                    case "MAPONLINE_OFFLINE_TIMEOUT":
-                        MAPONLINE_OFFLINE_TIMEOUT = int.Parse(x.Value);
-                        break;
-                    case "SuperUserIds":
-                        SuperUserIds = x.Value.Split(";").Where(
-                            x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
-                        break;
-                    case "MAPONLINE_DEFAULT_RADIUS":
-                        MAPONLINE_DEFAULT_RADIUS = int.Parse(x.Value);
-                        break;
-                    case "MAPONLINE_COMMAND_DISABLED_TIMEOUT":
-                        MAPONLINE_COMMAND_DISABLED_TIMEOUT = int.Parse(x.Value);
-                        break;
-                    case "MAPONLINE_REFRESH_INTERVAL":
-                        MAPONLINE_REFRESH_INTERVAL = int.Parse(x.Value);
-                        break;
-                    case "MAPONLINE_RADIUS_LIST":
-                        MAPONLINE_RADIUS_LIST = x.Value.Split(";").Where(
-                            x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
-                        break;
-                    case "LOCATIONSERVICE_UPDATE_INTERVAL":
-                        LOCATIONSERVICE_UPDATE_INTERVAL = int.Parse(x.Value);
-                        break;
-                    case "LOCATIONSERVICE_DISTANCE_THRESHOLD":
-                        LOCATIONSERVICE_DISTANCE_THRESHOLD = double.Parse(x.Value);
-                        break;
-                    case "HomePageUrl":
-                        HomePageUrl = x.Value;
-                        break;
-                    case "ChatFuncUrl":
-                        ChatFuncUrl = x.Value;
-                        break;
-                    case "ColorOfflinePinMale":
-                        ColorOfflinePinMale = x.Value;
-                        break;
-                    case "ColorOfflinePinFemale":
-                        ColorOfflinePinFemale = x.Value;
-                        break;
-                    case "FUNC_SENDLOGFILE":
-                        FUNC_SENDLOGFILE = bool.Parse(x.Value);
-                        if (FUNC_SENDLOGFILE)
-                        {
-                            Extension.SetNlogLogLevel(NLog.LogLevel.Debug);
-                        }
-                        break;
-                    case "BackendUrl":
-                        BackendUrl = x.Value;
-                        FriendStore.UpdateBackendUrl();
-                        break;
-                    case "AdBannerIdAndroid":
-                        AdBannerIdAndroid = x.Value;
-                        break;
-                    case "AdBannerIdiOS":
-                        AdBannerIdiOS = x.Value;
-                        break;
-                    default:
-                        if (x.Key.StartsWith(CacheTimeoutPrefix))
-                        {
-                            //CacheTimeoutDict.Add(x.Key, int.Parse(x.Value));
-                            CacheTimeoutDict[x.Key] = int.Parse(x.Value);
-                        }
-                        else
-                        {
-                            Logger.Warn("Key not managed.");
-                        }
-                        break;
-                }
-            });
-            Logger.Debug("InitializeConfiguration.END");
+                    Logger.Debug($"Key={x.Key}, Value={x.Value}");
+                    switch(x.Key)
+                    {
+                        case "MAPONLINE_ACTIVE_TIMEOUT":
+                            MAPONLINE_ACTIVE_TIMEOUT = int.Parse(x.Value);
+                            break;
+                        case "MAPONLINE_ONLINE_TIMEOUT":
+                            MAPONLINE_ONLINE_TIMEOUT = int.Parse(x.Value);
+                            break;
+                        case "MAPONLINE_OFFLINE_TIMEOUT":
+                            MAPONLINE_OFFLINE_TIMEOUT = int.Parse(x.Value);
+                            break;
+                        case "SuperUserIds":
+                            SuperUserIds = x.Value.Split(";").Where(
+                                x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
+                            break;
+                        case "MAPONLINE_DEFAULT_RADIUS":
+                            MAPONLINE_DEFAULT_RADIUS = int.Parse(x.Value);
+                            break;
+                        case "MAPONLINE_COMMAND_DISABLED_TIMEOUT":
+                            MAPONLINE_COMMAND_DISABLED_TIMEOUT = int.Parse(x.Value);
+                            break;
+                        case "MAPONLINE_REFRESH_INTERVAL":
+                            MAPONLINE_REFRESH_INTERVAL = int.Parse(x.Value);
+                            break;
+                        case "MAPONLINE_RADIUS_LIST":
+                            MAPONLINE_RADIUS_LIST = x.Value.Split(";").Where(
+                                x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
+                            break;
+                        case "LOCATIONSERVICE_UPDATE_INTERVAL":
+                            LOCATIONSERVICE_UPDATE_INTERVAL = int.Parse(x.Value);
+                            break;
+                        case "LOCATIONSERVICE_DISTANCE_THRESHOLD":
+                            LOCATIONSERVICE_DISTANCE_THRESHOLD = double.Parse(x.Value);
+                            break;
+                        case "HomePageUrl":
+                            HomePageUrl = x.Value;
+                            break;
+                        case "ChatFuncUrl":
+                            ChatFuncUrl = x.Value;
+                            break;
+                        case "ColorOfflinePinMale":
+                            ColorOfflinePinMale = x.Value;
+                            break;
+                        case "ColorOfflinePinFemale":
+                            ColorOfflinePinFemale = x.Value;
+                            break;
+                        case "FUNC_SENDLOGFILE":
+                            FUNC_SENDLOGFILE = bool.Parse(x.Value);
+                            if (FUNC_SENDLOGFILE)
+                            {
+                                Extension.SetNlogLogLevel(NLog.LogLevel.Debug);
+                            }
+                            break;
+                        case "BackendUrl":
+                            BackendUrl = x.Value;
+                            FriendStore.UpdateBackendUrl();
+                            break;
+                        case "AdBannerIdAndroid":
+                            AdBannerIdAndroid = x.Value;
+                            break;
+                        case "AdBannerIdiOS":
+                            AdBannerIdiOS = x.Value;
+                            break;
+                        default:
+                            if (x.Key.StartsWith(CacheTimeoutPrefix))
+                            {
+                                //CacheTimeoutDict.Add(x.Key, int.Parse(x.Value));
+                                CacheTimeoutDict[x.Key] = int.Parse(x.Value);
+                            }
+                            else
+                            {
+                                Logger.Warn("Key not managed.");
+                            }
+                            break;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                App.DisplayMsgError(ex.Message);
+                Logger.Error(ex.ToString());
+            }
+            finally
+            {
+                Logger.Debug("InitializeConfiguration.END");
+            }
         }
 
         public static int GetCacheTimeout(string cacheKey)

@@ -397,7 +397,7 @@ In Package Manager Console:
 The term “Add-Migration” is not recognized
 	--> Restart VSfailed
 Change Start up prokect to goFriendMobileAppService
-Add-Migration InitialCreate
+Add-Migration InitialCreate (may need to switch to debug mode)
 Update-Database
 Update-Database Chat
 Remove-Migration
